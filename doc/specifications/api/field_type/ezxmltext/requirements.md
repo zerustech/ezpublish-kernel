@@ -18,7 +18,7 @@ eZ Systems previously created the eZ Components, now known as Zeta Components,
 and contains [requirements/design documents](https://github.com/zetacomponents/Document/tree/master/design)
 as well as working code under the [Document component](https://github.com/zetacomponents/Document).
 
-This component has been developped in the mind of being at the heart of a
+This component has been developed in the mind of being at the heart of a
 refactoring of eZ Publish 3/4 and as a result of that, contains many relevant
 information and should therefor be considered as a very good candidate for
 handling rich text.
@@ -26,7 +26,7 @@ handling rich text.
 Requirements
 ------------
 
- * The internal format **MUST** be capabale of storing any kind of content
+ * The internal format **MUST** be capable of storing any kind of content
    that can be represented with (X)HTML5 since the primary output target of
    eZ Publish is the Web.
    The following content elements **MUST** be supported:
@@ -71,7 +71,7 @@ Requirements
    * fast to parse in PHP without any specific requirement;
    * easy to validate in PHP without any specific requirement.
    Those requirements makes XML formats probably the
- * It **MUST** be extendable by eZ developers as well as by eZ Publish 5
+ * It **MUST** be expendable by eZ developers as well as by eZ Publish 5
    customers that need to add their own notions.
  * Internal content relation **MUST** be possible.
  * More advanced concept **SHOULD** be possible as well:
