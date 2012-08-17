@@ -14,6 +14,15 @@ Current status
 The XML Block datatype is currently used to store rich content and its format is
 [documented](http://doc.ez.no/eZ-Publish/Technical-manual/4.x/Reference/XML-tags).
 
+eZ Systems previously created the eZ Components, now known as Zeta Components,
+and contains [requirements/design documents](https://github.com/zetacomponents/Document/tree/master/design)
+as well as working code under the [Document component](https://github.com/zetacomponents/Document).
+
+This component has been developped in the mind of being at the heart of a
+refactoring of eZ Publish 3/4 and as a result of that, contains many relevant
+information and should therefor be considered as a very good candidate for
+handling rich text.
+
 Requirements
 ------------
 
