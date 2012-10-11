@@ -79,6 +79,21 @@ class Content extends RestController
      *
      * @return \eZ\Publish\Core\REST\Server\Values\ContentList
      */
+    public function listContent()
+    {
+        if ( isset( $this->request->variables['remoteId'] ) )
+        {
+            return $this->loadContentInfoByRemoteId();
+        }
+
+        throw new \RuntimeException( '@TODO: Implement.' );
+    }
+
+    /**
+     * Load a content info by remote ID
+     *
+     * @return \eZ\Publish\Core\REST\Server\Values\ContentList
+     */
     public function loadContentInfoByRemoteId()
     {
         $contentInfo = $this->contentService->loadContentInfoByRemoteId(
