@@ -34,7 +34,9 @@ $generator = getenv( 'backendEncoding' ) === 'xml' ?
 
 // The URL Handler is responsible for URL parsing and generation. It will be
 // used in the output generators and in some parsing handlers.
-$urlHandler = new Common\UrlHandler\eZPublish();
+$urlHandler = new Common\UrlHandler\Prefixed(
+    parse_url( HTTP_BASE_URL, PHP_URL_PATH )
+);
 
 
 // FieldTypes to be used in integration tests. The field types are only used
