@@ -51,6 +51,7 @@ class Request extends RMFRequest
 
         // @todo: ATTENTION, only used for test setup
         $this->addHandler( 'testUser', new PropertyHandler\Server( 'HTTP_X_TEST_USER' ) );
+        $this->addHandler( 'testSession', new PropertyHandler\Server( 'HTTP_X_TEST_SESSION' ) );
 
         parent::__construct( $handlers );
     }
