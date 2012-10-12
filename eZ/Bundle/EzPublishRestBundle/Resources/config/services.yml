@@ -18,6 +18,7 @@ parameters:
     ezpublish_rest.parser_tools.class: eZ\Publish\Core\REST\Common\Input\ParserTools
     ezpublish_rest.field_type_parser.class: eZ\Publish\Core\REST\Common\Input\FieldTypeParser
     ezpublish_rest.listener.class: eZ\Bundle\EzPublishRestBundle\EventListener\RestListener
+    ezpublish_rest.mysql_test_reset_listener.class: eZ\Bundle\EzPublishRestBundle\EventListener\MysqlTestResetListener
     ezpublish_rest.field_type_serializer.class: eZ\Publish\Core\REST\Common\Output\FieldTypeSerializer
     ezpublish_rest.field_type_processor_registry.class: eZ\Publish\Core\REST\Common\FieldTypeProcessorRegistry
     ezpublish_rest.request.class: eZ\Publish\Core\REST\Server\Request
@@ -147,6 +148,15 @@ services:
             - @ezpublish_rest.request
         tags:
             - { name: kernel.event_subscriber }
+
+    # @TODO: Move this to test configuration only.
+    ezpublish_rest.mysql_test_reset_listener:
+        class: %ezpublish_rest.mysql_test_reset_listener.class%
+        arguments:
+            - @service_container
+            - @ezpublish_rest.request
+        tags:
+            - { name: kernel.event_subscriber, event: kernel.request, method: onKernelRequest }
 
     ezpublish_rest.response_visitor_dispatcher:
         class: %ezpublish_rest.response_visitor_dispatcher.class%
