@@ -57,7 +57,6 @@ class Stream implements HttpClient
         {
             $this->server .= ':' . $url['port'];
         }
-        $this->server .= $url['path'];
     }
 
     /**
@@ -77,6 +76,7 @@ class Stream implements HttpClient
         $requestHeaders = $this->getRequestHeaders( $message->headers );
 
         $url = $this->server . $path;
+        var_dump( $url );
 
         $contextOptions = array(
             'http' => array(
@@ -128,7 +128,7 @@ class Stream implements HttpClient
             else
             {
                 list( $key, $value ) = explode( ':', $lineContent, 2 );
-                $headers[$key] = ltrim( $value );
+                $headers[strtolower( $key )] = ltrim( $value );
             }
         }
 
