@@ -128,10 +128,10 @@ class Legacy extends SetupFactory
      *
      * @return void
      */
-    public function insertData()
+    public function insertData( $dbHandler = null )
     {
         $data = $this->getInitialData();
-        $handler = $this->getDatabaseHandler();
+        $handler = $dbHandler ?: $this->getDatabaseHandler();
 
         // FIXME: Needs to be in fixture
         $data['ezcontentobject_trash'] = array();
@@ -229,11 +229,11 @@ class Legacy extends SetupFactory
      *
      * @return void
      */
-    protected function initializeSchema()
+    public function initializeSchema( $dbHandler = null )
     {
         if ( !self::$schemaInitialized )
         {
-            $dbHandler = $this->getDatabaseHandler();
+            $dbHandler = $dbHandler ?: $this->getDatabaseHandler();
             $statements = $this->getSchemaStatemets();
 
             $this->applyStatements( $statements );
