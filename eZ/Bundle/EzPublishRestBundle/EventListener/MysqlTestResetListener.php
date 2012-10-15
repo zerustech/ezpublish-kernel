@@ -79,7 +79,6 @@ class MysqlTestResetListener implements EventSubscriberInterface
         }
         catch ( \InvalidArgumentException $e )
         {
-            echo $e;
             // No test session.
         }
     }
