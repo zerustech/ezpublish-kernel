@@ -22,6 +22,8 @@ parameters:
     ezpublish_rest.field_type_serializer.class: eZ\Publish\Core\REST\Common\Output\FieldTypeSerializer
     ezpublish_rest.field_type_processor_registry.class: eZ\Publish\Core\REST\Common\FieldTypeProcessorRegistry
     ezpublish_rest.request.class: eZ\Publish\Core\REST\Server\Request
+    ezpublish.security.authentication_provider.test_auth.class: eZ\Bundle\EzPublishRestBundle\Security\Authentication\TestAuthProvider
+    ezpublish.security.firewall_listener.test_auth.class: eZ\Bundle\EzPublishRestBundle\Security\Authentication\TestAuthListener
 
 services:
     ezpublish_rest.field_type_serializer:
@@ -170,3 +172,12 @@ services:
     ezpublish_rest.request:
         class: %ezpublish_rest.request.class%
 
+    # @TODO: Move this to test configuration only.
+    ezpublish.security.authentication_provider.test_auth:
+        class: %ezpublish.security.authentication_provider.test_auth.class%
+        arguments: [~, @ezpublish.api.repository.lazy]
+
+    # @TODO: Move this to test configuration only.
+    ezpublish.security.firewall_listener.test_auth:
+        class: %ezpublish.security.firewall_listener.test_auth.class%
+        arguments: [@security.context, @security.authentication.manager, ~, ~, ~, ~, ~, ~]
