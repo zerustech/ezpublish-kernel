@@ -9,23 +9,51 @@
 
 namespace eZ\Bundle\EzPublishRestBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder,
+use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory,
+    Symfony\Component\DependencyInjection\ContainerBuilder,
+    Symfony\Component\DependencyInjection\Reference,
     Symfony\Component\DependencyInjection\DefinitionDecorator,
-    Symfony\Component\Config\Definition\Builder\NodeDefinition,
-    Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
+    Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 /**
  * Basic auth based authentication provider, working with eZ Publish repository
  */
-class TestSecurityFactory implements SecurityFactoryInterface
+class TestSecurityFactory extends AbstractFactory
 {
-    public function create( ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint )
+    const AUTHENTICATION_PROVIDER_ID = 'ezpublish.security.authentication_provider.test_auth';
+    const AUTHENTICATION_LISTENER_ID = 'ezpublish.security.firewall_listener.test_auth';
+
+    /**
+     * Subclasses must return the id of a service which implements the
+     * AuthenticationProviderInterface.
+     *
+     * @param ContainerBuilder $container
+     * @param string           $id             The unique id of the firewall
+     * @param array            $config         The options array for this listener
+     * @param string           $userProviderId The id of the user provider
+     *
+     * @return string never null, the id of the authentication provider
+     */
+    protected function createAuthProvider( ContainerBuilder $container, $id, $config, $userProviderId )
     {
-        return array(
-            'ezpublish.security.authentication_provider.test_auth',
-            $id,
-            $defaultEntryPoint
-        );
+        $providerId = self::AUTHENTICATION_PROVIDER_ID . ".$id";
+        $container
+            ->setDefinition( $providerId, new DefinitionDecorator( self::AUTHENTICATION_PROVIDER_ID ) )
+            ->replaceArgument( 0, new Reference( $userProviderId ) )
+            ->addArgument( $id )
+        ;
+
+        return $providerId;
+    }
+
+    /**
+     * Subclasses must return the id of the listener template.
+     *
+     * @return string
+     */
+    protected function getListenerId()
+    {
+        return self::AUTHENTICATION_LISTENER_ID;
     }
 
     public function getPosition()
@@ -36,10 +64,5 @@ class TestSecurityFactory implements SecurityFactoryInterface
     public function getKey()
     {
         return 'ezpublish_test_auth';
-    }
-
-    public function addConfiguration( NodeDefinition $node )
-    {
-        return;
     }
 }
