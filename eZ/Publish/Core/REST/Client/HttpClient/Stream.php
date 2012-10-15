@@ -76,7 +76,6 @@ class Stream implements HttpClient
         $requestHeaders = $this->getRequestHeaders( $message->headers );
 
         $url = $this->server . $path;
-        var_dump( $url );
 
         $contextOptions = array(
             'http' => array(
