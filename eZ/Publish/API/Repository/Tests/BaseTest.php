@@ -222,13 +222,27 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
 
     private function assertPropertiesEqual( $propertyName, $expectedValue, $actualValue )
     {
-        if( $expectedValue instanceof \ArrayObject )
+        if ( $expectedValue instanceof \ArrayObject &&
+             $actualValue instanceof \ArrayObject )
         {
             $expectedValue = $expectedValue->getArrayCopy();
+            $actualValue   = $actualValue->getArrayCopy();
         }
-        if( $actualValue instanceof \ArrayObject )
+
+        if ( $expectedValue instanceof \DateTime &&
+             $actualValue instanceof \DateTime )
         {
-            $actualValue = $actualValue->getArrayCopy();
+            $expectedValue = $expectedValue->getTimestamp();
+            $actualValue   = $actualValue->getTimestamp();
+
+            return $this->assertEquals(
+                $expectedValue,
+                $actualValue,
+                sprintf( 'Object property "%s" incorrect.', $propertyName ),
+                // We allow small timestamp differences beacause the REST
+                // client might take a while for the rpocessing
+                5
+            );
         }
 
         $this->assertEquals(
