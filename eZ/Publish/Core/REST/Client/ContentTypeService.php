@@ -133,7 +133,14 @@ class ContentTypeService implements \eZ\Publish\API\Repository\ContentTypeServic
      */
     public function loadContentTypeGroup( $contentTypeGroupId )
     {
-        throw new \Exception( "@TODO: Implement." );
+        $response = $this->client->request(
+            'GET',
+            $contentTypeGroupId,
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeGroup' ) )
+            )
+        );
+        return $this->inputDispatcher->parse( $response );
     }
 
     /**
