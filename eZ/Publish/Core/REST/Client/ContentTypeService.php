@@ -147,14 +147,21 @@ class ContentTypeService implements \eZ\Publish\API\Repository\ContentTypeServic
      * Get a Content Type Group object by identifier
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException If group can not be found
-     * 
+     *
      * @param string $contentTypeGroupIdentifier
      *
      * @return \eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup
      */
     public function loadContentTypeGroupByIdentifier( $contentTypeGroupIdentifier )
     {
-        throw new \Exception( "@TODO: Implement." );
+        $response = $this->client->request(
+            'GET',
+            $this->urlHandler->generate( 'typegroupByIdentifier', array( 'typegroup' => $contentTypeGroupIdentifier ) ),
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeGroupList' ) )
+            )
+        );
+        return $this->inputDispatcher->parse( $response );
     }
 
     /**
@@ -164,7 +171,14 @@ class ContentTypeService implements \eZ\Publish\API\Repository\ContentTypeServic
      */
     public function loadContentTypeGroups()
     {
-        throw new \Exception( "@TODO: Implement." );
+        $response = $this->client->request(
+            'GET',
+            $this->urlHandler->generate( 'typegroups' ),
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeGroupList' ) )
+            )
+        );
+        return $this->inputDispatcher->parse( $response );
     }
 
     /**

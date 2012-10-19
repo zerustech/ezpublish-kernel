@@ -50,6 +50,7 @@ class eZPublish extends Pattern
         'trash'                     => '/content/trash/{trash}',
         'typegroups'                => '/content/typegroups',
         'typegroup'                 => '/content/typegroups/{typegroup}',
+        'typegroupByIdentifier'     => '/content/typegroups?identifier={typegroup}',
         'grouptypes'                => '/content/typegroups/{typegroup}/types',
         'types'                     => '/content/types',
         'typeByIdentifier'          => '/content/types?identifier={type}',
