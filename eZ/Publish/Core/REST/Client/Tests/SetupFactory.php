@@ -36,7 +36,9 @@ class SetupFactory extends Repository\Tests\SetupFactory
     public function getIdManager()
     {
         return new IdManager(
-            new Common\UrlHandler\eZPublish()
+            new Common\UrlHandler\Prefixed(
+                parse_url( HTTP_BASE_URL, PHP_URL_PATH )
+            )
         );
     }
 
