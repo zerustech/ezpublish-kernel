@@ -40,7 +40,6 @@ class ErrorMessage extends Parser
      */
     public function parse( array $data, ParsingDispatcher $parsingDispatcher )
     {
-        var_dump( $data );
         if ( isset( $this->errorCodeMapping[$data['errorCode']] ) )
         {
             $exceptionClass = $this->errorCodeMapping[$data['errorCode']];
