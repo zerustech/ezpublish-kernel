@@ -119,20 +119,14 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
     public function testCreateContentTypeGroupStructValues( array $data )
     {
         $createStruct = $data['createStruct'];
+        $createStruct->creatorId = $this->generateId( 'user', $createStruct->creatorId );
         $group = $data['group'];
 
-        $this->assertEquals(
-            array(
-                'identifier' => $group->identifier,
-                'creatorId' => $group->creatorId,
-                'creationDate' => $group->creationDate,
-            ),
-            array(
-                'identifier' => $createStruct->identifier,
-                'creatorId' => $createStruct->creatorId,
-                'creationDate' => $createStruct->creationDate,
-            )
+        $this->assertStructPropertiesCorrect(
+            $createStruct,
+            $group
         );
+
         $this->assertNotNull(
             $group->id
         );
@@ -149,6 +143,7 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
     public function testCreateContentTypeGroupStructLanguageDependentValues( array $data )
     {
         $createStruct = $data['createStruct'];
+        $createStruct->creatorId = $this->generateId( 'user', $createStruct->creatorId );
         $group = $data['group'];
 
         $this->assertStructPropertiesCorrect(
