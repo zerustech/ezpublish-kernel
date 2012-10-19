@@ -89,6 +89,11 @@ class Factory
                         $fieldTypeParser,
                         $parserTools
                     ),
+                    'application/vnd.ez.api.ContentTypeGroupInput'  => new Input\Parser\ContentTypeGroupInput(
+                        $urlHandler,
+                        $this->repository->getContentTypeService(),
+                        $parserTools
+                    ),
                     'application/vnd.ez.api.ContentTypeCreate'      => new Input\Parser\ContentTypeCreate(
                         $urlHandler,
                         $this->repository->getContentTypeService(),
