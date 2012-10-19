@@ -71,15 +71,16 @@ class Dispatcher
      */
     public function parse( Message $message )
     {
-        if ( !isset( $message->headers['content-type'] ) )
+        if ( !isset( $message->headers['Content-Type'] ) )
         {
+            var_dump( $message );
             throw new Exceptions\Parser( 'Missing Content-Type header in message.' );
         }
 
-        $contentTypeParts = explode( '+', $message->headers['content-type'] );
+        $contentTypeParts = explode( '+', $message->headers['Content-Type'] );
         if ( count( $contentTypeParts ) !== 2 )
         {
-            throw new Exceptions\Parser( "No format specification in content type. Missing '+(json|xml|…)' in '{$message->headers['content-type']}'." );
+            throw new Exceptions\Parser( "No format specification in content type. Missing '+(json|xml|…)' in '{$message->headers['Content-Type']}'." );
         }
 
         $media  = $contentTypeParts[0];

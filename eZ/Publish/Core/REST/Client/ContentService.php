@@ -201,7 +201,7 @@ class ContentService implements \eZ\Publish\API\Repository\ContentService, Sessi
             return $this->inputDispatcher->parse( $versionResponse );
         }
 
-        return $versionResponse->headers['location'];
+        return $versionResponse->headers['Location'];
     }
 
     /**
@@ -213,7 +213,7 @@ class ContentService implements \eZ\Publish\API\Repository\ContentService, Sessi
     protected function isErrorResponse( Message $response )
     {
         return (
-            strpos( $response->headers['content-type'], 'application/vnd.ez.api.ErrorMessage' ) === 0
+            strpos( $response->headers['Content-Type'], 'application/vnd.ez.api.ErrorMessage' ) === 0
         );
     }
 

@@ -85,7 +85,7 @@ class Section extends RestController
             $createdSection = $this->sectionService->createSection(
                 $this->inputDispatcher->parse(
                     new Message(
-                        array( 'content-type' => $this->request->contentType ),
+                        array( 'Content-Type' => $this->request->contentType ),
                         $this->request->body
                     )
                 )

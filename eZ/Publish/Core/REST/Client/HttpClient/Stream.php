@@ -127,7 +127,17 @@ class Stream implements HttpClient
             else
             {
                 list( $key, $value ) = explode( ':', $lineContent, 2 );
-                $headers[strtolower( $key )] = ltrim( $value );
+
+                $key = preg_replace_callback(
+                    '((^|[^a-z])([a-z]))',
+                    function ( $matches )
+                    {
+                        return $matches[1] . strtoupper( $matches[2] );
+                    },
+                    strtolower( $key )
+                );
+
+                $headers[$key] = ltrim( $value );
             }
         }
 
