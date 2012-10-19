@@ -219,7 +219,7 @@ class SectionService implements \eZ\Publish\API\Repository\SectionService, Sessi
      */
     public function countAssignedContents( Section $section )
     {
-        throw new \Exception( "@TODO: Implement." );
+        throw new \Exception( "@TODO: Probably not possible to implement with current API." );
     }
 
     /**
