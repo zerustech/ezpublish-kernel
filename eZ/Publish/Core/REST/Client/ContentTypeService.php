@@ -103,7 +103,23 @@ class ContentTypeService implements \eZ\Publish\API\Repository\ContentTypeServic
      */
     public function createContentTypeGroup( ContentTypeGroupCreateStruct  $contentTypeGroupCreateStruct )
     {
-        throw new \Exception( "@TODO: Implement." );
+        $inputMessage = $this->outputVisitor->visit( $contentTypeGroupCreateStruct );
+        $inputMessage->headers['Accept'] = $this->outputVisitor->getMediaType( 'ContentTypeGroup' );
+
+        $result = $this->client->request(
+            'POST',
+            $this->urlHandler->generate( 'typegroups' ),
+            $inputMessage
+        );
+
+        try
+        {
+            return $this->inputDispatcher->parse( $result );
+        }
+        catch ( \eZ\Publish\Core\REST\Common\Exceptions\ForbiddenException $e )
+        {
+            throw new \eZ\Publish\Core\REST\Common\Exceptions\InvalidArgumentException( $e->getMessage(), 0, $e );
+        }
     }
 
     /**
@@ -475,7 +491,9 @@ class ContentTypeService implements \eZ\Publish\API\Repository\ContentTypeServic
      */
     public function newContentTypeGroupCreateStruct( $identifier )
     {
-        throw new \Exception( "@TODO: Implement." );
+        return new ContentTypeGroupCreateStruct( array(
+            'identifier' => $identifier,
+        ) );
     }
 
     /**
