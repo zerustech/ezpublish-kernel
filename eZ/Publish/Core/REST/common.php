@@ -162,6 +162,10 @@ $inputParsers = array(
         $parserTools,
         $repository->getContentTypeService()
     ),
+    'application/vnd.ez.api.ContentTypeGroupList' => new Client\Input\Parser\ContentTypeGroupList(
+        $parserTools,
+        $repository->getContentTypeService()
+    ),
     'application/vnd.ez.api.ContentType'          => new Client\Input\Parser\ContentType(
         $parserTools,
         $repository->getContentTypeService()
