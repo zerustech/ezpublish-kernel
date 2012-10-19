@@ -135,7 +135,14 @@ class SectionService implements \eZ\Publish\API\Repository\SectionService, Sessi
             $inputMessage
         );
 
-        return $this->inputDispatcher->parse( $result );
+        try
+        {
+            return $this->inputDispatcher->parse( $result );
+        }
+        catch ( \eZ\Publish\Core\REST\Common\Exceptions\ForbiddenException $e )
+        {
+            throw new \eZ\Publish\Core\REST\Common\Exceptions\InvalidArgumentException( $e->getMessage(), 0, $e );
+        }
     }
 
     /**
