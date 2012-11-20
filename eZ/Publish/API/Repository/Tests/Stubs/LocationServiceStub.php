@@ -15,6 +15,7 @@ use eZ\Publish\API\Repository\Values\Content\LocationUpdateStruct;
 use eZ\Publish\API\Repository\Values\Content\LocationCreateStruct;
 use eZ\Publish\API\Repository\Values\Content\ContentInfo;
 use eZ\Publish\API\Repository\Values\Content\Location;
+use eZ\Publish\API\Repository\Values\Content\LocationList;
 
 use \eZ\Publish\API\Repository\Tests\Stubs\Values\Content\LocationStub;
 use \eZ\Publish\API\Repository\Tests\Stubs\Exceptions;
@@ -117,16 +118,10 @@ class LocationServiceStub implements LocationService
         $data['id'] = ++$this->nextLocationId;
         $data['pathString'] = $parentLocation->pathString . $data['id'] . '/';
         $data['depth'] = substr_count( $data['pathString'], '/' ) - 2;
-        $data['childCount'] = 0;
         $data['invisible'] = $locationCreateStruct->hidden;
-        // @TODO: Do parent locations need update?
-        $data['modifiedSubLocationDate'] = new \DateTime();
 
         $location = new LocationStub( $data );
         $this->locations[$location->id] = $location;
-
-        $parentLocation = $this->loadLocation( $location->parentLocationId );
-        $parentLocation->__setChildCount( $parentLocation->childCount + 1 );
 
         // Set main location if not set before.
         if ( null === $contentInfo->mainLocationId )
@@ -172,7 +167,7 @@ class LocationServiceStub implements LocationService
         {
             throw new Exceptions\InvalidArgumentExceptionStub;
         }
-        foreach ( $this->loadLocationChildren( $location ) as $childLocation )
+        foreach ( $this->loadLocationChildren( $location )->locations as $childLocation )
         {
             $this->checkContentNotInTree( $contentInfo, $childLocation );
         }
@@ -332,11 +327,9 @@ class LocationServiceStub implements LocationService
             'contentInfo' => $location->contentInfo,
             'parentLocationId' => $location->parentLocationId,
             'pathString' => $location->pathString,
-            'modifiedSubLocationDate' => $location->modifiedSubLocationDate,
             'depth' => $location->depth,
             'sortField' => $location->sortField,
             'sortOrder' => $location->sortOrder,
-            'childCount' => $location->childCount,
         );
     }
 
@@ -388,18 +381,11 @@ class LocationServiceStub implements LocationService
      * @param int $offset the start offset for paging
      * @param int $limit the number of locations returned. If $limit = -1 all children starting at $offset are returned
      *
-     * @return array Of {@link Location}
+     * @return \eZ\Publish\API\Repository\Values\Content\LocationList
      */
     public function loadLocationChildren( Location $location, $offset = 0, $limit = -1 )
     {
-        $children = array();
-        foreach ( $this->locations as $potentialChild )
-        {
-            if ( $potentialChild->parentLocationId == $location->id )
-            {
-                $children[] = $potentialChild;
-            }
-        }
+        $children = $this->loadLocationChildrenById( $location->id );
 
         usort(
             $children,
@@ -414,7 +400,44 @@ class LocationServiceStub implements LocationService
             }
         );
 
-        return array_slice( $children, $offset, ( $limit == -1 ? null : $limit ) );
+        return new LocationList(
+            array(
+                "locations" => array_slice( $children, $offset, ( $limit == -1 ? null : $limit ) ),
+                "totalCount" => count( $children )
+            )
+        );
+    }
+
+    /**
+     * Returns all location children based on their ID
+     *
+     * @param int $locationId
+     * @return array Of {@link Location}
+     */
+    private function loadLocationChildrenById( $locationId )
+    {
+        $children = array();
+        foreach ( $this->locations as $potentialChild )
+        {
+            if ( $potentialChild->parentLocationId == $locationId )
+            {
+                $children[] = $potentialChild;
+            }
+        }
+
+        return $children;
+    }
+
+    /**
+     * Returns the number of children which are readable by the current user of a location object
+     *
+     * @param \eZ\Publish\API\Repository\Values\Content\Location $location
+     *
+     * @return int
+     */
+    public function getLocationChildCount( Location $location )
+    {
+        return count( $this->loadLocationChildrenById( $location->id ) );
     }
 
     /**
@@ -459,7 +482,7 @@ class LocationServiceStub implements LocationService
 
         $location->__hide();
 
-        foreach ( $this->loadLocationChildren( $location ) as $child)
+        foreach ( $this->loadLocationChildren( $location )->locations as $child)
         {
             $this->markInvisible( $child );
         }
@@ -477,7 +500,7 @@ class LocationServiceStub implements LocationService
     {
         $location->__makeInvisible();
 
-        foreach ( $this->loadLocationChildren( $location ) as $child )
+        foreach ( $this->loadLocationChildren( $location )->locations as $child )
         {
             $this->markInvisible( $child );
         }
@@ -504,7 +527,7 @@ class LocationServiceStub implements LocationService
 
         $location->__unhide();
 
-        foreach ( $this->loadLocationChildren( $location ) as $child )
+        foreach ( $this->loadLocationChildren( $location )->locations as $child )
         {
             $this->markVisible( $child );
         }
@@ -529,7 +552,7 @@ class LocationServiceStub implements LocationService
         }
         $location->__makeVisible();
 
-        foreach ( $this->loadLocationChildren( $location ) as $child )
+        foreach ( $this->loadLocationChildren( $location )->locations as $child )
         {
             $this->markVisible( $child );
         }
@@ -560,17 +583,9 @@ class LocationServiceStub implements LocationService
             $contentService->deleteContent( $location->contentInfo );
         }
 
-        foreach ( $this->loadLocationChildren( $location ) as $child )
+        foreach ( $this->loadLocationChildren( $location )->locations as $child )
         {
             $this->deleteLocation( $child );
-        }
-
-        // Decrement $childCount property
-        if ( isset( $this->locations[$location->parentLocationId] ) )
-        {
-            $this->locations[$location->parentLocationId]->__setChildCount(
-                $this->locations[$location->parentLocationId]->childCount - 1
-            );
         }
     }
 
@@ -624,10 +639,6 @@ class LocationServiceStub implements LocationService
         // Check new parent is not tree
         $this->checkLocationNotInTree( $subtree, $targetParentLocation );
 
-        $targetParentLocation->__setChildCount(
-            $targetParentLocation->childCount + 1
-        );
-
         return $this->copySubtreeInternal( $subtree, $targetParentLocation );
     }
 
@@ -656,7 +667,7 @@ class LocationServiceStub implements LocationService
 
         $this->locations[$values['id']] = new LocationStub( $values );
 
-        foreach ( $this->loadLocationChildren( $subtree ) as $childLocation )
+        foreach ( $this->loadLocationChildren( $subtree )->locations as $childLocation )
         {
             $this->copySubtreeInternal( $childLocation, $this->locations[$values['id']] );
         }
@@ -679,7 +690,7 @@ class LocationServiceStub implements LocationService
         {
             throw new InvalidArgumentExceptionStub( 'What error code should be used?' );
         }
-        foreach ( $this->loadLocationChildren( $subtree ) as $childLocation )
+        foreach ( $this->loadLocationChildren( $subtree )->locations as $childLocation )
         {
             $this->checkLocationNotInTree( $childLocation, $location );
         }
@@ -704,9 +715,6 @@ class LocationServiceStub implements LocationService
         }
 
         $oldParentLocation = $this->loadLocation( $location->parentLocationId );
-        $oldParentLocation->__setChildCount( $oldParentLocation->childCount - 1 );
-
-        $newParentLocation->__setChildCount( $newParentLocation->childCount + 1 );
 
         $this->moveSubtreeInternal( $location, $newParentLocation );
     }
@@ -736,7 +744,7 @@ class LocationServiceStub implements LocationService
         $newLocation = $this->locations[$location->id] = new LocationStub( $values );
         $this->repository->getUrlAliasService()->_createAliasesForLocation( $newLocation );
 
-        foreach ( $this->loadLocationChildren( $location ) as $childLocation )
+        foreach ( $this->loadLocationChildren( $location )->locations as $childLocation )
         {
             $this->moveSubtreeInternal(
                 $childLocation,
@@ -757,16 +765,8 @@ class LocationServiceStub implements LocationService
     {
         $this->repository->getUrlAliasService()->_removeAliasesForLocation( $location );
 
-        // Decrement child count on parent location
-        if ( 0 === count( $trashed ) && isset( $this->locations[$location->parentLocationId] ) )
-        {
-            $this->locations[$location->parentLocationId]->__setChildCount(
-                $this->locations[$location->parentLocationId]->childCount - 1
-            );
-        }
-
         $trashed[] = $location;
-        foreach ( $this->loadLocationChildren( $location ) as $childLocation )
+        foreach ( $this->loadLocationChildren( $location )->locations as $childLocation )
         {
             $trashed = $this->__trashLocation( $childLocation, $trashed );
         }
@@ -791,16 +791,11 @@ class LocationServiceStub implements LocationService
             $location->__setParentLocationId( $newParentlocation->id );
         }
 
-        $location->__setChildCount( 0 );
         $location->__setDepth(
             $this->locations[$location->parentLocationId]->depth + 1
         );
         $location->__setPathString(
             $this->locations[$location->parentLocationId]->pathString . $location->id . "/"
-        );
-
-        $this->locations[$location->parentLocationId]->__setChildCount(
-            $this->locations[$location->parentLocationId]->childCount + 1
         );
 
         // If the main location of the restored content is also trashed /
@@ -813,29 +808,6 @@ class LocationServiceStub implements LocationService
         $this->repository->getUrlAliasService()->_createAliasesForLocation( $location );
 
         return ( $this->locations[$location->id] = $location );
-    }
-
-    /**
-     * Calculates the $childCount property for all stored locations.
-     *
-     * @return void
-     */
-    protected function calculateChildCounts()
-    {
-        $childCount = array();
-        foreach ( $this->locations as $location )
-        {
-            if ( !isset( $childCount[$location->parentLocationId] ) )
-            {
-                $childCount[$location->parentLocationId] = 0;
-            }
-            $childCount[$location->parentLocationId]++;
-        }
-
-        foreach ( $childCount as $id => $count )
-        {
-            $this->locations[$id]->__setChildCount( $count );
-        }
     }
 
     /**
@@ -869,7 +841,6 @@ class LocationServiceStub implements LocationService
             $this->locations[$location->id] = $location;
             $this->nextLocationId = max( $this->nextLocationId, $location->id );
         }
-        $this->calculateChildCounts();
     }
 }
 

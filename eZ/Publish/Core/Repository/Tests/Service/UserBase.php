@@ -472,13 +472,12 @@ abstract class UserBase extends BaseServiceTest
     }
 
     /**
-     * Test creating a user throwing ContentFieldValidationException
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentFieldValidationException
+     * Test creating a user throwing ContentValidationException
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentValidationException
      * @covers \eZ\Publish\API\Repository\UserService::createUser
      */
-    public function testCreateUserThrowsContentFieldValidationException()
+    public function testCreateUserThrowsContentValidationException()
     {
-        self::markTestSkipped( "Enable when field validation specs are finished" );
         $userService = $this->repository->getUserService();
 
         $userCreateStruct = $userService->newUserCreateStruct( "new_user", "new_user@ez.no", "password", "eng-GB" );
@@ -490,15 +489,15 @@ abstract class UserBase extends BaseServiceTest
     }
 
     /**
-     * Test creating a user throwing ContentValidationException
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentValidationException
+     * Test creating a user throwing InvalidArgumentException
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
      * @covers \eZ\Publish\API\Repository\UserService::createUser
      */
-    public function testCreateUserThrowsContentValidationException()
+    public function testCreateUserThrowsInvalidArgumentException()
     {
         $userService = $this->repository->getUserService();
 
-        $userCreateStruct = $userService->newUserCreateStruct( "new_user", "new_user@ez.no", "password", "eng-GB" );
+        $userCreateStruct = $userService->newUserCreateStruct( "admin", "new_user@ez.no", "password", "eng-GB" );
         $userCreateStruct->setField( "first_name", "", "eng-GB" );
         $userCreateStruct->setField( "last_name", "", "eng-GB" );
 
@@ -649,25 +648,6 @@ abstract class UserBase extends BaseServiceTest
     }
 
     /**
-     * Test updating a user throwing ContentFieldValidationException
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentFieldValidationException
-     * @covers \eZ\Publish\API\Repository\UserService::updateUser
-     */
-    public function testUpdateUserThrowsContentFieldValidationException()
-    {
-        self::markTestSkipped( "Enable when field validation specs are finished" );
-        $userService = $this->repository->getUserService();
-
-        $userUpdateStruct = $userService->newUserUpdateStruct();
-        $userUpdateStruct->contentUpdateStruct = $this->repository->getContentService()->newContentUpdateStruct();
-        $userUpdateStruct->contentUpdateStruct->setField( "first_name", null, "eng-US" );
-
-        $user = $userService->loadUser( 14 );
-
-        $userService->updateUser( $user, $userUpdateStruct );
-    }
-
-    /**
      * Test updating a user throwing ContentValidationException
      * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentValidationException
      * @covers \eZ\Publish\API\Repository\UserService::updateUser
@@ -716,6 +696,20 @@ abstract class UserBase extends BaseServiceTest
 
         if ( !$hasAddedLocation )
             self::fail( "Failed assigning user to user group" );
+    }
+
+    /**
+     * Test assigning a user group to user throwing InvalidArgumentException
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @covers \eZ\Publish\API\Repository\UserService::assignUserToUserGroup
+     */
+    public function testAssignUserToUserGroupThrowsInvalidArgumentException()
+    {
+        $userService = $this->repository->getUserService();
+
+        $user = $userService->loadUser( 14 );
+        $userGroup = $userService->loadUserGroup( 12 );
+        $userService->assignUserToUserGroup( $user, $userGroup );
     }
 
     /**

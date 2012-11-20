@@ -83,6 +83,7 @@ class ObjectStateService implements \eZ\Publish\API\Repository\ObjectStateServic
      * Creates a new object state group
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the user is not allowed to create an object state group
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the object state group with provided identifier already exists
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroupCreateStruct $objectStateGroupCreateStruct
      *
@@ -168,6 +169,7 @@ class ObjectStateService implements \eZ\Publish\API\Repository\ObjectStateServic
      * Updates an object state group
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the user is not allowed to update an object state group
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the object state group with provided identifier already exists
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroupUpdateStruct $objectStateGroupUpdateStruct
@@ -223,6 +225,7 @@ class ObjectStateService implements \eZ\Publish\API\Repository\ObjectStateServic
      * set to this state.
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the user is not allowed to create an object state
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the object state with provided identifier already exists in the same group
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateCreateStruct $objectStateCreateStruct
@@ -268,6 +271,7 @@ class ObjectStateService implements \eZ\Publish\API\Repository\ObjectStateServic
      * Updates an object state
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the user is not allowed to update an object state
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the object state with provided identifier already exists in the same group
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateUpdateStruct $objectStateUpdateStruct
@@ -340,7 +344,7 @@ class ObjectStateService implements \eZ\Publish\API\Repository\ObjectStateServic
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState
      */
-    public function setObjectState( ContentInfo $contentInfo, ObjectStateGroup $objectStateGroup, ObjectState $objectState )
+    public function setContentState( ContentInfo $contentInfo, ObjectStateGroup $objectStateGroup, ObjectState $objectState )
     {
         $inputMessage = $this->outputVisitor->visit( new ContentObjectStates( array( $objectState ) ) );
         $inputMessage->headers['Accept'] = $this->outputVisitor->getMediaType( 'ContentObjectStates' );
@@ -368,7 +372,7 @@ class ObjectStateService implements \eZ\Publish\API\Repository\ObjectStateServic
      *
      * @return \eZ\Publish\API\Repository\Values\ObjectState\ObjectState
      */
-    public function getObjectState( ContentInfo $contentInfo, ObjectStateGroup $objectStateGroup )
+    public function getContentState( ContentInfo $contentInfo, ObjectStateGroup $objectStateGroup )
     {
         $values = $this->urlHandler->parse( 'object', $contentInfo->id );
         $groupValues = $this->urlHandler->parse( 'objectstategroup', $objectStateGroup->id );

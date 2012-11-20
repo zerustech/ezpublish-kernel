@@ -17,11 +17,16 @@ use eZ\Publish\Core\SignalSlot\Signal;
 class PublishVersionSignal extends Signal
 {
     /**
-     * VersionNo
+     * Content ID
+     *
+     * @var mixed
+     */
+    public $contentId;
+
+    /**
+     * Version Number
      *
      * @var int
      */
     public $versionNo;
-
 }
-

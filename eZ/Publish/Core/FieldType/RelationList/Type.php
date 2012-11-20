@@ -11,10 +11,8 @@ namespace eZ\Publish\Core\FieldType\RelationList;
 
 use eZ\Publish\Core\FieldType\FieldType;
 use eZ\Publish\Core\FieldType\ValidationError;
-use eZ\Publish\SPI\Persistence\Content\FieldValue as PersistenceFieldValue;
 use eZ\Publish\Core\Repository\Values\Content\ContentInfo;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
-use eZ\Publish\SPI\FieldType\Event;
 
 /**
  * The RelationList field type.
@@ -143,9 +141,9 @@ class Type extends FieldType
      *
      * @param mixed $inputValue A ContentInfo, content ID or list of content ID's to build from, or a RelationList\Value
      *
-     * @return \eZ\Publish\Core\FieldType\RelationList\Value
+     * @return \eZ\Publish\Core\FieldType\RelationList\Value The potentially converted and structurally plausible value.
      */
-    public function acceptValue( $inputValue )
+    protected function internalAcceptValue( $inputValue )
     {
         // ContentInfo
         if ( $inputValue instanceof ContentInfo )
@@ -162,8 +160,7 @@ class Type extends FieldType
         {
             $inputValue = new Value( $inputValue );
         }
-
-        if ( !$inputValue instanceof Value )
+        else if ( !$inputValue instanceof Value )
         {
             throw new InvalidArgumentType(
                 '$inputValue',

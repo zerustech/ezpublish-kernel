@@ -187,6 +187,23 @@ abstract class ObjectStateBase extends BaseServiceTest
     }
 
     /**
+     * Test service method for creating object state group throwing InvalidArgumentException
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @covers \eZ\Publish\API\Repository\ObjectStateService::createObjectStateGroup
+     */
+    public function testCreateGroupThrowsInvalidArgumentException()
+    {
+        $objectStateService = $this->repository->getObjectStateService();
+
+        $groupCreateStruct = $objectStateService->newObjectStateGroupCreateStruct( 'ez_lock' );
+        $groupCreateStruct->defaultLanguageCode = 'eng-GB';
+        $groupCreateStruct->names = array( 'eng-GB' => 'Test' );
+        $groupCreateStruct->descriptions = array( 'eng-GB' => 'Test description' );
+
+        $objectStateService->createObjectStateGroup( $groupCreateStruct );
+    }
+
+    /**
      * Test service method for loading object state group
      * @covers \eZ\Publish\API\Repository\ObjectStateService::loadObjectStateGroup
      */
@@ -303,6 +320,65 @@ abstract class ObjectStateBase extends BaseServiceTest
             ),
             $updatedGroup
         );
+    }
+
+    /**
+     * Test service method for partially updating object state group
+     * @covers \eZ\Publish\API\Repository\ObjectStateService::updateObjectStateGroup
+     */
+    public function testPartiallyUpdateObjectStateGroup()
+    {
+        $objectStateService = $this->repository->getObjectStateService();
+
+        $groupUpdateStruct = $objectStateService->newObjectStateGroupUpdateStruct();
+        $groupUpdateStruct->defaultLanguageCode = 'eng-GB';
+        $groupUpdateStruct->names = array( 'eng-GB' => 'Test' );
+
+        $group = $objectStateService->loadObjectStateGroup( 2 );
+
+        $updatedGroup = $objectStateService->updateObjectStateGroup( $group, $groupUpdateStruct );
+
+        $this->assertInstanceOf(
+            '\\eZ\\Publish\\API\\Repository\\Values\\ObjectState\\ObjectStateGroup',
+            $updatedGroup
+        );
+
+        $this->assertPropertiesCorrect(
+            array(
+                'id' => 2,
+                'identifier' => 'ez_lock',
+                'defaultLanguageCode' => 'eng-GB',
+                'languageCodes' => array( 'eng-GB' ),
+                'names' => array( 'eng-GB' => 'Test' ),
+                // descriptions array should have an empty value for eng-GB
+                // without the original descriptions
+                // since the descriptions were not in the update struct and we're changing default language
+                'descriptions' => array( 'eng-GB' => '' )
+            ),
+            $updatedGroup
+        );
+    }
+
+    /**
+     * Test service method for updating object state group throwing InvalidArgumentException
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @covers \eZ\Publish\API\Repository\ObjectStateService::updateObjectStateGroup
+     */
+    public function testUpdateObjectStateGroupThrowsInvalidArgumentException()
+    {
+        $objectStateService = $this->repository->getObjectStateService();
+
+        $groupCreateStruct = $objectStateService->newObjectStateGroupCreateStruct( 'test' );
+        $groupCreateStruct->defaultLanguageCode = 'eng-GB';
+        $groupCreateStruct->names = array( 'eng-GB' => 'Test' );
+        $groupCreateStruct->descriptions = array( 'eng-GB' => 'Test description' );
+
+        $createdGroup = $objectStateService->createObjectStateGroup( $groupCreateStruct );
+
+        $groupUpdateStruct = $objectStateService->newObjectStateGroupUpdateStruct();
+        $groupUpdateStruct->identifier = 'ez_lock';
+
+        $objectStateService->updateObjectStateGroup( $createdGroup, $groupUpdateStruct );
     }
 
     /**
@@ -449,6 +525,29 @@ abstract class ObjectStateBase extends BaseServiceTest
     }
 
     /**
+     * Test service method for creating object state throwing InvalidArgumentException
+     * @covers \eZ\Publish\API\Repository\ObjectStateService::createObjectState
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     */
+    public function testCreateObjectStateThrowsInvalidArgumentException()
+    {
+        $objectStateService = $this->repository->getObjectStateService();
+
+        $group = $objectStateService->loadObjectStateGroup( 2 );
+
+        $stateCreateStruct = $objectStateService->newObjectStateCreateStruct( 'not_locked' );
+        $stateCreateStruct->priority = 2;
+        $stateCreateStruct->defaultLanguageCode = 'eng-GB';
+        $stateCreateStruct->names = array( 'eng-GB' => 'Test' );
+        $stateCreateStruct->descriptions = array( 'eng-GB' => 'Test description' );
+
+        $objectStateService->createObjectState(
+            $group,
+            $stateCreateStruct
+        );
+    }
+
+    /**
      * Test service method for loading object state
      * @covers \eZ\Publish\API\Repository\ObjectStateService::loadObjectState
      */
@@ -537,6 +636,66 @@ abstract class ObjectStateBase extends BaseServiceTest
     }
 
     /**
+     * Test service method for partially updating object state
+     * @covers \eZ\Publish\API\Repository\ObjectStateService::updateObjectState
+     */
+    public function testPartiallyUpdateObjectState()
+    {
+        $objectStateService = $this->repository->getObjectStateService();
+
+        $stateUpdateStruct = $objectStateService->newObjectStateUpdateStruct();
+        $stateUpdateStruct->identifier = 'test';
+        $stateUpdateStruct->names = array( 'eng-US' => 'Test' );
+
+        $state = $objectStateService->loadObjectState( 1 );
+
+        $updatedState = $objectStateService->updateObjectState( $state, $stateUpdateStruct );
+
+        $this->assertInstanceOf(
+            '\\eZ\\Publish\\API\\Repository\\Values\\ObjectState\\ObjectState',
+            $updatedState
+        );
+
+        $this->assertPropertiesCorrect(
+            array(
+                'id' => 1,
+                'identifier' => 'test',
+                'priority' => 0,
+                'defaultLanguageCode' => 'eng-US',
+                'languageCodes' => array( 'eng-US' ),
+                'names' => array( 'eng-US' => 'Test' ),
+                // Original value of empty description for eng-US should be kept
+                'descriptions' => array( 'eng-US' => '' )
+            ),
+            $updatedState
+        );
+
+        $this->assertInstanceOf(
+            '\\eZ\\Publish\\API\\Repository\\Values\\ObjectState\\ObjectStateGroup',
+            $updatedState->getObjectStateGroup()
+        );
+
+        $this->assertEquals( $state->getObjectStateGroup()->id, $updatedState->getObjectStateGroup()->id );
+    }
+
+    /**
+     * Test service method for updating object state throwing InvalidArgumentException
+     * @covers \eZ\Publish\API\Repository\ObjectStateService::updateObjectState
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     */
+    public function testUpdateObjectStateThrowsInvalidArgumentException()
+    {
+        $objectStateService = $this->repository->getObjectStateService();
+
+        $stateUpdateStruct = $objectStateService->newObjectStateUpdateStruct();
+        $stateUpdateStruct->identifier = 'locked';
+
+        $state = $objectStateService->loadObjectState( 1 );
+
+        $objectStateService->updateObjectState( $state, $stateUpdateStruct );
+    }
+
+    /**
      * Test service method for setting the priority of object state
      * @covers \eZ\Publish\API\Repository\ObjectStateService::setPriorityOfObjectState
      */
@@ -584,22 +743,22 @@ abstract class ObjectStateBase extends BaseServiceTest
 
     /**
      * Test service method for setting the object state to content
-     * @covers \eZ\Publish\API\Repository\ObjectStateService::setObjectState
+     * @covers \eZ\Publish\API\Repository\ObjectStateService::setContentState
      */
-    public function testSetObjectState()
+    public function testSetContentState()
     {
         $objectStateService = $this->repository->getObjectStateService();
 
         $state = $objectStateService->loadObjectState( 2 );
         $group = $state->getObjectStateGroup();
         $contentInfo = $this->repository->getContentService()->loadContentInfo( 4 );
-        $objectStateService->setObjectState(
+        $objectStateService->setContentState(
             $contentInfo,
             $group,
             $state
         );
 
-        $newObjectState = $objectStateService->getObjectState( $contentInfo, $group );
+        $newObjectState = $objectStateService->getContentState( $contentInfo, $group );
 
         $this->assertInstanceOf(
             '\\eZ\\Publish\\API\\Repository\\Values\\ObjectState\\ObjectState',
@@ -611,10 +770,10 @@ abstract class ObjectStateBase extends BaseServiceTest
 
     /**
      * Test service method for setting the object state to content throwing InvalidArgumentException
-     * @covers \eZ\Publish\API\Repository\ObjectStateService::setObjectState
+     * @covers \eZ\Publish\API\Repository\ObjectStateService::setContentState
      * @expectedException \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
      */
-    public function testSetObjectStateThrowsInvalidArgumentException()
+    public function testSetContentStateThrowsInvalidArgumentException()
     {
         $objectStateService = $this->repository->getObjectStateService();
 
@@ -636,7 +795,7 @@ abstract class ObjectStateBase extends BaseServiceTest
             $stateCreateStruct
         );
 
-        $objectStateService->setObjectState(
+        $objectStateService->setContentState(
             $this->repository->getContentService()->loadContentInfo( 4 ),
             $objectStateService->loadObjectStateGroup( 2 ),
             $createdState
@@ -645,13 +804,13 @@ abstract class ObjectStateBase extends BaseServiceTest
 
     /**
      * Test service method for getting the object state of content
-     * @covers \eZ\Publish\API\Repository\ObjectStateService::getObjectState
+     * @covers \eZ\Publish\API\Repository\ObjectStateService::getContentState
      */
-    public function testGetObjectState()
+    public function testGetContentState()
     {
         $objectStateService = $this->repository->getObjectStateService();
 
-        $objectState = $objectStateService->getObjectState(
+        $objectState = $objectStateService->getContentState(
             $this->repository->getContentService()->loadContentInfo( 4 ),
             $objectStateService->loadObjectStateGroup( 2 )
         );

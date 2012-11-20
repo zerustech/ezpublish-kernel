@@ -11,6 +11,7 @@ namespace eZ\Publish\API\Repository\Tests;
 
 use \eZ\Publish\API\Repository\Values\Content\Location;
 use \eZ\Publish\API\Repository\Values\Content\LocationCreateStruct;
+use eZ\Publish\API\Repository\Values\Content\LocationList;
 
 use \eZ\Publish\API\Repository\Exceptions;
 
@@ -19,8 +20,6 @@ use \eZ\Publish\API\Repository\Exceptions;
  *
  * @see eZ\Publish\API\Repository\LocationService
  * @group location
- *
- * @TODO: Tests for Location::$modifiedSubLocationDate property behavior.
  */
 class LocationServiceTest extends BaseTest
 {
@@ -149,7 +148,6 @@ class LocationServiceTest extends BaseTest
                 'parentLocationId' => $locationCreate->parentLocationId,
                 'pathString' => '/1/5/' . $this->parseId( 'location', $createdLocation->id ) . '/',
                 'depth' => 2,
-                'childCount' => 0,
                 'sortField' => $locationCreate->sortField,
                 'sortOrder' => $locationCreate->sortOrder,
             ),
@@ -157,21 +155,6 @@ class LocationServiceTest extends BaseTest
         );
 
         $this->assertNotNull( $createdLocation->id );
-        $this->assertInstanceOf( 'DateTime', $createdLocation->modifiedSubLocationDate );
-    }
-
-    /**
-     * Test for the createLocation() method.
-     *
-     * @return void
-     * @see \eZ\Publish\API\Repository\LocationService::createLocation()
-     * @depends eZ\Publish\API\Repository\Tests\LocationServiceTest::testCreateLocation
-     */
-    public function testCreateLocationParentChildCountRaised( array $data )
-    {
-        $parentLocation = $data['parentLocation'];
-
-        $this->assertEquals( 6, $parentLocation->childCount );
     }
 
     /**
@@ -379,12 +362,9 @@ class LocationServiceTest extends BaseTest
                 'remoteId' => '3f6d92f8044aed134f32153517850f5a',
                 'parentLocationId' => $this->generateId( 'location', 1 ),
                 'pathString' => '/1/5/',
-                // @todo: Fix date handling in tests
-                'modifiedSubLocationDate' => $this->createDateTime( 1343140542 ),
                 'depth' => 1,
                 'sortField' => 1,
                 'sortOrder' => 1,
-                'childCount' => 5,
             ),
             $location
         );
@@ -691,10 +671,35 @@ class LocationServiceTest extends BaseTest
         $childLocations = $locationService->loadLocationChildren( $location );
         /* END: Use Case */;
 
+        $this->assertInstanceOf(
+            "\\eZ\\Publish\\API\\Repository\\Values\\Content\\LocationList", $childLocations
+        );
         $this->assertInternalType(
-            'array', $childLocations
+            'array', $childLocations->locations
+        );
+        $this->assertInternalType(
+            'int', $childLocations->totalCount
         );
         return $childLocations;
+    }
+
+    /**
+     * Test for the getLocationChildCount() method.
+     *
+     * @see \eZ\Publish\API\Repository\LocationService::getLocationChildCount()
+     * @depends eZ\Publish\API\Repository\Tests\LocationServiceTest::testLoadLocation
+     */
+    public function testGetLocationChildCount()
+    {
+        // $locationId is the ID of an existing location
+        $locationService = $this->getRepository()->getLocationService();
+
+        $this->assertSame(
+            5,
+            $locationService->getLocationChildCount(
+                $locationService->loadLocation( $this->generateId( 'location', 5 ) )
+            )
+        );
     }
 
     /**
@@ -704,11 +709,12 @@ class LocationServiceTest extends BaseTest
      * @see \eZ\Publish\API\Repository\LocationService::loadLocationChildren()
      * @depends eZ\Publish\API\Repository\Tests\LocationServiceTest::testLoadLocationChildren
      */
-    public function testLoadLocationChildrenData( array $locations )
+    public function testLoadLocationChildrenData( LocationList $locations )
     {
-        $this->assertEquals( 5, count( $locations ) );
+        $this->assertEquals( 5, count( $locations->locations ) );
+        $this->assertEquals( 5, $locations->totalCount );
 
-        foreach ( $locations as $location )
+        foreach ( $locations->locations as $location )
         {
             $this->assertInstanceOf(
                 '\eZ\Publish\API\Repository\Values\Content\Location',
@@ -729,7 +735,7 @@ class LocationServiceTest extends BaseTest
                 {
                     return $location->id;
                 },
-                $locations
+                $locations->locations
             )
         );
     }
@@ -757,8 +763,14 @@ class LocationServiceTest extends BaseTest
         );
         /* END: Use Case */;
 
+        $this->assertInstanceOf(
+            "\\eZ\\Publish\\API\\Repository\\Values\\Content\\LocationList", $childLocations
+        );
         $this->assertInternalType(
-            'array', $childLocations
+            'array', $childLocations->locations
+        );
+        $this->assertInternalType(
+            'int', $childLocations->totalCount
         );
         return $childLocations;
     }
@@ -766,16 +778,17 @@ class LocationServiceTest extends BaseTest
     /**
      * Test for the loadLocationChildren() method.
      *
-     * @param \eZ\Publish\API\Repository\Values\Content\Location[] $locations
+     * @param \eZ\Publish\API\Repository\Values\Content\LocationList $locations
      * @return void
      * @see \eZ\Publish\API\Repository\LocationService::loadLocationChildren($location, $offset)
      * @depends eZ\Publish\API\Repository\Tests\LocationServiceTest::testLoadLocationChildrenWithOffset
      */
-    public function testLoadLocationChildrenDataWithOffset( array $locations )
+    public function testLoadLocationChildrenDataWithOffset( LocationList $locations )
     {
-        $this->assertEquals( 3, count( $locations ) );
+        $this->assertEquals( 3, count( $locations->locations ) );
+        $this->assertEquals( 5, $locations->totalCount );
 
-        foreach ( $locations as $location )
+        foreach ( $locations->locations as $location )
         {
             $this->assertInstanceOf(
                 '\eZ\Publish\API\Repository\Values\Content\Location',
@@ -794,7 +807,7 @@ class LocationServiceTest extends BaseTest
                 {
                     return $location->id;
                 },
-                $locations
+                $locations->locations
             )
         );
     }
@@ -822,8 +835,14 @@ class LocationServiceTest extends BaseTest
         );
         /* END: Use Case */;
 
+        $this->assertInstanceOf(
+            "\\eZ\\Publish\\API\\Repository\\Values\\Content\\LocationList", $childLocations
+        );
         $this->assertInternalType(
-            'array', $childLocations
+            'array', $childLocations->locations
+        );
+        $this->assertInternalType(
+            'int', $childLocations->totalCount
         );
         return $childLocations;
     }
@@ -837,11 +856,12 @@ class LocationServiceTest extends BaseTest
      * @see \eZ\Publish\API\Repository\LocationService::loadLocationChildren($location, $offset, $limit)
      * @depends eZ\Publish\API\Repository\Tests\LocationServiceTest::testLoadLocationChildrenWithOffsetAndLimit
      */
-    public function testLoadLocationChildrenDataWithOffsetAndLimit( array $locations )
+    public function testLoadLocationChildrenDataWithOffsetAndLimit( LocationList $locations )
     {
-        $this->assertEquals( 2, count( $locations ) );
+        $this->assertEquals( 2, count( $locations->locations ) );
+        $this->assertEquals( 5, $locations->totalCount );
 
-        foreach ( $locations as $location )
+        foreach ( $locations->locations as $location )
         {
             $this->assertInstanceOf(
                 '\eZ\Publish\API\Repository\Values\Content\Location',
@@ -859,7 +879,7 @@ class LocationServiceTest extends BaseTest
                 {
                     return $location->id;
                 },
-                $locations
+                $locations->locations
             )
         );
     }
@@ -954,12 +974,9 @@ class LocationServiceTest extends BaseTest
                 'depth' => $originalLocation->depth,
                 'sortField' => $updateStruct->sortField,
                 'sortOrder' => $updateStruct->sortOrder,
-                'childCount' => $originalLocation->childCount,
             ),
             $updatedLocation
         );
-
-        $this->assertInstanceOf( 'DateTime', $updatedLocation->modifiedSubLocationDate );
     }
 
     /**
@@ -1070,7 +1087,7 @@ class LocationServiceTest extends BaseTest
                 $hiddenLocation->id
             )
         );
-        foreach ( $locationService->loadLocationChildren( $hiddenLocation ) as $child )
+        foreach ( $locationService->loadLocationChildren( $hiddenLocation )->locations as $child )
         {
             $this->assertSubtreeProperties(
                 array( 'invisible' => true ),
@@ -1103,7 +1120,7 @@ class LocationServiceTest extends BaseTest
                 $location->$propertyName
             );
 
-            foreach ( $locationService->loadLocationChildren( $location ) as $child )
+            foreach ( $locationService->loadLocationChildren( $location )->locations as $child )
             {
                 $this->assertSubtreeProperties( $expectedValues, $child );
             }
@@ -1144,7 +1161,7 @@ class LocationServiceTest extends BaseTest
                 $unHiddenLocation->id
             )
         );
-        foreach ( $locationService->loadLocationChildren( $unHiddenLocation ) as $child )
+        foreach ( $locationService->loadLocationChildren( $unHiddenLocation )->locations as $child )
         {
             $this->assertSubtreeProperties(
                 array( 'invisible' => false ),
@@ -1192,7 +1209,7 @@ class LocationServiceTest extends BaseTest
                 $unHiddenHigherLocation->id
             )
         );
-        foreach ( $locationService->loadLocationChildren( $unHiddenHigherLocation ) as $child )
+        foreach ( $locationService->loadLocationChildren( $unHiddenHigherLocation )->locations as $child )
         {
             $this->assertSubtreeProperties(
                 array( 'invisible' => false ),
@@ -1209,7 +1226,7 @@ class LocationServiceTest extends BaseTest
                 $stillHiddenLocation->id
             )
         );
-        foreach ( $locationService->loadLocationChildren( $stillHiddenLocation ) as $child )
+        foreach ( $locationService->loadLocationChildren( $stillHiddenLocation )->locations as $child )
         {
             $this->assertSubtreeProperties(
                 array( 'invisible' => true ),
@@ -1300,7 +1317,7 @@ class LocationServiceTest extends BaseTest
         );
 
         // Get child count
-        $childCountBefore = $parentLocation->childCount;
+        $childCountBefore = $locationService->getLocationChildCount( $parentLocation );
 
         // Delete the user group location
         $locationService->deleteLocation( $location );
@@ -1311,7 +1328,7 @@ class LocationServiceTest extends BaseTest
         );
 
         // This will be $childCountBefore - 1
-        $childCountAfter = $parentLocation->childCount;
+        $childCountAfter = $locationService->getLocationChildCount( $parentLocation );
         /* END: Use Case */
 
         $this->assertEquals( $childCountBefore - 1, $childCountAfter );
@@ -1447,7 +1464,7 @@ class LocationServiceTest extends BaseTest
         $repository = $this->getRepository();
         $locationService = $repository->getLocationService();
 
-        $childCountBefore = $locationService->loadLocation( 56 )->childCount;
+        $childCountBefore = $locationService->getLocationChildCount( $locationService->loadLocation( 56 ) );
 
         $mediaLocationId = $this->generateId( 'location', 43 );
         $demoDesignLocationId = $this->generateId( 'location', 56 );
@@ -1474,7 +1491,7 @@ class LocationServiceTest extends BaseTest
         );
         /* END: Use Case */
 
-        $childCountAfter = $locationService->loadLocation( $demoDesignLocationId )->childCount;
+        $childCountAfter = $locationService->getLocationChildCount( $locationService->loadLocation( $demoDesignLocationId ) );
 
         $this->assertEquals( $childCountBefore + 1, $childCountAfter );
     }
@@ -1502,10 +1519,8 @@ class LocationServiceTest extends BaseTest
         // Load location to copy
         $locationToCopy = $locationService->loadLocation( $communityLocationId );
 
-        // Load all child locations
-        $childLocations = $locationService->loadLocationChildren( $locationToCopy );
-
         // Use a child as new parent
+        $childLocations = $locationService->loadLocationChildren( $locationToCopy )->locations;
         $newParentLocation = end( $childLocations );
 
         // This call will fail with an "InvalidArgumentException", because the
@@ -1643,7 +1658,7 @@ class LocationServiceTest extends BaseTest
 
         // Load expected properties before move
         $expected = $this->loadLocationProperties( $newParentLocation );
-        $expected['childCount'] += 1;
+        $childCountBefore = $locationService->getLocationChildCount( $newParentLocation );
 
         $mediaLocationId = $this->generateId( 'location', 43 );
         $demoDesignLocationId = $this->generateId( 'location', 56 );
@@ -1678,8 +1693,10 @@ class LocationServiceTest extends BaseTest
 
         // Load Subtree properties after move
         $actual = $this->loadLocationProperties( $newParentLocation );
+        $childCountAfter = $locationService->getLocationChildCount( $newParentLocation );
 
         $this->assertEquals( $expected, $actual );
+        $this->assertEquals( $childCountBefore + 1, $childCountAfter );
     }
 
     /**
@@ -1698,7 +1715,7 @@ class LocationServiceTest extends BaseTest
 
         // Load expected properties before move
         $expected = $this->loadLocationProperties( $oldParentLocation );
-        $expected['childCount'] -= 1;
+        $childCountBefore = $locationService->getLocationChildCount( $oldParentLocation );
 
         $mediaLocationId = $this->generateId( 'location', 43 );
         $demoDesignLocationId = $this->generateId( 'location', 56 );
@@ -1733,8 +1750,10 @@ class LocationServiceTest extends BaseTest
 
         // Load Subtree properties after move
         $actual = $this->loadLocationProperties( $oldParentLocation );
+        $childCountAfter = $locationService->getLocationChildCount( $oldParentLocation );
 
         $this->assertEquals( $expected, $actual );
+        $this->assertEquals( $childCountBefore - 1, $childCountAfter );
     }
 
     /**
@@ -1748,7 +1767,7 @@ class LocationServiceTest extends BaseTest
     {
         $locationService = $this->getRepository()->getLocationService();
 
-        foreach ( $locationService->loadLocationChildren( $location ) as $childLocation )
+        foreach ( $locationService->loadLocationChildren( $location )->locations as $childLocation )
         {
             $properties[] = $this->loadLocationProperties( $childLocation );
 
@@ -1773,7 +1792,6 @@ class LocationServiceTest extends BaseTest
                 'depth' => $location->depth,
                 'parentLocationId' => $location->parentLocationId,
                 'pathString' => $location->pathString,
-                'childCount' => $location->childCount,
                 'remoteId' => $location->remoteId,
                 'hidden' => $location->hidden,
                 'invisible' => $location->invisible,

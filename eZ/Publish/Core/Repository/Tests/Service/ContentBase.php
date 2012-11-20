@@ -13,6 +13,7 @@ use eZ\Publish\Core\Repository\Tests\Service\Base as BaseServiceTest,
     eZ\Publish\Core\Repository\Values\Content\ContentInfo,
     eZ\Publish\API\Repository\Values\Content\LocationCreateStruct,
     eZ\Publish\API\Repository\Values\Content\Content as APIContent,
+    eZ\Publish\API\Repository\Values\Content\Relation,
     eZ\Publish\Core\Repository\Values\Content\Content,
     eZ\Publish\API\Repository\Exceptions\NotFoundException;
 
@@ -184,7 +185,10 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testLoadContentInfoThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $this->repository->getContentService()->loadContentInfo( 4 );
     }
 
     /**
@@ -255,7 +259,10 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testLoadContentInfoByRemoteIdThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $this->repository->getContentService()->loadContentInfoByRemoteId( "f5c88a2209584891056f987fd965b0ba" );
     }
 
     /**
@@ -366,7 +373,10 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testLoadVersionInfoByIdThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $this->repository->getContentService()->loadVersionInfoById( 4 );
     }
 
     /**
@@ -481,7 +491,10 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testLoadContentThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $this->repository->getContentService()->loadContent( 4 );
     }
 
     /**
@@ -675,7 +688,10 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testLoadContentByRemoteIdThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $this->repository->getContentService()->loadContentByRemoteId( "f5c88a2209584891056f987fd965b0ba" );
     }
 
     /**
@@ -846,7 +862,6 @@ abstract class ContentBase extends BaseServiceTest
         $this->assertCreateContentStructValuesVersionInfo( $data );
         $this->assertCreateContentStructValuesRelations( $data );
         $this->assertCreateContentStructValuesFields( $data );
-        $this->assertCreateContentStructValuesNodeAssignments( $data );
     }
 
     /**
@@ -864,8 +879,7 @@ abstract class ContentBase extends BaseServiceTest
         $this->assertPropertiesCorrect(
             array(
                 "id" => $contentDraft->id,
-                // @todo
-                //"name" => ,
+                "name" => $contentCreate->fields[0]->value,
                 "sectionId" => $contentCreate->sectionId,
                 "currentVersionNo" => 1,
                 "published" => false,
@@ -877,13 +891,15 @@ abstract class ContentBase extends BaseServiceTest
                 "mainLanguageCode" => $contentCreate->mainLanguageCode,
                 // @todo: should be null, InMemory skips creating node assignments and creates locations right away
                 //"mainLocationId" => null,
-                // implementation properties
-                // @todo: test content type
-                //"contentTypeId" => $contentCreate->contentType->id
+                //"contentType"
             ),
-            $contentDraft->contentInfo
+            $contentDraft->versionInfo->contentInfo
         );
         $this->assertNotNull( $contentDraft->id );
+        $this->assertEquals(
+            $contentCreate->contentType->id,
+            $contentDraft->versionInfo->contentInfo->contentType->id
+        );
     }
 
     /**
@@ -909,10 +925,6 @@ abstract class ContentBase extends BaseServiceTest
                 "status" => VersionInfo::STATUS_DRAFT,
                 "initialLanguageCode" => $contentCreate->mainLanguageCode,
                 //"languageCodes"
-                // implementation properties
-                // @todo: test content draft id
-                //"contentId" => $contentDraft->id,
-                // @todo
                 "names" => array(
                     "eng-GB" => "value for field definition with empty default value",
                     "eng-US" => "value for field definition with empty default value"
@@ -1025,13 +1037,37 @@ abstract class ContentBase extends BaseServiceTest
     }
 
     /**
+     * Test for the createContent() method.
      *
-     *
-     * @param array $data
+     * @covers \eZ\Publish\Core\Repository\ContentService::createContent
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      */
-    protected function assertCreateContentStructValuesNodeAssignments( array $data )
+    public function testCreateContentThrowsUnauthorizedException()
     {
-        //@todo implement
+        $testContentType = $this->createTestContentType();
+        $contentService = $this->repository->getContentService();
+
+        $contentCreate = $contentService->newContentCreateStruct( $testContentType, 'eng-GB' );
+        $contentCreate->setField( "test_required_empty", "value for field definition with empty default value" );
+        $contentCreate->setField( "test_translatable", "and thumbs opposable", "eng-US" );
+        $contentCreate->sectionId = 1;
+        $contentCreate->ownerId = $this->repository->getCurrentUser()->id;
+        $contentCreate->remoteId = 'abcdef0123456789abcdef0123456789';
+        $contentCreate->alwaysAvailable = true;
+
+        $locationCreates = array(
+            new LocationCreateStruct(
+                array(
+                    "remoteId" => "db787a9143f57828dd4331573466a013",
+                    "parentLocationId" => 2
+                )
+            ),
+        );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->createContent( $contentCreate, $locationCreates );
     }
 
     /**
@@ -1040,9 +1076,23 @@ abstract class ContentBase extends BaseServiceTest
      * @covers \eZ\Publish\Core\Repository\ContentService::createContent
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      */
-    public function testCreateContentThrowsUnauthorizedException()
+    public function testCreateContentWithoutLocationsThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $testContentType = $this->createTestContentType();
+        $contentService = $this->repository->getContentService();
+
+        $contentCreate = $contentService->newContentCreateStruct( $testContentType, 'eng-GB' );
+        $contentCreate->setField( "test_required_empty", "value for field definition with empty default value" );
+        $contentCreate->setField( "test_translatable", "and thumbs opposable", "eng-US" );
+        $contentCreate->sectionId = 1;
+        $contentCreate->ownerId = $this->repository->getCurrentUser()->id;
+        $contentCreate->remoteId = 'abcdef0123456789abcdef0123456789';
+        $contentCreate->alwaysAvailable = true;
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->createContent( $contentCreate, array() );
     }
 
     /**
@@ -1123,66 +1173,6 @@ abstract class ContentBase extends BaseServiceTest
 
         // Throws an exception because translation was given for a untranslatable field
         // Note that it is still permissible to set untranslatable field with main language
-        $contentService->createContent( $contentCreate );
-        /* END: Use Case */
-    }
-
-    /**
-     * Test for the createContent() method.
-     *
-     * @covers \eZ\Publish\Core\Repository\ContentService::createContent
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentValidationException
-     *
-     * @return array
-     */
-    public function testCreateContentThrowsContentValidationExceptionMultipleUntranslatableField()
-    {
-        $testContentType = $this->createTestContentType();
-
-        /* BEGIN: Use Case */
-        $contentService = $this->repository->getContentService();
-
-        $contentCreate = $contentService->newContentCreateStruct( $testContentType, 'eng-GB' );
-        $contentCreate->setField( "test_required_empty", "value for field definition with empty default value" );
-        $contentCreate->setField( "test_untranslatable", "Jabberwock" );
-        $contentCreate->setField( "test_untranslatable", "Bandersnatch" );
-        $contentCreate->sectionId = 1;
-        $contentCreate->ownerId = 14;
-        $contentCreate->remoteId = 'abcdef0123456789abcdef0123456789';
-        $contentCreate->alwaysAvailable = true;
-
-        // Throws an exception because multiple fields are set in create struct for the same (untranslatable)
-        // field definition
-        $contentService->createContent( $contentCreate );
-        /* END: Use Case */
-    }
-
-    /**
-     * Test for the createContent() method.
-     *
-     * @covers \eZ\Publish\Core\Repository\ContentService::createContent
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentValidationException
-     *
-     * @return array
-     */
-    public function testCreateContentThrowsContentValidationExceptionMultipleTranslatableField()
-    {
-        $testContentType = $this->createTestContentType();
-
-        /* BEGIN: Use Case */
-        $contentService = $this->repository->getContentService();
-
-        $contentCreate = $contentService->newContentCreateStruct( $testContentType, 'eng-GB' );
-        $contentCreate->setField( "test_required_empty", "value for field definition with empty default value" );
-        $contentCreate->setField( "test_translatable", "Jabberwock" );
-        $contentCreate->setField( "test_translatable", "Bandersnatch" );
-        $contentCreate->sectionId = 1;
-        $contentCreate->ownerId = 14;
-        $contentCreate->remoteId = 'abcdef0123456789abcdef0123456789';
-        $contentCreate->alwaysAvailable = true;
-
-        // Throws an exception because multiple fields are set in create struct for the same (translatable)
-        // field definition and language
         $contentService->createContent( $contentCreate );
         /* END: Use Case */
     }
@@ -1341,8 +1331,8 @@ abstract class ContentBase extends BaseServiceTest
         $this->assertPropertiesCorrect(
             array(
                 "ownerId" => $updateStruct->ownerId,
-                // @todo test name change after name scheme resolver is implemented
-                //"name" => $updateStruct->name,
+                // not changeable through MetadataUpdateStruct
+                //"name"
                 "publishedDate" => $updateStruct->publishedDate,
                 "modificationDate" => $updateStruct->modificationDate,
                 "mainLanguageCode" => $updateStruct->mainLanguageCode,
@@ -1363,7 +1353,14 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testUpdateContentMetadataThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentInfo = $this->repository->getContentService()->loadContentInfo( 12 );
+        $contentMetadataUpdateStruct = $this->repository->getContentService()->newContentMetadataUpdateStruct();
+        $contentMetadataUpdateStruct->remoteId = "the-all-new-remoteid";
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $this->repository->getContentService()->updateContentMetadata( $contentInfo, $contentMetadataUpdateStruct );
     }
 
     /**
@@ -1598,7 +1595,19 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testUpdateContentThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $content = $this->createTestContent();
+
+        $contentUpdateStruct = $this->repository->getContentService()->newContentUpdateStruct();
+        $contentUpdateStruct->initialLanguageCode = "eng-US";
+        $contentUpdateStruct->setField( "test_required_empty", "new value for test_required_empty" );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $this->repository->getContentService()->updateContent(
+            $content->versionInfo,
+            $contentUpdateStruct
+        );
     }
 
     /**
@@ -1711,64 +1720,6 @@ abstract class ContentBase extends BaseServiceTest
      *
      * @covers \eZ\Publish\Core\Repository\ContentService::updateContent
      * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentValidationException
-     */
-    public function testUpdateContentThrowsContentValidationExceptionMultipleTranslatableField()
-    {
-        $content = $this->createTestContent();
-
-        /* BEGIN: Use Case */
-        $contentService = $this->repository->getContentService();
-
-        $versionInfo = $contentService->loadVersionInfoById(
-            $content->id,
-            $content->getVersionInfo()->versionNo
-        );
-
-        $contentUpdateStruct = $contentService->newContentUpdateStruct();
-        $contentUpdateStruct->initialLanguageCode = "eng-GB";
-        $contentUpdateStruct->setField( "test_translatable", "Jabberwock" );
-        $contentUpdateStruct->setField( "test_translatable", "Bandersnatch" );
-
-        // Throws an exception because multiple fields are set in update struct for the same (translatable)
-        // field definition and language
-        $updatedContent = $contentService->updateContent( $versionInfo, $contentUpdateStruct );
-        /* END: Use Case */
-    }
-
-    /**
-     * Test for the updateContent() method.
-     *
-     * @covers \eZ\Publish\Core\Repository\ContentService::updateContent
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentValidationException
-     */
-    public function testUpdateContentThrowsContentValidationExceptionMultipleUntranslatableField()
-    {
-        $content = $this->createTestContent();
-
-        /* BEGIN: Use Case */
-        $contentService = $this->repository->getContentService();
-
-        $versionInfo = $contentService->loadVersionInfoById(
-            $content->id,
-            $content->getVersionInfo()->versionNo
-        );
-
-        $contentUpdateStruct = $contentService->newContentUpdateStruct();
-        $contentUpdateStruct->initialLanguageCode = "eng-GB";
-        $contentUpdateStruct->setField( "test_untranslatable", "Jabberwock" );
-        $contentUpdateStruct->setField( "test_untranslatable", "Bandersnatch" );
-
-        // Throws an exception because multiple fields are set in update struct for the same (untranslatable)
-        // field definition
-        $updatedContent = $contentService->updateContent( $versionInfo, $contentUpdateStruct );
-        /* END: Use Case */
-    }
-
-    /**
-     * Test for the updateContent() method.
-     *
-     * @covers \eZ\Publish\Core\Repository\ContentService::updateContent
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\ContentValidationException
      *
      * @return array
      */
@@ -1849,7 +1800,12 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testPublishVersionThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $draftContent = $this->createTestContent();
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $this->repository->getContentService()->publishVersion( $draftContent->versionInfo );
     }
 
     /**
@@ -2009,18 +1965,14 @@ abstract class ContentBase extends BaseServiceTest
     /**
      * Test for the createContentDraft() method.
      *
-     * @depends testCreateContentDraft
      * @covers \eZ\Publish\Core\Repository\ContentService::createContentDraft
      * @expectedException \eZ\Publish\API\Repository\Exceptions\BadStateException
-     *
-     * @param array $data
      */
-    public function testCreateContentDraftThrowsBadStateException( array $data )
+    public function testCreateContentDraftThrowsBadStateException()
     {
-        $draftContent = $data["draftContent"];
-
-        /* BEGIN: Use Case */
         $contentService = $this->repository->getContentService();
+        $contentInfo = $contentService->loadContentInfo( 4 );
+        $draftContent = $contentService->createContentDraft( $contentInfo );
 
         // Throws an exception because version status is not
         // VersionInfo::STATUS_PUBLISHED nor VersionInfo::STATUS_ARCHIVED
@@ -2028,7 +1980,6 @@ abstract class ContentBase extends BaseServiceTest
             $draftContent->contentInfo,
             $draftContent->getVersionInfo()
         );
-        /* END: Use Case */
     }
 
     /**
@@ -2039,7 +1990,14 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testCreateContentDraftThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentService = $this->repository->getContentService();
+
+        $contentInfo = $contentService->loadContentInfo( 4 );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->createContentDraft( $contentInfo );
     }
 
     /**
@@ -2111,7 +2069,11 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testLoadContentDraftsThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        // Now $contentDrafts should contain two drafted versions
+        $this->repository->getContentService()->loadContentDrafts();
     }
 
     /**
@@ -2222,7 +2184,14 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testLoadVersionsThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentService = $this->repository->getContentService();
+
+        $contentInfo = $contentService->loadContentInfo( 4 );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->loadVersions( $contentInfo );
     }
 
     /**
@@ -2284,7 +2253,17 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testDeleteVersionThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentService = $this->repository->getContentService();
+
+        $contentInfo = $contentService->loadContentInfo( 4 );
+
+        // Create a version to delete
+        $draftContent = $contentService->createContentDraft( $contentInfo );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->deleteVersion( $draftContent->versionInfo );
     }
 
     /**
@@ -2323,7 +2302,14 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testDeleteContentThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test for ContentService::deleteContent() is not implemented." );
+        $contentService = $this->repository->getContentService();
+
+        $contentInfo = $contentService->loadContentInfo( 4 );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->deleteContent( $contentInfo );
     }
 
     /**
@@ -2513,7 +2499,16 @@ abstract class ContentBase extends BaseServiceTest
      */
     public function testCopyContentThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test for ContentService::deleteContent() is not implemented." );
+        $contentService = $this->repository->getContentService();
+        $locationService = $this->repository->getLocationService();
+
+        $contentInfo = $contentService->loadContentInfo( 11 );
+        $destinationLocationCreateStruct = $locationService->newLocationCreateStruct( 5 );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->copyContent( $contentInfo, $destinationLocationCreateStruct );
     }
 
     /**
@@ -2558,6 +2553,252 @@ abstract class ContentBase extends BaseServiceTest
 
         foreach ( $translationValues as $propertyName => $propertyValue )
             $this->assertNull( $propertyValue, "Property '{$propertyName}' initial value should be null'" );
+    }
+
+    /**
+     * Test for the loadRelations() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::loadRelations
+     * @covers \eZ\Publish\Core\Repository\ContentService::addRelation
+     */
+    public function testLoadRelations()
+    {
+        $contentDraft = $this->createTestContent();
+        $contentService = $this->repository->getContentService();
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        $contentService->addRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+
+        $relations = $contentService->loadRelations( $contentDraft->versionInfo );
+
+        $this->assertRelations( $relations, $contentDraft->contentInfo, $mediaContentInfo );
+    }
+
+    protected function assertRelations( $relations, $sourceContentInfo, $destinationContentInfo )
+    {
+        self::assertInternalType( "array", $relations );
+        self::assertCount( 1, $relations );
+        self::assertInstanceOf( "eZ\\Publish\\API\\Repository\\Values\\Content\\Relation", $relations[0] );
+        self::assertNotNull( $relations[0]->id );
+        self::assertEquals( Relation::COMMON, $relations[0]->type );
+        self::assertNull( $relations[0]->sourceFieldDefinitionIdentifier );
+        self::assertEquals( $sourceContentInfo, $relations[0]->sourceContentInfo );
+        self::assertEquals( $destinationContentInfo, $relations[0]->destinationContentInfo );
+    }
+
+    /**
+     * Test for the loadRelations() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::loadRelations
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
+     */
+    public function testLoadRelationsThrowsUnauthorizedException()
+    {
+        $contentDraft = $this->createTestContent();
+        $contentService = $this->repository->getContentService();
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        $contentService->addRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->loadRelations( $contentDraft->versionInfo );
+    }
+
+    /**
+     * Test for the loadReverseRelations() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::loadReverseRelations
+     */
+    public function testLoadReverseRelations()
+    {
+        $contentDraft = $this->createTestContent();
+        $contentService = $this->repository->getContentService();
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        $contentService->addRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+
+        $relations = $contentService->loadReverseRelations( $mediaContentInfo );
+
+        $this->assertRelations( $relations, $contentDraft->contentInfo, $mediaContentInfo );
+    }
+
+    /**
+     * Test for the loadReverseRelations() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::loadReverseRelations
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
+     */
+    public function testLoadReverseRelationsThrowsUnauthorizedException()
+    {
+        $contentDraft = $this->createTestContent();
+        $contentService = $this->repository->getContentService();
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        $contentService->addRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->loadReverseRelations( $mediaContentInfo );
+    }
+
+    /**
+     * Test for the addRelation() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::addRelation
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
+     */
+    public function testAddRelationThrowsUnauthorizedException()
+    {
+        $contentDraft = $this->createTestContent();
+        $contentService = $this->repository->getContentService();
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->addRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+    }
+
+    /**
+     * Test for the addRelation() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::addRelation
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\BadStateException
+     */
+    public function testAddRelationThrowsBadStateException()
+    {
+        $contentService = $this->repository->getContentService();
+        $contentDraft = $this->createTestContent();
+        $publishedContent = $contentService->publishVersion( $contentDraft->versionInfo );
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        $contentService->addRelation(
+            $publishedContent->getVersionInfo(),
+            $mediaContentInfo
+        );
+    }
+
+    /**
+     * Test for the deleteRelation() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::deleteRelation
+     */
+    public function testDeleteRelation()
+    {
+        $contentDraft = $this->createTestContent();
+        $contentService = $this->repository->getContentService();
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        $contentService->addRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+
+        $contentService->deleteRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+
+        $relations = $contentService->loadRelations( $contentDraft->versionInfo );
+
+        self::assertCount( 0, $relations );
+    }
+
+    /**
+     * Test for the deleteRelation() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::deleteRelation
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
+     */
+    public function testDeleteRelationThrowsUnauthorizedException()
+    {
+        $contentDraft = $this->createTestContent();
+        $contentService = $this->repository->getContentService();
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        $contentService->addRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentService->deleteRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+    }
+
+    /**
+     * Test for the deleteRelation() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::deleteRelation
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\BadStateException
+     */
+    public function testDeleteRelationThrowsBadStateException()
+    {
+        $contentService = $this->repository->getContentService();
+        $contentDraft = $this->createTestContent();
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        $contentService->addRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
+
+        $publishedContent = $contentService->publishVersion( $contentDraft->versionInfo );
+
+        $contentService->deleteRelation(
+            $publishedContent->getVersionInfo(),
+            $mediaContentInfo
+        );
+    }
+
+    /**
+     * Test for the deleteRelation() method.
+     *
+     * @covers \eZ\Publish\Core\Repository\ContentService::deleteRelation
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     */
+    public function testDeleteRelationThrowsInvalidArgumentException()
+    {
+        $contentDraft = $this->createTestContent();
+        $contentService = $this->repository->getContentService();
+
+        $mediaContentInfo = $contentService->loadContentInfoByRemoteId( 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
+        $contentService->deleteRelation(
+            $contentDraft->getVersionInfo(),
+            $mediaContentInfo
+        );
     }
 
     /**
@@ -2670,7 +2911,7 @@ abstract class ContentBase extends BaseServiceTest
         $fieldCreate->names = array( "eng-GB" => "Test required empty" );
         $fieldCreate->descriptions = array( "eng-GB" => "Required field with empty default value" );
         $fieldCreate->fieldGroup = "test-field-group";
-        $fieldCreate->position = 0;
+        $fieldCreate->position = 1;
         $fieldCreate->isTranslatable = false;
         $fieldCreate->isRequired = true;
         $fieldCreate->isInfoCollector = false;
@@ -2691,7 +2932,7 @@ abstract class ContentBase extends BaseServiceTest
         $fieldCreate->names = array( "eng-GB" => "Test required not empty" );
         $fieldCreate->descriptions = array( "eng-GB" => "Required field with default value not empty" );
         $fieldCreate->fieldGroup = "test-field-group";
-        $fieldCreate->position = 1;
+        $fieldCreate->position = 2;
         $fieldCreate->isTranslatable = false;
         $fieldCreate->isRequired = true;
         $fieldCreate->isInfoCollector = false;
@@ -2705,7 +2946,7 @@ abstract class ContentBase extends BaseServiceTest
         $fieldCreate->names = array( "eng-GB" => "Test translatable" );
         $fieldCreate->descriptions = array( "eng-GB" => "Translatable field" );
         $fieldCreate->fieldGroup = "test-field-group";
-        $fieldCreate->position = 2;
+        $fieldCreate->position = 3;
         $fieldCreate->isTranslatable = true;
         $fieldCreate->isRequired = false;
         $fieldCreate->isInfoCollector = false;
@@ -2719,7 +2960,7 @@ abstract class ContentBase extends BaseServiceTest
         $fieldCreate->names = array( "eng-GB" => "Test not translatable" );
         $fieldCreate->descriptions = array( "eng-GB" => "Untranslatable field" );
         $fieldCreate->fieldGroup = "test-field-group";
-        $fieldCreate->position = 3;
+        $fieldCreate->position = 4;
         $fieldCreate->isTranslatable = false;
         $fieldCreate->isRequired = false;
         $fieldCreate->isInfoCollector = false;

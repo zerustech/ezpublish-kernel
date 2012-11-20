@@ -24,11 +24,9 @@ class CreateContentSignal extends Signal
     public $contentId;
 
     /**
-     * Verion Number
+     * Version Number
      *
-     * @var mixed
+     * @var int
      */
     public $versionNo;
-
 }
-

@@ -38,7 +38,7 @@ class LanguageLimitationType implements SPILimitationTypeInterface
      */
     public function acceptValue( APILimitationValue $limitationValue, Repository $repository )
     {
-        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( 'acceptValue' );
+        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( __METHOD__ );
     }
 
     /**
@@ -111,7 +111,14 @@ class LanguageLimitationType implements SPILimitationTypeInterface
      */
     public function getCriterion( APILimitationValue $value, Repository $repository )
     {
-        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( 'getCriterion' );
+        if ( empty( $value->limitationValues )  )// no limitation values
+            throw new \RuntimeException( "\$value->limitationValues is empty, it should not have been stored in the first place" );
+
+        if ( !isset( $value->limitationValues[1] ) )// 1 limitation value: EQ operation
+            return new Criterion\LanguageCode( $value->limitationValues[0] );
+
+        // several limitation values: IN operation
+        return new Criterion\LanguageCode( $value->limitationValues );
     }
 
     /**
@@ -124,6 +131,6 @@ class LanguageLimitationType implements SPILimitationTypeInterface
      */
     public function valueSchema( Repository $repository )
     {
-        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( 'valueSchema' );
+        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( __METHOD__ );
     }
 }

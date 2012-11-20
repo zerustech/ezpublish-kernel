@@ -57,12 +57,10 @@ class URLAliasService implements URLAliasServiceInterface
         $this->repository = $repository;
         $this->urlAliasHandler = $urlAliasHandler;
         $this->settings = $settings + array(// Union makes sure default settings are ignored if provided in argument
-            'prioritizedLanguageList' => array(// @todo These settings should probably be exposed from Language Service
-                "eng-US",
-                "eng-GB"
-            ),
             "showAllTranslations" => false
         );
+        // Get prioritized languages from language service to not have to call it several times
+        $this->settings['prioritizedLanguageList'] = $repository->getContentLanguageService()->getPrioritizedLanguageCodeList();
     }
 
      /**
@@ -85,7 +83,6 @@ class URLAliasService implements URLAliasServiceInterface
     public function createUrlAlias( Location $location, $path, $languageCode, $forwarding = false, $alwaysAvailable = false )
     {
         $path = $this->cleanUrl( $path );
-        $path = $this->addPathPrefix( $path );
 
         $this->repository->beginTransaction();
         try
@@ -118,7 +115,7 @@ class URLAliasService implements URLAliasServiceInterface
     }
 
      /**
-     * Create a user chosen $alias pointing to a resource in $languageName.
+     * Create a user chosen $alias pointing to a resource in $languageCode.
      *
      * This method does not handle location resources - if a user enters a location target
      * the createCustomUrlAlias method has to be used.
@@ -146,7 +143,6 @@ class URLAliasService implements URLAliasServiceInterface
         }
 
         $path = $this->cleanUrl( $path );
-        $path = $this->addPathPrefix( $path );
 
         if ( $matches[1] === "eznode" || 0 === strpos( $matches[2], "module:content/view/full/" ) )
         {
@@ -173,7 +169,7 @@ class URLAliasService implements URLAliasServiceInterface
         try
         {
             $spiUrlAlias = $this->urlAliasHandler->createGlobalUrlAlias(
-                $resource,
+                $matches[1] . ":" . $this->cleanUrl( $matches[2] ),
                 $path,
                 $forwarding,
                 $languageCode,
@@ -184,11 +180,7 @@ class URLAliasService implements URLAliasServiceInterface
         catch ( ForbiddenException $e )
         {
             $this->repository->rollback();
-            throw new InvalidArgumentException(
-                "\$path",
-                $e->getMessage(),
-                $e
-            );
+            throw new InvalidArgumentException( "\$path", $e->getMessage(), $e );
         }
         catch ( Exception $e )
         {
@@ -218,6 +210,11 @@ class URLAliasService implements URLAliasServiceInterface
 
         foreach ( $spiUrlAliasList as $spiUrlAlias )
         {
+            if ( !$this->isUrlAliasLoadable( $spiUrlAlias, $languageCode ) )
+            {
+                continue;
+            }
+
             $path = $this->extractPath( $spiUrlAlias, $languageCode );
             if ( $path === false )
             {
@@ -233,7 +230,7 @@ class URLAliasService implements URLAliasServiceInterface
     /**
      * Determines alias language code.
      *
-     * Method will return false if language code can't be determined.
+     * Method will return false if language code can't be matched against alias language codes or language settings.
      *
      * @param \eZ\Publish\SPI\Persistence\Content\URLAlias $spiUrlAlias
      * @param string|null $languageCode
@@ -265,12 +262,14 @@ class URLAliasService implements URLAliasServiceInterface
     }
 
     /**
+     * Returns path extracted from normalized path data returned from persistence, using language settings.
      *
+     * Will return false if path could not be determined.
      *
      * @param \eZ\Publish\SPI\Persistence\Content\URLAlias $spiUrlAlias
      * @param string $languageCode
      *
-     * @return string
+     * @return string|boolean
      */
     protected function extractPath( SPIURLAlias $spiUrlAlias, $languageCode )
     {
@@ -300,7 +299,9 @@ class URLAliasService implements URLAliasServiceInterface
     }
 
     /**
+     * Returns language code with highest priority.
      *
+     * Will return false if language code could nto be matched with language settings in place.
      *
      * @param array $entries
      *
@@ -325,34 +326,77 @@ class URLAliasService implements URLAliasServiceInterface
     }
 
     /**
+     * Matches path string with normalized path data returned from persistence.
      *
+     * Returns matched path string (possibly case corrected) and array of corresponding language codes or false
+     * if path could not be matched.
      *
      * @param \eZ\Publish\SPI\Persistence\Content\URLAlias $spiUrlAlias
+     * @param string $path
+     * @param string $languageCode
      *
-     * @return string
+     * @return array
      */
-    protected function extractPathByPathLanguageData( SPIURLAlias $spiUrlAlias )
+    protected function matchPath( SPIURLAlias $spiUrlAlias, $path, $languageCode )
     {
-        $pathData = array();
+        $matchedPathElements = array();
+        $matchedPathLanguageCodes = array();
+        $pathElements = explode( "/", $path );
+        $pathLevels = count( $spiUrlAlias->pathData );
 
-        foreach ( $spiUrlAlias->pathData as $level => $levelEntries )
+        foreach ( $pathElements as $level => $pathElement )
         {
-            $languageCode = reset( $spiUrlAlias->pathLanguageData[$level]["language-codes"] );
-            $pathData[] = $levelEntries["translations"][$languageCode];
+            if ( $level === $pathLevels - 1 )
+            {
+                $matchedLanguageCode = $this->selectAliasLanguageCode( $spiUrlAlias, $languageCode );
+            }
+            else
+            {
+                $matchedLanguageCode = $this->matchLanguageCode( $spiUrlAlias->pathData[$level], $pathElement );
+            }
+
+            if ( $matchedLanguageCode === false )
+            {
+                return array( false, false );
+            }
+
+            $matchedPathLanguageCodes[] = $matchedLanguageCode;
+            $matchedPathElements[] = $spiUrlAlias->pathData[$level]["translations"][$matchedLanguageCode];
         }
 
-        return implode( "/", $pathData );
+        return array( implode( "/", $matchedPathElements ), $matchedPathLanguageCodes );
     }
 
     /**
      *
+     *
+     * @param array $pathElementData
+     * @param $pathElement
+     *
+     * @return string|boolean
+     */
+    protected function matchLanguageCode( array $pathElementData, $pathElement )
+    {
+        foreach ( $pathElementData["translations"] as $languageCode => $translation )
+        {
+            if ( strtolower( $pathElement ) === strtolower( $translation ) )
+            {
+                return $languageCode;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns true or false depending if URL alias is loadable or not for language settings in place.
      *
      * @param \eZ\Publish\SPI\Persistence\Content\URLAlias $spiUrlAlias
      * @param string|null $languageCode
      *
      * @return boolean
      */
-    protected function isAliasLoadable( SPIURLAlias $spiUrlAlias, $languageCode )
+    protected function isUrlAliasLoadable( SPIURLAlias $spiUrlAlias, $languageCode )
     {
         if ( isset( $languageCode ) && !in_array( $languageCode, $spiUrlAlias->languageCodes ) )
         {
@@ -364,19 +408,52 @@ class URLAliasService implements URLAliasServiceInterface
             return true;
         }
 
-        foreach ( $spiUrlAlias->pathLanguageData as $levelLanguageData )
+        foreach ( $spiUrlAlias->pathData as $levelPathData )
         {
-            if ( $levelLanguageData["always-available"] )
+            if ( $levelPathData["always-available"] )
             {
                 continue;
             }
 
-            foreach ( $levelLanguageData["language-codes"] as $levelLanguageCode )
+            foreach ( $levelPathData["translations"] as $translationLanguageCode => $translation )
             {
-                if ( in_array( $levelLanguageCode, $this->settings["prioritizedLanguageList"] ) )
+                if ( in_array( $translationLanguageCode, $this->settings["prioritizedLanguageList"] ) )
                 {
                     continue 2;
                 }
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns true or false depending if URL alias is loadable or not for language settings in place.
+     *
+     * @param array $pathData
+     * @param array $languageCodes
+     *
+     * @return boolean
+     */
+    protected function isPathLoadable( array $pathData, array $languageCodes )
+    {
+        if ( $this->settings["showAllTranslations"] )
+        {
+            return true;
+        }
+
+        foreach ( $pathData as $level => $levelPathData )
+        {
+            if ( $levelPathData["always-available"] )
+            {
+                continue;
+            }
+
+            if ( in_array( $languageCodes[$level], $this->settings["prioritizedLanguageList"] ) )
+            {
+                continue;
             }
 
             return false;
@@ -457,6 +534,13 @@ class URLAliasService implements URLAliasServiceInterface
         }
     }
 
+    /**
+     * Builds persistence domain object.
+     *
+     * @param \eZ\Publish\API\Repository\Values\Content\URLAlias $urlAlias
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\URLAlias
+     */
     protected function buildSPIUrlAlias( URLAlias $urlAlias )
     {
         return new SPIURLAlias(
@@ -480,22 +564,16 @@ class URLAliasService implements URLAliasServiceInterface
     public function lookup( $url, $languageCode = null )
     {
         $url = $this->cleanUrl( $url );
-        $url = $this->addPathPrefix( $url );
 
         $spiUrlAlias = $this->urlAliasHandler->lookup( $url );
 
-        if ( !$this->isAliasLoadable( $spiUrlAlias, $languageCode ) )
+        list( $path, $languageCodes ) = $this->matchPath( $spiUrlAlias, $url, $languageCode );
+        if ( $path === false || !$this->isPathLoadable( $spiUrlAlias->pathData, $languageCodes ) )
         {
-            throw new NotFoundException(
-                "URLAlias",
-                $url
-            );
+            throw new NotFoundException( "URLAlias", $url );
         }
 
-        return $this->buildUrlAliasDomainObject(
-            $spiUrlAlias,
-            $this->extractPathByPathLanguageData( $spiUrlAlias )
-        );
+        return $this->buildUrlAliasDomainObject( $spiUrlAlias, $path );
     }
 
     /**
@@ -512,13 +590,13 @@ class URLAliasService implements URLAliasServiceInterface
      */
     public function reverseLookup( Location $location, $languageCode = null )
     {
-        $urlAliases = $this->listLocationAliases( $location, $languageCode );
+        $urlAliases = $this->listLocationAliases( $location, false, $languageCode );
 
-        foreach ( $this->settings["prioritizedLanguageList"] as $languageCode )
+        foreach ( $this->settings["prioritizedLanguageList"] as $prioritizedLanguageCode )
         {
             foreach ( $urlAliases as $urlAlias )
             {
-                if ( in_array( $languageCode, $urlAlias->languageCodes ) )
+                if ( in_array( $prioritizedLanguageCode, $urlAlias->languageCodes ) )
                 {
                     return $urlAlias;
                 }
@@ -533,13 +611,34 @@ class URLAliasService implements URLAliasServiceInterface
             }
         }
 
-        throw new NotFoundException(
-            "URLAlias",
-            $location->id
-        );
+        throw new NotFoundException( "URLAlias", $location->id );
     }
 
     /**
+     * Loads URL alias by given $id
+     *
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     *
+     * @param string $id
+     *
+     * @return \eZ\Publish\API\Repository\Values\Content\URLAlias
+     */
+    public function load( $id )
+    {
+        $spiUrlAlias = $this->urlAliasHandler->loadUrlAlias( $id );
+        $path = $this->extractPath( $spiUrlAlias, null );
+
+        if ( $path === false )
+        {
+            throw new NotFoundException( "URLAlias", $id );
+        }
+
+        return $this->buildUrlAliasDomainObject( $spiUrlAlias, $path );
+    }
+
+    /**
+     *
+     *
      * @param string $url
      *
      * @return string
@@ -547,38 +646,6 @@ class URLAliasService implements URLAliasServiceInterface
     protected function cleanUrl( $url )
     {
         return trim( $url, "/ " );
-    }
-
-    /**
-     * Adds path prefix to URL
-     *
-     * @param string $url
-     *
-     * @return string $url with path prefix prepended
-     * @todo: implement
-     */
-    protected function addPathPrefix( $url )
-    {
-        $pathPrefix = array();
-        $pathPrefixExclude = array();
-
-        return $url;
-    }
-
-    /**
-     * Removes path prefix from URL
-     *
-     * @param string $url
-     *
-     * @return string $url with path prefix removed
-     * @todo: implement
-     */
-    protected function removePathPrefix( $url )
-    {
-        $pathPrefix = array();
-        $pathPrefixExclude = array();
-
-        return $url;
     }
 
     /**
@@ -597,7 +664,7 @@ class URLAliasService implements URLAliasServiceInterface
         }
         else
         {
-            $destination = $this->removePathPrefix( $spiUrlAlias->destination );
+            $destination = $spiUrlAlias->destination;
         }
 
         return new URLAlias(
@@ -607,7 +674,7 @@ class URLAliasService implements URLAliasServiceInterface
                 "destination" => $destination,
                 "languageCodes" => $spiUrlAlias->languageCodes,
                 "alwaysAvailable" => $spiUrlAlias->alwaysAvailable,
-                "path" => $path,
+                "path" => "/" . $path,
                 "isHistory" => $spiUrlAlias->isHistory,
                 "isCustom" => $spiUrlAlias->isCustom,
                 "forward" => $spiUrlAlias->forward

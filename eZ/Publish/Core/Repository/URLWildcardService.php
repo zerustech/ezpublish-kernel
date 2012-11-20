@@ -78,7 +78,9 @@ class URLWildcardService implements URLWildcardServiceInterface
     public function create( $sourceUrl, $destinationUrl, $forward = false )
     {
         if ( $this->repository->hasAccess( 'content', 'urltranslator' ) !== true )
+        {
             throw new UnauthorizedException( 'content', 'urltranslator' );
+        }
 
         $sourceUrl = $this->cleanUrl( $sourceUrl );
         $destinationUrl = $this->cleanUrl( $destinationUrl );
@@ -101,7 +103,7 @@ class URLWildcardService implements URLWildcardServiceInterface
         $patterns = array_map( 'intval', $patterns[0] );
         $placeholders = array_map( 'intval', $placeholders[1] );
 
-        if ( count( $placeholders ) > 0 && max( $placeholders ) > count( $patterns ) )
+        if ( !empty( $placeholders ) && max( $placeholders ) > count( $patterns ) )
         {
             throw new ContentValidationException( "Placeholders are not matching with wildcards." );
         }
@@ -134,7 +136,7 @@ class URLWildcardService implements URLWildcardServiceInterface
      */
     protected function cleanUrl( $url )
     {
-        return trim( $url, "/ " );
+        return "/" . trim( $url, "/ " );
     }
 
     /**
@@ -147,7 +149,9 @@ class URLWildcardService implements URLWildcardServiceInterface
     public function remove( URLWildcard $urlWildcard )
     {
         if ( $this->repository->hasAccess( 'content', 'urltranslator' ) !== true )
+        {
             throw new UnauthorizedException( 'content', 'urltranslator' );
+        }
 
         $this->repository->beginTransaction();
         try
@@ -302,8 +306,7 @@ class URLWildcardService implements URLWildcardServiceInterface
      *
      * @param string $destinationUrl
      * @param array $values
-     * @todo remove throw?
-     * @throws \eZ\Publish\API\Repository\Exceptions\ContentValidationException
+     *
      * @return string
      */
     private function substitute( $destinationUrl, array $values )

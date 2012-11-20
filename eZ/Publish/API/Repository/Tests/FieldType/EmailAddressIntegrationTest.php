@@ -69,7 +69,7 @@ class EmailAddressIntegrationTest extends BaseIntegrationTest
     public function getValidatorSchema()
     {
         return array(
-            'EMailAddressValidator' => array()
+            'EmailAddressValidator' => array()
         );
     }
 
@@ -81,7 +81,7 @@ class EmailAddressIntegrationTest extends BaseIntegrationTest
     public function getValidValidatorConfiguration()
     {
         return array(
-            'EMailAddressValidator' => array()
+            'EmailAddressValidator' => array()
         );
     }
 
@@ -314,5 +314,22 @@ class EmailAddressIntegrationTest extends BaseIntegrationTest
             ),
         );
     }
-}
 
+    public function providerForTestIsEmptyValue()
+    {
+        return array(
+            array( new EmailAddressValue ),
+            array( new EmailAddressValue( null ) ),
+            array( new EmailAddressValue( "" ) ),
+        );
+    }
+
+    public function providerForTestIsNotEmptyValue()
+    {
+        return array(
+            array(
+                $this->getValidCreationFieldData()
+            ),
+        );
+    }
+}

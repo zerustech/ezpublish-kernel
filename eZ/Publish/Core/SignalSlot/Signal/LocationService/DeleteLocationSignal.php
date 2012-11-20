@@ -17,11 +17,16 @@ use eZ\Publish\Core\SignalSlot\Signal;
 class DeleteLocationSignal extends Signal
 {
     /**
-     * LocationId
+     * ContentId
+     *
+     * @var mixed
+     */
+    public $contentId;
+
+    /**
+     * Location ID
      *
      * @var mixed
      */
     public $locationId;
-
 }
-

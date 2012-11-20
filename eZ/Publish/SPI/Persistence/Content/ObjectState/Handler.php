@@ -35,6 +35,17 @@ interface Handler
     public function loadGroup( $groupId );
 
     /**
+     * Loads a object state group by identifier
+     *
+     * @param string $identifier
+     *
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException if the group was not found
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState\Group
+     */
+    public function loadGroupByIdentifier( $identifier );
+
+    /**
      * Loads all object state groups
      *
      * @param int $offset
@@ -95,6 +106,18 @@ interface Handler
     public function load( $stateId );
 
     /**
+     * Loads an object state by identifier and group it belongs to
+     *
+     * @param string $identifier
+     * @param mixed $groupId
+     *
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException if the state was not found
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState
+     */
+    public function loadByIdentifier( $identifier, $groupId );
+
+    /**
      * Updates an object state
      *
      * @param mixed $stateId
@@ -128,7 +151,7 @@ interface Handler
      * @param mixed $stateId
      * @return boolean
      */
-    public function setObjectState( $contentId, $groupId, $stateId );
+    public function setContentState( $contentId, $groupId, $stateId );
 
     /**
      * Gets the object-state of object identified by $contentId.
@@ -139,7 +162,7 @@ interface Handler
      * @param mixed $stateGroupId
      * @return \eZ\Publish\SPI\Persistence\Content\ObjectState
      */
-    public function getObjectState( $contentId, $stateGroupId );
+    public function getContentState( $contentId, $stateGroupId );
 
     /**
      * Returns the number of objects which are in this state

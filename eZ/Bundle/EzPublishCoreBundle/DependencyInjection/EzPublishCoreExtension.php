@@ -58,6 +58,7 @@ class EzPublishCoreExtension extends Extension
         // Default settings
         $loader->load( 'default_settings.yml' );
         $this->registerSiteAcccessConfiguration( $config, $container );
+        $this->registerImageMagickConfiguration( $config, $container );
 
         // Routing
         $this->handleRouting( $container, $loader );
@@ -65,6 +66,7 @@ class EzPublishCoreExtension extends Extension
         $this->handleApiLoading( $container, $loader );
         $this->handleTemplating( $container, $loader );
         $this->handleSessionLoading( $container, $loader );
+        $this->handleCache( $config, $container, $loader );
 
         // Map settings
         foreach ( $this->configParsers as $configParser )
@@ -85,6 +87,15 @@ class EzPublishCoreExtension extends Extension
 
     private function registerSiteAcccessConfiguration( array $config, ContainerBuilder $container )
     {
+        if ( !isset( $config['siteaccess'] ) )
+        {
+            $config['siteaccess'] = array();
+            $config['siteaccess']['list'] = array( 'setup');
+            $config['siteaccess']['default_siteaccess'] = 'setup';
+            $config['siteaccess']['groups'] = array();
+            $config['siteaccess']['match'] = null;
+        }
+
         $container->setParameter( 'ezpublish.siteaccess.list', $config['siteaccess']['list'] );
         $container->setParameter( 'ezpublish.siteaccess.default', $config['siteaccess']['default_siteaccess'] );
         $container->setParameter( 'ezpublish.siteaccess.match_config', $config['siteaccess']['match'] );
@@ -103,6 +114,23 @@ class EzPublishCoreExtension extends Extension
             }
         }
         $container->setParameter( 'ezpublish.siteaccess.groups_by_siteaccess', $groupsBySiteaccess );
+    }
+
+    private function registerImageMagickConfiguration( array $config, ContainerBuilder $container )
+    {
+        if ( isset( $config['imagemagick'] ) )
+        {
+            $container->setParameter( 'ezpublish.image.imagemagick.enabled', $config['imagemagick']['enabled'] );
+            if ( $config['imagemagick']['enabled'] )
+            {
+                $container->setParameter( 'ezpublish.image.imagemagick.executable_path', dirname( $config['imagemagick']['path'] ) );
+                $container->setParameter( 'ezpublish.image.imagemagick.executable', basename( $config['imagemagick']['path'] ) );
+            }
+        }
+
+        $filters = isset( $config['imagemagick']['filters'] ) ? $config['imagemagick']['filters'] : array();
+        $filters = $filters + $container->getParameter( 'ezpublish.image.imagemagick.filters' );
+        $container->setParameter( 'ezpublish.image.imagemagick.filters', $filters );
     }
 
     /**
@@ -157,4 +185,46 @@ class EzPublishCoreExtension extends Extension
         $loader->load( 'session.yml' );
     }
 
+    /**
+     * Handle cache parameters
+     *
+     * @param array $config
+     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     * @param \Symfony\Component\DependencyInjection\Loader\FileLoader $loader
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return void
+     */
+    private function handleCache( array $config, ContainerBuilder $container, FileLoader $loader )
+    {
+        $loader->load( 'cache.yml' );
+        if ( isset( $config['http_cache']['purge_type'] ) )
+        {
+            switch ( $config['http_cache']['purge_type'] )
+            {
+                case 'local':
+                    $purgeService = 'ezpublish.http_cache.purge_client.local';
+                    break;
+                case 'single_http':
+                    $purgeService = 'ezpublish.http_cache.purge_client.single_request';
+                    break;
+                case 'multiple_http':
+                    $purgeService = 'ezpublish.http_cache.purge_client.multi_request';
+                    break;
+                default:
+                    if ( !$container->has( $config['http_cache']['purge_type'] ) )
+                        throw new \InvalidArgumentException( "Invalid ezpublish.http_cache.purge_type. Can be 'single', 'multiple' or a valid service identifier implementing PurgeClientInterface." );
+
+                    $purgeService = $config['http_cache']['purge_type'];
+            }
+
+            $container->setAlias( 'ezpublish.http_cache.purge_client', $purgeService );
+        }
+
+        if ( isset( $config['http_cache']['timeout'] ) )
+        {
+            $container->setParameter( 'ezpublish.http_cache.purge_client.http_client.timeout', (int)$config['http_cache']['timeout'] );
+        }
+    }
 }

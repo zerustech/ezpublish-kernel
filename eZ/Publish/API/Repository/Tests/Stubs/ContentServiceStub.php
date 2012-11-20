@@ -345,7 +345,7 @@ class ContentServiceStub implements ContentService
             }
         }
 
-        if ( null === $languageCodes || 0 === count( $languageCodes ) )
+        if ( empty( $languageCodes ) )
         {
             return $content;
         }
@@ -1134,7 +1134,7 @@ class ContentServiceStub implements ContentService
         $languageCodes = $this->getLanguageCodes( $oldAndNewFields, $initialLanguageCode );
 
         // Automatically overwrites old with new fields
-        $fields = $this->getFieldsByTypeAndLanguageCode( $contentType, $oldAndNewFields, $initialLanguageCode );
+        $fields = $this->getFieldsByTypeAndLanguageCode( $contentType, $oldAndNewFields, $initialLanguageCode ?: $mainLanguageCode );
 
         // Validate all required fields available in each language
         $this->checkRequiredFields( $contentType, $fields, $languageCodes, $mainLanguageCode );

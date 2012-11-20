@@ -17,32 +17,38 @@ use eZ\Publish\Core\SignalSlot\Signal;
 class CopyContentSignal extends Signal
 {
     /**
-     * ContentId
+     * Source Content ID
      *
      * @var mixed
      */
     public $srcContentId;
 
     /**
-     * VersionNo
+     * Source Version Number
      *
-     * @var int
+     * @var int|null
      */
     public $srcVersionNo;
 
     /**
-     * ContentId
+     * Destination Content ID
      *
      * @var mixed
      */
     public $dstContentId;
 
     /**
-     * VersionNo
+     * Destination Version Number
      *
      * @var int
      */
     public $dstVersionNo;
 
-}
 
+    /**
+     * Destination Parent Location ID
+     *
+     * @var mixed
+     */
+    public $dstParentLocationId;
+}

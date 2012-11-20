@@ -8,9 +8,7 @@
  */
 
 namespace eZ\Publish\Core\REST\Server\Controller;
-use eZ\Publish\Core\REST\Common\UrlHandler;
 use eZ\Publish\Core\REST\Common\Message;
-use eZ\Publish\Core\REST\Common\Input;
 use eZ\Publish\Core\REST\Server\Values;
 use eZ\Publish\Core\REST\Server\Exceptions;
 use eZ\Publish\Core\REST\Server\Controller as RestController;
@@ -29,6 +27,7 @@ use eZ\Publish\API\Repository\Exceptions\NotFoundException;
 use eZ\Publish\API\Repository\Exceptions\InvalidArgumentException;
 
 use eZ\Publish\Core\REST\Common\Exceptions\InvalidArgumentException AS RestInvalidArgumentException;
+use eZ\Publish\Core\REST\Server\Exceptions\ForbiddenException;
 
 /**
  * User controller
@@ -112,8 +111,7 @@ class User extends RestController
     {
         //@todo Replace hardcoded value with one loaded from settings
         return new Values\PermanentRedirect(
-            $this->urlHandler->generate( 'group', array( 'group' => '/1/5' ) ),
-            'UserGroup'
+            $this->urlHandler->generate( 'group', array( 'group' => '/1/5' ) )
         );
     }
 
@@ -232,23 +230,23 @@ class User extends RestController
         $userGroupLocation = $this->locationService->loadLocation(
             $this->extractLocationIdFromPath( $urlValues['group'] )
         );
+        $userGroup = $this->userService->loadUserGroup( $userGroupLocation->contentId );
 
-        $userGroupCreateStruct = $this->inputDispatcher->parse(
+        $userCreateStruct = $this->inputDispatcher->parse(
             new Message(
                 array( 'Content-Type' => $this->request->contentType ),
                 $this->request->body
             )
         );
 
-        //@todo Check for existence of user with same login
-        //Problem being, PAPI doesn't specify any distinct error in such case
-
-        $createdUser = $this->userService->createUser(
-            $userGroupCreateStruct,
-            array(
-                $this->userService->loadUserGroup( $userGroupLocation->contentId )
-            )
-        );
+        try
+        {
+            $createdUser = $this->userService->createUser( $userCreateStruct, array( $userGroup ) );
+        }
+        catch ( InvalidArgumentException $e )
+        {
+            throw new ForbiddenException( $e->getMessage() );
+        }
 
         $createdContentInfo = $createdUser->getVersionInfo()->getContentInfo();
         $createdLocation = $this->locationService->loadLocation( $createdContentInfo->mainLocationId );
@@ -354,7 +352,7 @@ class User extends RestController
     /**
      * Given user group is deleted
      *
-     * @return \eZ\Publish\Core\REST\Server\Values\ResourceDeleted
+     * @return \eZ\Publish\Core\REST\Server\Values\NoContent
      */
     public function deleteUserGroup()
     {
@@ -377,13 +375,13 @@ class User extends RestController
 
         $this->userService->deleteUserGroup( $userGroup );
 
-        return new Values\ResourceDeleted();
+        return new Values\NoContent();
     }
 
     /**
      * Given user is deleted
      *
-     * @return \eZ\Publish\Core\REST\Server\Values\ResourceDeleted
+     * @return \eZ\Publish\Core\REST\Server\Values\NoContent
      */
     public function deleteUser()
     {
@@ -400,13 +398,54 @@ class User extends RestController
 
         $this->userService->deleteUser( $user );
 
-        return new Values\ResourceDeleted();
+        return new Values\NoContent();
+    }
+
+    /**
+     * Loads users
+     *
+     * @return \eZ\Publish\Core\REST\Server\Values\UserList|\eZ\Publish\Core\REST\Server\Values\UserRefList
+     */
+    public function loadUsers()
+    {
+        $restUsers = array();
+        if ( isset( $this->request->variables['roleId'] ) )
+        {
+             $restUsers = $this->loadUsersAssignedToRole();
+        }
+        else if ( isset( $this->request->variables['remoteId'] ) )
+        {
+            $restUsers = array(
+                $this->loadUserByRemoteId()
+            );
+        }
+
+        if ( $this->getMediaType( $this->request ) === 'application/vnd.ez.api.userlist' )
+        {
+            return new Values\UserList( $restUsers, $this->request->path );
+        }
+
+        return new Values\UserRefList( $restUsers, $this->request->path );
+    }
+
+    /**
+     * Loads a user by its remote ID
+     *
+     * @return \eZ\Publish\Core\REST\Server\Values\RestUser
+     */
+    public function loadUserByRemoteId()
+    {
+        $contentInfo = $this->contentService->loadContentInfoByRemoteId( $this->request->variables['remoteId'] );
+        $user = $this->userService->loadUser( $contentInfo->id );
+        $userLocation = $this->locationService->loadLocation( $contentInfo->mainLocationId );
+
+        return new Values\RestUser( $user, $contentInfo, $userLocation );
     }
 
     /**
      * Loads a list of users assigned to role
      *
-     * @return \eZ\Publish\Core\REST\Server\Values\UserList|\eZ\Publish\Core\REST\Server\Values\UserRefList
+     * @return \eZ\Publish\Core\REST\Server\Values\RestUser[]
      */
     public function loadUsersAssignedToRole()
     {
@@ -429,18 +468,64 @@ class User extends RestController
             }
         }
 
-        if ( $this->getMediaType( $this->request ) === 'application/vnd.ez.api.userlist' )
+        return $restUsers;
+    }
+
+    /**
+     * Loads user groups
+     *
+     * @return \eZ\Publish\Core\REST\Server\Values\UserGroupList|\eZ\Publish\Core\REST\Server\Values\UserGroupRefList
+     */
+    public function loadUserGroups()
+    {
+        $restUserGroups = array();
+        if ( isset( $this->request->variables['id'] ) )
         {
-            return new Values\UserList( $restUsers, $this->request->path );
+            $userGroup = $this->userService->loadUserGroup( $this->request->variables['id'] );
+            $userGroupContentInfo = $userGroup->getVersionInfo()->getContentInfo();
+            $userGroupMainLocation = $this->locationService->loadLocation( $userGroupContentInfo->mainLocationId );
+
+            $restUserGroups = array(
+                new Values\RestUserGroup( $userGroup, $userGroupContentInfo, $userGroupMainLocation )
+            );
+        }
+        else if ( isset( $this->request->variables['roleId'] ) )
+        {
+             $restUserGroups = $this->loadUserGroupsAssignedToRole();
+        }
+        else if ( isset( $this->request->variables['remoteId'] ) )
+        {
+            $restUserGroups = array(
+                $this->loadUserGroupByRemoteId()
+            );
         }
 
-        return new Values\UserRefList( $restUsers, $this->request->path );
+        if ( $this->getMediaType( $this->request ) === 'application/vnd.ez.api.usergrouplist' )
+        {
+            return new Values\UserGroupList( $restUserGroups, $this->request->path );
+        }
+
+        return new Values\UserGroupRefList( $restUserGroups, $this->request->path );
+    }
+
+    /**
+     * Loads a user group by its remote ID
+     *
+     * @return \eZ\Publish\Core\REST\Server\Values\RestUserGroup
+     */
+    public function loadUserGroupByRemoteId()
+    {
+        $contentInfo = $this->contentService->loadContentInfoByRemoteId( $this->request->variables['remoteId'] );
+        $userGroup = $this->userService->loadUserGroup( $contentInfo->id );
+        $userGroupLocation = $this->locationService->loadLocation( $contentInfo->mainLocationId );
+
+        return new Values\RestUserGroup( $userGroup, $contentInfo, $userGroupLocation );
     }
 
     /**
      * Loads a list of user groups assigned to role
      *
-     * @return \eZ\Publish\Core\REST\Server\Values\UserGroupList|\eZ\Publish\Core\REST\Server\Values\UserGroupRefList
+     * @return \eZ\Publish\Core\REST\Server\Values\RestUserGroup[]
      */
     public function loadUserGroupsAssignedToRole()
     {
@@ -463,12 +548,7 @@ class User extends RestController
             }
         }
 
-        if ( $this->getMediaType( $this->request ) === 'application/vnd.ez.api.usergrouplist' )
-        {
-            return new Values\UserGroupList( $restUserGroups, $this->request->path );
-        }
-
-        return new Values\UserGroupRefList( $restUserGroups, $this->request->path );
+        return $restUserGroups;
     }
 
     /**
@@ -605,7 +685,10 @@ class User extends RestController
      */
     public function loadUsersFromGroup()
     {
-        $urlValues = $this->urlHandler->parse( 'groupUsers', $this->request->path );
+        $questionMark = strpos( $this->request->path, '?' );
+        $requestPath = $questionMark !== false ? substr( $this->request->path, 0, $questionMark ) : $this->request->path;
+
+        $urlValues = $this->urlHandler->parse( 'groupUsers', $requestPath );
 
         $userGroupLocation = $this->locationService->loadLocation(
             $this->extractLocationIdFromPath( $urlValues['group'] )
@@ -615,7 +698,14 @@ class User extends RestController
             $userGroupLocation->contentId
         );
 
-        $users = $this->userService->loadUsersOfUserGroup( $userGroup );
+        $offset = isset( $this->request->variables['offset'] ) ? (int)$this->request->variables['offset'] : 0;
+        $limit = isset( $this->request->variables['limit'] ) ? (int)$this->request->variables['limit'] : -1;
+
+        $users = $this->userService->loadUsersOfUserGroup(
+            $userGroup,
+            $offset >= 0 ? $offset : 0,
+            $limit >= 0 ? $limit : -1
+        );
 
         $restUsers = array();
         foreach ( $users as $user )
@@ -708,10 +798,14 @@ class User extends RestController
             throw new Exceptions\ForbiddenException( $e->getMessage() );
         }
 
-        //@todo Error handling if user is already in the group
-        //Reason being that UserService::assignUserToUserGroup by specs
-        // does nothing if the user is already a member of the group
-        $this->userService->assignUserToUserGroup( $user, $userGroup );
+        try
+        {
+            $this->userService->assignUserToUserGroup( $user, $userGroup );
+        }
+        catch ( InvalidArgumentException $e )
+        {
+            throw new Exceptions\ForbiddenException( $e->getMessage() );
+        }
 
         $userGroups = $this->userService->loadUserGroupsOfUser( $user );
         $restUserGroups = array();

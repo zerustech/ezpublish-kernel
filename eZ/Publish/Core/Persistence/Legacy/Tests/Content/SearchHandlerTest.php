@@ -77,16 +77,10 @@ class SearchHandlerTest extends LanguageAwareTestCase
      */
     protected function getContentSearchHandler( array $fullTextSearchConfiguration = array() )
     {
-        $processor = new Content\Search\TransformationProcessor(
-            new Content\Search\TransformationParser( self::getInstallationDir() ),
-            new Content\Search\TransformationPcreCompiler(
-                new Content\Search\Utf8Converter()
-            )
-        );
-
+        $rules = array();
         foreach ( glob( __DIR__ . '/SearchHandler/_fixtures/transformations/*.tr' ) as $file )
         {
-            $processor->loadRules( str_replace( self::getInstallationDir(), '', $file ) );
+            $rules[] = str_replace( self::getInstallationDir(), '', $file );
         }
 
         return new Content\Search\Handler(
@@ -138,7 +132,13 @@ class SearchHandlerTest extends LanguageAwareTestCase
                         ),
                         new Content\Search\Gateway\CriterionHandler\FullText(
                             $this->getDatabaseHandler(),
-                            $processor,
+                            new Content\Search\TransformationProcessor\DefinitionBased(
+                                new Content\Search\TransformationProcessor\DefinitionBased\Parser( self::getInstallationDir() ),
+                                new Content\Search\TransformationProcessor\PcreCompiler(
+                                    new Content\Search\Utf8Converter()
+                                ),
+                                $rules
+                            ),
                             $fullTextSearchConfiguration
                         ),
                         new Content\Search\Gateway\CriterionHandler\Field(
@@ -150,6 +150,16 @@ class SearchHandlerTest extends LanguageAwareTestCase
                                     'ezprice' => new Integer()
                                 )
                             )
+                        ),
+                        new Content\Search\Gateway\CriterionHandler\ObjectStateId(
+                            $this->getDatabaseHandler()
+                        ),
+                        new Content\Search\Gateway\CriterionHandler\LanguageCode(
+                            $this->getDatabaseHandler(),
+                            $this->getLanguageMaskGenerator()
+                        ),
+                        new Content\Search\Gateway\CriterionHandler\Visibility(
+                            $this->getDatabaseHandler()
                         ),
                     )
                 ),
@@ -1154,6 +1164,131 @@ class SearchHandlerTest extends LanguageAwareTestCase
                     function ( $hit ) { return $hit->valueObject->versionInfo->contentInfo->id; },
                     $result->searchHits
                 )
+            )
+        );
+    }
+
+    /**
+     * @return void
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\CriterionHandler\ObjectStateId
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\EzcDatabase
+     */
+    public function testObjectStateIdFilter()
+    {
+        $locator = $this->getContentSearchHandler();
+
+        $result = $locator->findContent( new Query( array(
+            'criterion' => new Criterion\ObjectStateId(
+                1
+            ),
+            'limit' => 10,
+        ) ) );
+
+        $this->assertEquals(
+            array( 4, 10, 11, 12, 13, 14, 41, 42, 45, 49 ),
+            array_map(
+                function ( $hit ) { return $hit->valueObject->versionInfo->contentInfo->id; },
+                $result->searchHits
+            )
+        );
+    }
+
+    /**
+     * @return void
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\CriterionHandler\ObjectStateId
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\EzcDatabase
+     */
+    public function testObjectStateIdFilterIn()
+    {
+        $locator = $this->getContentSearchHandler();
+
+        $result = $locator->findContent( new Query( array(
+            'criterion' => new Criterion\ObjectStateId(
+                array( 1, 2 )
+            ),
+            'limit' => 10,
+        ) ) );
+
+        $this->assertEquals(
+            array( 4, 10, 11, 12, 13, 14, 41, 42, 45, 49 ),
+            array_map(
+                function ( $hit ) { return $hit->valueObject->versionInfo->contentInfo->id; },
+                $result->searchHits
+            )
+        );
+    }
+
+    /**
+     * @return void
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\CriterionHandler\LanguageId
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\EzcDatabase
+     */
+    public function testLanguageIdFilter()
+    {
+        $locator = $this->getContentSearchHandler();
+
+        $result = $locator->findContent( new Query( array(
+            'criterion' => new Criterion\LanguageCode(
+                'eng-GB'
+            ),
+            'limit' => 10,
+        ) ) );
+
+        $this->assertEquals(
+            array( 4, 10, 11, 12, 13, 14, 41, 42, 45, 49 ),
+            array_map(
+                function ( $hit ) { return $hit->valueObject->versionInfo->contentInfo->id; },
+                $result->searchHits
+            )
+        );
+    }
+
+    /**
+     * @return void
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\CriterionHandler\LanguageId
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\EzcDatabase
+     */
+    public function testLanguageIdFilterIn()
+    {
+        $locator = $this->getContentSearchHandler();
+
+        $result = $locator->findContent( new Query( array(
+            'criterion' => new Criterion\LanguageCode(
+                'eng-US', 'eng-GB'
+            ),
+            'limit' => 10,
+        ) ) );
+
+        $this->assertEquals(
+            array( 4, 10, 11, 12, 13, 14, 41, 42, 45, 49 ),
+            array_map(
+                function ( $hit ) { return $hit->valueObject->versionInfo->contentInfo->id; },
+                $result->searchHits
+            )
+        );
+    }
+
+    /**
+     * @return void
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\CriterionHandler\Visibility
+     * @covers \eZ\Publish\Core\Persistence\Legacy\Content\Search\Gateway\EzcDatabase
+     */
+    public function testVisibilityFilter()
+    {
+        $locator = $this->getContentSearchHandler();
+
+        $result = $locator->findContent( new Query( array(
+            'criterion' => new Criterion\Visibility(
+                Criterion\Visibility::VISIBLE
+            ),
+            'limit' => 10,
+        ) ) );
+
+        $this->assertEquals(
+            array( 4, 10, 11, 12, 13, 14, 41, 42, 45, 49 ),
+            array_map(
+                function ( $hit ) { return $hit->valueObject->versionInfo->contentInfo->id; },
+                $result->searchHits
             )
         );
     }

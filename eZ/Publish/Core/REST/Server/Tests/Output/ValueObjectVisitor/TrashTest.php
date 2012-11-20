@@ -12,7 +12,9 @@ use eZ\Publish\Core\REST\Common\Tests\Output\ValueObjectVisitorBaseTest;
 
 use eZ\Publish\Core\REST\Server\Output\ValueObjectVisitor;
 use eZ\Publish\Core\REST\Server\Values\Trash;
+use eZ\Publish\Core\REST\Server\Values\RestTrashItem;
 use eZ\Publish\Core\REST\Common;
+use eZ\Publish\Core\Repository\Values\Content;
 
 class TrashTest extends ValueObjectVisitorBaseTest
 {
@@ -28,7 +30,7 @@ class TrashTest extends ValueObjectVisitorBaseTest
 
         $generator->startDocument( null );
 
-        $trash = new Trash( array() );
+        $trash = new Trash( array(), '/content/trash' );
 
         $visitor->visit(
             $this->getVisitorMock(),
@@ -80,6 +82,43 @@ class TrashTest extends ValueObjectVisitorBaseTest
             $result,
             'Invalid <Trash> attributes.',
             false
+        );
+    }
+
+    /**
+     * Test if Trash visitor visits the children
+     */
+    public function testTrashVisitsChildren()
+    {
+        $visitor   = $this->getTrashVisitor();
+        $generator = $this->getGenerator();
+
+        $generator->startDocument( null );
+
+        $trashList = new Trash(
+            array(
+                new RestTrashItem(
+                    new Content\TrashItem(),
+                    // Dummy value for ChildCount
+                    0
+                ),
+                new RestTrashItem(
+                    new Content\TrashItem(),
+                    // Dummy value for ChildCount
+                    0
+                ),
+            ),
+            '/content/trash'
+        );
+
+        $this->getVisitorMock()->expects( $this->exactly( 2 ) )
+            ->method( 'visitValueObject' )
+            ->with( $this->isInstanceOf( 'eZ\\Publish\\Core\\REST\\Server\\Values\\RestTrashItem' ) );
+
+        $visitor->visit(
+            $this->getVisitorMock(),
+            $generator,
+            $trashList
         );
     }
 

@@ -42,7 +42,7 @@ class EmailAddressTest extends StandardizedFieldTypeTest
     protected function getValidatorConfigurationSchemaExpectation()
     {
         return array(
-            'EMailAddressValidator' => array()
+            'EmailAddressValidator' => array()
         );
     }
 
@@ -63,7 +63,7 @@ class EmailAddressTest extends StandardizedFieldTypeTest
      */
     protected function getEmptyValueExpectation()
     {
-        return null;
+        return new EmailAddressValue;
     }
 
     /**
@@ -137,7 +137,7 @@ class EmailAddressTest extends StandardizedFieldTypeTest
         return array(
             array(
                 null,
-                null,
+                new EmailAddressValue,
             ),
             array(
                 'spam_mail@ex-something.no',
@@ -292,12 +292,12 @@ class EmailAddressTest extends StandardizedFieldTypeTest
             ),
             array(
                 array(
-                    'EMailAddressValidator' => array()
+                    'EmailAddressValidator' => array()
                 )
             ),
             array(
                 array(
-                    'EMailAddressValidator' => array(
+                    'EmailAddressValidator' => array(
                         'Extent' => 'regex',
                     )
                 )
@@ -357,21 +357,21 @@ class EmailAddressTest extends StandardizedFieldTypeTest
             ),
             array(
                 array(
-                    'EMailAddressValidator' => array(
+                    'EmailAddressValidator' => array(
                         'Extent' => 23
                     ),
                 ),
             ),
             array(
                 array(
-                    'EMailAddressValidator' => array(
+                    'EmailAddressValidator' => array(
                         'Extent' => '',
                     ),
                 ),
             ),
             array(
                 array(
-                    'EMailAddressValidator' => array(
+                    'EmailAddressValidator' => array(
                         'Extent' => '\\http\\',
                     ),
                 )

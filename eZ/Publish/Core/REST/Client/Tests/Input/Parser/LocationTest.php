@@ -34,14 +34,12 @@ class LocationTest extends BaseTest
                 '_href' => '/content/locations/1/2/21'
             ),
             'pathString' => '/1/2/21/42',
-            'subLocationModificationDate' => '1970-01-01T01:00+01:00',
             'depth' => '3',
             'Content' => array(
                 '_href' => '/content/objects/42'
             ),
             'sortField' => 'PATH',
             'sortOrder' => 'ASC',
-            'childCount' => '0'
         );
 
         $result = $locationParser->parse( $inputArray, $this->getParsingDispatcherMock() );
@@ -164,20 +162,6 @@ class LocationTest extends BaseTest
     }
 
     /**
-     * Tests that the resulting location contains the modification date
-     *
-     * @param \eZ\Publish\API\Repository\Values\Content\Location $result
-     * @depends testParse
-     */
-    public function testResultContainsModificationDate( $result )
-    {
-        $this->assertInstanceOf(
-            '\\DateTime',
-            $result->modifiedSubLocationDate
-        );
-    }
-
-    /**
      * Tests that the resulting location contains depth
      *
      * @param \eZ\Publish\API\Repository\Values\Content\Location $result
@@ -216,20 +200,6 @@ class LocationTest extends BaseTest
         $this->assertEquals(
             Location::SORT_ORDER_ASC,
             $result->sortOrder
-        );
-    }
-
-    /**
-     * Tests that the resulting location contains child count
-     *
-     * @param \eZ\Publish\API\Repository\Values\Content\Location $result
-     * @depends testParse
-     */
-    public function testResultContainsChildCount( $result )
-    {
-        $this->assertEquals(
-            0,
-            $result->childCount
         );
     }
 

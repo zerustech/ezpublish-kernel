@@ -173,7 +173,7 @@ class LocationHandlerTest extends HandlerTest
         $this->assertEquals( $this->lastContentId, $location->contentId );
         // @todo contentVersion not yet implemented
         //$this->assertEquals( 1, $location->contentVersion );
-        $this->assertEquals( "test_0/test_1/test_2/test_3/test_4", $location->pathIdentificationString );
+        $this->assertEmpty( $location->pathIdentificationString );
         $this->assertEquals( $this->lastLocationId, $location->mainLocationId );
         $this->assertEquals( Location::SORT_FIELD_NAME, $location->sortField );
         $this->assertEquals( Location::SORT_ORDER_ASC, $location->sortOrder );
@@ -326,15 +326,7 @@ class LocationHandlerTest extends HandlerTest
             )->locations[0] as $property => $value
         )
         {
-            switch ( $property )
-            {
-                case 'modifiedSubLocation' :
-                    self::assertGreaterThanOrEqual( $newLocation->$property, $value, "Location does not match" );
-                    break;
-
-                default:
-                    self::assertEquals( $newLocation->$property, $value, "Location does not match" );
-            }
+            self::assertEquals( $newLocation->$property, $value, "Location does not match" );
         }
 
         // Verifying the direct child is present
@@ -345,15 +337,7 @@ class LocationHandlerTest extends HandlerTest
             )->locations[0] as $property => $value
         )
         {
-            switch ( $property )
-            {
-                case 'modifiedSubLocation' :
-                    self::assertGreaterThanOrEqual( $loc->$property, $value, "Location does not match" );
-                    break;
-
-                default:
-                    self::assertEquals( $loc->$property, $value, "Location does not match" );
-            }
+            self::assertEquals( $loc->$property, $value, "Location does not match" );
         }
         unset( $loc );
 
@@ -365,15 +349,7 @@ class LocationHandlerTest extends HandlerTest
             )->locations[0] as $property => $value
         )
         {
-            switch ( $property )
-            {
-                case 'modifiedSubLocation' :
-                    self::assertGreaterThanOrEqual( $loc->$property, $value, "Location does not match" );
-                    break;
-
-                default:
-                    self::assertEquals( $loc->$property, $value, "Location does not match" );
-            }
+            self::assertEquals( $loc->$property, $value, "Location does not match" );
         }*/
     }
 
@@ -445,7 +421,7 @@ class LocationHandlerTest extends HandlerTest
 
         $this->assertEquals(
             $location->id,
-            $content->locations[0]->mainLocationId,
+            $content->versionInfo->contentInfo->mainLocationId,
             "Main location has not been changed"
         );
 

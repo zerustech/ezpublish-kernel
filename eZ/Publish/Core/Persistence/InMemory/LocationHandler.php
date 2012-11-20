@@ -54,6 +54,52 @@ class LocationHandler implements LocationHandlerInterface
         return $this->backend->load( 'Content\\Location', $locationId );
     }
 
+
+    /**
+     * Loads all locations for $contentId, optionally limited to a sub tree
+     * identified by $rootLocationId
+     *
+     * @param int $contentId
+     * @param int $rootLocationId
+     * @return \eZ\Publish\SPI\Persistence\Content\Location[]
+     * @todo Add support for $rootLocationId when not child of node 1
+     */
+    public function loadLocationsByContent( $contentId, $rootLocationId = null )
+    {
+        if ( $rootLocationId )
+            return $this->backend->find(
+                'Content\\Location',
+                array( 'contentId' => $contentId, 'pathString' => "%/{$rootLocationId}/%" )
+            );
+
+        return $this->backend->find(
+            'Content\\Location',
+            array( 'contentId' => $contentId )
+        );
+    }
+
+    /**
+     * Loads the data for the location identified by $remoteId.
+     *
+     * @param string $remoteId
+     * @return \eZ\Publish\SPI\Persistence\Content\Location
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    public function loadByRemoteId( $remoteId )
+    {
+        $locations = $this->backend->find(
+            'Content\\Location',
+            array( 'remoteId' => $remoteId )
+        );
+
+        if ( empty( $locations ) )
+            throw new NotFound( 'Location by remote id', $remoteId );
+        else if ( isset( $locations[1] ) )
+            throw new \RuntimeException( "Several Locations found with same remote id: {$remoteId}" );
+
+        return $locations[0];
+    }
+
     /**
      * Get all subtree locations for the given location (including), sorted by path string
      *
@@ -240,8 +286,6 @@ class LocationHandler implements LocationHandlerInterface
                 )
             );
         }
-
-        $this->updateSubtreeModificationTime( $newParentVO->pathString );
     }
 
     /**
@@ -264,8 +308,6 @@ class LocationHandler implements LocationHandlerInterface
             array( "pathString" => "{$locationVO->pathString}%" ),
             array( "invisible" => true )
         );
-
-       $this->updateSubtreeModificationTime( $this->getParentPathString( $locationVO->pathString ) );
     }
 
     /**
@@ -310,7 +352,6 @@ class LocationHandler implements LocationHandlerInterface
         }
 
         $this->backend->updateByMatch( 'Content\\Location', array( 'id' => $locationsToUnhide ), array( 'invisible' => false ) );
-        $this->updateSubtreeModificationTime( $this->getParentPathString( $locationVO->pathString ) );
     }
 
     /**
@@ -338,8 +379,6 @@ class LocationHandler implements LocationHandlerInterface
                 'contentId' => $location1->contentId,
             )
         );
-        $this->updateSubtreeModificationTime( $this->getParentPathString( $location1->pathString ) );
-        $this->updateSubtreeModificationTime( $this->getParentPathString( $location2->pathString ) );
     }
 
     /**
@@ -388,7 +427,6 @@ class LocationHandler implements LocationHandlerInterface
                 'mainLocationId' => isset( $mainLocationId ) ? $mainLocationId : $vo->id
             )
         );
-        $this->updateSubtreeModificationTime( $this->getParentPathString( $parent->pathString ) );
         return $this->load( $vo->id );
     }
 
@@ -440,14 +478,14 @@ class LocationHandler implements LocationHandlerInterface
     /**
      * @see eZ\Publish\SPI\Persistence\Content\Location\Handler
      */
-    public function storeUrlAliasPath( $path, $locationId, $languageName = null, $alwaysAvailable = false )
+    public function storeUrlAliasPath( $path, $locationId, $languageCode = null, $alwaysAvailable = false )
     {
     }
 
     /**
      * @see eZ\Publish\SPI\Persistence\Content\Location\Handler
      */
-    public function createCustomUrlAlias( $alias, $locationId, $forwarding = false, $languageName = null, $alwaysAvailable = false )
+    public function createCustomUrlAlias( $alias, $locationId, $forwarding = false, $languageCode = null, $alwaysAvailable = false )
     {
     }
 
@@ -513,8 +551,6 @@ class LocationHandler implements LocationHandlerInterface
                 array( 'mainLocationId' => $remainingLocations[0]->id )
             );
         }
-
-        $this->updateSubtreeModificationTime( $this->getParentPathString( $location->pathString ) );
     }
 
     /**
@@ -566,19 +602,6 @@ class LocationHandler implements LocationHandlerInterface
         );
 
         $this->setSectionForSubtree( $locationId, $parentContent->sectionId );
-    }
-
-    /**
-     * Updates subtree modification time for all locations starting from $startPathString
-     * @param string $startPathString
-     */
-    private function updateSubtreeModificationTime( $startPathString )
-    {
-        $this->backend->updateByMatch(
-            'Content\\Location',
-            array( 'pathString' => $startPathString . '%' ),
-            array( 'modifiedSubLocation' => time() )
-        );
     }
 
     /**

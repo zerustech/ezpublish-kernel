@@ -190,7 +190,13 @@ class Repository implements RepositoryInterface
                 'limit' => 0,
                 'sequence' => ''
             ),
+            'languages' => array()
         );
+
+        if ( !empty( $this->serviceSettings['languages'] ) )
+        {
+            $this->serviceSettings['language']['languages'] = $this->serviceSettings['languages'];
+        }
 
         if ( $user !== null )
             $this->setCurrentUser( $user );
@@ -604,6 +610,9 @@ class Repository implements RepositoryInterface
      * Get NameSchemaResolverService
      *
      * @access private Internal service for the Core Services
+     *
+     * @todo Move out from this & other repo instances when services becomes proper services in DIC terms using factory.
+     *
      * @return \eZ\Publish\Core\Repository\NameSchemaService
      */
     public function getNameSchemaService()

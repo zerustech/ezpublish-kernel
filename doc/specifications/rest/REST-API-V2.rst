@@ -1,7 +1,7 @@
 
-==============================
-eZ Publish REST API DRAFT 1.50
-==============================
+==========================
+eZ Publish REST API V2 RFC
+==========================
 
 .. sectnum::
 
@@ -113,7 +113,7 @@ Authentication
 Basic Authentication
 --------------------
 
-See http://tools.ietf.org/html/rfc261
+See http://tools.ietf.org/html/rfc2617
 
 OAuth
 -----
@@ -174,7 +174,7 @@ In the content module there are the root collections objects, locations, trash a
         :Resource:                                          POST                GET                  PATCH/PUT                   DELETE            COPY
 ----------------------------------------------------- ------------------- ----------------------- ---------------------------- ---------------- --------------
 /                                                     .                   list root resources     .                            .                             
-/content/objects                                      create new content  list/find content       .                            .            
+/content/objects                                      create new content  .                       .                            .            
 /content/objects/<ID>                                 .                   load content            update content meta data     delete content   copy content
 /content/objects/<ID>/<lang_code>                     .                   .                       .                            delete language
                                                                                                                                from content   
@@ -238,8 +238,6 @@ List Root Resources
     :Accept:
          :application/vnd.ez.api.Root+xml:  if set the list is return in xml format (see Root_)
          :application/vnd.ez.api.Root+json:  if set the list is returned in json format (see Root_)
-:Parameters:
-    :languages: (comma separated list) restricts the output of translatable fields to the given languages
 :Response: 
 
 .. code:: http
@@ -678,17 +676,8 @@ JSON Example
 List/Search Content
 ```````````````````
 :Resource: /content/objects
-:Method: GET
-:Description: List/Search content objects (published version)
-:Parameters:
-    :q:               (required) query string in lucene format TBD
-    :limit:           only <limit> items will be returned started by offset
-    :offset:          offset of the result set
-    :sortField:       the field used for sorting TBD.
-    :sortOrder:       DESC or ASC
-:Response: TBD
-:Error codes:
-    :400: If the query string does not match the lucene query string format, In this case the response contains an ErrorMessage_
+:Method: GET (not implemented)
+:Description: This resource will used in future for searching content by providing a query string as alternative to posting a view to /content/views. 
         
 Load Content
 ````````````
@@ -1605,7 +1594,6 @@ XML Example
       <invisible>false</invisible>
       <ParentLocation href="/content/locations/1/5/73" media-type="application/vnd.ez.api.Location+xml"/>
       <pathString>/1/5/73/133</pathString>
-      <subLocationModificationDate>2001-01-01T12:45:00</subLocationModificationDate>
       <depth>4</depth>
       <childCount>0</childCount>
       <remoteId>remoteId-qwert567</remoteId>
@@ -1665,6 +1653,22 @@ XML Example
       <Location href="/content/locations/1/4/73/133" media-type="application/vnd.ez.api.Location+xml"/>
     </LocationList>
         
+Load locations by id
+````````````````````
+:Resource: /content/locations
+:Method: GET
+:Description: loads the location for a given id (x)or remote id
+:Parameters: :id: the id of the location. If present the location is with the given id is returned.
+             :remoteId: the remoteId of the location. If present the location with the given remoteId is returned
+:Response: 
+
+.. code:: http
+
+          HTTP/1.1 307 Temporary Redirect
+          Location: /content/locations/<path>
+
+:Error Codes:
+    :404: If the  location with the given id (remoteId) does not exist
 
 Load location 
 `````````````
@@ -1690,7 +1694,7 @@ Load location
           Location_      
 
 :Error Codes:
-    :404: If the  location with the given id does not exist
+    :404: If the  location with the given path does not exist
     :401: If the user is not authorized to read this location  
 
 XML Example
@@ -1721,7 +1725,6 @@ XML Example
       <invisible>false</invisible>
       <ParentLocation href="/content/locations/1/5/73" media-type="application/vnd.ez.api.Location+xml"/>
       <pathString>/1/5/73/133</pathString>
-      <subLocationModificationDate>2001-01-01T12:45:00</subLocationModificationDate>
       <depth>4</depth>
       <childCount>0</childCount>
       <remoteId>remoteId-qwert567</remoteId>
@@ -1805,7 +1808,6 @@ XML Example
       <invisible>true</invisible>
       <ParentLocation href="/content/locations/1/5/73" media-type="application/vnd.ez.api.Location+xml"/>
       <pathString>/1/5/73/133</pathString>
-      <subLocationModificationDate>2001-01-01T12:45:00</subLocationModificationDate>
       <depth>4</depth>
       <childCount>0</childCount>
       <remoteId>remoteId-qwert999</remoteId>
@@ -2897,18 +2899,41 @@ Create Url Alias
     :401: If the user is not authorized to create an url alias
     :403: If an url alias same identifier already exists
 
-List UrlAliases
-```````````````
-:Resource: /content/urlaliases
+List UrlAliases for location
+````````````````````````````
+:Resource: /content/locations/<path>/urlaliases
 :Method: GET
-:Description: Returns a list of url aliases
+:Description: Returns the list of url aliases for a location
 :Parameters:
-    :type:  location or global
-    :custom: in the case of type=location this flag indicates wether autogenerated (false) or manual url aliases (true) should be returned. 
+    :custom: (default true) this flag indicates wether autogenerated (false) or manual url aliases (true) should be returned. 
 :Headers:
     :Accept:
-         :application/vnd.ez.api.UrlAliasList+xml:  if set the url alias list is returned in xml format (see UrlAlias_)
-         :application/vnd.ez.api.UrlAliasList+json:  if set the url alias list is returned in json format (see UrlAlias_)
+         :application/vnd.ez.api.UrlAliasRefList+xml:  if set the url alias list contains only references and is returned in xml format (see UrlAlias_)
+         :application/vnd.ez.api.UrlAliasRefList+json:  if set the url alias list contains only references is and returned in json format (see UrlAlias_)
+:Response:
+ 
+.. code:: http
+
+          HTTP/1.1 200 OK
+          Content-Type: <depending on accept header>
+          Content-Length: <length>
+.. parsed-literal::
+          UrlAlias_  
+
+:Error Codes:
+    :401: If the user has no permission to read urlaliases
+    :401: If the location was not found
+
+
+List Global UrlAliases
+``````````````````````
+:Resource: /content/urlaliases
+:Method: GET
+:Description: Returns the list of url global aliases
+:Headers:
+    :Accept:
+         :application/vnd.ez.api.UrlAliasRefList+xml:  if set the url alias list contains only references and is returned in xml format (see UrlAlias_)
+         :application/vnd.ez.api.UrlAliasRefList+json:  if set the url alias list contains only references is and returned in json format (see UrlAlias_)
 :Response:
  
 .. code:: http
@@ -2999,9 +3024,6 @@ List UrlWildcards
 :Resource: /content/urlwildcards
 :Method: GET
 :Description: Returns a list of url wildcards
-:Parameters:
-    :type:  location or global
-    :custom: in the case of type=location this flag indicates wether autogenerated (false) or manual url wildcards (true) should be returned. 
 :Headers:
     :Accept:
          :application/vnd.ez.api.UrlWildcardList+xml:  if set the url wildcard list is returned in xml format (see UrlWildcard_)
@@ -3577,7 +3599,7 @@ List Content Types
 :Parameters:
     :identifier: retrieves the content type for the given identifer
     :remoteId: retieves the content type for the given remoteId 
-    :limit:    only <limit> items will be returned started by offset
+    :limit:    only <limit> items will be returned started by offset 
     :offset:   offset of the result set
     :orderby:   one of (name | lastmodified)
     :sort:      one of (asc|desc)
@@ -4112,14 +4134,11 @@ Load User Groups
 ````````````````
 :Resource: /user/groups
 :Method: GET
-:Description: loads a user groups 
+:Description: Load user groups for either an id or remoteId or role.
 :Parameters: 
     :roleId: lists user groups assigned to the given role
+    :id: retieves the user group for the given Id 
     :remoteId: retieves the user group for the given remoteId 
-    :limit:    only <limit> items will be returned started by offset
-    :offset:   offset of the result set
-    :orderby:   one of (name | lastmodified)
-    :sort:      one of (asc|desc)
 :Headers:
     :Accept:
          :application/vnd.ez.api.UserGroupList+xml:  if set the user group list returned in xml format (see UserGroup_)
@@ -4644,14 +4663,10 @@ List Users
 ``````````
 :Resource: /user/users
 :Method: GET
-:Description: List users
+:Description: Load users either for a given remoteId or role
 :Parameters: 
     :roleId: lists users assigned to the given role
     :remoteId: retieves the user for the given remoteId 
-    :limit:    only <limit> items will be returned started by offset
-    :offset:   offset of the result set
-    :orderby:   one of (name | lastmodified)
-    :sort:      one of (asc|desc)
 :Headers:
     :Accept:
          :application/vnd.ez.api.UserList+xml:  if set the user list returned in xml format (see User_)
@@ -5077,6 +5092,7 @@ Load Roles
 :Method: GET
 :Description: Returns a list of all roles
 :Parameters: 
+    :identifier: Restricts the result to a list containing the role with the given identifier. If the role is not found an empty list is returned.
     :limit:    only <limit> items will be returned started by offset
     :offset:   offset of the result set
 :Headers:
@@ -5158,7 +5174,7 @@ Delete Role
 ```````````
 :Resource: /user/roles/<ID>
 :Method: DELETE
-:Description: the given role is deleted
+:Description: the given role and all assignments to users or user groups are deleted
 :Response: 
 
 .. code:: http
@@ -5166,8 +5182,7 @@ Delete Role
         HTTP/1.1 204 No Content
 
 :Error Codes:
-    :401: If the user is not authorized to delete this content type
-    :403: If the role is assigned to a user or user group
+    :401: If the user is not authorized to delete this role
 
 Load Roles for User or User Group
 `````````````````````````````````
@@ -5274,7 +5289,6 @@ Assign Role to User or User Group
 
 :Error Codes:
     :401: If the user is not authorized to assign this role
-    :403: If the role is already assigned to the user or user group
 
 XML Example
 '''''''''''
@@ -7005,15 +7019,6 @@ Location XML Schema
                   </xsd:documentation>
                 </xsd:annotation>
               </xsd:element>
-              <xsd:element name="subLocationModificationDate"
-                type="xsd:dateTime">
-                <xsd:annotation>
-                  <xsd:documentation>
-                    Timestamp of the latest update of a
-                    content object in a sub location.
-                  </xsd:documentation>
-                </xsd:annotation>
-              </xsd:element>
               <xsd:element name="depth" type="xsd:int">
                 <xsd:annotation>
                   <xsd:documentation>
@@ -7123,15 +7128,6 @@ Trash XML Schema
                   </xsd:documentation>
                 </xsd:annotation>
               </xsd:element>
-              <xsd:element name="subLocationModificationDate"
-                type="xsd:dateTime">
-                <xsd:annotation>
-                  <xsd:documentation>
-                    Timestamp of the latest update of a
-                    content object in a sub location.
-                  </xsd:documentation>
-                </xsd:annotation>
-              </xsd:element>
               <xsd:element name="depth" type="xsd:int">
                 <xsd:annotation>
                   <xsd:documentation>
@@ -7199,7 +7195,7 @@ UrlAlias XML Schema
             <xsd:sequence>
               <xsd:choice>
                 <xsd:element name="location" type="ref" />
-                <xsd:element name="url" type="xsd:string" />
+                <xsd:element name="resource" type="xsd:string" />
               </xsd:choice>
               <xsd:element name="path" type="xsd:string" />
               <xsd:element name="languageCodes" type="xsd:string" />
@@ -7219,11 +7215,17 @@ UrlAlias XML Schema
             minOccurs="0" maxOccurs="unbounded" />
         </xsd:sequence>
       </xsd:complexType>
-      <xsd:complexType name="vnd.ez.api.UrlAliasCreate">
+      <xsd:complexType name="vnd.ez.api.UrlAliasRefList">
+        <xsd:sequence>
+          <xsd:element name="UrlAlias" type="ref"
+            minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:complexType>
+       <xsd:complexType name="vnd.ez.api.UrlAliasCreate">
         <xsd:sequence>
           <xsd:choice>
             <xsd:element name="location" type="ref" />
-            <xsd:element name="url" type="xsd:string" />
+            <xsd:element name="resource" type="xsd:string" />
           </xsd:choice>
           <xsd:element name="resource" type="xsd:string" />
           <xsd:element name="path" type="xsd:string" />
@@ -8795,12 +8797,6 @@ Role XML Schema
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-          <xsd:element name="mainLanguageCode" type="xsd:string"
-            minOccurs="0" />
-          <xsd:element name="names" type="multiLanguageValuesType"
-            minOccurs="0" />
-          <xsd:element name="descriptions" type="multiLanguageValuesType"
-            minOccurs="0" />
         </xsd:all>
       </xsd:complexType>
 
@@ -8815,12 +8811,6 @@ Role XML Schema
                   </xsd:documentation>
                 </xsd:annotation>
               </xsd:element>
-              <xsd:element name="mainLanguageCode" type="xsd:string"
-                minOccurs="0" />
-              <xsd:element name="names" type="multiLanguageValuesType"
-                minOccurs="0" />
-              <xsd:element name="descriptions" type="multiLanguageValuesType"
-                minOccurs="0" />
               <xsd:element name="Policies" type="ref" />
             </xsd:all>
           </xsd:extension>

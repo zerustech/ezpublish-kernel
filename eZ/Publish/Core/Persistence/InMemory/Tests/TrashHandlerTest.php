@@ -174,7 +174,7 @@ class TrashHandlerTest extends HandlerTest
      */
     public function testLoad()
     {
-        $trashed = $this->trashHandler->trash( $this->locations[0]->id );
+        $trashed = $this->trashHandler->trashSubtree( $this->locations[0]->id );
         $trashedId = $trashed->id;
         unset( $trashed );
 
@@ -182,9 +182,6 @@ class TrashHandlerTest extends HandlerTest
         self::assertInstanceOf( 'eZ\\Publish\\SPI\\Persistence\\Content\\Location\\Trashed', $trashed );
         foreach ( $this->locations[0] as $property => $value )
         {
-            if ( $property === 'modifiedSubLocation' )
-                continue;
-
             self::assertEquals( $value, $trashed->$property, "Property {$property} did not match");
         }
     }

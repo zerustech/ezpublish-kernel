@@ -10,7 +10,8 @@
 namespace eZ\Publish\API\Repository\Tests\FieldType;
 use eZ\Publish\Core\FieldType\XmlText\Value as XmlTextValue,
     eZ\Publish\Core\FieldType\XmlText\Type as XmlTextType,
-    eZ\Publish\API\Repository\Values\Content\Field;
+    eZ\Publish\API\Repository\Values\Content\Field,
+    DOMDocument;
 
 /**
  * Integration test for use field type
@@ -18,8 +19,39 @@ use eZ\Publish\Core\FieldType\XmlText\Value as XmlTextValue,
  * @group integration
  * @group field-type
  */
-class XmlTextIntergrationTest extends BaseIntegrationTest
+class XmlTextIntegrationTest extends BaseIntegrationTest
 {
+    /**
+     * @var \DOMDocument
+     */
+    private $createdDOMValue;
+
+    private $updatedDOMValue;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->createdDOMValue = new DOMDocument;
+        $this->createdDOMValue->loadXML(
+<<<EOT
+<?xml version="1.0" encoding="utf-8"?>
+<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
+<paragraph>Example</paragraph>
+</section>
+EOT
+        );
+
+        $this->updatedDOMValue = new DOMDocument;
+        $this->updatedDOMValue->loadXML(
+<<<EOT
+<?xml version="1.0" encoding="utf-8"?>
+<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
+<paragraph>Example 2</paragraph>
+</section>
+EOT
+        );
+    }
+
     /**
      * Get name of tested field tyoe
      *
@@ -113,12 +145,16 @@ class XmlTextIntergrationTest extends BaseIntegrationTest
      */
     public function getValidCreationFieldData()
     {
-        return new XmlTextValue(
-            '<?xml version="1.0" encoding="utf-8"?>
+        $doc = new DOMDocument;
+        $doc->loadXML(
+<<<EOT
+<?xml version="1.0" encoding="utf-8"?>
 <section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
 <paragraph>Example</paragraph>
-</section>'
+</section>
+EOT
         );
+        return new XmlTextValue( $doc );
     }
 
     /**
@@ -139,10 +175,7 @@ class XmlTextIntergrationTest extends BaseIntegrationTest
 
         $this->assertPropertiesCorrect(
             array(
-                'text' => '<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-<paragraph>Example</paragraph>
-</section>',
+                'xml' => $this->createdDOMValue
             ),
             $field->value
         );
@@ -186,12 +219,7 @@ class XmlTextIntergrationTest extends BaseIntegrationTest
      */
     public function getValidUpdateFieldData()
     {
-        return new XmlTextValue(
-            '<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-<paragraph>Example 2</paragraph>
-</section>'
-        );
+        return new XmlTextValue( $this->updatedDOMValue );
     }
 
     /**
@@ -210,10 +238,7 @@ class XmlTextIntergrationTest extends BaseIntegrationTest
 
         $this->assertPropertiesCorrect(
             array(
-                'text' => '<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-<paragraph>Example 2</paragraph>
-</section>',
+                'xml' => $this->updatedDOMValue
             ),
             $field->value
         );
@@ -262,10 +287,7 @@ class XmlTextIntergrationTest extends BaseIntegrationTest
 
         $this->assertPropertiesCorrect(
             array(
-                'text' => '<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-<paragraph>Example</paragraph>
-</section>',
+                'xml' => $this->createdDOMValue
             ),
             $field->value
         );
@@ -293,15 +315,19 @@ class XmlTextIntergrationTest extends BaseIntegrationTest
      */
     public function provideToHashData()
     {
-        $xmlData = '<?xml version="1.0" encoding="utf-8"?>
+        $xml = new DOMDocument;
+        $xml->loadXML(
+<<<EOT
+<?xml version="1.0" encoding="utf-8"?>
 <section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-<paragraph>Simple value</paragraph>
-</section>';
-
+<paragraph>Example</paragraph>
+</section>
+EOT
+        );
         return array(
             array(
-                new XmlTextValue( $xmlData ),
-                $xmlData,
+                new XmlTextValue( $xml ),
+                array ( 'xml' => $xml->saveXML() ),
             ),
         );
     }
@@ -317,11 +343,14 @@ class XmlTextIntergrationTest extends BaseIntegrationTest
     {
         return array(
             array(
-                '<?xml version="1.0" encoding="utf-8"?>
+                array(
+                    'xml' => '<?xml version="1.0" encoding="utf-8"?>
 <section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
 <paragraph>Foobar</paragraph>
-</section>'
-            ),
+</section>
+'
+                )
+            )
         );
     }
 
@@ -341,6 +370,34 @@ class XmlTextIntergrationTest extends BaseIntegrationTest
             'eZ\\Publish\\Core\\FieldType\\XmlText\\Value',
             $xmlTextValue
         );
-        $this->assertEquals( $hash, $xmlTextValue->text );
+        $this->assertInstanceOf( 'DOMDocument', $xmlTextValue->xml );
+
+        $this->assertEquals( $hash['xml'], (string)$xmlTextValue );
+    }
+
+    public function providerForTestIsEmptyValue()
+    {
+        $doc = new DOMDocument;
+        $doc->loadXML( "<section></section>" );
+
+        return array(
+            array( new XmlTextValue ),
+            array( new XmlTextValue( $doc ) ),
+        );
+    }
+
+    public function providerForTestIsNotEmptyValue()
+    {
+        $doc = new DOMDocument;
+        $doc->loadXML( "<section> </section>" );
+        $doc2 = new DOMDocument;
+        $doc2->loadXML( "<section><paragraph></paragraph></section>" );
+        return array(
+            array(
+                $this->getValidCreationFieldData()
+            ),
+            array( new XmlTextValue( $doc ) ),
+            array( new XmlTextValue( $doc2 ) ),
+        );
     }
 }

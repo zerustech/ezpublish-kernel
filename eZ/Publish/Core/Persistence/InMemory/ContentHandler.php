@@ -54,6 +54,8 @@ class ContentHandler implements ContentHandlerInterface
         /** @var \eZ\Publish\SPI\Persistence\Content $contentObj */
         $contentObj = $this->backend->create( 'Content', array( '_currentVersionNo' => 1 ) );
         /** @var \eZ\Publish\SPI\Persistence\Content\ContentInfo $contentInfo */
+        $mainLanguageCode = $this->handler->contentLanguageHandler()
+            ->load( $content->initialLanguageId )->languageCode;
         $contentInfo = $this->backend->create(
             'Content\\ContentInfo',
             array(
@@ -63,13 +65,15 @@ class ContentHandler implements ContentHandlerInterface
                 'ownerId' => $content->ownerId,
                 'status' => VersionInfo::STATUS_DRAFT,
                 'currentVersionNo' => 1,
+                'name' => isset( $content->name[$mainLanguageCode] )
+                    ? $content->name[$mainLanguageCode]
+                    : null,
                 // Published and modified timestamps for drafts is 0
                 'modificationDate' => 0,
                 'publicationDate' => 0,
                 'alwaysAvailable' => $content->alwaysAvailable,
                 'remoteId' => $content->remoteId,
-                'mainLanguageCode' => $this->handler->contentLanguageHandler()
-                    ->load( $content->initialLanguageId )->languageCode
+                'mainLanguageCode' => $mainLanguageCode
             ),
             true
         );
@@ -115,16 +119,19 @@ class ContentHandler implements ContentHandlerInterface
                     ->load( $content->initialLanguageId )->languageCode
             )
         );
+        $locations = array();
+        foreach ( $content->locations as $location )
+        {
+            $location->contentId = $contentInfo->id;
+            $location->contentVersion = 1;
+            $locations[] = $this->handler->locationHandler()->create( $location );
+        }
+        if ( count( $locations ) )
+        {
+            $contentInfo->mainLocationId = $locations[0]->id;
+        }
         $versionInfo->contentInfo = $contentInfo;
         $contentObj->versionInfo = $versionInfo;
-
-        $locationHandler = $this->handler->locationHandler();
-        foreach ( $content->locations as $locationStruct )
-        {
-            $locationStruct->contentId = $contentInfo->id;
-            $locationStruct->contentVersion = $contentInfo->currentVersionNo;
-            $contentObj->locations[] = $locationHandler->create( $locationStruct );
-        }
         return $contentObj;
     }
 
@@ -299,13 +306,7 @@ class ContentHandler implements ContentHandlerInterface
     {
         $res = $this->backend->find(
             'Content',
-            array( 'id' => $id ),
-            array(
-                'locations' => array(
-                    'type' => 'Content\\Location',
-                    'match' => array( 'contentId' => 'id' )
-                )
-            )
+            array( 'id' => $id )
         );
         if ( empty( $res ) )
             throw new NotFound( "Content", "contentId:{$id}" );
@@ -464,22 +465,6 @@ class ContentHandler implements ContentHandlerInterface
             throw new NotFound( "Version", "contentId: $contentId, versionNo: $version" );
         }
         return $this->backend->update( 'Content\\VersionInfo', $versions[0]->id, array( 'status' => $status ) );
-    }
-
-    /**
-     * @see \eZ\Publish\SPI\Persistence\Content\Handler
-     */
-    public function setObjectState( $contentId, $stateGroup, $state )
-    {
-        throw new RuntimeException( '@TODO: Implement' );
-    }
-
-    /**
-     * @see \eZ\Publish\SPI\Persistence\Content\Handler
-     */
-    public function getObjectState( $contentId, $stateGroup )
-    {
-        throw new RuntimeException( '@TODO: Implement' );
     }
 
     /**

@@ -8,9 +8,7 @@
  */
 
 namespace eZ\Publish\Core\REST\Server\Controller;
-use eZ\Publish\Core\REST\Common\UrlHandler;
 use eZ\Publish\Core\REST\Common\Message;
-use eZ\Publish\Core\REST\Common\Input;
 use eZ\Publish\Core\REST\Common\Exceptions;
 use eZ\Publish\Core\REST\Server\Values;
 use eZ\Publish\Core\REST\Server\Controller as RestController;
@@ -20,6 +18,8 @@ use eZ\Publish\API\Repository\UserService;
 use eZ\Publish\API\Repository\LocationService;
 use eZ\Publish\API\Repository\Values\User\RoleCreateStruct;
 use eZ\Publish\API\Repository\Values\User\RoleUpdateStruct;
+
+use eZ\Publish\API\Repository\Exceptions\NotFoundException as APINotFoundException;
 
 /**
  * Role controller
@@ -90,9 +90,32 @@ class Role extends RestController
      */
     public function listRoles()
     {
-        return new Values\RoleList(
-            $this->roleService->loadRoles()
-        );
+        $roles = array();
+        if ( isset( $this->request->variables['identifier'] ) )
+        {
+            try
+            {
+                $role = $this->roleService->loadRoleByIdentifier( $this->request->variables['identifier'] );
+                $roles[] = $role;
+            }
+            catch ( APINotFoundException $e )
+            {
+                // Do nothing
+            }
+        }
+        else
+        {
+            $offset = isset( $this->request->variables['offset'] ) ? (int)$this->request->variables['offset'] : 0;
+            $limit = isset( $this->request->variables['limit'] ) ? (int)$this->request->variables['limit'] : -1;
+
+            $roles = array_slice(
+                $this->roleService->loadRoles(),
+                $offset >= 0 ? $offset : 0,
+                $limit >= 0 ? $limit : null
+            );
+        }
+
+        return new Values\RoleList( $roles, $this->request->path );
     }
 
     /**
@@ -104,20 +127,6 @@ class Role extends RestController
     {
         $values = $this->urlHandler->parse( 'role', $this->request->path );
         return $this->roleService->loadRole( $values['role'] );
-    }
-
-    /**
-     * Load role by identifier
-     *
-     * @return \eZ\Publish\Core\REST\Server\Values\RoleList
-     */
-    public function loadRoleByIdentifier()
-    {
-        return new Values\RoleList(
-            array(
-                $this->roleService->loadRoleByIdentifier( $this->request->variables['identifier'] )
-            )
-        );
     }
 
     /**
@@ -143,19 +152,16 @@ class Role extends RestController
     /**
      * Delete a role by ID
      *
-     * @return \eZ\Publish\Core\REST\Server\Values\ResourceDeleted
+     * @return \eZ\Publish\Core\REST\Server\Values\NoContent
      */
     public function deleteRole()
     {
-        //@todo error handling if the role is assigned to user or user group
-        //problem being that PAPI does not specify throwing an exception in that case
-
         $values = $this->urlHandler->parse( 'role', $this->request->path );
         $this->roleService->deleteRole(
             $this->roleService->loadRole( $values['role'] )
         );
 
-        return new Values\ResourceDeleted();
+        return new Values\NoContent();
     }
 
     /**
@@ -175,7 +181,7 @@ class Role extends RestController
     /**
      * Deletes all policies from a role
      *
-     * @return \eZ\Publish\Core\REST\Server\Values\ResourceDeleted
+     * @return \eZ\Publish\Core\REST\Server\Values\NoContent
      */
     public function deletePolicies()
     {
@@ -188,7 +194,7 @@ class Role extends RestController
             $this->roleService->removePolicy( $loadedRole, $rolePolicy );
         }
 
-        return new Values\ResourceDeleted();
+        return new Values\NoContent();
     }
 
     /**
@@ -279,7 +285,7 @@ class Role extends RestController
     /**
      * Delete a policy from role
      *
-     * @return \eZ\Publish\Core\REST\Server\Values\ResourceDeleted
+     * @return \eZ\Publish\Core\REST\Server\Values\NoContent
      */
     public function deletePolicy()
     {
@@ -300,7 +306,7 @@ class Role extends RestController
         if ( $policy !== null )
         {
             $this->roleService->removePolicy( $role, $policy );
-            return new Values\ResourceDeleted();
+            return new Values\NoContent();
         }
 
         throw new Exceptions\NotFoundException( "Policy not found: '{$this->request->path}'." );
@@ -313,9 +319,6 @@ class Role extends RestController
      */
     public function assignRoleToUser()
     {
-        //@todo error handling if the role is already assigned to user
-        //problem being that PAPI does not specify throwing an exception in this case
-
         $values = $this->urlHandler->parse( 'userRoleAssignments', $this->request->path );
 
         $roleAssignment = $this->inputDispatcher->parse(
@@ -341,9 +344,6 @@ class Role extends RestController
      */
     public function assignRoleToUserGroup()
     {
-        //@todo error handling if the role is already assigned to user group
-        //problem being that PAPI does not specify throwing an exception in this case
-
         $values = $this->urlHandler->parse( 'groupRoleAssignments', $this->request->path );
 
         $roleAssignment = $this->inputDispatcher->parse(
@@ -510,10 +510,7 @@ class Role extends RestController
     {
         return new RoleUpdateStruct(
             array(
-                'identifier' => $createStruct->identifier,
-                'mainLanguageCode' => $createStruct->mainLanguageCode,
-                'names' => $createStruct->names,
-                'descriptions' => $createStruct->descriptions
+                'identifier' => $createStruct->identifier
             )
         );
     }

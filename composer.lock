@@ -1,5 +1,5 @@
 {
-    "hash": "fb8cdb8ae62d695386af4e9489e15007",
+    "hash": "97ff2c23e6daea8d021553f1b641ee0f",
     "packages": [
         {
             "name": "doctrine/common",
@@ -56,7 +56,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -71,26 +71,95 @@
             ]
         },
         {
+            "name": "kriswallsmith/buzz",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "http://github.com/kriswallsmith/Buzz.git",
+                "reference": "988bf14201ffbed940f23b42f87302e6adec4c21"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/kriswallsmith/Buzz/archive/988bf14201ffbed940f23b42f87302e6adec4c21.zip",
+                "reference": "988bf14201ffbed940f23b42f87302e6adec4c21",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "suggest": {
+                "ext-curl": "*"
+            },
+            "time": "1345206213",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "Buzz": "lib/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kris Wallsmith",
+                    "email": "kris.wallsmith@gmail.com",
+                    "homepage": "http://kriswallsmith.net/"
+                }
+            ],
+            "description": "Lightweight HTTP client",
+            "homepage": "https://github.com/kriswallsmith/Buzz",
+            "keywords": [
+                "curl",
+                "http client"
+            ]
+        },
+        {
+            "name": "qafoo/rmf",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "git://github.com/Qafoo/REST-Micro-Framework.git",
+                "reference": "1.0.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/Qafoo/REST-Micro-Framework/zipball/1.0.0",
+                "reference": "1.0.0",
+                "shasum": ""
+            },
+            "time": "2012-09-03 11:24:11",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Qafoo\\RMF": "src/main/"
+                }
+            },
+            "description": "Very simple VC framework which makes it easy to build HTTP applications / REST webservices"
+        },
+        {
             "name": "symfony-cmf/routing",
             "version": "dev-master",
             "target-dir": "Symfony/Cmf/Component/Routing",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony-cmf/Routing",
-                "reference": "f43358ce7877ebb63800f10ca7a503a38eb52fe5"
+                "reference": "ad024d9d3125a1ee30c391d4d12e33bf534ac684"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony-cmf/Routing/zipball/f43358ce7877ebb63800f10ca7a503a38eb52fe5",
-                "reference": "f43358ce7877ebb63800f10ca7a503a38eb52fe5",
+                "url": "https://github.com/symfony-cmf/Routing/zipball/ad024d9d3125a1ee30c391d4d12e33bf534ac684",
+                "reference": "ad024d9d3125a1ee30c391d4d12e33bf534ac684",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
-                "symfony/routing": "2.1.*",
-                "symfony/http-kernel": "2.1.*"
+                "symfony/routing": ">=2.1,<2.3-dev",
+                "symfony/http-kernel": ">=2.1,<2.3-dev"
             },
-            "time": "1348780131",
+            "time": "1351276175",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -121,16 +190,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "2.1.x-dev",
+            "version": "v2.1.3",
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "f62fa8a79edc94240a7fd3ef3096ddd789eced4f"
+                "reference": "v2.1.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/zipball/f62fa8a79edc94240a7fd3ef3096ddd789eced4f",
-                "reference": "f62fa8a79edc94240a7fd3ef3096ddd789eced4f",
+                "url": "https://github.com/symfony/symfony/zipball/v2.1.3",
+                "reference": "v2.1.3",
                 "shasum": ""
             },
             "require": {
@@ -177,16 +246,16 @@
                 "doctrine/orm": ">=2.2.3,<2.4-dev",
                 "doctrine/data-fixtures": "1.0.*",
                 "propel/propel1": "dev-master",
-                "monolog/monolog": "dev-master"
+                "monolog/monolog": "1.*"
             },
-            "time": "1348749927",
+            "time": "2012-10-30 01:14:14",
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.1-dev"
                 }
             },
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Symfony": "src/",
@@ -218,22 +287,22 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "b8c917972f74da88f0e930ea32a90566739d87ac"
+                "reference": "0879472d7ecfd6b5714b066da152e005d7781b5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/zipball/b8c917972f74da88f0e930ea32a90566739d87ac",
-                "reference": "b8c917972f74da88f0e930ea32a90566739d87ac",
+                "url": "https://github.com/fabpot/Twig/zipball/0879472d7ecfd6b5714b066da152e005d7781b5b",
+                "reference": "0879472d7ecfd6b5714b066da152e005d7781b5b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1348667791",
+            "time": "1351620822",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.10-dev"
+                    "dev-master": "1.11-dev"
                 }
             },
             "installation-source": "source",
@@ -1452,7 +1521,7 @@
                 "reference": "1.1rc1",
                 "shasum": ""
             },
-            "time": "2008-12-15 12:05:06",
+            "time": "2008-12-15 04:05:06",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1506,18 +1575,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ezsystems/ezpublish.git",
-                "reference": "430cb39aa3454f962ea055c51efbf341afd46272"
+                "reference": "4ccd3f0b11691ecd6a2ef66cea6a143c2bc5554a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/ezsystems/ezpublish/zipball/430cb39aa3454f962ea055c51efbf341afd46272",
-                "reference": "430cb39aa3454f962ea055c51efbf341afd46272",
+                "url": "https://github.com/ezsystems/ezpublish/zipball/4ccd3f0b11691ecd6a2ef66cea6a143c2bc5554a",
+                "reference": "4ccd3f0b11691ecd6a2ef66cea6a143c2bc5554a",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "1348754029",
+            "time": "1351872174",
             "type": "library",
             "installation-source": "source",
             "description": "eZ Publish LegacyStack (4.x)",
@@ -1543,7 +1612,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-08-25 12:49:29",
+            "time": "2012-08-25 05:49:29",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1555,34 +1624,6 @@
                 "BSD"
             ],
             "homepage": "http://vfs.bovigo.org/"
-        },
-        {
-            "name": "qafoo/rmf",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "http://github.com/Qafoo/REST-Micro-Framework",
-                "reference": "1.0.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/Qafoo/REST-Micro-Framework/zipball/1.0.0",
-                "reference": "1.0.0",
-                "shasum": ""
-            },
-            "time": "1346696651",
-            "type": "library",
-            "installation-source": "source",
-            "autoload": {
-                "psr-0": {
-                    "Qafoo\\RMF": "src/main/"
-                }
-            },
-            "description": "Very simple VC framework which makes it easy to build HTTP applications / REST webservices",
-            "support": {
-                "source": "https://github.com/Qafoo/REST-Micro-Framework/tree/1.0.0",
-                "issues": "https://github.com/Qafoo/REST-Micro-Framework/issues"
-            }
         }
     ],
     "aliases": [
@@ -1607,7 +1648,7 @@
         "zetacomponents/signal-slot": 20,
         "zetacomponents/system-information": 20,
         "zetacomponents/webdav": 5,
-        "qafoo/rmf": 20,
+        "kriswallsmith/buzz": 20,
         "ezsystems/ezpublish-legacy": 20
     }
 }

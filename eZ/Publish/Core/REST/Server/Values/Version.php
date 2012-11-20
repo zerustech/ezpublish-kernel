@@ -9,7 +9,7 @@
 
 namespace eZ\Publish\Core\REST\Server\Values;
 
-use eZ\Publish\API\Repository\Values\Content\VersionInfo;
+use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\Core\REST\Common\Value as RestValue;
 
 /**
@@ -18,17 +18,26 @@ use eZ\Publish\Core\REST\Common\Value as RestValue;
 class Version extends RestValue
 {
     /**
-     * Version info
-     *
-     * @var \eZ\Publish\API\Repository\Values\Content\VersionInfo
+     * @var \eZ\Publish\API\Repository\Values\Content\Content
      */
-    public $versionInfo;
+    public $content;
 
     /**
-     * @param \eZ\Publish\API\Repository\Values\Content\VersionInfo $versionInfo
+     * Path used to load this content
+     *
+     * @var string
      */
-    public function __construct( VersionInfo $versionInfo )
+    public $path;
+
+    /**
+     * Construct
+     *
+     * @param \eZ\Publish\API\Repository\Values\Content\Content $content
+     * @param string $path
+     */
+    public function __construct( Content $content, $path = null )
     {
-        $this->versionInfo = $versionInfo;
+        $this->content = $content;
+        $this->path = $path;
     }
 }

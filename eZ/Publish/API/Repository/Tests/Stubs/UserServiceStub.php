@@ -315,12 +315,21 @@ class UserServiceStub implements UserService
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException if a user group was not found
      * @throws \eZ\Publish\API\Repository\Exceptions\ContentFieldValidationException if a field in the $userCreateStruct is not valid
      * @throws \eZ\Publish\API\Repository\Exceptions\ContentValidationException if a required field is missing
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if a user with provided login already exists
      */
     public function createUser( UserCreateStruct $userCreateStruct, array $parentGroups )
     {
         if ( false === $this->repository->hasAccess( 'content', 'create' ) )
         {
             throw new UnauthorizedExceptionStub( 'What error code should be used?' );
+        }
+
+        foreach ( $this->users as $user )
+        {
+            if ( $user->login == $userCreateStruct->login )
+            {
+                throw new InvalidArgumentExceptionStub( 'What error code should be used?' );
+            }
         }
 
         $contentService = $this->repository->getContentService();
@@ -534,12 +543,11 @@ class UserServiceStub implements UserService
     /**
      * Assigns a new user group to the user
      *
-     * If the user is already in the given user group this method does nothing.
-     *
      * @param \eZ\Publish\API\Repository\Values\User\User $user
      * @param \eZ\Publish\API\Repository\Values\User\UserGroup $userGroup
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the authenticated user is not allowed to assign the user group to the user
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the user is already in the given user group
      */
     public function assignUserToUserGroup( User $user, UserGroup $userGroup )
     {
@@ -547,6 +555,11 @@ class UserServiceStub implements UserService
         {
             throw new UnauthorizedExceptionStub( 'What error code should be used?' );
         }
+        if ( true === isset( $this->user2groups[$user->id][$userGroup->id] ) )
+        {
+            throw new InvalidArgumentExceptionStub( 'What error code should be used?' );
+        }
+
         if ( false === isset( $this->user2groups[$user->id] ) )
         {
             $this->user2groups[$user->id] = array();
@@ -645,7 +658,7 @@ class UserServiceStub implements UserService
 
         $groupIds = array_keys( $this->user2groups[$userId] );
         $userGroups = array();
-        while ( count( $groupIds ) > 0 )
+        while ( !empty( $groupIds ) )
         {
             $groupId = array_pop( $groupIds );
 

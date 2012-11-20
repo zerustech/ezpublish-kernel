@@ -38,7 +38,7 @@ class StateLimitationType implements SPILimitationTypeInterface
      */
     public function acceptValue( APILimitationValue $limitationValue, Repository $repository )
     {
-        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( 'acceptValue' );
+        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( __METHOD__ );
     }
 
     /**
@@ -94,7 +94,7 @@ class StateLimitationType implements SPILimitationTypeInterface
         $contentStateService = $repository->getObjectStateService();
         $stateGroups = $contentStateService->loadObjectStateGroups();
         foreach ( $stateGroups as $stateGroup )
-            $objectStateIdArray[] = $contentStateService->getObjectState( $object, $stateGroup )->id;
+            $objectStateIdArray[] = $contentStateService->getContentState( $object, $stateGroup )->id;
 
         $intersect = array_intersect( $value->limitationValues, $objectStateIdArray );
         return !empty( $intersect );
@@ -110,7 +110,14 @@ class StateLimitationType implements SPILimitationTypeInterface
      */
     public function getCriterion( APILimitationValue $value, Repository $repository )
     {
-        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( 'getCriterion' );
+        if ( empty( $value->limitationValues )  )// no limitation values
+            throw new \RuntimeException( "\$value->limitationValues is empty, it should not have been stored in the first place" );
+
+        if ( !isset( $value->limitationValues[1] ) )// 1 limitation value: EQ operation
+            return new Criterion\ObjectStateId( $value->limitationValues[0] );
+
+        // several limitation values: IN operation
+        return new Criterion\ObjectStateId( $value->limitationValues );
     }
 
     /**
@@ -123,6 +130,6 @@ class StateLimitationType implements SPILimitationTypeInterface
      */
     public function valueSchema( Repository $repository )
     {
-        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( 'valueSchema' );
+        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( __METHOD__ );
     }
 }

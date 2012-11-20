@@ -421,16 +421,26 @@ class Backend
                 if ( !in_array( $item[$matchProperty], $matchValue ) )
                     return false;
             }
-            // Use of wildcards like in SQL, at the end of $matchValue
-            // i.e. /1/2/% (for pathString)
-            else if ( ( $wildcardPos = strpos( $matchValue, '%' ) ) > 0 && ( $wildcardPos === strlen( $matchValue ) - 1 ) )
+            // Use of wildcards like in SQL, at the start and/or end of $matchValue
+            // i.e. %/5/% (for pathString)
+            else if ( $ends = substr( $matchValue, -1 ) === "%" || substr( $matchValue, 0, 1 ) === "%" )
             {
-                // Returns true if $item[$matchProperty] begins with $matchValue (minus '%' wildcard char)
-                $matchValue = substr( $matchValue, 0, -1 );
-                $pos = strpos( $item[$matchProperty], $matchValue );
+                $starts = substr( $matchValue, 0, 1 ) === "%";
+                if ( $starts ) $matchValue = substr( $matchValue, 1 );
+                if ( $ends ) $matchValue = substr( $matchValue, 0, -1 );
+
                 if ( $matchValue === $item[$matchProperty] )
                     return false;
-                if ( $pos !== 0 )
+
+                $pos = strpos( $item[$matchProperty], $matchValue );
+
+                if ( $pos === false )
+                    return false;
+
+                if ( !$starts && $pos !== 0 )
+                    return false;
+
+                if ( !$ends && $pos !== ( strlen( $item[$matchProperty] ) - strlen( $matchValue ) ) )
                     return false;
             }
             // plain equal match
@@ -508,6 +518,17 @@ class Backend
                         $value->$propertyName = $propertyValue;
                     }
                 }
+                else if ( $type === "Content\\UrlAlias" && $prop === "id" )
+                {
+                    // id should be <parent>-<hash>, but as there is no property for link in VO and we need it in handler,
+                    // returning everything here
+                    // Note: before returning in handler id must be overwritten with <parent>-<hash>
+                    $value = array(
+                        "id" => $data["id"],
+                        "parent" => $data["parent"],
+                        "link" => $data["link"],
+                    );
+                }
                 else
                 {
                     $value = $data[$prop];
@@ -536,6 +557,9 @@ class Backend
     {
         foreach ( $joinInfo as $property => $info )
         {
+            if ( isset( $info['skip'] ) && $info['skip'] )
+                continue;
+
             if ( isset( $info['single'] ) && $info['single'] )
             {
                 $value =& $item->$property;

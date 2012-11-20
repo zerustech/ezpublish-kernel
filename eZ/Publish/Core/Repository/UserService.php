@@ -400,6 +400,7 @@ class UserService implements UserServiceInterface
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the authenticated user is not allowed to move the user group
      * @throws \eZ\Publish\API\Repository\Exceptions\ContentFieldValidationException if a field in the $userCreateStruct is not valid
      * @throws \eZ\Publish\API\Repository\Exceptions\ContentValidationException if a required field is missing or set to an empty value
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if a user with provided login already exists
      */
     public function createUser( APIUserCreateStruct $userCreateStruct, array $parentGroups )
     {
@@ -420,6 +421,16 @@ class UserService implements UserServiceInterface
 
         if ( !is_bool( $userCreateStruct->enabled ) )
             throw new InvalidArgumentValue( "enabled", $userCreateStruct->enabled, "UserCreateStruct" );
+
+        try
+        {
+            $this->userHandler->loadByLogin( $userCreateStruct->login );
+            throw new InvalidArgumentException( "userCreateStruct", "User with provided login already exists" );
+        }
+        catch ( NotFoundException $e )
+        {
+            // Do nothing
+        }
 
         $contentService = $this->repository->getContentService();
         $locationService = $this->repository->getLocationService();
@@ -546,8 +557,34 @@ class UserService implements UserServiceInterface
         if ( !is_numeric( $userId ) )
             throw new InvalidArgumentValue( "userId", $userId );
 
-        $spiUser = $this->userHandler->load( $userId );
-        return $this->buildDomainUserObject( $spiUser );
+        /** @var \eZ\Publish\API\Repository\Values\Content\Content $content */
+        $content = $this->repository->getContentService()->internalLoadContent( $userId );
+        // Get spiUser value from Field Value
+        foreach ( $content->getFields() as $field )
+        {
+            if ( !$field->value instanceof UserValue )
+                continue;
+
+            /** @var \eZ\Publish\Core\FieldType\User\Value $value */
+            $value = $field->value;
+            $spiUser = new SPIUser();
+            $spiUser->id = $value->contentId;
+            $spiUser->login = $value->login;
+            $spiUser->email = $value->email;
+            $spiUser->hashAlgorithm = $value->passwordHashType;
+            $spiUser->passwordHash = $value->passwordHash;
+            $spiUser->isEnabled = $value->enabled;
+            $spiUser->maxLogin = $value->maxLogin;
+            break;
+        }
+
+        // If for some reason not found, load it
+        if ( !isset( $spiUser ) )
+        {
+            $spiUser = $this->userHandler->load( $userId );
+        }
+
+        return $this->buildDomainUserObject( $spiUser, $content );
     }
 
     /**
@@ -579,6 +616,9 @@ class UserService implements UserServiceInterface
 
         if ( !is_string( $password ) || empty( $password ) )
             throw new InvalidArgumentValue( "password", $password );
+
+        // Randomize login time to protect against timing attacks
+        usleep( mt_rand( 0, 30000 ) );
 
         $spiUsers = $this->userHandler->loadByLogin( $login );
 
@@ -753,12 +793,11 @@ class UserService implements UserServiceInterface
     /**
      * Assigns a new user group to the user
      *
-     * If the user is already in the given user group this method does nothing.
-     *
      * @param \eZ\Publish\API\Repository\Values\User\User $user
      * @param \eZ\Publish\API\Repository\Values\User\UserGroup $userGroup
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the authenticated user is not allowed to assign the user group to the user
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the user is already in the given user group
      */
     public function assignUserToUserGroup( APIUser $user, APIUserGroup $userGroup )
     {
@@ -780,11 +819,15 @@ class UserService implements UserServiceInterface
         }
 
         if ( $loadedGroup->getVersionInfo()->getContentInfo()->mainLocationId === null )
-            throw new InvalidArgumentException( "userGroup", "user group has no main location or no locations" );
+        {
+            throw new BadStateException( "userGroup", "user group has no main location or no locations" );
+        }
 
         if ( in_array( $loadedGroup->getVersionInfo()->getContentInfo()->mainLocationId, $existingGroupIds ) )
+        {
             // user is already assigned to the user group
-            return;
+            throw new InvalidArgumentException( "user", "user is already in the given user group" );
+        }
 
         $locationCreateStruct = $locationService->newLocationCreateStruct(
             $loadedGroup->getVersionInfo()->getContentInfo()->mainLocationId
@@ -829,10 +872,10 @@ class UserService implements UserServiceInterface
 
         $userLocations = $locationService->loadLocations( $loadedUser->getVersionInfo()->getContentInfo() );
         if ( empty( $userLocations ) )
-            throw new InvalidArgumentException( "user", "user has no locations, cannot unassign from group" );
+            throw new BadStateException( "user", "user has no locations, cannot unassign from group" );
 
         if ( $loadedGroup->getVersionInfo()->getContentInfo()->mainLocationId === null )
-            throw new InvalidArgumentException( "userGroup", "user group has no main location or no locations, cannot unassign" );
+            throw new BadStateException( "userGroup", "user group has no main location or no locations, cannot unassign" );
 
         foreach ( $userLocations as $userLocation )
         {

@@ -450,12 +450,9 @@ function generateLocationFixture( array $fixture )
             ) ),
             'parentLocationId' => $data['parent_node_id'],
             'pathString' => $data['path_string'],
-            'modifiedSubLocationDate' => dateCreateCall( $data['modified_subnode'] ),
             'depth' => $data['depth'],
             'sortField' => $data['sort_field'],
             'sortOrder' => $data['sort_order'],
-            'childCount' => null, // Cannot be easily calculated
-
         );
         $nextId = max( $nextId, $data['node_id'] );
     }

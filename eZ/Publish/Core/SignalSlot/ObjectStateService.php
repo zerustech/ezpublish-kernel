@@ -8,7 +8,23 @@
  */
 
 namespace eZ\Publish\Core\SignalSlot;
-use \eZ\Publish\API\Repository\ObjectStateService as ObjectStateServiceInterface;
+
+use eZ\Publish\API\Repository\ObjectStateService as ObjectStateServiceInterface;
+use eZ\Publish\API\Repository\Values\ObjectState\ObjectStateCreateStruct;
+use eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroupCreateStruct;
+use eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroupUpdateStruct;
+use eZ\Publish\API\Repository\Values\ObjectState\ObjectStateUpdateStruct;
+use eZ\Publish\API\Repository\Values\ObjectState\ObjectState;
+use eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup;
+use eZ\Publish\API\Repository\Values\Content\ContentInfo;
+use eZ\Publish\Core\SignalSlot\Signal\ObjectStateService\CreateObjectStateGroupSignal;
+use eZ\Publish\Core\SignalSlot\Signal\ObjectStateService\UpdateObjectStateGroupSignal;
+use eZ\Publish\Core\SignalSlot\Signal\ObjectStateService\DeleteObjectStateGroupSignal;
+use eZ\Publish\Core\SignalSlot\Signal\ObjectStateService\CreateObjectStateSignal;
+use eZ\Publish\Core\SignalSlot\Signal\ObjectStateService\UpdateObjectStateSignal;
+use eZ\Publish\Core\SignalSlot\Signal\ObjectStateService\SetPriorityOfObjectStateSignal;
+use eZ\Publish\Core\SignalSlot\Signal\ObjectStateService\DeleteObjectStateSignal;
+use eZ\Publish\Core\SignalSlot\Signal\ObjectStateService\SetContentStateSignal;
 
 /**
  * ObjectStateService class
@@ -49,18 +65,21 @@ class ObjectStateService implements ObjectStateServiceInterface
      * Creates a new object state group
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the user is not allowed to create an object state group
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the object state group with provided identifier already exists
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroupCreateStruct $objectStateGroupCreateStruct
      *
      * @return \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup
      */
-    public function createObjectStateGroup( \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroupCreateStruct $objectStateGroupCreateStruct )
+    public function createObjectStateGroup( ObjectStateGroupCreateStruct $objectStateGroupCreateStruct )
     {
         $returnValue = $this->service->createObjectStateGroup( $objectStateGroupCreateStruct );
         $this->signalDispatcher->emit(
-            new Signal\ObjectStateService\CreateObjectStateGroupSignal( array(
-                'objectStateGroupId' => $returnValue->id,
-            ) )
+            new CreateObjectStateGroupSignal(
+                array(
+                    'objectStateGroupId' => $returnValue->id,
+                )
+            )
         );
         return $returnValue;
     }
@@ -76,8 +95,7 @@ class ObjectStateService implements ObjectStateServiceInterface
      */
     public function loadObjectStateGroup( $objectStateGroupId )
     {
-        $returnValue = $this->service->loadObjectStateGroup( $objectStateGroupId );
-        return $returnValue;
+        return $this->service->loadObjectStateGroup( $objectStateGroupId );
     }
 
     /**
@@ -90,8 +108,7 @@ class ObjectStateService implements ObjectStateServiceInterface
      */
     public function loadObjectStateGroups( $offset = 0, $limit = -1 )
     {
-        $returnValue = $this->service->loadObjectStateGroups( $offset, $limit );
-        return $returnValue;
+        return $this->service->loadObjectStateGroups( $offset, $limit );
     }
 
     /**
@@ -101,29 +118,31 @@ class ObjectStateService implements ObjectStateServiceInterface
      *
      * @return \eZ\Publish\API\Repository\Values\ObjectState\ObjectState[]
      */
-    public function loadObjectStates( \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup )
+    public function loadObjectStates( ObjectStateGroup $objectStateGroup )
     {
-        $returnValue = $this->service->loadObjectStates( $objectStateGroup );
-        return $returnValue;
+        return $this->service->loadObjectStates( $objectStateGroup );
     }
 
     /**
      * Updates an object state group
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the user is not allowed to update an object state group
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the object state group with provided identifier already exists
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroupUpdateStruct $objectStateGroupUpdateStruct
      *
      * @return \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup
      */
-    public function updateObjectStateGroup( \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup, \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroupUpdateStruct $objectStateGroupUpdateStruct )
+    public function updateObjectStateGroup( ObjectStateGroup $objectStateGroup, ObjectStateGroupUpdateStruct $objectStateGroupUpdateStruct )
     {
         $returnValue = $this->service->updateObjectStateGroup( $objectStateGroup, $objectStateGroupUpdateStruct );
         $this->signalDispatcher->emit(
-            new Signal\ObjectStateService\UpdateObjectStateGroupSignal( array(
-                'objectStateGroupId' => $objectStateGroup->id,
-            ) )
+            new UpdateObjectStateGroupSignal(
+                array(
+                    'objectStateGroupId' => $objectStateGroup->id,
+                )
+            )
         );
         return $returnValue;
     }
@@ -135,13 +154,15 @@ class ObjectStateService implements ObjectStateServiceInterface
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup
      */
-    public function deleteObjectStateGroup( \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup )
+    public function deleteObjectStateGroup( ObjectStateGroup $objectStateGroup )
     {
         $returnValue = $this->service->deleteObjectStateGroup( $objectStateGroup );
         $this->signalDispatcher->emit(
-            new Signal\ObjectStateService\DeleteObjectStateGroupSignal( array(
-                'objectStateGroupId' => $objectStateGroup->id,
-            ) )
+            new DeleteObjectStateGroupSignal(
+                array(
+                    'objectStateGroupId' => $objectStateGroup->id,
+                )
+            )
         );
         return $returnValue;
     }
@@ -153,20 +174,23 @@ class ObjectStateService implements ObjectStateServiceInterface
      * set to this state.
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the user is not allowed to create an object state
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the object state with provided identifier already exists in the same group
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateCreateStruct $objectStateCreateStruct
      *
      * @return \eZ\Publish\API\Repository\Values\ObjectState\ObjectState
      */
-    public function createObjectState( \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup, \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateCreateStruct $objectStateCreateStruct )
+    public function createObjectState( ObjectStateGroup $objectStateGroup, ObjectStateCreateStruct $objectStateCreateStruct )
     {
         $returnValue = $this->service->createObjectState( $objectStateGroup, $objectStateCreateStruct );
         $this->signalDispatcher->emit(
-            new Signal\ObjectStateService\CreateObjectStateSignal( array(
-                'objectStateGroupId' => $objectStateGroup->id,
-                'objectStateId' => $returnValue->id,
-            ) )
+            new CreateObjectStateSignal(
+                array(
+                    'objectStateGroupId' => $objectStateGroup->id,
+                    'objectStateId' => $returnValue->id,
+                )
+            )
         );
         return $returnValue;
     }
@@ -182,27 +206,29 @@ class ObjectStateService implements ObjectStateServiceInterface
      */
     public function loadObjectState( $stateId )
     {
-        $returnValue = $this->service->loadObjectState( $stateId );
-        return $returnValue;
+        return $this->service->loadObjectState( $stateId );
     }
 
     /**
      * Updates an object state
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the user is not allowed to update an object state
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the object state with provided identifier already exists in the same group
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateUpdateStruct $objectStateUpdateStruct
      *
      * @return \eZ\Publish\API\Repository\Values\ObjectState\ObjectState
      */
-    public function updateObjectState( \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState, \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateUpdateStruct $objectStateUpdateStruct )
+    public function updateObjectState( ObjectState $objectState, ObjectStateUpdateStruct $objectStateUpdateStruct )
     {
         $returnValue = $this->service->updateObjectState( $objectState, $objectStateUpdateStruct );
         $this->signalDispatcher->emit(
-            new Signal\ObjectStateService\UpdateObjectStateSignal( array(
-                'objectStateId' => $objectState->id,
-            ) )
+            new UpdateObjectStateSignal(
+                array(
+                    'objectStateId' => $objectState->id,
+                )
+            )
         );
         return $returnValue;
     }
@@ -215,14 +241,16 @@ class ObjectStateService implements ObjectStateServiceInterface
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState
      * @param int $priority
      */
-    public function setPriorityOfObjectState( \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState, $priority )
+    public function setPriorityOfObjectState( ObjectState $objectState, $priority )
     {
         $returnValue = $this->service->setPriorityOfObjectState( $objectState, $priority );
         $this->signalDispatcher->emit(
-            new Signal\ObjectStateService\SetPriorityOfObjectStateSignal( array(
-                'objectStateId' => $objectState->id,
-                'priority' => $priority,
-            ) )
+            new SetPriorityOfObjectStateSignal(
+                array(
+                    'objectStateId' => $objectState->id,
+                    'priority' => $priority,
+                )
+            )
         );
         return $returnValue;
     }
@@ -235,13 +263,15 @@ class ObjectStateService implements ObjectStateServiceInterface
      *
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState
      */
-    public function deleteObjectState( \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState )
+    public function deleteObjectState( ObjectState $objectState )
     {
         $returnValue = $this->service->deleteObjectState( $objectState );
         $this->signalDispatcher->emit(
-            new Signal\ObjectStateService\DeleteObjectStateSignal( array(
-                'objectStateId' => $objectState->id,
-            ) )
+            new DeleteObjectStateSignal(
+                array(
+                    'objectStateId' => $objectState->id,
+                )
+            )
         );
         return $returnValue;
     }
@@ -256,15 +286,17 @@ class ObjectStateService implements ObjectStateServiceInterface
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup
      * @param \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState
      */
-    public function setObjectState( \eZ\Publish\API\Repository\Values\Content\ContentInfo $contentInfo, \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup, \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState )
+    public function setContentState( ContentInfo $contentInfo, ObjectStateGroup $objectStateGroup, ObjectState $objectState )
     {
-        $returnValue = $this->service->setObjectState( $contentInfo, $objectStateGroup, $objectState );
+        $returnValue = $this->service->setContentState( $contentInfo, $objectStateGroup, $objectState );
         $this->signalDispatcher->emit(
-            new Signal\ObjectStateService\SetObjectStateSignal( array(
-                'contentId' => $contentInfo->id,
-                'objectStateGroupId' => $objectStateGroup->id,
-                'objectStateId' => $objectState->id,
-            ) )
+            new SetContentStateSignal(
+                array(
+                    'contentId' => $contentInfo->id,
+                    'objectStateGroupId' => $objectStateGroup->id,
+                    'objectStateId' => $objectState->id,
+                )
+            )
         );
         return $returnValue;
     }
@@ -279,10 +311,9 @@ class ObjectStateService implements ObjectStateServiceInterface
      *
      * @return \eZ\Publish\API\Repository\Values\ObjectState\ObjectState
      */
-    public function getObjectState( \eZ\Publish\API\Repository\Values\Content\ContentInfo $contentInfo, \eZ\Publish\API\Repository\Values\ObjectState\ObjectStateGroup $objectStateGroup )
+    public function getContentState( ContentInfo $contentInfo, ObjectStateGroup $objectStateGroup )
     {
-        $returnValue = $this->service->getObjectState( $contentInfo, $objectStateGroup );
-        return $returnValue;
+        return $this->service->getContentState( $contentInfo, $objectStateGroup );
     }
 
     /**
@@ -292,10 +323,9 @@ class ObjectStateService implements ObjectStateServiceInterface
      *
      * @return int
      */
-    public function getContentCount( \eZ\Publish\API\Repository\Values\ObjectState\ObjectState $objectState )
+    public function getContentCount( ObjectState $objectState )
     {
-        $returnValue = $this->service->getContentCount( $objectState );
-        return $returnValue;
+        return $this->service->getContentCount( $objectState );
     }
 
     /**
@@ -306,8 +336,7 @@ class ObjectStateService implements ObjectStateServiceInterface
      */
     public function newObjectStateGroupCreateStruct( $identifier )
     {
-        $returnValue = $this->service->newObjectStateGroupCreateStruct( $identifier );
-        return $returnValue;
+        return $this->service->newObjectStateGroupCreateStruct( $identifier );
     }
 
     /**
@@ -317,8 +346,7 @@ class ObjectStateService implements ObjectStateServiceInterface
      */
     public function newObjectStateGroupUpdateStruct()
     {
-        $returnValue = $this->service->newObjectStateGroupUpdateStruct();
-        return $returnValue;
+        return $this->service->newObjectStateGroupUpdateStruct();
     }
 
     /**
@@ -329,8 +357,7 @@ class ObjectStateService implements ObjectStateServiceInterface
      */
     public function newObjectStateCreateStruct( $identifier )
     {
-        $returnValue = $this->service->newObjectStateCreateStruct( $identifier );
-        return $returnValue;
+        return $this->service->newObjectStateCreateStruct( $identifier );
     }
 
     /**
@@ -340,9 +367,6 @@ class ObjectStateService implements ObjectStateServiceInterface
      */
     public function newObjectStateUpdateStruct()
     {
-        $returnValue = $this->service->newObjectStateUpdateStruct();
-        return $returnValue;
+        return $this->service->newObjectStateUpdateStruct();
     }
-
 }
-

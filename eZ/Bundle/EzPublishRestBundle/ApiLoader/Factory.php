@@ -124,6 +124,8 @@ class Factory
                     'application/vnd.ez.api.ContentObjectStates'    => new Input\Parser\ContentObjectStates( $urlHandler ),
                     'application/vnd.ez.api.RelationCreate'         => new Input\Parser\RelationCreate( $urlHandler ),
                     'application/vnd.ez.api.ViewInput'              => new Input\Parser\ViewInput( $urlHandler ),
+                    'application/vnd.ez.api.UrlWildcardCreate'      => new Input\Parser\URLWildcardCreate( $urlHandler, $parserTools ),
+                    'application/vnd.ez.api.UrlAliasCreate'         => new Input\Parser\URLAliasCreate( $urlHandler, $parserTools ),
 
                     // internal Media-Types
                     'application/vnd.ez.api.internal.criterion.ContentId'              => new Input\Parser\Criterion\ContentId( $urlHandler ),
@@ -150,6 +152,9 @@ class Factory
                     'application/vnd.ez.api.internal.criterion.Subtree'                => new Input\Parser\Criterion\Subtree( $urlHandler ),
                     'application/vnd.ez.api.internal.criterion.UrlAlias'               => new Input\Parser\Criterion\UrlAlias( $urlHandler ),
                     'application/vnd.ez.api.internal.criterion.UserMetadata'           => new Input\Parser\Criterion\UserMetadata( $urlHandler ),
+                    'application/vnd.ez.api.internal.criterion.ObjectStateId'          => new Input\Parser\Criterion\ObjectStateId( $urlHandler ),
+                    'application/vnd.ez.api.internal.criterion.Visibility'             => new Input\Parser\Criterion\Visibility( $urlHandler ),
+                    'application/vnd.ez.api.internal.criterion.LanguageCode'           => new Input\Parser\Criterion\LanguageCode( $urlHandler ),
                 )
             ),
             array(
@@ -210,6 +215,13 @@ class Factory
             '\\eZ\\Publish\\API\\Repository\\Values\\Content\\URLWildcard'           => new Output\ValueObjectVisitor\URLWildcard( $urlHandler ),
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\CreatedURLWildcard'          => new Output\ValueObjectVisitor\CreatedURLWildcard( $urlHandler ),
 
+            // URLAlias
+
+            '\\eZ\\Publish\\Core\\REST\\Server\\Values\\URLAliasList'                => new Output\ValueObjectVisitor\URLAliasList( $urlHandler ),
+            '\\eZ\\Publish\\Core\\REST\\Server\\Values\\URLAliasRefList'             => new Output\ValueObjectVisitor\URLAliasRefList( $urlHandler ),
+            '\\eZ\\Publish\\API\\Repository\\Values\\Content\\URLAlias'              => new Output\ValueObjectVisitor\URLAlias( $urlHandler ),
+            '\\eZ\\Publish\\Core\\REST\\Server\\Values\\CreatedURLAlias'             => new Output\ValueObjectVisitor\CreatedURLAlias( $urlHandler ),
+
             // Content
 
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\ContentList'                 => new Output\ValueObjectVisitor\ContentList( $urlHandler ),
@@ -218,12 +230,7 @@ class Factory
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\VersionList'                 => new Output\ValueObjectVisitor\VersionList( $urlHandler ),
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\CreatedVersion'              => new Output\ValueObjectVisitor\CreatedVersion( $urlHandler, $fieldTypeSerializer ),
             '\\eZ\\Publish\\API\\Repository\\Values\\Content\\VersionInfo'           => new Output\ValueObjectVisitor\VersionInfo( $urlHandler ),
-
-            // The following two visitors are quite similar, as they both generate
-            // <Version> resource. However, "Version" visitor DOES NOT generate embedded
-            // <Fields> and <Relations> elements, while "Content" visitor DOES
-            '\\eZ\\Publish\\Core\\REST\\Server\\Values\\Version'                     => new Output\ValueObjectVisitor\Version( $urlHandler ),
-            '\\eZ\\Publish\\API\\Repository\\Values\\Content\\Content'               => new Output\ValueObjectVisitor\Content(
+            '\\eZ\\Publish\\Core\\REST\\Server\\Values\\Version'                     => new Output\ValueObjectVisitor\Version(
                 $urlHandler,
                 $fieldTypeSerializer
             ),
@@ -283,13 +290,13 @@ class Factory
             // Location
 
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\CreatedLocation'             => new Output\ValueObjectVisitor\CreatedLocation( $urlHandler ),
-            '\\eZ\\Publish\\API\\Repository\\Values\\Content\\Location'              => new Output\ValueObjectVisitor\Location( $urlHandler ),
+            '\\eZ\\Publish\\Core\\REST\\Server\\Values\\RestLocation'                => new Output\ValueObjectVisitor\RestLocation( $urlHandler ),
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\LocationList'                => new Output\ValueObjectVisitor\LocationList( $urlHandler ),
 
             // Trash
 
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\Trash'                       => new Output\ValueObjectVisitor\Trash( $urlHandler ),
-            '\\eZ\\Publish\\API\\Repository\\Values\\Content\\TrashItem'             => new Output\ValueObjectVisitor\TrashItem( $urlHandler ),
+            '\\eZ\\Publish\\Core\\REST\\Server\\Values\\RestTrashItem'               => new Output\ValueObjectVisitor\RestTrashItem( $urlHandler ),
 
             // Views
 
@@ -312,9 +319,7 @@ class Factory
             // REST specific
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\TemporaryRedirect'           => new Output\ValueObjectVisitor\TemporaryRedirect( $urlHandler ),
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\PermanentRedirect'           => new Output\ValueObjectVisitor\PermanentRedirect( $urlHandler ),
-            '\\eZ\\Publish\\Core\\REST\\Server\\Values\\ResourceDeleted'             => new Output\ValueObjectVisitor\ResourceDeleted( $urlHandler ),
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\ResourceCreated'             => new Output\ValueObjectVisitor\ResourceCreated( $urlHandler ),
-            '\\eZ\\Publish\\Core\\REST\\Server\\Values\\ResourceSwapped'             => new Output\ValueObjectVisitor\ResourceSwapped( $urlHandler ),
             '\\eZ\\Publish\\Core\\REST\\Server\\Values\\NoContent'                   => new Output\ValueObjectVisitor\NoContent( $urlHandler ),
             '\\eZ\\Publish\\Core\\REST\\Common\\Values\\Root'                        => new Output\ValueObjectVisitor\Root( $urlHandler ),
         );

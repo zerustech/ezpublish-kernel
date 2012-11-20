@@ -40,11 +40,9 @@ abstract class TrashBase extends BaseServiceTest
                 'remoteId' => null,
                 'parentLocationId' => null,
                 'pathString' => null,
-                'modifiedSubLocationDate' => null,
                 'depth' => null,
                 'sortField' => null,
                 'sortOrder' => null,
-                'childCount' => null
             ),
             $trashItem
         );
@@ -132,11 +130,9 @@ abstract class TrashBase extends BaseServiceTest
                 'remoteId',
                 'parentLocationId',
                 'pathString',
-                'modifiedSubLocationDate',
                 'depth',
                 'sortField',
                 'sortOrder',
-                'childCount'
             ),
             $trashItem,
             $loadedTrashItem
@@ -177,16 +173,62 @@ abstract class TrashBase extends BaseServiceTest
                 'remoteId',
                 'parentLocationId',
                 'pathString',
-                'modifiedSubLocationDate',
                 'depth',
                 'sortField',
                 'sortOrder'
             ),
             $location,
-            $trashItem,
-            //@todo: enable the following properties
-            array( 'childCount' )
+            $trashItem
         );
+    }
+
+    /**
+     * Test sending a location to trash
+     * @covers \eZ\Publish\API\Repository\TrashService::trash
+     */
+    public function testTrashUpdatesMainLocation()
+    {
+        $contentService = $this->repository->getContentService();
+        $locationService = $this->repository->getLocationService();
+        $trashService = $this->repository->getTrashService();
+
+        $contentInfo = $contentService->loadContentInfo( 42 );
+
+        // Create additional location that will become new main location
+        $location = $locationService->createLocation(
+            $contentInfo,
+            new LocationCreateStruct( array( "parentLocationId" => 2 ) )
+        );
+
+        $trashService->trash(
+            $locationService->loadLocation( $contentInfo->mainLocationId )
+        );
+
+        self::assertEquals(
+            $location->id,
+            $contentService->loadContentInfo( 42 )->mainLocationId
+        );
+    }
+
+    /**
+     * Test sending a location to trash
+     * @covers \eZ\Publish\API\Repository\TrashService::trash
+     */
+    public function testTrashReturnsNull()
+    {
+        $contentService = $this->repository->getContentService();
+        $locationService = $this->repository->getLocationService();
+        $trashService = $this->repository->getTrashService();
+
+        // Create additional location to trash
+        $location = $locationService->createLocation(
+            $contentService->loadContentInfo( 42 ),
+            new LocationCreateStruct( array( "parentLocationId" => 2 ) )
+        );
+
+        $trashItem = $trashService->trash( $location );
+
+        self::assertNull( $trashItem );
     }
 
     /**
@@ -217,9 +259,7 @@ abstract class TrashBase extends BaseServiceTest
                 'sortOrder'
             ),
             $location,
-            $recoveredLocation,
-            //@todo: assert child count
-            array( 'childCount' )
+            $recoveredLocation
         );
 
         $parentLocation = $locationService->loadLocation( $location->parentLocationId );
@@ -227,6 +267,7 @@ abstract class TrashBase extends BaseServiceTest
 
         self::assertEquals( $newPathString, $recoveredLocation->pathString );
         self::assertGreaterThan( 0, $recoveredLocation->id );
+        self::assertEquals( $recoveredLocation->id, $recoveredLocation->contentInfo->mainLocationId );
     }
 
     /**
@@ -279,13 +320,12 @@ abstract class TrashBase extends BaseServiceTest
             ),
             $location,
             $recoveredLocation,
-            array( "childCount", "depth" )
+            array( "depth" )
         );
 
         $parentLocation = $locationService->loadLocation( $recoveredLocation->parentLocationId );
         $newPathString = $parentLocation->pathString . $recoveredLocation->id . "/";
 
-        self::assertEquals( 1, $parentLocation->childCount );
         self::assertEquals( $parentLocation->depth + 1, $recoveredLocation->depth );
         self::assertEquals( $newPathString, $recoveredLocation->pathString );
         self::assertGreaterThan( 0, $recoveredLocation->id );

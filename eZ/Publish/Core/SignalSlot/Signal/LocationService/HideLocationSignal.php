@@ -17,11 +17,9 @@ use eZ\Publish\Core\SignalSlot\Signal;
 class HideLocationSignal extends Signal
 {
     /**
-     * LocationId
+     * Location ID
      *
      * @var mixed
      */
     public $locationId;
-
 }
-

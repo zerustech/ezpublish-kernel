@@ -11,7 +11,8 @@ namespace eZ\Publish\Core\Repository\Tests\Service;
 use eZ\Publish\Core\Repository\Tests\Service\Base as BaseServiceTest,
     eZ\Publish\API\Repository\Values\Content\Location,
     eZ\Publish\API\Repository\Values\ContentType\ContentType,
-    eZ\Publish\API\Repository\Exceptions;
+    eZ\Publish\API\Repository\Exceptions,
+    eZ\Publish\Core\FieldType\XmlText\Value as XmlValue;
 
 /**
  * Test case for ContentType service
@@ -60,9 +61,10 @@ abstract class ContentTypeBase extends BaseServiceTest
                 'identifier' => 'new-group',
                 'creatorId' => null,
                 'creationDate' => null,
-                'mainLanguageCode' => null,
-                'names' => null,
-                'descriptions' => null
+                // @todo uncomment when support for multilingual names and descriptions is added
+                //'mainLanguageCode' => null,
+                //'names' => null,
+                //'descriptions' => null
             ),
             $createStruct
         );
@@ -85,9 +87,10 @@ abstract class ContentTypeBase extends BaseServiceTest
         );
         $groupCreate->creatorId = $this->repository->getCurrentUser()->id;
         $groupCreate->creationDate = new \DateTime();
-        $groupCreate->mainLanguageCode = 'eng-GB';
-        $groupCreate->names = array( 'eng-US' => 'A name.' );
-        $groupCreate->descriptions = array( 'eng-US' => 'A description.' );
+        // @todo uncomment when support for multilingual names and descriptions is added
+        //$groupCreate->mainLanguageCode = 'eng-GB';
+        //$groupCreate->names = array( 'eng-US' => 'A name.' );
+        //$groupCreate->descriptions = array( 'eng-US' => 'A description.' );
 
         $group = $contentTypeService->createContentTypeGroup( $groupCreate );
         /* END: Use Case */
@@ -142,7 +145,22 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testCreateContentTypeGroupThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        $groupCreate = $contentTypeService->newContentTypeGroupCreateStruct(
+            'new-group'
+        );
+        $groupCreate->creatorId = $this->repository->getCurrentUser()->id;
+        $groupCreate->creationDate = new \DateTime();
+        // @todo uncomment when support for multilingual names and descriptions is added
+        // $groupCreate->mainLanguageCode = 'eng-GB';
+        // $groupCreate->names = array( 'eng-US' => 'A name.' );
+        // $groupCreate->descriptions = array( 'eng-US' => 'A description.' );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->createContentTypeGroup( $groupCreate );
     }
 
     /**
@@ -161,15 +179,17 @@ abstract class ContentTypeBase extends BaseServiceTest
         $groupCreate = $contentTypeService->newContentTypeGroupCreateStruct(
             'new-group'
         );
-        $groupCreate->names = array( 'eng-GB'=> 'NewGroup' );
-        $groupCreate->descriptions = array();
+        // @todo uncomment when support for multilingual names and descriptions is added
+        //$groupCreate->names = array( 'eng-GB'=> 'NewGroup' );
+        //$groupCreate->descriptions = array();
         $contentTypeService->createContentTypeGroup( $groupCreate );
 
         $secondGroupCreate = $contentTypeService->newContentTypeGroupCreateStruct(
             'new-group'
         );
-        $secondGroupCreate->names = array( 'eng-GB'=> 'NewGroup' );
-        $secondGroupCreate->descriptions = array();
+        // @todo uncomment when support for multilingual names and descriptions is added
+        //$secondGroupCreate->names = array( 'eng-GB'=> 'NewGroup' );
+        //$secondGroupCreate->descriptions = array();
 
         // Throws an exception because group with identifier "new-group" already exists
         $contentTypeService->createContentTypeGroup( $secondGroupCreate );
@@ -193,9 +213,10 @@ abstract class ContentTypeBase extends BaseServiceTest
         );
         $groupCreate->creatorId = $this->repository->getCurrentUser()->id;
         $groupCreate->creationDate = new \DateTime();
-        $groupCreate->mainLanguageCode = 'eng-GB';
-        $groupCreate->names = array( 'eng-US' => 'A name.' );
-        $groupCreate->descriptions = array( 'eng-US' => 'A description.' );
+        // @todo uncomment when support for multilingual names and descriptions is added
+        //$groupCreate->mainLanguageCode = 'eng-GB';
+        //$groupCreate->names = array( 'eng-US' => 'A name.' );
+        //$groupCreate->descriptions = array( 'eng-US' => 'A description.' );
 
         $storedGroup = $contentTypeService->createContentTypeGroup( $groupCreate );
 
@@ -468,15 +489,16 @@ abstract class ContentTypeBase extends BaseServiceTest
         $groupUpdate->identifier = 'updated-group';
         $groupUpdate->modifierId = 42;
         $groupUpdate->modificationDate = new \DateTime();
-        $groupUpdate->mainLanguageCode = 'en_US';
-        $groupUpdate->names = array(
-            'en_US' => 'A name',
-            'en_GB' => 'A name',
-        );
-        $groupUpdate->descriptions = array(
-            'en_US' => 'A description',
-            'en_GB' => 'A description',
-        );
+        // @todo uncomment when support for multilingual names and descriptions is added
+        //$groupUpdate->mainLanguageCode = 'en_US';
+        //$groupUpdate->names = array(
+        //    'en_US' => 'A name',
+        //    'en_GB' => 'A name',
+        //);
+        //$groupUpdate->descriptions = array(
+        //    'en_US' => 'A description',
+        //    'en_GB' => 'A description',
+        //);
 
         $contentTypeService->updateContentTypeGroup( $group, $groupUpdate );
         /* END: Use Case */
@@ -523,9 +545,10 @@ abstract class ContentTypeBase extends BaseServiceTest
             'modificationDate' => $updateStruct->modificationDate,
             'creatorId' => $originalGroup->creatorId,
             'modifierId' => $updateStruct->modifierId,
-            'mainLanguageCode' => $updateStruct->mainLanguageCode,
-            'names' => $updateStruct->names,
-            'descriptions' => $updateStruct->descriptions,
+            // @todo uncomment when support for multilingual names and descriptions is added
+            //'mainLanguageCode' => $updateStruct->mainLanguageCode,
+            //'names' => $updateStruct->names,
+            //'descriptions' => $updateStruct->descriptions,
         );
 
         $this->assertPropertiesCorrect(
@@ -549,9 +572,10 @@ abstract class ContentTypeBase extends BaseServiceTest
         );
         $groupCreate->creatorId = $this->repository->getCurrentUser()->id;
         $groupCreate->creationDate = new \DateTime();
-        $groupCreate->mainLanguageCode = 'eng-US';
-        $groupCreate->names = array( 'eng-US' => 'Name' );
-        $groupCreate->descriptions = array( 'eng-US' => 'Description' );
+        // @todo uncomment when support for multilingual names and descriptions is added
+        //$groupCreate->mainLanguageCode = 'eng-US';
+        //$groupCreate->names = array( 'eng-US' => 'Name' );
+        //$groupCreate->descriptions = array( 'eng-US' => 'Description' );
 
         return $contentTypeService->createContentTypeGroup( $groupCreate );
     }
@@ -566,7 +590,32 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testUpdateContentTypeGroupThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $this->createContentTypeGroup();
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        $group = $contentTypeService->loadContentTypeGroupByIdentifier( 'new-group' );
+
+        $groupUpdate = $contentTypeService->newContentTypeGroupUpdateStruct();
+        $groupUpdate->identifier = 'updated-group';
+        $groupUpdate->modifierId = 42;
+        $groupUpdate->modificationDate = new \DateTime();
+        // @todo uncomment when support for multilingual names and descriptions is added
+        /*
+        $groupUpdate->mainLanguageCode = 'en_US';
+        $groupUpdate->names = array(
+            'en_US' => 'A name',
+            'en_GB' => 'A name',
+        );
+        $groupUpdate->descriptions = array(
+            'en_US' => 'A description',
+            'en_GB' => 'A description',
+        );
+        */
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->updateContentTypeGroup( $group, $groupUpdate );
     }
 
     /**
@@ -590,8 +639,9 @@ abstract class ContentTypeBase extends BaseServiceTest
             'updated-group'
         );
         $groupCreate->creatorId = $this->repository->getCurrentUser()->id;
-        $groupCreate->names = array( 'eng-US' => 'Name' );
-        $groupCreate->descriptions = array( 'eng-US' => 'Description' );
+        // @todo uncomment when support for multilingual names and descriptions is added
+        //$groupCreate->names = array( 'eng-US' => 'Name' );
+        //$groupCreate->descriptions = array( 'eng-US' => 'Description' );
         $groupToOverwrite = $contentTypeService->createContentTypeGroup( $groupCreate );
 
         $group = $contentTypeService->loadContentTypeGroupByIdentifier( 'new-group' );
@@ -662,14 +712,24 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the deleteContentTypeGroup() method.
      *
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::deleteContentTypeGroup
      *
      * @return void
      */
     public function testDeleteContentTypeGroupThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $this->createContentTypeGroup();
+
+        /* BEGIN: Use Case */
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        $group = $contentTypeService->loadContentTypeGroupByIdentifier( 'new-group' );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->deleteContentTypeGroup( $group );
     }
 
     /**
@@ -688,9 +748,10 @@ abstract class ContentTypeBase extends BaseServiceTest
             );
             $groupCreate->creatorId = $this->repository->getCurrentUser()->id;
             $groupCreate->creationDate = new \DateTime();
-            $groupCreate->mainLanguageCode = 'de_DE';
-            $groupCreate->names = array( 'en_US' => 'A name.' );
-            $groupCreate->descriptions = array( 'en_US' => 'A description.' );
+            // @todo uncomment when support for multilingual names and descriptions is added
+            //$groupCreate->mainLanguageCode = 'de_DE';
+            //$groupCreate->names = array( 'en_US' => 'A name.' );
+            //$groupCreate->descriptions = array( 'en_US' => 'A description.' );
             $this->contentTypeGroups[] = $contentTypeService->createContentTypeGroup( $groupCreate );
 
             $groupCreate->identifier = 'second-group';
@@ -1664,7 +1725,8 @@ abstract class ContentTypeBase extends BaseServiceTest
             "isTranslatable",
             "isRequired",
             "isInfoCollector",
-            "defaultValue",
+            // Do not compare defaultValue as they may have different representations
+            //"defaultValue",
             "isSearchable"
         );
 
@@ -1999,6 +2061,7 @@ abstract class ContentTypeBase extends BaseServiceTest
         $typeCreateStruct->mainLanguageCode = 'eng-GB';
 
         $titleFieldCreate = $contentTypeService->newFieldDefinitionCreateStruct( 'title', 'ezstring' );
+        $titleFieldCreate->position = 1;
         $typeCreateStruct->addFieldDefinition( $titleFieldCreate );
 
         $type = $contentTypeService->createContentType(
@@ -2016,7 +2079,6 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the publishContentTypeDraft() method.
      *
-     * @depends testPublishContentTypeDraft
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::publishContentTypeDraft
      *
@@ -2024,7 +2086,16 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testPublishContentTypeDraftThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeDraft = $this->createDraftContentType();
+        $draftId = $contentTypeDraft->id;
+
+        $contentTypeService = $this->repository->getContentTypeService();
+        $contentTypeDraft = $contentTypeService->loadContentTypeDraft( $draftId );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->publishContentTypeDraft( $contentTypeDraft );
     }
 
     /**
@@ -2051,9 +2122,10 @@ abstract class ContentTypeBase extends BaseServiceTest
         );
         $groupCreate->creatorId = $this->repository->getCurrentUser()->id;
         $groupCreate->creationDate = new \DateTime();
-        $groupCreate->mainLanguageCode = 'ger-DE';
-        $groupCreate->names = array( 'eng-US' => 'A name.' );
-        $groupCreate->descriptions = array( 'eng-US' => 'A description.' );
+        // @todo uncomment when support for multilingual names and descriptions is added
+        //$groupCreate->mainLanguageCode = 'ger-DE';
+        //$groupCreate->names = array( 'eng-US' => 'A name.' );
+        //$groupCreate->descriptions = array( 'eng-US' => 'A description.' );
         $group = $contentTypeService->createContentTypeGroup( $groupCreate );
 
         $typeCreateStruct = $contentTypeService->newContentTypeCreateStruct(
@@ -2223,7 +2295,6 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the createContentTypeDraft() method.
      *
-     * @depends testCreateContentTypeDraft
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::createContentTypeDraft
      *
@@ -2231,7 +2302,14 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testCreateContentTypeDraftThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $publishedType = $this->createPublishedContentType();
+
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->createContentTypeDraft( $publishedType );
     }
 
     /**
@@ -2375,7 +2453,6 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the updateContentTypeDraft() method.
      *
-     * @depends testUpdateContentTypeDraft
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::updateContentTypeDraft
      *
@@ -2383,7 +2460,16 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testUpdateContentTypeDraftThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeDraft = $this->createDraftContentType();
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        $typeUpdate = $contentTypeService->newContentTypeUpdateStruct();
+        $typeUpdate->identifier = 'news-article';
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->updateContentTypeDraft( $contentTypeDraft, $typeUpdate );
     }
 
     /**
@@ -2517,7 +2603,6 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the deleteContentType() method.
      *
-     * @depends testDeleteContentType
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::deleteContentType
      *
@@ -2525,7 +2610,14 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testDeleteContentTypeThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        $commentType = $contentTypeService->loadContentTypeByIdentifier( 'comment' );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->deleteContentType( $commentType );
     }
 
     /**
@@ -2664,7 +2756,6 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the copyContentType() method.
      *
-     * @depends testCopyContentType
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::copyContentType
      *
@@ -2672,7 +2763,14 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testCopyContentTypeThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        $commentType = $contentTypeService->loadContentTypeByIdentifier( 'comment' );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->copyContentType( $commentType );
     }
 
     /**
@@ -2716,7 +2814,6 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the assignContentTypeGroup() method.
      *
-     * @depends testAssignContentTypeGroup
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::assignContentTypeGroup
      *
@@ -2724,7 +2821,15 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testAssignContentTypeGroupThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        $mediaGroup = $contentTypeService->loadContentTypeGroupByIdentifier( 'Media' );
+        $folderType = $contentTypeService->loadContentTypeByIdentifier( 'folder' );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->assignContentTypeGroup( $folderType, $mediaGroup );
     }
 
     /**
@@ -2798,7 +2903,6 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the unassignContentTypeGroup() method.
      *
-     * @depends testUnassignContentTypeGroup
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::unassignContentTypeGroup
      *
@@ -2806,7 +2910,20 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testUnassignContentTypeGroupThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        $folderType = $contentTypeService->loadContentTypeByIdentifier( 'folder' );
+
+        $mediaGroup = $contentTypeService->loadContentTypeGroupByIdentifier( 'Media' );
+        $contentGroup = $contentTypeService->loadContentTypeGroupByIdentifier( 'Content' );
+
+        // May not unassign last group
+        $contentTypeService->assignContentTypeGroup( $folderType, $mediaGroup );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->unassignContentTypeGroup( $folderType, $contentGroup );
     }
 
     /**
@@ -2938,7 +3055,7 @@ abstract class ContentTypeBase extends BaseServiceTest
         $fieldDefCreate->isTranslatable = true;
         $fieldDefCreate->isRequired = false;
         $fieldDefCreate->isInfoCollector = false;
-        $fieldDefCreate->defaultValue = "";
+        $fieldDefCreate->defaultValue = new XmlValue;
         $fieldDefCreate->validatorConfiguration = array();
         $fieldDefCreate->fieldSettings = array(
             'numRows' => 10,
@@ -3015,7 +3132,25 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testAddFieldDefinitionThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeDraft = $this->createDraftContentType();
+        $contentTypeService = $this->repository->getContentTypeService();
+
+        $fieldDefCreate = $contentTypeService->newFieldDefinitionCreateStruct( 'tags', 'ezstring' );
+        $fieldDefCreate->names = array( 'eng-US' => 'Tags' );
+        $fieldDefCreate->descriptions = array( 'eng-US' => 'Tags of the blog post' );
+        $fieldDefCreate->fieldGroup = 'blog-meta';
+        $fieldDefCreate->position = 1;
+        $fieldDefCreate->isTranslatable = true;
+        $fieldDefCreate->isRequired = true;
+        $fieldDefCreate->isInfoCollector = false;
+        $fieldDefCreate->defaultValue = "New tags text line";
+        $fieldDefCreate->fieldSettings = null;
+        $fieldDefCreate->isSearchable = true;
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->addFieldDefinition( $contentTypeDraft, $fieldDefCreate );
     }
 
     /**
@@ -3142,7 +3277,6 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the removeFieldDefinition() method.
      *
-     * @depends testRemoveFieldDefinition
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::removeFieldDefinition
      *
@@ -3150,7 +3284,13 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testRemoveFieldDefinitionThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeDraft = $this->createDraftContentType();
+        $bodyField = $contentTypeDraft->getFieldDefinition( 'body' );
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $this->repository->getContentTypeService()->removeFieldDefinition( $contentTypeDraft, $bodyField );
     }
 
     /**
@@ -3320,7 +3460,9 @@ abstract class ContentTypeBase extends BaseServiceTest
                     ? $originalField->isSearchable
                     : $updateStruct->isSearchable,
             ),
-            $updatedField
+            $updatedField,
+            // Do not compare defaultValue as they may have different representations
+            array( "defaultValue" )
         );
 
         $expectedFieldSettings = (array)$updateStruct->fieldSettings;
@@ -3387,7 +3529,6 @@ abstract class ContentTypeBase extends BaseServiceTest
     /**
      * Test for the updateFieldDefinition() method.
      *
-     * @depends testUpdateFieldDefinition
      * @expectedException \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      * @covers \eZ\Publish\Core\Repository\ContentTypeService::updateFieldDefinition
      *
@@ -3395,7 +3536,21 @@ abstract class ContentTypeBase extends BaseServiceTest
      */
     public function testUpdateFieldDefinitionThrowsUnauthorizedException()
     {
-        $this->markTestIncomplete( "Test not implemented: " . __METHOD__ );
+        $contentTypeService = $this->repository->getContentTypeService();
+        $contentTypeDraft = $this->createDraftContentType();
+        $fieldDefinition = $contentTypeDraft->getFieldDefinition( "body" );
+
+        $fieldDefinitionUpdateStruct = $contentTypeService->newFieldDefinitionUpdateStruct();
+        $fieldDefinitionUpdateStruct->identifier = $fieldDefinition->identifier . "changed";
+
+        // Set anonymous as current user
+        $this->repository->setCurrentUser( $this->getStubbedUser( 10 ) );
+
+        $contentTypeService->updateFieldDefinition(
+            $contentTypeDraft,
+            $fieldDefinition,
+            $fieldDefinitionUpdateStruct
+        );
     }
 
     /**

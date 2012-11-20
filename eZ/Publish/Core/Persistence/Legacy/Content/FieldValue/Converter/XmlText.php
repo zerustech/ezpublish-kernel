@@ -13,7 +13,9 @@ use eZ\Publish\Core\Persistence\Legacy\Content\FieldValue\Converter,
     eZ\Publish\SPI\Persistence\Content\FieldValue,
     eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition,
     eZ\Publish\Core\Persistence\Legacy\Content\StorageFieldDefinition,
-    eZ\Publish\Core\FieldType\FieldSettings;
+    eZ\Publish\Core\FieldType\FieldSettings,
+    eZ\Publish\Core\FieldType\XmlText\Value,
+    DOMDocument;
 
 class XmlText implements Converter
 {
@@ -38,7 +40,7 @@ class XmlText implements Converter
      */
     public function toStorageValue( FieldValue $value, StorageFieldValue $storageFieldValue )
     {
-        $storageFieldValue->dataText = $value->data;
+        $storageFieldValue->dataText = $value->data->saveXML();
     }
 
     /**
@@ -49,7 +51,9 @@ class XmlText implements Converter
      */
     public function toFieldValue( StorageFieldValue $value, FieldValue $fieldValue )
     {
-        $fieldValue->data = $value->dataText;
+        $domDoc = new DOMDocument;
+        $domDoc->loadXML( $value->dataText ?: Value::EMPTY_VALUE );
+        $fieldValue->data = $domDoc;
     }
 
     /**
@@ -62,7 +66,8 @@ class XmlText implements Converter
     {
         $storageDefinition->dataInt1 = $fieldDefinition->fieldTypeConstraints->fieldSettings['numRows'];
         $storageDefinition->dataText2 = $fieldDefinition->fieldTypeConstraints->fieldSettings['tagPreset'];
-        $storageDefinition->dataText1 = $fieldDefinition->defaultValue->data;
+        if ( !empty( $fieldDefinition->defaultValue->data ) )
+            $storageDefinition->dataText1 = $fieldDefinition->defaultValue->data->saveXML();
     }
 
     /**
@@ -79,7 +84,14 @@ class XmlText implements Converter
                 'tagPreset' => $storageDefinition->dataText2
             )
         );
-        $fieldDefinition->defaultValue->data = isset( $storageDefinition->dataText1 ) ? $storageDefinition->dataText1 : '';
+
+        $defaultValue = null;
+        if ( !empty( $storageDefinition->dataText1 ) )
+        {
+            $defaultValue = new DOMDocument;
+            $defaultValue->loadXML( $storageDefinition->dataText1 );
+        }
+        $fieldDefinition->defaultValue->data = $defaultValue;
     }
 
     /**

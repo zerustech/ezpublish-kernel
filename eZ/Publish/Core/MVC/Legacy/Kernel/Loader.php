@@ -12,6 +12,7 @@ namespace eZ\Publish\Core\MVC\Legacy\Kernel;
 use eZ\Publish\Core\MVC\Legacy\Kernel as LegacyKernel,
     eZ\Publish\Core\MVC\Legacy\LegacyEvents,
     eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent,
+    eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent,
     ezpKernelHandler,
     eZURI,
     Symfony\Component\DependencyInjection\ContainerInterface,
@@ -96,11 +97,15 @@ class Loader
                 $request = $container->get( 'request' );
                 $eventDispatcher = $container->get( 'event_dispatcher' );
 
-                $buildEvent = new PreBuildKernelWebHandlerEvent(
+                // PRE_BUILD_LEGACY_KERNEL for non request related stuff (potentially available in CLI context as well
+                $eventDispatcher->dispatch( LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent( $legacyParameters ) );
+
+                // Pure web stuff
+                $buildEventWeb = new PreBuildKernelWebHandlerEvent(
                     $legacyParameters, $request
                 );
                 $eventDispatcher->dispatch(
-                    LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB, $buildEvent
+                    LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB, $buildEventWeb
                 );
 
                 $interfaces = class_implements( $webHandlerClass );
@@ -108,11 +113,12 @@ class Loader
                     throw new \InvalidArgumentException( 'A legacy kernel handler must be an instance of ezpKernelHandler.' );
 
                 $webHandler = new $webHandlerClass( $legacyParameters->all() );
-                eZURI::instance()->setURIString(
+                $uri = eZURI::instance();
+                $uri->setURIString(
                     $request->attributes->get(
                         'semanticPathinfo',
                         $request->getPathinfo()
-                    )
+                    ) . $request->attributes->get( 'viewParametersString' )
                 );
                 chdir( $webrootDir );
             }
@@ -122,17 +128,33 @@ class Loader
     }
 
     /**
-     * @param array $settings
+     * Builds legacy kernel handler CLI
      *
+     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
      * @return CLIHandler
      */
-    public function buildLegacyKernelHandlerCLI( array $settings = array() )
+    public function buildLegacyKernelHandlerCLI( ContainerInterface $container )
     {
-        chdir( $this->legacyRootDir );
-        $cliHandler = new CLIHandler( $settings );
-        chdir( $this->webrootDir );
+        $legacyRootDir = $this->legacyRootDir;
+        $webrootDir = $this->webrootDir;
 
-        return $cliHandler;
+        return function () use ( $legacyRootDir, $webrootDir, $container )
+        {
+            static $cliHandler;
+            if ( !$cliHandler instanceof ezpKernelHandler )
+            {
+                chdir( $legacyRootDir );
+
+                $legacyParameters = new ParameterBag( $container->getParameter( 'ezpublish_legacy.kernel_handler.cli.options' ) );
+                $eventDispatcher = $container->get( 'event_dispatcher' );
+                $eventDispatcher->dispatch( LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent( $legacyParameters ) );
+
+                $cliHandler = new CLIHandler( $legacyParameters->all(), $container->get( 'ezpublish.siteaccess' ), $container );
+                chdir( $webrootDir );
+            }
+
+            return $cliHandler;
+        };
     }
 
     /**

@@ -12,7 +12,6 @@ namespace eZ\Publish\Core\REST\Server\Output\ValueObjectVisitor;
 use eZ\Publish\Core\REST\Common\Output\ValueObjectVisitor;
 use eZ\Publish\Core\REST\Common\Output\Generator;
 use eZ\Publish\Core\REST\Common\Output\Visitor;
-use eZ\Publish\Core\REST\Server\Values\Version;
 
 /**
  * VersionList value object visitor
@@ -36,12 +35,30 @@ class VersionList extends ValueObjectVisitor
         $generator->startAttribute( 'href', $data->path );
         $generator->endAttribute( 'href' );
 
-        $generator->startList( 'Version' );
+        $generator->startList( 'VersionItem' );
         foreach ( $data->versions as $version )
         {
-            $visitor->visitValueObject( new Version( $version ) );
+            $generator->startHashElement( 'VersionItem' );
+
+            $generator->startObjectElement( 'Version' );
+            $generator->startAttribute(
+                'href',
+                $this->urlHandler->generate(
+                    'objectVersion',
+                    array(
+                         'object' => $version->getContentInfo()->id,
+                         'version' => $version->versionNo
+                    )
+                )
+            );
+            $generator->endAttribute( 'href' );
+            $generator->endObjectElement( 'Version' );
+
+            $visitor->visitValueObject( $version );
+
+            $generator->endHashElement( 'VersionItem' );
         }
-        $generator->endList( 'Version' );
+        $generator->endList( 'VersionItem' );
 
         $generator->endObjectElement( 'VersionList' );
     }

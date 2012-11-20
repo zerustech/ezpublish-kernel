@@ -239,7 +239,7 @@ class LocationService implements \eZ\Publish\API\Repository\LocationService, Ses
      * @param int $offset the start offset for paging
      * @param int $limit the number of locations returned. If $limit = -1 all children starting at $offset are returned
      *
-     * @return array Of {@link Location}
+     * @return \eZ\Publish\API\Repository\Values\Content\LocationList
      */
     public function loadLocationChildren( Location $location, $offset = 0, $limit = -1 )
     {
@@ -253,6 +253,18 @@ class LocationService implements \eZ\Publish\API\Repository\LocationService, Ses
         );
 
         return $this->inputDispatcher->parse( $response );
+    }
+
+    /**
+     * Returns the number of children which are readable by the current user of a location object
+     *
+     * @param \eZ\Publish\API\Repository\Values\Content\Location $location
+     *
+     * @return int
+     */
+    public function getLocationChildCount( Location $location )
+    {
+        throw new \Exception( "@TODO: Implement." );
     }
 
     /**

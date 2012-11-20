@@ -57,6 +57,29 @@ class ExceptionConversion extends Gateway
     }
 
     /**
+     * Loads data for an object state by identifier
+     *
+     * @param string $identifier
+     * @param mixed $groupId
+     * @return array
+     */
+    public function loadObjectStateDataByIdentifier( $identifier, $groupId )
+    {
+        try
+        {
+            return $this->innerGateway->loadObjectStateDataByIdentifier( $identifier, $groupId );
+        }
+        catch ( \ezcDbException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+        catch ( \PDOException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+    }
+
+    /**
      * Loads data for all object states belonging to group with $groupId ID
      *
      * @param mixed $groupId
@@ -89,6 +112,28 @@ class ExceptionConversion extends Gateway
         try
         {
             return $this->innerGateway->loadObjectStateGroupData( $groupId );
+        }
+        catch ( \ezcDbException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+        catch ( \PDOException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+    }
+
+    /**
+     * Loads data for an object state group by identifier
+     *
+     * @param string $identifier
+     * @return array
+     */
+    public function loadObjectStateGroupDataByIdentifier( $identifier )
+    {
+        try
+        {
+            return $this->innerGateway->loadObjectStateGroupDataByIdentifier( $identifier );
         }
         catch ( \ezcDbException $e )
         {
@@ -300,11 +345,11 @@ class ExceptionConversion extends Gateway
      * @param mixed $groupId
      * @param mixed $stateId
      */
-    public function setObjectState( $contentId, $groupId, $stateId )
+    public function setContentState( $contentId, $groupId, $stateId )
     {
         try
         {
-            return $this->innerGateway->setObjectState( $contentId, $groupId, $stateId );
+            return $this->innerGateway->setContentState( $contentId, $groupId, $stateId );
         }
         catch ( \ezcDbException $e )
         {

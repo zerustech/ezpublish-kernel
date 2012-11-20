@@ -127,7 +127,8 @@ class ContentHandlerTest extends TestCase
                 $this->returnValue(
                     new VersionInfo(
                         array(
-                            "names" => array()
+                            "names" => array(),
+                            "contentInfo" => new ContentInfo
                         )
                     )
                 )
@@ -197,7 +198,7 @@ class ContentHandlerTest extends TestCase
      */
     public function testPublishFirstVersion()
     {
-        $handler = $this->getPartlyMockedHandler( array( 'loadContentInfo', 'setStatus' ) );
+        $handler = $this->getPartlyMockedHandler( array( 'loadVersionInfo', 'setStatus' ) );
 
         $gatewayMock = $this->getGatewayMock();
         $mapperMock = $this->getMapperMock();
@@ -206,9 +207,11 @@ class ContentHandlerTest extends TestCase
         $metadataUpdateStruct = new MetadataUpdateStruct();
 
         $handler->expects( $this->at( 0 ) )
-            ->method( 'loadContentInfo' )
-            ->with( 23 )
-            ->will( $this->returnValue( new ContentInfo( array( "currentVersionNo" => 1 ) ) ) );
+            ->method( 'loadVersionInfo' )
+            ->with( 23, 1 )
+            ->will( $this->returnValue(
+                new VersionInfo( array( "contentInfo" => new ContentInfo( array( "currentVersionNo" => 1 ) ) ) ) )
+            );
 
         $gatewayMock->expects( $this->once() )
             ->method( 'load' )
@@ -258,7 +261,7 @@ class ContentHandlerTest extends TestCase
      */
     public function testPublish()
     {
-        $handler = $this->getPartlyMockedHandler( array( 'loadContentInfo', 'setStatus' ) );
+        $handler = $this->getPartlyMockedHandler( array( 'loadVersionInfo', 'setStatus' ) );
 
         $gatewayMock = $this->getGatewayMock();
         $mapperMock = $this->getMapperMock();
@@ -267,9 +270,11 @@ class ContentHandlerTest extends TestCase
         $metadataUpdateStruct = new MetadataUpdateStruct();
 
         $handler->expects( $this->at( 0 ) )
-            ->method( 'loadContentInfo' )
-            ->with( 23 )
-            ->will( $this->returnValue( new ContentInfo( array( "currentVersionNo" => 1 ) ) ) );
+            ->method( 'loadVersionInfo' )
+            ->with( 23, 2 )
+            ->will( $this->returnValue(
+                new VersionInfo( array( "contentInfo" => new ContentInfo( array( "currentVersionNo" => 1 ) ) ) ) )
+            );
 
         $handler
             ->expects( $this->at( 1 ) )
@@ -799,11 +804,12 @@ class ContentHandlerTest extends TestCase
      */
     public function testRemoveRawContent()
     {
-        $handler = $this->getContentHandler();
+        $handler = $this->getPartlyMockedHandler( array( "loadContentInfo" ) );
 
         $gatewayMock = $this->getGatewayMock();
         $mapperMock = $this->getMapperMock();
         $fieldHandlerMock = $this->getFieldHandlerMock();
+        $locationGatewayMock = $this->getLocationGatewayMock();
 
         // Method needs to list versions
         $mapperMock->expects( $this->once() )
@@ -832,6 +838,14 @@ class ContentHandlerTest extends TestCase
         $gatewayMock->expects( $this->once() )
             ->method( "deleteContent" )
             ->with( $this->equalTo( 23 ) );
+
+        $handler->expects( $this->once() )
+            ->method( 'loadContentInfo' )
+            ->with( 23 )
+            ->will( $this->returnValue( new ContentInfo( array( "mainLocationId" => 42 ) ) ) );
+        $locationGatewayMock->expects( $this->once() )
+            ->method( "removeElementFromTrash" )
+            ->with( $this->equalTo( 42 ) );
 
         $handler->removeRawContent( 23 );
     }

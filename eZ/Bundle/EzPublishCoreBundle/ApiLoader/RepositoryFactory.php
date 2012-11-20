@@ -52,13 +52,18 @@ class RepositoryFactory
     /**
      * Builds the main repository, heart of eZ Publish API
      *
+     * This always returns the true inner Repository, please depend on ezpublish.api.repository and not this method
+     * directly to make sure you get an instance wrapped inside Signal / Cache / * functionality.
+     *
      * @param \eZ\Publish\SPI\Persistence\Handler $persistenceHandler
      * @param \eZ\Publish\SPI\IO\Handler $ioHandler
      * @return \eZ\Publish\API\Repository\Repository
      */
     public function buildRepository( PersistenceHandler $persistenceHandler, IoHandler $ioHandler )
     {
-        $repositoryClass = $this->container->getParameter( 'ezpublish.api.repository.class' );
+        /** @var $configResolver \eZ\Publish\Core\MVC\ConfigResolverInterface */
+        $configResolver = $this->container->get( 'ezpublish.config.resolver' );
+        $repositoryClass = $this->container->getParameter( 'ezpublish.api.inner_repository.class' );
         return new $repositoryClass(
             $persistenceHandler,
             $ioHandler,
@@ -66,13 +71,15 @@ class RepositoryFactory
                 'fieldType'     => $this->fieldTypes,
                 'role'          => array(
                     'limitationTypes'   => $this->roleLimitations
-                )
+                ),
+                'languages'     => $configResolver->getParameter( 'languages' )
             )
         );
     }
 
     /**
-     * Returns a closure which returns the repository.
+     * Returns a closure which returns ezpublish.api.repository when called.
+     *
      * To be used when lazy loading is needed.
      *
      * @return \Closure
@@ -150,8 +157,8 @@ class RepositoryFactory
      *
      * @param \eZ\Publish\API\Repository\Repository $repository
      * @param $serviceName
+     * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentException
      * @return mixed
-     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the method/service is invalid
      */
     public function buildService( Repository $repository, $serviceName )
     {

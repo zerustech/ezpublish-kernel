@@ -58,17 +58,20 @@ class LegacyStorage extends Gateway
      */
     public function storeFieldData( Field $field, $contentTypeID )
     {
-        $existingKeywordMap = $this->getExistingKeywords( $field->value->externalData, $field->fieldDefinitionId );
-
-        $keywordsToInsert = $this->getKeywordsToInsert( $existingKeywordMap, $field->value->externalData );
-
-        $insertedKeywordMap = $this->insertKeywords( $keywordsToInsert, $contentTypeID );
+        $existingKeywordMap = $this->getExistingKeywords( $field->value->externalData, $contentTypeID );
 
         $this->deleteOldKeywordAssignements( $field );
 
-        $keywordsToAssignMap = array_merge( $existingKeywordMap, $insertedKeywordMap );
-
-        $this->assignKeywords( $field->id, $keywordsToAssignMap );
+        $this->assignKeywords(
+            $field->id,
+            $this->insertKeywords(
+                array_diff_key(
+                    array_fill_keys( $field->value->externalData, true ),
+                    $existingKeywordMap
+                ),
+                $contentTypeID
+            ) + $existingKeywordMap
+        );
     }
 
     /**
@@ -203,35 +206,6 @@ class LegacyStorage extends Gateway
         }
 
         return $existingKeywordMap;
-    }
-
-    /**
-     * Returns a list of keywords to insert.
-     *
-     * Returns an array in the following format:
-     * <code>
-     *  array(
-     *      '<keyword>' => true,
-     *      // ...
-     *  );
-     * </code>
-     *
-     * @param mixed[] $existingKeywords
-     * @param string[] $keywordList
-     * @return mixed[]
-     */
-    protected function getKeywordsToInsert( $existingKeywords, $keywordList )
-    {
-        $keywordsToInsert = array_fill_keys( $keywordList, true );
-
-        $keywordIds = array();
-
-        foreach ( $existingKeywords as $keyword => $id )
-        {
-            unset( $keywordsToInsert[$keyword] );
-        }
-
-        return $keywordsToInsert;
     }
 
     /**

@@ -131,20 +131,56 @@ class SearchService implements SearchServiceInterface
      * Add content, read Permission criteria if needed and return false if no access at all
      *
      * @access private Temporarily made accessible until Location service stops using searchHandler()
+     * @uses getPermissionsCriterion()
+     *
      * @param \eZ\Publish\API\Repository\Values\Content\Query\Criterion $criterion
      *
      * @return boolean|\eZ\Publish\API\Repository\Values\Content\Query\Criterion
      */
     public function addPermissionsCriterion( Criterion &$criterion )
     {
-        $permissionSets = $this->repository->hasAccess( 'content', 'read' );
+        $permissionCriterion = $this->getPermissionsCriterion();
+        if ( $permissionCriterion === true || $permissionCriterion === false )
+        {
+            return $permissionCriterion;
+        }
+
+        // Merge with original $criterion
+        if ( $criterion instanceof Criterion\LogicalAnd )
+        {
+            $criterion->criteria[] = $permissionCriterion;
+        }
+        else
+        {
+            $criterion = new Criterion\LogicalAnd(
+                array(
+                    $criterion,
+                    $permissionCriterion
+                )
+            );
+        }
+        return true;
+    }
+
+    /**
+     * Get content-read Permission criteria if needed and return false if no access at all
+     *
+     * @access private Temporarily made accessible until Location service stops using searchHandler()
+     *
+     * @uses \eZ\Publish\API\Repository::hasAccess()
+     * @throws \RuntimeException If empty array of limitations are provided from hasAccess()
+     * @return boolean|\eZ\Publish\API\Repository\Values\Content\Query\Criterion
+     */
+    public function getPermissionsCriterion( $module = 'content', $function = 'read' )
+    {
+        $permissionSets = $this->repository->hasAccess( $module, $function );
         if ( $permissionSets === false || $permissionSets === true )
         {
             return $permissionSets;
         }
 
         if ( empty( $permissionSets ) )
-            throw new \RuntimeException( "Got an empty array of limitations from hasAccess()" );
+            throw new \RuntimeException( "Got an empty array of limitations from hasAccess( '{$module}', '{$function}' )" );
 
         /**
          * RoleAssignment is a OR condition, so is policy, while limitations is a AND condition
@@ -202,26 +238,8 @@ class SearchService implements SearchServiceInterface
 
         }
 
-        // Merge with original $criterion
-        if ( $criterion instanceof Criterion\LogicalAnd )
-        {
-            $criterion->criteria[] = isset( $roleAssignmentOrCriteria[1] ) ?
-                new Criterion\LogicalOr( $roleAssignmentOrCriteria ) :
-                $roleAssignmentOrCriteria[0];
-        }
-        else
-        {
-            $criterion = new Criterion\LogicalAnd(
-                array(
-                    $criterion,
-                    ( isset( $roleAssignmentOrCriteria[1] ) ?
-                        new Criterion\LogicalOr( $roleAssignmentOrCriteria ) :
-                        $roleAssignmentOrCriteria[0]
-                    )
-                )
-            );
-        }
-
-        return true;
+        return isset( $roleAssignmentOrCriteria[1] ) ?
+            new Criterion\LogicalOr( $roleAssignmentOrCriteria ) :
+            $roleAssignmentOrCriteria[0];
     }
 }
