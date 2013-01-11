@@ -57,4 +57,22 @@ class SqlNg extends Legacy
         );
         return $repository;
     }
+
+    /**
+     * Returns the database schema as an array of SQL statements
+     *
+     * @return string[]
+     */
+    protected function getSchemaStatements()
+    {
+
+        return array_filter(
+            preg_split(
+                '(;\\s*$)m',
+                file_get_contents(
+                    __DIR__ . '/../../../../Core/Persistence/SqlNg/schema/schema.' . self::$db . '.sql'
+                )
+            )
+        );
+    }
 }
