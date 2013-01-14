@@ -213,13 +213,40 @@ class Handler implements HandlerInterface
     protected $dbHandler;
 
     /**
+     * Storage registry
+     *
+     * @var \eZ\Publish\Core\Persistence\Legacy\Content\StorageRegistry
+     */
+    protected $storageRegistry;
+
+    /**
      * Creates a new repository handler.
      *
      * @param \eZ\Publish\Core\Persistence\SqlNg\EzcDbHandler $dbHandler The database handler
      */
-    public function __construct( EzcDbHandler $dbHandler )
+    public function __construct(
+        EzcDbHandler $dbHandler,
+        Content\StorageRegistry $storageRegistry )
     {
         $this->dbHandler = $dbHandler;
+        $this->storageRegistry = $storageRegistry;
+    }
+
+    /**
+     * @return \eZ\Publish\SPI\Persistence\Content\Language\Handler
+     */
+    public function contentLanguageHandler()
+    {
+        if ( !isset( $this->languageHandler ) )
+        {
+            $this->languageHandler = new Content\Language\Handler(
+                new Content\Language\Gateway\ExceptionConversion(
+                    new Content\Language\Gateway\EzcDatabase( $this->dbHandler )
+                ),
+                new Content\Language\Mapper()
+            );
+        }
+        return $this->languageHandler;
     }
 
     /**
@@ -232,20 +259,133 @@ class Handler implements HandlerInterface
         if ( !isset( $this->contentHandler ) )
         {
             $this->contentHandler = new Content\Handler(
+                $this->getContentGateway(),
+                $this->getLocationGateway(),
+                $this->getContentMapper(),
+                $this->getFieldHandler()
             );
         }
         return $this->contentHandler;
     }
 
     /**
-     * Returns the field value converter registry
+     * Returns a content gateway
      *
-     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\FieldValue\ConverterRegistry
+     * @return \eZ\Publish\Core\Persistence\Legacy\Content\Gateway
      */
-    public function getFieldValueConverterRegistry()
+    protected function getContentGateway()
     {
-        return $this->converterRegistry;
+        if ( !isset( $this->contentGateway ) )
+        {
+            $this->contentGateway = new Content\Gateway\ExceptionConversion(
+                new Content\Gateway\EzcDatabase(
+                    $this->dbHandler,
+                    new Content\Gateway\EzcDatabase\QueryBuilder( $this->dbHandler ),
+                    $this->contentLanguageHandler()
+                )
+            );
+        }
+        return $this->contentGateway;
     }
+
+    /**
+     * Returns a content mapper
+     *
+     * @return \eZ\Publish\Core\Persistence\Legacy\Content\Mapper
+     */
+    protected function getContentMapper()
+    {
+        if ( !isset( $this->contentMapper ) )
+        {
+            $this->contentMapper = new Content\Mapper(
+                $this->contentLanguageHandler()
+            );
+        }
+        return $this->contentMapper;
+    }
+
+    /**
+     * Returns a field handler
+     *
+     * @return \eZ\Publish\Core\Persistence\Legacy\Content\FieldHandler
+     */
+    protected function getFieldHandler()
+    {
+        if ( !isset( $this->fieldHandler ) )
+        {
+            $this->fieldHandler = new Content\FieldHandler(
+                $this->getContentGateway(),
+                $this->getContentTypeGateway(),
+                $this->getContentMapper(),
+                $this->getStorageHandler()
+            );
+        }
+        return $this->fieldHandler;
+    }
+
+    /**
+     * Returns a storage handler
+     *
+     * @return \eZ\Publish\Core\Persistence\Legacy\Content\StorageHandler
+     */
+    protected function getStorageHandler()
+    {
+        if ( !isset( $this->storageHandler ) )
+        {
+            $this->storageHandler = new Content\StorageHandler(
+                $this->storageRegistry,
+                $this->getContext()
+            );
+        }
+        return $this->storageHandler;
+    }
+
+    /**
+     * Get context definition for external storage layers
+     *
+     * @return array
+     */
+    protected function getContext()
+    {
+        return array(
+            'identifier' => 'SqlNgStorage',
+            'connection' => $this->dbHandler,
+        );
+    }
+
+    /**
+     * @return \eZ\Publish\SPI\Persistence\Content\Type\Handler
+     */
+    public function contentTypeHandler()
+    {
+        if ( !isset( $this->contentTypeHandler ) )
+        {
+            $this->contentTypeHandler = new Content\Type\Handler(
+                $this->getContentTypeGateway(),
+                new Content\Type\Mapper()
+            );
+        }
+        return $this->contentTypeHandler;
+    }
+
+    /**
+     * Returns the content type gateway
+     *
+     * @return \eZ\Publish\Core\Persistence\Legacy\Content\Type\Gateway
+     */
+    protected function getContentTypeGateway()
+    {
+        if ( !isset( $this->contentTypeGateway ) )
+        {
+            $this->contentTypeGateway = new Content\Type\Gateway\ExceptionConversion(
+                new Content\Type\Gateway\EzcDatabase(
+                    $this->dbHandler
+                )
+            );
+        }
+        return $this->contentTypeGateway;
+    }
+
     /**
      * Returns the storage registry
      *
@@ -270,32 +410,6 @@ class Handler implements HandlerInterface
     }
 
     /**
-     * @return \eZ\Publish\SPI\Persistence\Content\Type\Handler
-     */
-    public function contentTypeHandler()
-    {
-        if ( !isset( $this->contentTypeHandler ) )
-        {
-            $this->contentTypeHandler = new Content\Type\Handler(
-            );
-        }
-        return $this->contentTypeHandler;
-    }
-
-    /**
-     * @return \eZ\Publish\SPI\Persistence\Content\Language\Handler
-     */
-    public function contentLanguageHandler()
-    {
-        if ( !isset( $this->languageHandler ) )
-        {
-            $this->languageHandler = new Content\Language\Handler(
-            );
-        }
-        return $this->languageHandler;
-    }
-
-    /**
      * @return \eZ\Publish\SPI\Persistence\Content\Location\Handler
      */
     public function locationHandler()
@@ -306,6 +420,22 @@ class Handler implements HandlerInterface
             );
         }
         return $this->locationHandler;
+    }
+
+    /**
+     * Returns a location gateway
+     *
+     * @return \eZ\Publish\Core\Persistence\Legacy\Content\Location\Gateway\EzcDatabase
+     */
+    protected function getLocationGateway()
+    {
+        if ( !isset( $this->locationGateway ) )
+        {
+            $this->locationGateway = new Content\Location\Gateway\ExceptionConversion(
+                new Content\Location\Gateway\EzcDatabase( $this->dbHandler )
+            );
+        }
+        return $this->locationGateway;
     }
 
     /**
@@ -329,6 +459,11 @@ class Handler implements HandlerInterface
         if ( !isset( $this->userHandler ) )
         {
             $this->userHandler = new User\Handler(
+                new User\Gateway\ExceptionConversion(
+                    new User\Gateway\EzcDatabase( $this->dbHandler )
+                ),
+                new User\Role\Gateway\EzcDatabase( $this->dbHandler ),
+                new User\Mapper()
             );
         }
         return $this->userHandler;
