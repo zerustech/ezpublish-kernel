@@ -20,10 +20,20 @@ use RuntimeException;
 class Handler implements BaseSectionHandler
 {
     /**
-     * Creates a new Section Handler
+     * Section Gateway
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Section\Gateway
      */
-    public function __construct()
+    protected $sectionGateway;
+
+    /**
+     * Creates a new Section Handler
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Section\Gateway $sectionGateway
+     */
+    public function __construct( Gateway $sectionGateway  )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**

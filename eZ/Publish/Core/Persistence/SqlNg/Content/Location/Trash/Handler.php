@@ -23,10 +23,51 @@ use eZ\Publish\Core\Persistence\SqlNg\Content\Location\Mapper as LocationMapper;
 class Handler implements BaseTrashHandler
 {
     /**
-     * Construct from userGateway
+     * Location handler.
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Handler
      */
-    public function __construct()
+    protected $locationHandler;
+
+    /**
+     * Gateway for handling location data
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway
+     */
+    protected $locationGateway;
+
+    /**
+     * Mapper for handling location data
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Mapper
+     */
+    protected $locationMapper;
+
+    /**
+     * Content handler
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Handler
+     */
+    protected $contentHandler;
+
+    /**
+     * Construct from userGateway
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Handler $locationHandler
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway $locationGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Mapper $locationMapper
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Handler $contentHandler
+     *
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Trash\Handler
+     */
+    public function __construct(
+        LocationHandler $locationHandler,
+        LocationGateway $locationGateway,
+        LocationMapper $locationMapper,
+        ContentHandler $contentHandler
+    )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**
@@ -53,6 +94,8 @@ class Handler implements BaseTrashHandler
      *
      * @param mixed $locationId
      *
+     * @todo Handle field types actions
+     *
      * @return null|\eZ\Publish\SPI\Persistence\Content\Location\Trashed null if location was deleted, otherwise Trashed object
      */
     public function trashSubtree( $locationId )
@@ -74,6 +117,7 @@ class Handler implements BaseTrashHandler
      *
      * @return int Newly restored location id
      * @throws \eZ\Publish\Core\Base\Exceptions\NotFoundException If $newParentId is invalid
+     * @todo Handle field types actions
      */
     public function recover( $trashedId, $newParentId )
     {
@@ -117,19 +161,6 @@ class Handler implements BaseTrashHandler
      * @return void
      */
     public function deleteTrashItem( $trashedId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Triggers delete operations for $trashItem.
-     * If there is no more locations for corresponding content, then it will be deleted as well.
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\Location\Trashed $trashItem
-     *
-     * @return void
-     */
-    protected function delete( Trashed $trashItem )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }

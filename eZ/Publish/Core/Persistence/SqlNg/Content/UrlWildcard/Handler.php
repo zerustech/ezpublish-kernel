@@ -21,10 +21,28 @@ use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 class Handler implements BaseUrlWildcardHandler
 {
     /**
-     * Creates a new UrlWildcard Handler
+     * UrlWildcard Gateway
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\UrlWildcard\Gateway
      */
-    public function __construct()
+    protected $gateway;
+
+    /**
+     * UrlWildcard Mapper
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\UrlWildcard\Mapper
+     */
+    protected $mapper;
+
+    /**
+     * Creates a new UrlWildcard Handler
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\UrlWildcard\Gateway $gateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\UrlWildcard\Mapper $mapper
+     */
+    public function __construct( Gateway $gateway, Mapper $mapper )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**

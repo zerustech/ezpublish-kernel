@@ -46,10 +46,36 @@ use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 class Handler extends BaseSearchHandler
 {
     /**
-     * Creates a new content handler.
+     * Content locator gateway.
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway
      */
-    public function __construct()
+    protected $gateway;
+
+    /**
+     * Content mapper
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper
+     */
+    protected $contentMapper;
+
+    /**
+     * FieldHandler
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\FieldHandler
+     */
+    protected $fieldHandler;
+
+    /**
+     * Creates a new content handler.
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway $gateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper $contentMapper
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler $fieldHandler
+     */
+    public function __construct( Gateway $gateway, ContentMapper $contentMapper, FieldHandler $fieldHandler )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**

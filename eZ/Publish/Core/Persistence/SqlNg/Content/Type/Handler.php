@@ -29,11 +29,37 @@ use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 class Handler implements BaseContentTypeHandler
 {
     /**
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Gateway
+     */
+    protected $contentTypeGateway;
+
+    /**
+     * Mappper for Type objects.
+     *
+     * @var Mapper
+     */
+    protected $mapper;
+
+    /**
+     * Content Type update handler
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Update\Handler
+     */
+    protected $updateHandler;
+
+    /**
      * Creates a new content type handler.
      *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Gateway $contentTypeGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Mapper $mapper
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Update\Handler $updateHandler
      */
-    public function __construct()
+    public function __construct(
+        Gateway $contentTypeGateway,
+        Mapper $mapper,
+        UpdateHandler $updateHandler )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**
@@ -224,6 +250,7 @@ class Handler implements BaseContentTypeHandler
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException If group or type with provided status is not found
      * @throws \eZ\Publish\API\Repository\Exceptions\BadStateException If $groupId is last group on $contentTypeId or
      *                                                                 not a group assigned to type
+     * @todo Add throws for NotFound and BadState when group is not assigned to type
      */
     public function unlink( $groupId, $contentTypeId, $status )
     {
@@ -238,6 +265,7 @@ class Handler implements BaseContentTypeHandler
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException If group or type with provided status is not found
      * @throws \eZ\Publish\API\Repository\Exceptions\BadStateException If type is already part of group
+     * @todo Above throws are not implemented
      */
     public function link( $groupId, $contentTypeId, $status )
     {

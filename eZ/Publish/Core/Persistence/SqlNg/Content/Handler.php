@@ -25,10 +25,49 @@ use eZ\Publish\Core\Base\Exceptions\NotFoundException as NotFound;
 class Handler implements BaseContentHandler
 {
     /**
-     * Creates a new content handler.
+     * Content gateway.
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Gateway
      */
-    public function __construct()
+    protected $contentGateway;
+
+    /**
+     * Location gateway.
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway
+     */
+    protected $locationGateway;
+
+    /**
+     * Mapper.
+     *
+     * @var Mapper
+     */
+    protected $mapper;
+
+    /**
+     * FieldHandler
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
+     */
+    protected $fieldHandler;
+
+    /**
+     * Creates a new content handler.
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Gateway $contentGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway $locationGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper $mapper
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler $fieldHandler
+     */
+    public function __construct(
+        Gateway $contentGateway,
+        LocationGateway $locationGateway,
+        Mapper $mapper,
+        FieldHandler $fieldHandler
+    )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**

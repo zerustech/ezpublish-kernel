@@ -23,10 +23,36 @@ use eZ\Publish\Core\Base\Exceptions\NotFoundException as NotFound;
 class Handler implements BaseUserHandler
 {
     /**
-     * Construct from userGateway
+     * Gateway for storing user data
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\User\Gateway
      */
-    public function __construct()
+    protected $userGateway;
+
+    /**
+     * Gateway for storing role data
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\User\Role\Gateway
+     */
+    protected $roleGateway;
+
+    /**
+     * Mapper for user related objects
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\User\Mapper
+     */
+    protected $mapper;
+
+    /**
+     * Construct from userGateway
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\User\Gateway $userGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\User\Role\Gateway $roleGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\User\Mapper $mapper
+     */
+    public function __construct( Gateway $userGateway, RoleGateway $roleGateway, Mapper $mapper )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**

@@ -26,10 +26,51 @@ use eZ\Publish\SPI\Persistence\Content\MetadataUpdateStruct;
 class Handler implements BaseLocationHandler
 {
     /**
-     * Construct from userGateway
+     * Gateway for handling location data
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway
      */
-    public function __construct()
+    protected $locationGateway;
+
+    /**
+     * Location locationMapper
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Mapper
+     */
+    protected $locationMapper;
+
+    /**
+     * Content handler
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Handler
+     */
+    protected $contentHandler;
+
+    /**
+     * Content locationMapper
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper
+     */
+    protected $contentMapper;
+
+    /**
+     * Construct from userGateway
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway $locationGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Mapper $locationMapper
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Handler $contentHandler
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper $contentMapper
+     *
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Handler
+     */
+    public function __construct(
+        LocationGateway $locationGateway,
+        LocationMapper $locationMapper,
+        ContentHandler $contentHandler,
+        ContentMapper $contentMapper
+    )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**

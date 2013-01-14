@@ -19,10 +19,28 @@ use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 class Handler implements BaseObjectStateHandler
 {
     /**
-     * Creates a new ObjectState Handler
+     * ObjectState Gateway
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway
      */
-    public function __construct()
+    protected $objectStateGateway;
+
+    /**
+     * ObjectState Mapper
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Mapper
+     */
+    protected $objectStateMapper;
+
+    /**
+     * Creates a new ObjectState Handler
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway $objectStateGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Mapper $objectStateMapper
+     */
+    public function __construct( Gateway $objectStateGateway, Mapper $objectStateMapper )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**

@@ -26,11 +26,64 @@ use RuntimeException;
  */
 class Handler implements UrlAliasHandlerInterface
 {
+    protected $configuration = array(
+    );
+
+    /**
+     * UrlAlias Gateway
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\UrlAlias\Gateway
+     */
+    protected $gateway;
+
+    /**
+     * Gateway for handling location data
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway
+     */
+    protected $locationGateway;
+
+    /**
+     * UrlAlias Mapper
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\UrlAlias\Mapper
+     */
+    protected $mapper;
+
+    /**
+     * Caching language handler
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\CachingHandler
+     */
+    protected $languageHandler;
+
+    /**
+     * Transformation processor to normalize URL strings
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Search\TransformationProcessor
+     */
+    protected $transformationProcessor;
+
     /**
      * Creates a new UrlAlias Handler
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\UrlAlias\Gateway $gateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\UrlAlias\Mapper $mapper
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway $locationGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler $languageHandler
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Search\TransformationProcessor $transformationProcessor
+     * @param array $configuration
      */
-    public function __construct()
+    public function __construct(
+        Gateway $gateway,
+        Mapper $mapper,
+        LocationGateway $locationGateway,
+        LanguageHandler $languageHandler,
+        TransformationProcessor $transformationProcessor,
+        array $configuration = array()
+    )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**
@@ -203,6 +256,16 @@ class Handler implements UrlAliasHandlerInterface
      * @return void
      */
     public function locationCopied( $locationId, $newLocationId, $newParentId )
+    {
+        throw new \RuntimeException( "@TODO: Implement" );
+    }
+
+    /**
+     * Notifies the underlying engine that a location was deleted or moved to trash
+     *
+     * @param mixed $locationId
+     */
+    public function locationDeleted( $locationId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }

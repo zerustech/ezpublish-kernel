@@ -21,10 +21,28 @@ use LogicException;
 class Handler implements BaseLanguageHandler
 {
     /**
-     * Creates a new Language Handler
+     * Language Gateway
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Gateway
      */
-    public function __construct()
+    protected $languageGateway;
+
+    /**
+     * Language Mapper
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Mapper
+     */
+    protected $languageMapper;
+
+    /**
+     * Creates a new Language Handler
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Gateway $languageGateway
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Mapper $languageMapper
+     */
+    public function __construct( Gateway $languageGateway, Mapper $languageMapper )
     {
+        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**
