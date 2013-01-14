@@ -8,8 +8,9 @@ DROP TABLE IF EXISTS ezcontent_language;
 CREATE TABLE ezcontent_language (
     disabled int(11) NOT NULL DEFAULT '0',
     id int(11) NOT NULL DEFAULT '0',
-    locale varchar(20) NOT NULL DEFAULT '',
+    language_code varchar(20) NOT NULL DEFAULT '',
     name varchar(255) NOT NULL DEFAULT '',
+    is_enabled int(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
@@ -45,7 +46,7 @@ CREATE TABLE ezcontenttype_name (
     contenttype_id int(11) NOT NULL DEFAULT '0',
     version_no int(11) NOT NULL DEFAULT '0',
     language_id int(11) NOT NULL DEFAULT '0',
-    language_locale varchar(20) NOT NULL DEFAULT '',
+    language_code varchar(20) NOT NULL DEFAULT '',
     name varchar(255) NOT NULL DEFAULT '',
     PRIMARY KEY (contenttype_id, version_no, language_id),
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE,
@@ -213,7 +214,7 @@ DROP TABLE IF EXISTS `ezsection`;
 CREATE TABLE `ezsection` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `identifier` varchar(255) DEFAULT NULL,
-    `locale` varchar(255) DEFAULT NULL,
+    `language_code` varchar(255) DEFAULT NULL,
     `name` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
