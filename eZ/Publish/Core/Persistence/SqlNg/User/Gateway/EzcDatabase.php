@@ -19,20 +19,20 @@ use eZ\Publish\SPI\Persistence\User;
 class EzcDatabase extends Gateway
 {
     /**
-     * Database handler
+     * Database dbHandler
      *
      * @var EzcDbHandler
      */
-    protected $handler;
+    protected $dbHandler;
 
     /**
-     * Construct from database handler
+     * Construct from database dbHandler
      *
-     * @param \EzcDbHandler $handler
+     * @param \EzcDbHandler $dbHandler
      */
-    public function __construct( EzcDbHandler $handler )
+    public function __construct( EzcDbHandler $dbHandler )
     {
-        $this->handler = $handler;
+        $this->dbHandler = $dbHandler;
     }
 
     /**

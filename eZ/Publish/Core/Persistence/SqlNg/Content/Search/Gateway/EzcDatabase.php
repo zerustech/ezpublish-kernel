@@ -19,7 +19,7 @@ use eZ\Publish\API\Repository\Values\Content\VersionInfo;
 use ezcQuerySelect;
 
 /**
- * Content locator gateway implementation using the zeta handler component.
+ * Content locator gateway implementation using the zeta dbHandler component.
  */
 class EzcDatabase extends Gateway
 {
@@ -30,11 +30,11 @@ class EzcDatabase extends Gateway
     const MAX_LIMIT = 1073741824;
 
     /**
-     * Database handler
+     * Database dbHandler
      *
      * @var EzcDbHandler
      */
-    protected $handler;
+    protected $dbHandler;
 
     /**
      * Criteria converter
@@ -58,21 +58,21 @@ class EzcDatabase extends Gateway
     protected $queryBuilder;
 
     /**
-     * Caching language handler
+     * Caching language dbHandler
      *
      * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\CachingHandler
      */
     protected $languageHandler;
 
     /**
-     * Construct from handler handler
+     * Construct from dbHandler dbHandler
      *
-     * @param \EzcDbHandler $handler
+     * @param \EzcDbHandler $dbHandler
      *
      * @return void
      */
     public function __construct(
-        EzcDbHandler $handler,
+        EzcDbHandler $dbHandler,
         CriteriaConverter $criteriaConverter,
         SortClauseConverter $sortClauseConverter,
         QueryBuilder $queryBuilder,

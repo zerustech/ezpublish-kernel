@@ -21,11 +21,11 @@ use eZ\Publish\SPI\Persistence\User\Role;
 class EzcDatabase extends Gateway
 {
     /**
-     * Database handler
+     * Database dbHandler
      *
      * @var EzcDbHandler
      */
-    protected $handler;
+    protected $dbHandler;
 
     /**
      * Internal type ID for user groups
@@ -33,15 +33,15 @@ class EzcDatabase extends Gateway
     const GROUP_TYPE_ID = 3;
 
     /**
-     * Construct from database handler
+     * Construct from database dbHandler
      *
-     * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $handler
+     * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $dbHandler
      *
      * @return void
      */
-    public function __construct( EzcDbHandler $handler )
+    public function __construct( EzcDbHandler $dbHandler )
     {
-        $this->handler = $handler;
+        $this->dbHandler = $dbHandler;
     }
 
     /**
