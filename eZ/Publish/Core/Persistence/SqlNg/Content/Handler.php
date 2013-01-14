@@ -164,7 +164,9 @@ class Handler implements BaseContentHandler
      */
     public function loadContentInfo( $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->mapper->extractContentInfoFromRow(
+            $this->contentGateway->loadContentInfo( $contentId )
+        );
     }
 
     /**

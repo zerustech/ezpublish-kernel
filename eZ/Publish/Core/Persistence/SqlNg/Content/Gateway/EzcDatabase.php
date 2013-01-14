@@ -257,7 +257,41 @@ class EzcDatabase extends Gateway
      */
     public function loadContentInfo( $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        /** @var $query \ezcQuerySelect */
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            "ezcontent.*",
+            $this->dbHandler->aliasedColumn( $query, 'main_id', 'ezcontentlocation' )
+        )->from(
+            $this->dbHandler->quoteTable( "ezcontent" )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( "ezcontentlocation" ),
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "content_id", "ezcontentlocation" ),
+                    $this->dbHandler->quoteColumn( "id", "ezcontent" )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "main_id", "ezcontentlocation" ),
+                    $this->dbHandler->quoteColumn( "id", "ezcontentlocation" )
+                )
+            )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( "id", "ezcontent" ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )
+        );
+        $statement = $query->prepare();
+        $statement->execute();
+        $row = $statement->fetch( \PDO::FETCH_ASSOC );
+
+        if ( empty( $row ) )
+        {
+            throw new NotFound( "content", $contentId );
+        }
+
+        return $row;
     }
 
     /**
