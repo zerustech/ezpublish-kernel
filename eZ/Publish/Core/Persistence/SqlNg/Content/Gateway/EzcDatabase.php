@@ -56,16 +56,18 @@ class EzcDatabase extends Gateway
     /**
      * Creates a new gateway based on $db
      *
-     * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $db
+     * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $dbHandler
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Gateway\EzcDatabase\QueryBuilder $queryBuilder
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\CachingHandler $languageHandler
      */
     public function __construct(
-        EzcDbHandler $db,
+        EzcDbHandler $dbHandler,
         QueryBuilder $queryBuilder,
         LanguageHandler $languageHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
+        $this->queryBuilder = $queryBuilder;
+        $this->languageHandler = $languageHandler;
     }
 
     /**

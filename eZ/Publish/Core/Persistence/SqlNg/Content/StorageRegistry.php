@@ -38,7 +38,7 @@ class StorageRegistry
      */
     public function __construct( array $storageMap )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->storageMap = $storageMap;
     }
 
     /**

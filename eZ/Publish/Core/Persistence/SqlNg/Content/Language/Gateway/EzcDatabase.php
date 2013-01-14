@@ -33,7 +33,7 @@ class EzcDatabase extends Gateway
      */
     public function __construct ( EzcDbHandler $dbHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
     }
 
     /**

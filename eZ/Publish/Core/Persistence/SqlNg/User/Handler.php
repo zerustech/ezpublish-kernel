@@ -52,7 +52,9 @@ class Handler implements BaseUserHandler
      */
     public function __construct( Gateway $userGateway, RoleGateway $roleGateway, Mapper $mapper )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->userGateway = $userGateway;
+        $this->roleGateway = $roleGateway;
+        $this->mapper = $mapper;
     }
 
     /**

@@ -42,7 +42,8 @@ class Handler implements BaseLanguageHandler
      */
     public function __construct( Gateway $languageGateway, Mapper $languageMapper )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->languageGateway = $languageGateway;
+        $this->languageMapper = $languageMapper;
     }
 
     /**

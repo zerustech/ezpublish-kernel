@@ -27,7 +27,7 @@ class QueryBuilder
      */
     public function __construct( ezcDbHandler $dbHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
     }
 
     /**

@@ -30,18 +30,18 @@ class EzcDatabase extends Gateway
      *
      * @var \EzcDbHandler
      */
-    protected $handler;
+    protected $dbHandler;
 
     /**
      * Construct from database handler
      *
-     * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $handler
+     * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $dbHandler
      *
      * @return void
      */
-    public function __construct( EzcDbHandler $handler )
+    public function __construct( EzcDbHandler $dbHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
     }
 
     /**

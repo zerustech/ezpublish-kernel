@@ -39,7 +39,8 @@ class StorageHandler
      */
     public function __construct( StorageRegistry $storageRegistry, array $context )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->storageRegistry = $storageRegistry;
+        $this->context = $context;
     }
 
     /**

@@ -33,13 +33,13 @@ class EzcDatabase extends Gateway
     protected $dbHandler;
 
     /**
-     * Creates a new gateway based on $db
+     * Creates a new gateway based on $dbHandler
      *
-     * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $db
+     * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $dbHandler
      */
-    public function __construct( EzcDbHandler $db )
+    public function __construct( EzcDbHandler $dbHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
     }
 
     /**

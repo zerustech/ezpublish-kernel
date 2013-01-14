@@ -67,7 +67,10 @@ class Handler implements BaseContentHandler
         FieldHandler $fieldHandler
     )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentGateway = $contentGateway;
+        $this->locationGateway = $locationGateway;
+        $this->mapper = $mapper;
+        $this->fieldHandler = $fieldHandler;
     }
 
     /**

@@ -40,7 +40,7 @@ class Mapper
      */
     public function __construct( LanguageHandler $languageHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->languageHandler = $languageHandler;
     }
 
     /**

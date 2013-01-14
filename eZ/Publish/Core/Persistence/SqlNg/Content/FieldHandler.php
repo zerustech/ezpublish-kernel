@@ -63,7 +63,10 @@ class FieldHandler
         Mapper $mapper,
         StorageHandler $storageHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentGateway = $contentGateway;
+        $this->typeGateway = $typeGateway;
+        $this->mapper = $mapper;
+        $this->storageHandler = $storageHandler;
     }
 
     /**
