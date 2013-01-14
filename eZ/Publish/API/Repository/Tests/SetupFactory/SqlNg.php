@@ -10,6 +10,7 @@
 namespace eZ\Publish\API\Repository\Tests\SetupFactory;
 
 use eZ\Publish\Core\Persistence\SqlNg\Handler;
+use eZ\Publish\Core\Persistence\SqlNg\Content\StorageRegistry;
 
 /**
  * A Test Factory is used to setup the infrastructure for a tests, based on a
@@ -48,7 +49,8 @@ class SqlNg extends Legacy
         $persistenceHandlerProperty->setValue(
             $repository,
             new Handler(
-                $this->getDatabaseHandler()
+                $this->getDatabaseHandler(),
+                new StorageRegistry( array() )
             )
         );
 
