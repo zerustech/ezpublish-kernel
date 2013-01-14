@@ -270,7 +270,7 @@ CREATE TABLE ezrole (
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS ezuser_role_rel;
-CREATE TABLE ezuser_role (
+CREATE TABLE ezuser_role_rel (
     id int(11) NOT NULL AUTO_INCREMENT,
     user_id int(11) DEFAULT NULL,
     role_id int(11) DEFAULT NULL,
