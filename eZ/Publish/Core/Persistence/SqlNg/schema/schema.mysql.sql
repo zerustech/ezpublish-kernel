@@ -100,8 +100,8 @@ CREATE TABLE ezcontenttype_group_rel (
 --
 -- Content object definitions (formerlly known as contentobject)
 --
-DROP TABLE IF EXISTS ezcontentobject;
-CREATE TABLE ezcontentobject (
+DROP TABLE IF EXISTS ezcontent;
+CREATE TABLE ezcontent(
     id int(11) NOT NULL AUTO_INCREMENT,
     contenttype_id int(11) NOT NULL DEFAULT '0',
     current_version_no int(11) DEFAULT NULL,
