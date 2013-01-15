@@ -285,21 +285,23 @@ CREATE TABLE `ezuservisit` (
 DROP TABLE IF EXISTS ezrole;
 CREATE TABLE ezrole (
     id int(11) NOT NULL AUTO_INCREMENT,
-    name varchar(255) NOT NULL DEFAULT '',
+    identifier varchar(255) NOT NULL DEFAULT '',
+    name LONGTEXT,
+    description LONGTEXT,
     changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezuser_role_rel;
-CREATE TABLE ezuser_role_rel (
+DROP TABLE IF EXISTS ezrole_content_rel;
+CREATE TABLE ezrole_content_rel (
     id int(11) NOT NULL AUTO_INCREMENT,
-    user_id int(11) DEFAULT NULL,
     role_id int(11) DEFAULT NULL,
+    content_id int(11) DEFAULT NULL,
     limit_identifier varchar(255) DEFAULT '',
     limit_value varchar(255) DEFAULT '',
     changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE,
+    FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES ezrole(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
