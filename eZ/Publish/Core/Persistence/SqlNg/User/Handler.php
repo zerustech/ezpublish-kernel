@@ -69,7 +69,8 @@ class Handler implements BaseUserHandler
      */
     public function create( User $user )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->userGateway->createUser( $user );
+        return $user;
     }
 
     /**
@@ -81,7 +82,14 @@ class Handler implements BaseUserHandler
      */
     public function load( $userId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $data = $this->userGateway->load( $userId );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFound( 'user', $userId );
+        }
+
+        return $this->mapper->mapUser( reset( $data ) );
     }
 
     /**
@@ -94,7 +102,14 @@ class Handler implements BaseUserHandler
      */
     public function loadByLogin( $login, $alsoMatchEmail = false )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $data = $this->userGateway->loadByLoginOrMail( $login, $alsoMatchEmail ? $login : null );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFound( 'user', $login );
+        }
+
+        return $this->mapper->mapUsers( $data );
     }
 
     /**
@@ -104,7 +119,7 @@ class Handler implements BaseUserHandler
      */
     public function update( User $user )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->userGateway->updateUser( $user );
     }
 
     /**
@@ -114,7 +129,7 @@ class Handler implements BaseUserHandler
      */
     public function delete( $userId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->userGateway->deleteUser( $userId );
     }
 
     /**

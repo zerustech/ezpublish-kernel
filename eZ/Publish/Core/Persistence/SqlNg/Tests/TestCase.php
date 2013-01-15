@@ -18,11 +18,11 @@ use eZ\Publish\Core\Persistence\SqlNg;
  */
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
-    protected $dsn;
+    protected static $dsn;
 
-    protected $db;
+    protected static $db;
 
-    protected $persistenceHandler;
+    protected static $persistenceHandler;
 
     public function setUp()
     {
@@ -30,7 +30,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        unset( $this->persistenceHandler );
     }
 
     /**
@@ -40,9 +39,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getPersistenceHandler()
     {
-        if ( !$this->persistenceHandler )
+        if ( !self::$persistenceHandler )
         {
-            $this->persistenceHandler = new SqlNg\Handler(
+            self::$persistenceHandler = new SqlNg\Handler(
                 $this->getDatabaseHandler(),
                 new SqlNg\Content\StorageRegistry( array() )
             );
@@ -52,7 +51,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             );
         }
 
-        return $this->persistenceHandler;
+        return self::$persistenceHandler;
     }
 
     /**
@@ -85,7 +84,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             preg_split(
                 '(;\\s*$)m',
                 file_get_contents(
-                    __DIR__ . '/../schema/schema.' . $this->db . '.sql'
+                    __DIR__ . '/../schema/schema.' . self::$db . '.sql'
                 )
             )
         );
@@ -98,11 +97,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getDatabaseHandler()
     {
-        $this->dsn = getenv( "DATABASE" ) ?: "sqlite://:memory:";
-        $this->db = preg_replace( '(^([a-z]+).*)', '\\1', $this->dsn );
+        self::$dsn = getenv( "DATABASE" ) ?: "sqlite://:memory:";
+        self::$db = preg_replace( '(^([a-z]+).*)', '\\1', self::$dsn );
 
         return new EzcDbHandler(
-            \ezcDbFactory::create( $this->dsn )
+            \ezcDbFactory::create( self::$dsn )
         );
     }
 }

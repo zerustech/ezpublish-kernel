@@ -28,7 +28,16 @@ class Mapper
      */
     public function mapUser( array $data )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $user = new User();
+        $user->id = (int)$data['id'];
+        $user->login = $data['login'];
+        $user->email = $data['email'];
+        $user->passwordHash = $data['password_hash'];
+        $user->hashAlgorithm = (int)$data['password_hash_type'];
+        $user->isEnabled = (bool)$data['is_enabled'];
+        $user->maxLogin = (int)$data['max_login'];
+
+        return $user;
     }
 
     /**
@@ -40,7 +49,13 @@ class Mapper
      */
     public function mapUsers( array $data )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $users = array();
+        foreach ( $data as $row )
+        {
+            $users[] = $this->mapUser( $row );
+        }
+
+        return $users;
     }
 
     /**
