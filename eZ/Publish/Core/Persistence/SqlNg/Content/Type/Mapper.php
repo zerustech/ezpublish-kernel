@@ -25,23 +25,6 @@ use eZ\Publish\Core\Persistence\SqlNg\Content\FieldValue\ConverterRegistry as Co
 class Mapper
 {
     /**
-     * Converter registry
-     *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\FieldValue\ConverterRegistry
-     */
-    protected $converterRegistry;
-
-    /**
-     * Creates a new content type mapper
-     *
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldValue\ConverterRegistry $converterRegistry
-     */
-    public function __construct( ConverterRegistry $converterRegistry )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Creates a Group from its create struct.
      *
      * @param \eZ\Publish\SPI\Persistence\Content\Type\Group\CreateStruct $struct

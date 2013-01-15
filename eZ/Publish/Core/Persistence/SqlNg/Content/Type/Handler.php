@@ -41,25 +41,17 @@ class Handler implements BaseContentTypeHandler
     protected $mapper;
 
     /**
-     * Content Type update handler
-     *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Update\Handler
-     */
-    protected $updateHandler;
-
-    /**
      * Creates a new content type handler.
      *
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Gateway $contentTypeGateway
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Mapper $mapper
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Update\Handler $updateHandler
      */
     public function __construct(
         Gateway $contentTypeGateway,
-        Mapper $mapper,
-        UpdateHandler $updateHandler )
+        Mapper $mapper )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentTypeGateway = $contentTypeGateway;
+        $this->mapper = $mapper;
     }
 
     /**
