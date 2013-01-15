@@ -76,11 +76,12 @@ CREATE TABLE ezcontenttype_field (
 DROP TABLE IF EXISTS ezcontenttype_group;
 CREATE TABLE ezcontenttype_group (
     id int(11) NOT NULL AUTO_INCREMENT,
+    identifier varchar(255) DEFAULT NULL,
     created int(11) NOT NULL DEFAULT '0',
     creator_id int(11) NOT NULL DEFAULT '0',
     modified int(11) NOT NULL DEFAULT '0',
     modifier_id int(11) NOT NULL DEFAULT '0',
-    name varchar(255) DEFAULT NULL,
+    name LONGTEXT,
     description LONGTEXT,
     PRIMARY KEY (id),
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
