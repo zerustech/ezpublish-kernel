@@ -12,6 +12,7 @@ namespace eZ\Publish\Core\Persistence\SqlNg\Tests;
 use eZ\Publish\API\Repository\Tests\SetupFactory;
 use eZ\Publish\Core\Persistence\Legacy\EzcDbHandler;
 use eZ\Publish\Core\Persistence\SqlNg;
+use eZ\Publish\SPI\Persistence;
 
 /**
  * Base test case for database related tests
@@ -23,6 +24,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected static $db;
 
     protected static $persistenceHandler;
+
+    protected static $user;
 
     public function setUp()
     {
@@ -103,6 +106,28 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return new EzcDbHandler(
             \ezcDbFactory::create( self::$dsn )
         );
+    }
+
+    /**
+     * Get a real user in the database
+     *
+     * @return Persistence\User
+     */
+    protected function getUser()
+    {
+        if ( !self::$user )
+        {
+            $userHandler = $this->getPersistenceHandler()->userHandler();
+            self::$user = $userHandler->create( new Persistence\User( array(
+                'id' => 14,
+                'login' => 'admin',
+                'email' => 'admin@example.com',
+                'hashAlgorithm' => 0,
+                'passwordHash' => '*',
+            ) ) );
+        }
+
+        return self::$user;
     }
 
     /**

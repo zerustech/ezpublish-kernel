@@ -61,7 +61,15 @@ class Handler implements BaseContentTypeHandler
      */
     public function createGroup( GroupCreateStruct $createStruct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $group = $this->mapper->createGroupFromCreateStruct(
+            $createStruct
+        );
+
+        $group->id = $this->contentTypeGateway->insertGroup(
+            $group
+        );
+
+        return $group;
     }
 
     /**
@@ -71,7 +79,10 @@ class Handler implements BaseContentTypeHandler
      */
     public function updateGroup( GroupUpdateStruct $struct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentTypeGateway->updateGroup(
+            $struct
+        );
+        return $this->loadGroup( $struct->id );
     }
 
     /**
@@ -94,7 +105,16 @@ class Handler implements BaseContentTypeHandler
      */
     public function loadGroup( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $groups = $this->mapper->extractGroupsFromRows(
+            $this->contentTypeGateway->loadGroupData( $groupId )
+        );
+
+        if ( count( $groups ) !== 1 )
+        {
+            throw new NotFoundException( 'group', $groupId );
+        }
+
+        return $groups[0];
     }
 
     /**

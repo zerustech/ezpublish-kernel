@@ -32,46 +32,62 @@ class ContentTypeHandlerTest extends TestCase
         );
     }
 
-    /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::createGroup
-     *
-     * @return void
-     */
     public function testCreateGroup()
     {
         $handler = $this->getHandler();
         $group = $handler->createGroup(
-            new Persistence\Content\Type\Group\CreateStruct()
+            new Persistence\Content\Type\Group\CreateStruct( $values = array(
+                'identifier' => 'testgroup',
+                'created' => 123456789,
+                'creatorId' => $this->getUser()->id,
+                'modified' => 123456789,
+                'modifierId' => $this->getUser()->id,
+            ) )
         );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content\\Type\\Group',
             $group
         );
-        $this->assertEquals(
-            23,
-            $group->id
-        );
+
+        $this->assertPropertiesCorrect( $values, $group );
+
+        return $group;
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::updateGroup
-     *
-     * @return void
+     * @depends testCreateGroup
      */
-    public function testUpdateGroup()
+    public function testLoadGroup( $group )
     {
-        $updateStruct = new GroupUpdateStruct();
-        $updateStruct->id = 23;
+        $handler = $this->getHandler();
+        $loaded = $handler->loadGroup( $group->id );
 
-        $res = $handlerMock->updateGroup(
-            $updateStruct
+        $this->assertEquals( $group, $loaded );
+    }
+
+    /**
+     * @depends testCreateGroup
+     */
+    public function testUpdateGroup( $group )
+    {
+
+        $handler = $this->getHandler();
+        $group = $handler->updateGroup(
+            new Persistence\Content\Type\Group\UpdateStruct( $values = array(
+                'id' => $group->id,
+                'identifier' => 'updated',
+                'modified' => 123456789,
+                'modifierId' => $this->getUser()->id,
+            ) )
         );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content\\Type\\Group',
-            $res
+            $group
         );
+
+        $this->assertPropertiesCorrect( $values, $group );
     }
 
     /**
@@ -83,22 +99,6 @@ class ContentTypeHandlerTest extends TestCase
     {
         $handler = $this->getHandler();
         $handler->deleteGroup( 23 );
-    }
-
-    /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadGroup
-     *
-     * @return void
-     */
-    public function testLoadGroup()
-    {
-        $handler = $this->getHandler();
-        $res = $handler->loadGroup( 23 );
-
-        $this->assertEquals(
-            new Group(),
-            $res
-        );
     }
 
     /**

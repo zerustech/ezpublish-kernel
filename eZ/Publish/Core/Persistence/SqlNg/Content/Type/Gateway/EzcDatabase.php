@@ -51,7 +51,39 @@ class EzcDatabase extends Gateway
      */
     public function insertGroup( Group $group )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontenttype_group' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontenttype_group', 'id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $group->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'created' ),
+            $query->bindValue( $group->created, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'creator_id' ),
+            $query->bindValue( $group->creatorId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modified' ),
+            $query->bindValue( $group->modified, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modifier_id' ),
+            $query->bindValue( $group->modifierId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $group->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $group->description ) )
+        );
+        $query->prepare()->execute();
+
+        return $this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontenttype_group', 'id' )
+        );
     }
 
     /**
@@ -63,7 +95,32 @@ class EzcDatabase extends Gateway
      */
     public function updateGroup( GroupUpdateStruct $group )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteColumn( 'ezcontenttype_group' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $group->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modified' ),
+            $query->bindValue( $group->modified, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modifier_id' ),
+            $query->bindValue( $group->modifierId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $group->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $group->description ) )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $query->bindValue( $group->id, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $query->prepare()->execute();
     }
 
     /**
@@ -153,7 +210,17 @@ class EzcDatabase extends Gateway
      */
     public function loadGroupData( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createGroupLoadQuery();
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+            )
+        );
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return $stmt->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -390,5 +457,28 @@ class EzcDatabase extends Gateway
     public function publishTypeAndFields( $typeId, $sourceVersion, $targetVersion )
     {
         throw new \RuntimeException( "@TODO: Implement" );
+    }
+
+    /**
+     * Creates the basic query to load Group data.
+     *
+     * @return ezcQuerySelect
+     */
+    protected function createGroupLoadQuery()
+    {
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $this->dbHandler->quoteColumn( 'created' ),
+            $this->dbHandler->quoteColumn( 'creator_id' ),
+            $this->dbHandler->quoteColumn( 'modified' ),
+            $this->dbHandler->quoteColumn( 'modifier_id' ),
+            $this->dbHandler->quoteColumn( 'name' ),
+            $this->dbHandler->quoteColumn( 'description' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontenttype_group' )
+        );
+        return $query;
     }
 }

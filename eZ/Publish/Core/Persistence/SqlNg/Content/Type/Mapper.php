@@ -9,13 +9,7 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\Type;
 
-use eZ\Publish\SPI\Persistence\Content\Type;
-use eZ\Publish\SPI\Persistence\Content\Type\CreateStruct;
-use eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition;
-use eZ\Publish\SPI\Persistence\Content\Type\Group;
-use eZ\Publish\SPI\Persistence\Content\Type\Group\CreateStruct as GroupCreateStruct;
-use eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition;
-use eZ\Publish\Core\Persistence\SqlNg\Content\FieldValue\ConverterRegistry as ConverterRegistry;
+use eZ\Publish\SPI\Persistence;
 
 /**
  * Mapper for Content Type Handler.
@@ -33,9 +27,19 @@ class Mapper
      *
      * @return Group
      */
-    public function createGroupFromCreateStruct( GroupCreateStruct $struct )
+    public function createGroupFromCreateStruct( Persistence\Content\Type\Group\CreateStruct $struct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $group = new Persistence\Content\Type\Group();
+
+        $group->name = $struct->name;
+        $group->description = $struct->description;
+        $group->identifier = $struct->identifier;
+        $group->created = $struct->created;
+        $group->modified = $struct->modified;
+        $group->creatorId = $struct->creatorId;
+        $group->modifierId = $struct->modifierId;
+
+        return $group;
     }
 
     /**
@@ -47,7 +51,24 @@ class Mapper
      */
     public function extractGroupsFromRows( array $rows )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $groups = array();
+
+        foreach ( $rows as $row )
+        {
+            $group = new Persistence\Content\Type\Group();
+            $group->id = (int)$row['id'];
+            $group->created = (int)$row['created'];
+            $group->creatorId = (int)$row['creator_id'];
+            $group->modified = (int)$row['modified'];
+            $group->modifierId = (int)$row['modifier_id'];
+            $group->identifier = $row['identifier'];
+            $group->name = json_decode( $row['name'], true );
+            $group->description = json_decode( $row['description'], true );
+
+            $groups[] = $group;
+        }
+
+        return $groups;
     }
 
     /**
