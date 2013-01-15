@@ -141,7 +141,14 @@ class Handler implements BaseUserHandler
      */
     public function createRole( Role $role )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->roleGateway->createRole( $role );
+
+        foreach ( $role->policies as $policy )
+        {
+            $this->addPolicy( $role->id, $policy );
+        }
+
+        return $role;
     }
 
     /**
@@ -155,7 +162,14 @@ class Handler implements BaseUserHandler
      */
     public function loadRole( $roleId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $data = $this->roleGateway->loadRole( $roleId );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFound( 'role', $roleId );
+        }
+
+        return $this->mapper->mapRole( $data );
     }
 
     /**
@@ -169,7 +183,14 @@ class Handler implements BaseUserHandler
      */
     public function loadRoleByIdentifier( $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $data = $this->roleGateway->loadRoleByIdentifier( $identifier );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFound( 'role', $identifier );
+        }
+
+        return $this->mapper->mapRole( $data );
     }
 
     /**
@@ -179,7 +200,9 @@ class Handler implements BaseUserHandler
      */
     public function loadRoles()
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $data = $this->roleGateway->loadRoles();
+
+        return $this->mapper->mapRoles( $data );
     }
 
     /**
@@ -201,7 +224,7 @@ class Handler implements BaseUserHandler
      */
     public function updateRole( RoleUpdateStruct $role )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->roleGateway->updateRole( $role );
     }
 
     /**
@@ -211,7 +234,7 @@ class Handler implements BaseUserHandler
      */
     public function deleteRole( $roleId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->roleGateway->deleteRole( $roleId );
     }
 
     /**
@@ -224,7 +247,9 @@ class Handler implements BaseUserHandler
      */
     public function addPolicy( $roleId, Policy $policy )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->roleGateway->addPolicy( $roleId, $policy );
+
+        return $policy;
     }
 
     /**
@@ -236,7 +261,8 @@ class Handler implements BaseUserHandler
      */
     public function updatePolicy( Policy $policy )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->roleGateway->removePolicyLimitations( $policy->id );
+        $this->roleGateway->addPolicyLimitations( $policy->id, $policy->limitations );
     }
 
     /**
@@ -249,7 +275,7 @@ class Handler implements BaseUserHandler
      */
     public function removePolicy( $roleId, $policyId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->roleGateway->removePolicy( $policyId );
     }
 
     /**

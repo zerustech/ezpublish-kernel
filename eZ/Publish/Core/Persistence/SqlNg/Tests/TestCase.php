@@ -104,4 +104,33 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             \ezcDbFactory::create( self::$dsn )
         );
     }
+
+    /**
+     * Asserts correct property values on $object.
+     *
+     * Asserts that for all keys in $properties a corresponding property
+     * exists in $object with the *same* value as in $properties.
+     *
+     * @param array $properties
+     * @param object $object
+     *
+     * @return void
+     */
+    public static function assertPropertiesCorrect( array $properties, $object )
+    {
+        if ( !is_object( $object ) )
+        {
+            throw new \InvalidArgumentException(
+                'Expected object as second parameter, received ' . gettype( $object )
+            );
+        }
+        foreach ( $properties as $propName => $propVal )
+        {
+            self::assertEquals(
+                $propVal,
+                $object->$propName,
+                "Incorrect value for \${$propName}"
+            );
+        }
+    }
 }

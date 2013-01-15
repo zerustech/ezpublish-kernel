@@ -67,7 +67,47 @@ class Mapper
      */
     public function mapPolicies( array $data )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        /**
+         * @var \eZ\Publish\SPI\Persistence\User\Policy[] $policies
+         */
+        $policies = array();
+        foreach ( $data as $row )
+        {
+            $policyId = $row['ezpolicy_id'];
+            if ( !isset( $policies[$policyId] ) &&
+                 ( $policyId !== null ) )
+            {
+                $policies[$policyId] = new Policy(
+                    array(
+                        'id' => $row['ezpolicy_id'],
+                        'roleId' => $row['ezrole_id'],
+                        'module' => $row['ezpolicy_module_name'],
+                        'function' => $row['ezpolicy_function_name'],
+                        'limitations' => '*' // limitations must be '*' if not a non empty array of limitations
+                    )
+                );
+            }
+
+            if ( !$row['ezpolicy_limitation_identifier'] )
+            {
+                continue;
+            }
+            else if ( $policies[$policyId]->limitations === '*' )
+            {
+                $policies[$policyId]->limitations = array();
+            }
+
+            if ( !isset( $policies[$policyId]->limitations[$row['ezpolicy_limitation_identifier']] ) )
+            {
+                $policies[$policyId]->limitations[$row['ezpolicy_limitation_identifier']] = array( $row['ezpolicy_limitation_value_value'] );
+            }
+            else if ( !in_array( $row['ezpolicy_limitation_value_value'], $policies[$policyId]->limitations[$row['ezpolicy_limitation_identifier']] ) )
+            {
+                $policies[$policyId]->limitations[$row['ezpolicy_limitation_identifier']][] = $row['ezpolicy_limitation_value_value'];
+            }
+        }
+
+        return array_values( $policies );
     }
 
     /**
@@ -79,7 +119,26 @@ class Mapper
      */
     public function mapRole( array $data )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $role = new Role();
+
+        foreach ( $data as $row )
+        {
+            if ( empty( $role->id ) )
+            {
+                $role->id = $row['ezrole_id'];
+                $role->identifier = $row['ezrole_identifier'];
+                $role->name = json_decode( $row['ezrole_name'], true );
+                $role->description = json_decode( $row['ezrole_description'], true );
+            }
+
+            $role->groupIds[] = $row['ezrole_content_rel_content_id'];
+        }
+
+        // Remove duplicates and sanitize arrays
+        $role->groupIds = array_values( array_unique( array_filter( $role->groupIds ) ) );
+        $role->policies = $this->mapPolicies( $data );
+
+        return $role;
     }
 
     /**
@@ -92,7 +151,22 @@ class Mapper
      */
     public function mapRoles( array $data, $indexById = false )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $roleData = array();
+        foreach ( $data as $row )
+        {
+            $roleData[$row['ezrole_id']][] = $row;
+        }
+
+        $roles = array();
+        foreach ( $roleData as $id => $data )
+        {
+            if ( $indexById )
+                $roles[$id] = $this->mapRole( $data );
+            else
+                $roles[] = $this->mapRole( $data );
+        }
+
+        return $roles;
     }
 
     /**
