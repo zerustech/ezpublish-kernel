@@ -11,6 +11,7 @@ CREATE TABLE ezcontent_language (
     language_code varchar(20) NOT NULL DEFAULT '',
     name varchar(255) NOT NULL DEFAULT '',
     is_enabled int(1) NOT NULL DEFAULT 0,
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
@@ -35,6 +36,7 @@ CREATE TABLE ezcontenttype (
     sort_field int(11) NOT NULL DEFAULT '1',
     sort_order int(11) NOT NULL DEFAULT '1',
     version_no int(11) NOT NULL DEFAULT '0',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id, version_no),
     FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
@@ -48,6 +50,7 @@ CREATE TABLE ezcontenttype_name (
     language_id int(11) NOT NULL DEFAULT '0',
     language_code varchar(20) NOT NULL DEFAULT '',
     name varchar(255) NOT NULL DEFAULT '',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (contenttype_id, version_no, language_id),
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE,
     FOREIGN KEY (language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT
@@ -69,6 +72,7 @@ CREATE TABLE ezcontenttype_field (
     description_list LONGTEXT,
     name_list LONGTEXT NOT NULL,
     version_no int(11) NOT NULL DEFAULT '0',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id, version_no),
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -83,6 +87,7 @@ CREATE TABLE ezcontenttype_group (
     modifier_id int(11) NOT NULL DEFAULT '0',
     name LONGTEXT,
     description LONGTEXT,
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
     FOREIGN KEY (modifier_id) REFERENCES ezuser(id) ON DELETE RESTRICT
@@ -94,6 +99,7 @@ CREATE TABLE ezcontenttype_group_rel (
     version_no int(11) NOT NULL DEFAULT '0',
     group_id int(11) NOT NULL DEFAULT '0',
     group_name varchar(255) DEFAULT NULL,
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (contenttype_id, version_no, group_id),
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE,
     FOREIGN KEY (group_id) REFERENCES ezcontenttype_group(id) ON DELETE RESTRICT
@@ -116,6 +122,7 @@ CREATE TABLE ezcontent(
     remote_id varchar(100) DEFAULT NULL,
     section_id int(11) NOT NULL DEFAULT '0',
     status int(11) DEFAULT '0',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY ezcontentobject_remote_id (remote_id),
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE RESTRICT,
@@ -132,6 +139,7 @@ CREATE TABLE ezcontentobject_name (
     content_translation varchar(20) NOT NULL DEFAULT '',
     name varchar(255) DEFAULT NULL,
     real_translation varchar(20) DEFAULT NULL,
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (content_id, content_version_no, content_translation),
     FOREIGN KEY (content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE,
     FOREIGN KEY (language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT
@@ -147,6 +155,7 @@ CREATE TABLE ezcontentversion (
     initial_language_id int(11) NOT NULL DEFAULT '0',
     status int(11) NOT NULL DEFAULT '0',
     fields LONGTEXT NOT NULL,
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE,
     FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
@@ -162,6 +171,7 @@ CREATE TABLE ezcontentobject_relation (
     to_content_id int(11) NOT NULL DEFAULT '0',
     op_code int(11) NOT NULL DEFAULT '0',
     relation_type int(11) NOT NULL DEFAULT '1',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (contenttype_field_id) REFERENCES ezcontenttype_field(id) ON DELETE RESTRICT,
     FOREIGN KEY (from_content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE,
@@ -187,6 +197,7 @@ CREATE TABLE ezcontentlocation (
     is_invisible int(11) NOT NULL DEFAULT '0',
     sort_field int(11) DEFAULT '1',
     sort_order int(11) DEFAULT '1',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (main_id) REFERENCES ezcontentlocation(id) ON DELETE RESTRICT,
     FOREIGN KEY (parent_id) REFERENCES ezcontentlocation(id) ON DELETE RESTRICT,
@@ -209,6 +220,7 @@ CREATE TABLE ezcontentobject_trash (
     is_invisible int(11) NOT NULL DEFAULT '0',
     sort_field int(11) DEFAULT '1',
     sort_order int(11) DEFAULT '1',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
@@ -218,6 +230,7 @@ CREATE TABLE `ezsection` (
     `identifier` varchar(255) DEFAULT NULL,
     `language_code` varchar(255) DEFAULT NULL,
     `name` varchar(255) DEFAULT NULL,
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -232,6 +245,7 @@ CREATE TABLE ezuser (
     login varchar(150) NOT NULL DEFAULT '',
     password_hash varchar(50) DEFAULT NULL,
     password_hash_type int(11) NOT NULL DEFAULT '1',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
@@ -240,6 +254,7 @@ CREATE TABLE ezuser_setting (
     user_id int(11) NOT NULL DEFAULT '0',
     is_enabled int(11) NOT NULL DEFAULT '0',
     max_login int(11) DEFAULT NULL,
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id),
     FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -250,6 +265,7 @@ CREATE TABLE `ezuser_accountkey` (
     `user_id` int(11) NOT NULL DEFAULT '0',
     `time` int(11) NOT NULL DEFAULT '0',
     `hash_key` varchar(32) NOT NULL DEFAULT '',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -261,6 +277,7 @@ CREATE TABLE `ezuservisit` (
     `failed_login_attempts` int(11) NOT NULL DEFAULT '0',
     `last_visit_timestamp` int(11) NOT NULL DEFAULT '0',
     `login_count` int(11) NOT NULL DEFAULT '0',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`user_id`),
     FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -269,6 +286,7 @@ DROP TABLE IF EXISTS ezrole;
 CREATE TABLE ezrole (
     id int(11) NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL DEFAULT '',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
@@ -279,6 +297,7 @@ CREATE TABLE ezuser_role_rel (
     role_id int(11) DEFAULT NULL,
     limit_identifier varchar(255) DEFAULT '',
     limit_value varchar(255) DEFAULT '',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES ezrole(id) ON DELETE CASCADE
@@ -290,6 +309,7 @@ CREATE TABLE ezpolicy (
     role_id int(11) DEFAULT NULL,
     function_name varchar(255) DEFAULT NULL,
     module_name varchar(255) DEFAULT NULL,
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (role_id) REFERENCES ezrole(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -299,6 +319,7 @@ CREATE TABLE ezpolicy_limitation (
     id int(11) NOT NULL AUTO_INCREMENT,
     policy_id int(11) DEFAULT NULL,
     identifier varchar(255) NOT NULL DEFAULT '',
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (policy_id) REFERENCES ezpolicy(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -308,6 +329,7 @@ CREATE TABLE ezpolicy_limitation_value (
     id int(11) NOT NULL AUTO_INCREMENT,
     limitation_id int(11) DEFAULT NULL,
     value varchar(255) DEFAULT NULL,
+    changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (limitation_id) REFERENCES ezpolicy_limitation(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
