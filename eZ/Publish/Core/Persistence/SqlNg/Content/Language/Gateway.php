@@ -67,13 +67,4 @@ abstract class Gateway
      * @return void
      */
     abstract public function deleteLanguage( $id );
-
-    /**
-     * Check whether a language may be deleted
-     *
-     * @param int $id
-     *
-     * @return boolean
-     */
-    abstract public function canDeleteLanguage( $id );
 }

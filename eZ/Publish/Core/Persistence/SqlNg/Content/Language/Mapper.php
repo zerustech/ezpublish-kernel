@@ -26,7 +26,13 @@ class Mapper
      */
     public function createLanguageFromCreateStruct( CreateStruct $struct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $language = new Language();
+
+        $language->languageCode = $struct->languageCode;
+        $language->name = $struct->name;
+        $language->isEnabled = $struct->isEnabled;
+
+        return $language;
     }
 
     /**
@@ -38,6 +44,20 @@ class Mapper
      */
     public function extractLanguagesFromRows( array $rows )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $languages = array();
+
+        foreach ( $rows as $row )
+        {
+            $language = new Language();
+
+            $language->id = (int)$row['id'];
+            $language->languageCode = $row['language_code'];
+            $language->name = $row['name'];
+            $language->isEnabled = (bool)$row['is_enabled'];
+
+            $languages[$row['language_code']] = $language;
+        }
+
+        return $languages;
     }
 }

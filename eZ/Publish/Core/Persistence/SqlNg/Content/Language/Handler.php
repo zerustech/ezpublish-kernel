@@ -55,7 +55,11 @@ class Handler implements BaseLanguageHandler
      */
     public function create( CreateStruct $struct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $language = $this->languageMapper->createLanguageFromCreateStruct(
+            $struct
+        );
+        $language->id = $this->languageGateway->insertLanguage( $language );
+        return $language;
     }
 
     /**
@@ -65,7 +69,7 @@ class Handler implements BaseLanguageHandler
      */
     public function update( Language $language )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->languageGateway->updateLanguage( $language );
     }
 
     /**
@@ -79,7 +83,15 @@ class Handler implements BaseLanguageHandler
      */
     public function load( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $languages = $this->languageMapper->extractLanguagesFromRows(
+            $this->languageGateway->loadLanguageData( $id )
+        );
+
+        if ( count( $languages ) < 1 )
+        {
+            throw new NotFoundException( 'Language', $id );
+        }
+        return reset( $languages );
     }
 
     /**
@@ -93,7 +105,15 @@ class Handler implements BaseLanguageHandler
      */
     public function loadByLanguageCode( $languageCode )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $languages = $this->languageMapper->extractLanguagesFromRows(
+            $this->languageGateway->loadLanguageDataByLanguageCode( $languageCode )
+        );
+
+        if ( count( $languages ) < 1 )
+        {
+            throw new NotFoundException( 'Language', $languageCode );
+        }
+        return reset( $languages );
     }
 
     /**
@@ -103,7 +123,9 @@ class Handler implements BaseLanguageHandler
      */
     public function loadAll()
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->languageMapper->extractLanguagesFromRows(
+            $this->languageGateway->loadAllLanguagesData()
+        );
     }
 
     /**
@@ -115,6 +137,6 @@ class Handler implements BaseLanguageHandler
      */
     public function delete( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->languageGateway->deleteLanguage( $id );
     }
 }

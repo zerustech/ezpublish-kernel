@@ -6,8 +6,7 @@ SET foreign_key_checks = 0;
 --
 DROP TABLE IF EXISTS ezcontent_language;
 CREATE TABLE ezcontent_language (
-    disabled int(11) NOT NULL DEFAULT '0',
-    id int(11) NOT NULL DEFAULT '0',
+    id int(11) NOT NULL AUTO_INCREMENT,
     language_code varchar(20) NOT NULL DEFAULT '',
     name varchar(255) NOT NULL DEFAULT '',
     is_enabled int(1) NOT NULL DEFAULT 0,
