@@ -323,15 +323,16 @@ class ExceptionConversion extends Gateway
      * Loads an array with data about field definition referred $id and $status.
      *
      * @param mixed $id field definition id
+     * @param int $status
      * @param int $status field definition status
      *
      * @return array Data rows.
      */
-    public function loadFieldDefinition( $id )
+    public function loadFieldDefinition( $id, $status )
     {
         try
         {
-            return $this->innerGateway->loadFieldDefinition( $id );
+            return $this->innerGateway->loadFieldDefinition( $id, $status );
         }
         catch ( \ezcDbException $e )
         {
@@ -347,15 +348,16 @@ class ExceptionConversion extends Gateway
      * Inserts a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
+     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
      *
      * @return mixed Field definition ID
      */
-    public function insertFieldDefinition( $typeId, FieldDefinition $fieldDefinition )
+    public function insertFieldDefinition( $typeId, $status, FieldDefinition $fieldDefinition )
     {
         try
         {
-            return $this->innerGateway->insertFieldDefinition( $typeId, $fieldDefinition );
+            return $this->innerGateway->insertFieldDefinition( $typeId, $status, $fieldDefinition );
         }
         catch ( \ezcDbException $e )
         {
@@ -371,15 +373,16 @@ class ExceptionConversion extends Gateway
      * Deletes a field definition.
      *
      * @param mixed $typeId
+     * @param int $status
      * @param mixed $fieldDefinitionId
      *
      * @return void
      */
-    public function deleteFieldDefinition( $typeId, $fieldDefinitionId )
+    public function deleteFieldDefinition( $typeId, $status, $fieldDefinitionId )
     {
         try
         {
-            return $this->innerGateway->deleteFieldDefinition( $typeId, $fieldDefinitionId );
+            return $this->innerGateway->deleteFieldDefinition( $typeId, $status, $fieldDefinitionId );
         }
         catch ( \ezcDbException $e )
         {
@@ -395,15 +398,16 @@ class ExceptionConversion extends Gateway
      * Updates a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
+     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
      *
      * @return void
      */
-    public function updateFieldDefinition( $typeId, FieldDefinition $fieldDefinition )
+    public function updateFieldDefinition( $typeId, $status, FieldDefinition $fieldDefinition )
     {
         try
         {
-            return $this->innerGateway->updateFieldDefinition( $typeId, $fieldDefinition );
+            return $this->innerGateway->updateFieldDefinition( $typeId, $status, $fieldDefinition );
         }
         catch ( \ezcDbException $e )
         {

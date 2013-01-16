@@ -206,18 +206,14 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testLoadContentTypes()
+    public function testLoadContentTypes( $type )
     {
         $handler = $this->getHandler();
-        $res = $handler->loadContentTypes( 23, 0 );
+        $loaded = $handler->loadContentTypes( $type->groupIds[0], $type->status );
 
-        $this->assertEquals(
-            array( new Type() ),
-            $res
-        );
+        $this->assertEquals( array( $type ), $loaded );
     }
 
     /**

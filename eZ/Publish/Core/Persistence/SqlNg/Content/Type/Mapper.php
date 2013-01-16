@@ -80,7 +80,66 @@ class Mapper
      */
     public function extractTypesFromRows( array $rows )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $types = array();
+        $fields = array();
+
+        foreach ( $rows as $row )
+        {
+            $typeId = (int)$row['ezcontenttype_id'];
+            if ( !isset( $types[$typeId] ) )
+            {
+                $types[$typeId] = $this->extractTypeFromRow( $row );
+            }
+
+            $fieldId = (int)$row['ezcontenttype_field_id'];
+            if ( !isset( $fields[$fieldId] ) )
+            {
+                $types[$typeId]->fieldDefinitions[] = $fields[$fieldId] = $this->extractFieldFromRow( $row );
+            }
+
+            $groupId = (int)$row['ezcontenttype_group_rel_group_id'];
+            if ( !in_array( $groupId, $types[$typeId]->groupIds ) )
+            {
+                $types[$typeId]->groupIds[] = $groupId;
+            }
+        }
+
+        // Re-index $types to avoid people relying on ID keys
+        return array_values( $types );
+    }
+
+    /**
+     * Creates a Type from the data in $row.
+     *
+     * @param array $row
+     *
+     * @return Type
+     */
+    protected function extractTypeFromRow( array $row )
+    {
+        $type = new Persistence\Content\Type();
+
+        $type->id = (int)$row['ezcontenttype_id'];
+        $type->status = (int)$row['ezcontenttype_status'];
+        $type->name = json_decode( $row['ezcontenttype_name_list'], true );
+        $type->description = json_decode( $row['ezcontenttype_description_list'], true );
+        $type->identifier = $row['ezcontenttype_identifier'];
+        $type->created = (int)$row['ezcontenttype_created'];
+        $type->creatorId = (int)$row['ezcontenttype_creator_id'];
+        $type->modified = (int)$row['ezcontenttype_modified'];
+        $type->modifierId = (int)$row['ezcontenttype_modifier_id'];
+        $type->remoteId = $row['ezcontenttype_remote_id'];
+        $type->nameSchema = $row['ezcontenttype_contentobject_name'];
+        $type->isContainer = ( $row['ezcontenttype_is_container'] == 1 );
+        $type->initialLanguageId = (int)$row['ezcontenttype_initial_language_id'];
+        $type->defaultAlwaysAvailable = ( $row['ezcontenttype_always_available'] == 1 );
+        $type->sortField = (int)$row['ezcontenttype_sort_field'];
+        $type->sortOrder = (int)$row['ezcontenttype_sort_order'];
+
+        $type->groupIds = array();
+        $type->fieldDefinitions = array();
+
+        return $type;
     }
 
     /**
@@ -92,7 +151,23 @@ class Mapper
      */
     public function extractFieldFromRow( array $row )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $field = new Persistence\Content\Type\FieldDefinition();
+
+        $field->id = (int)$row['ezcontenttype_field_id'];
+        $field->name = json_decode( $row['ezcontenttype_field_name_list'], true );
+        $field->description = json_decode( $row['ezcontenttype_field_description_list'], true );
+        $field->identifier = $row['ezcontenttype_field_identifier'];
+        $field->fieldGroup = $row['ezcontenttype_field_field_group'];
+        $field->fieldType = $row['ezcontenttype_field_type_string'];
+        $field->isTranslatable = ( $row['ezcontenttype_field_can_translate'] == 1 );
+        $field->isRequired = $row['ezcontenttype_field_is_required'] == 1;
+        $field->isInfoCollector = $row['ezcontenttype_field_is_information_collector'] == 1;
+        $field->isSearchable = (bool)$row['ezcontenttype_field_is_searchable'];
+        $field->position = (int)$row['ezcontenttype_field_placement'];
+        $field->defaultValue = json_decode( $row['ezcontenttype_field_default_value'], true );
+        $field->fieldTypeConstraints = json_decode( $row['ezcontenttype_field_constraints'], true );
+
+        return $field;
     }
 
     /**
@@ -136,17 +211,6 @@ class Mapper
      * @return \eZ\Publish\SPI\Persistence\Content\Type\CreateStruct
      */
     public function createCreateStructFromType( Type $type )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Maps a FieldDefinition from the given $storageFieldDef
-     *
-     * @param array $row
-     * @return Persistence\Content\Type\FieldDefinition
-     */
-    public function toFieldDefinition( array $row )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }

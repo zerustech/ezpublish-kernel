@@ -366,18 +366,42 @@ class EzcDatabase extends Gateway
      */
     public function loadTypesDataForGroup( $groupId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $q = $this->getLoadTypeQuery();
+        $q->where(
+            $q->expr->lAnd(
+                $q->expr->eq(
+                    $this->dbHandler->quoteColumn(
+                        'group_id',
+                        'ezcontenttype_group_rel'
+                    ),
+                    $q->bindValue( $groupId, null, \PDO::PARAM_INT )
+                ),
+                $q->expr->eq(
+                    $this->dbHandler->quoteColumn(
+                        'status',
+                        'ezcontenttype'
+                    ),
+                    $q->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $stmt = $q->prepare();
+        $stmt->execute();
+
+        return $stmt->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
      * Inserts a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
+     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
      *
      * @return mixed Field definition ID
      */
-    public function insertFieldDefinition( $typeId, FieldDefinition $fieldDefinition )
+    public function insertFieldDefinition( $typeId, $status, FieldDefinition $fieldDefinition )
     {
         $query = $this->dbHandler->createInsertQuery();
         $query->insertInto( $this->dbHandler->quoteTable( 'ezcontenttype_field' ) );
@@ -386,6 +410,9 @@ class EzcDatabase extends Gateway
             isset( $fieldDefinition->id ) ?
                 $query->bindValue( $fieldDefinition->id, null, \PDO::PARAM_INT ) :
                 $this->dbHandler->getAutoIncrementValue( 'ezcontenttype_field', 'id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( $status, null, \PDO::PARAM_INT )
         )->set(
             $this->dbHandler->quoteColumn( 'contenttype_id' ),
             $query->bindValue( $typeId, null, \PDO::PARAM_INT )
@@ -397,7 +424,7 @@ class EzcDatabase extends Gateway
         if ( !isset( $fieldDefinition->id ) )
         {
             return $this->dbHandler->lastInsertId(
-                $this->dbHandler->getSequenceName( 'ezcontentclass_attribute', 'id' )
+                $this->dbHandler->getSequenceName( 'ezcontenttype_field', 'id' )
             );
         }
 
@@ -461,7 +488,7 @@ class EzcDatabase extends Gateway
      *
      * @return array Data rows.
      */
-    public function loadFieldDefinition( $id )
+    public function loadFieldDefinition( $id, $status )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
@@ -470,11 +497,12 @@ class EzcDatabase extends Gateway
      * Deletes a field definition.
      *
      * @param mixed $typeId
+     * @param int $status
      * @param mixed $fieldDefinitionId
      *
      * @return void
      */
-    public function deleteFieldDefinition( $typeId, $fieldDefinitionId )
+    public function deleteFieldDefinition( $typeId, $status, $fieldDefinitionId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
@@ -483,11 +511,12 @@ class EzcDatabase extends Gateway
      * Updates a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
+     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
      *
      * @return void
      */
-    public function updateFieldDefinition( $typeId, FieldDefinition $fieldDefinition )
+    public function updateFieldDefinition( $typeId, $status, FieldDefinition $fieldDefinition )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
@@ -648,6 +677,103 @@ class EzcDatabase extends Gateway
         )->from(
             $this->dbHandler->quoteTable( 'ezcontenttype_group' )
         );
+        return $query;
+    }
+
+    /**
+     * Returns a basic query to retrieve Type data.
+     *
+     * @return ezcQuerySelect
+     */
+    protected function getLoadTypeQuery()
+    {
+        $query = $this->dbHandler->createSelectQuery();
+
+        $query->select(
+            $this->dbHandler->aliasedColumn( $query, 'id', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'status', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'created', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'creator_id', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'name_list', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'description_list', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'modified', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'modifier_id', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'remote_id', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'contentobject_name', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'is_container', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'initial_language_id', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'sort_field', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'sort_order', 'ezcontenttype' ),
+            $this->dbHandler->aliasedColumn( $query, 'always_available', 'ezcontenttype' ),
+
+            $this->dbHandler->aliasedColumn( $query, 'id', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'name_list', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'description_list', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'field_group', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'placement', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'type_string', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'can_translate', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'is_required', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'is_information_collector', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'constraints', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'default_value', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'is_searchable', 'ezcontenttype_field' ),
+
+            $this->dbHandler->aliasedColumn( $query, 'group_id', 'ezcontenttype_group_rel' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontenttype' )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( 'ezcontenttype_field' ),
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn(
+                        'id',
+                        'ezcontenttype'
+                    ),
+                    $this->dbHandler->quoteColumn(
+                        'contenttype_id',
+                        'ezcontenttype_field'
+                    )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn(
+                        'status',
+                        'ezcontenttype'
+                    ),
+                    $this->dbHandler->quoteColumn(
+                        'status',
+                        'ezcontenttype_field'
+                    )
+                )
+            )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( 'ezcontenttype_group_rel' ),
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn(
+                        'id',
+                        'ezcontenttype'
+                    ),
+                    $this->dbHandler->quoteColumn(
+                        'contenttype_id',
+                        'ezcontenttype_group_rel'
+                    )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn(
+                        'status',
+                        'ezcontenttype'
+                    ),
+                    $this->dbHandler->quoteColumn(
+                        'status',
+                        'ezcontenttype_group_rel'
+                    )
+                )
+            )
+        );
+
         return $query;
     }
 }

@@ -46,6 +46,7 @@ DROP TABLE IF EXISTS ezcontenttype_field;
 CREATE TABLE ezcontenttype_field (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `identifier` VARCHAR(50) NOT NULL DEFAULT '',
+    `status` INT(11) NOT NULL DEFAULT '0',
     `field_group` VARCHAR(25) NOT NULL DEFAULT '',
     `contenttype_id` INT(11) NOT NULL DEFAULT '0',
     `can_translate` INT(11) DEFAULT '1',
@@ -59,7 +60,7 @@ CREATE TABLE ezcontenttype_field (
     `constraints` LONGTEXT,
     `default_value` LONGTEXT,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
+    PRIMARY KEY (id, status),
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

@@ -128,40 +128,44 @@ abstract class Gateway
      * Loads an array with data about field definition referred $id and $status.
      *
      * @param mixed $id field definition id
+     * @param int $status
      *
      * @return array Data rows.
      */
-    abstract public function loadFieldDefinition( $id );
+    abstract public function loadFieldDefinition( $id, $status );
 
     /**
      * Inserts a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
+     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
      *
      * @return mixed Field definition ID
      */
-    abstract public function insertFieldDefinition( $typeId, FieldDefinition $fieldDefinition );
+    abstract public function insertFieldDefinition( $typeId, $status, FieldDefinition $fieldDefinition );
 
     /**
      * Deletes a field definition.
      *
      * @param mixed $typeId
+     * @param int $status
      * @param mixed $fieldDefinitionId
      *
      * @return void
      */
-    abstract public function deleteFieldDefinition( $typeId, $fieldDefinitionId );
+    abstract public function deleteFieldDefinition( $typeId, $status, $fieldDefinitionId );
 
     /**
      * Updates a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
+     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
      *
      * @return void
      */
-    abstract public function updateFieldDefinition( $typeId, FieldDefinition $fieldDefinition );
+    abstract public function updateFieldDefinition( $typeId, $status, FieldDefinition $fieldDefinition );
 
     /**
      * Update a type with $updateStruct.

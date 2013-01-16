@@ -155,7 +155,9 @@ class Handler implements BaseContentTypeHandler
      */
     public function loadContentTypes( $groupId, $status = 0 )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->mapper->extractTypesFromRows(
+            $this->contentTypeGateway->loadTypesDataForGroup( $groupId, $status )
+        );
     }
 
     /**
@@ -252,6 +254,7 @@ class Handler implements BaseContentTypeHandler
         {
             $fieldDefinition->id = $this->contentTypeGateway->insertFieldDefinition(
                 $contentType->id,
+                $contentType->status,
                 $fieldDefinition
             );
         }
