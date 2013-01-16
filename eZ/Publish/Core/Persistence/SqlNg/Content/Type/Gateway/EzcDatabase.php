@@ -16,7 +16,6 @@ use eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition;
 use eZ\Publish\SPI\Persistence\Content\Type\UpdateStruct;
 use eZ\Publish\SPI\Persistence\Content\Type\Group;
 use eZ\Publish\SPI\Persistence\Content\Type\Group\UpdateStruct as GroupUpdateStruct;
-use eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException as NotFound;
 use ezcQuery;
 use ezcQuerySelect;
@@ -173,7 +172,84 @@ class EzcDatabase extends Gateway
      */
     public function insertType( Type $type, $typeId = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto( $this->dbHandler->quoteTable( 'ezcontenttype' ) );
+        $query->set(
+            $this->dbHandler->quoteColumn( 'id' ),
+            isset( $typeId ) ?
+                $query->bindValue( $typeId, null, \PDO::PARAM_INT ) :
+                $this->dbHandler->getAutoIncrementValue( 'ezcontenttype', 'id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( $type->status, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'created' ),
+            $query->bindValue( $type->created, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'creator_id' ),
+            $query->bindValue( $type->creatorId, null, \PDO::PARAM_INT )
+        );
+        $this->setCommonTypeColumns( $query, $type );
+
+        $query->prepare()->execute();
+
+        if ( empty( $typeId ) )
+        {
+            $typeId = $this->dbHandler->lastInsertId(
+                $this->dbHandler->getSequenceName( 'ezcontenttype', 'id' )
+            );
+        }
+
+        return $typeId;
+    }
+
+    /**
+     * Set common columns for insert/update of a Type.
+     *
+     * @param \ezcQuery $query
+     * @param mixed $type
+     *
+     * @return void
+     */
+    protected function setCommonTypeColumns( ezcQuery $query, $type )
+    {
+        $query->set(
+            $this->dbHandler->quoteColumn( 'name_list' ),
+            $query->bindValue( json_encode( $type->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description_list' ),
+            $query->bindValue( json_encode( $type->description ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $type->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modified' ),
+            $query->bindValue( $type->modified, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modifier_id' ),
+            $query->bindValue( $type->modifierId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'remote_id' ),
+            $query->bindValue( $type->remoteId )
+        )->set(
+            $this->dbHandler->quoteColumn( 'contentobject_name' ),
+            $query->bindValue( $type->nameSchema )
+        )->set(
+            $this->dbHandler->quoteColumn( 'is_container' ),
+            $query->bindValue( $type->isContainer ? 1 : 0, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'initial_language_id' ),
+            $query->bindValue( $type->initialLanguageId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'sort_field' ),
+            $query->bindValue( $type->sortField, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'sort_order' ),
+            $query->bindValue( $type->sortOrder, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'always_available' ),
+            $query->bindValue( (int)$type->defaultAlwaysAvailable, null, \PDO::PARAM_INT )
+        );
     }
 
     /**
@@ -187,7 +263,24 @@ class EzcDatabase extends Gateway
      */
     public function insertGroupAssignment( $groupId, $typeId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $groups = $this->loadGroupData( $groupId );
+        $group = $groups[0];
+
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontenttype_group_rel' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'contenttype_id' ),
+            $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'group_id' ),
+            $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( $status, null, \PDO::PARAM_INT )
+        );
+
+        $query->prepare()->execute();
     }
 
     /**
@@ -280,20 +373,84 @@ class EzcDatabase extends Gateway
      * Inserts a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
-     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition $storageFieldDef
      *
      * @return mixed Field definition ID
      */
-    public function insertFieldDefinition(
-        $typeId,
-        $status,
-        FieldDefinition $fieldDefinition,
-        StorageFieldDefinition $storageFieldDef
-    )
+    public function insertFieldDefinition( $typeId, FieldDefinition $fieldDefinition )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto( $this->dbHandler->quoteTable( 'ezcontenttype_field' ) );
+        $query->set(
+            $this->dbHandler->quoteColumn( 'id' ),
+            isset( $fieldDefinition->id ) ?
+                $query->bindValue( $fieldDefinition->id, null, \PDO::PARAM_INT ) :
+                $this->dbHandler->getAutoIncrementValue( 'ezcontenttype_field', 'id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'contenttype_id' ),
+            $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+        );
+        $this->setCommonFieldColumns( $query, $fieldDefinition );
+
+        $query->prepare()->execute();
+
+        if ( !isset( $fieldDefinition->id ) )
+        {
+            return $this->dbHandler->lastInsertId(
+                $this->dbHandler->getSequenceName( 'ezcontentclass_attribute', 'id' )
+            );
+        }
+
+        return $fieldDefinition->id;
+    }
+
+    /**
+     * Set common columns for insert/update of FieldDefinition.
+     *
+     * @param \ezcQuery $query
+     * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
+     *
+     * @return void
+     */
+    protected function setCommonFieldColumns( ezcQuery $query, FieldDefinition $fieldDefinition )
+    {
+        $query->set(
+            $this->dbHandler->quoteColumn( 'name_list' ),
+            $query->bindValue( json_encode( $fieldDefinition->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description_list' ),
+            $query->bindValue( json_encode( $fieldDefinition->description ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $fieldDefinition->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'field_group' ),
+            $query->bindValue( $fieldDefinition->fieldGroup, null, \PDO::PARAM_STR )
+        )->set(
+            $this->dbHandler->quoteColumn( 'placement' ),
+            $query->bindValue( $fieldDefinition->position, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'type_string' ),
+            $query->bindValue( $fieldDefinition->fieldType )
+        )->set(
+            $this->dbHandler->quoteColumn( 'can_translate' ),
+            $query->bindValue( ( $fieldDefinition->isTranslatable ? 1 : 0 ), null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'is_required' ),
+            $query->bindValue( ( $fieldDefinition->isRequired ? 1 : 0 ), null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'is_information_collector' ),
+            $query->bindValue( ( $fieldDefinition->isInfoCollector ? 1 : 0 ), null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'constraints' ),
+            $query->bindValue( json_encode( $fieldDefinition->fieldTypeConstraints ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'default_value' ),
+            $query->bindValue( json_encode( $fieldDefinition->defaultValue ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'is_searchable' ),
+            $query->bindValue( ( $fieldDefinition->isSearchable ? 1 : 0 ), null, \PDO::PARAM_INT )
+        );
     }
 
     /**
@@ -304,7 +461,7 @@ class EzcDatabase extends Gateway
      *
      * @return array Data rows.
      */
-    public function loadFieldDefinition( $id, $status )
+    public function loadFieldDefinition( $id )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
@@ -313,12 +470,11 @@ class EzcDatabase extends Gateway
      * Deletes a field definition.
      *
      * @param mixed $typeId
-     * @param int $status
      * @param mixed $fieldDefinitionId
      *
      * @return void
      */
-    public function deleteFieldDefinition( $typeId, $status, $fieldDefinitionId )
+    public function deleteFieldDefinition( $typeId, $fieldDefinitionId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
@@ -327,16 +483,11 @@ class EzcDatabase extends Gateway
      * Updates a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
-     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition $storageFieldDef
      *
      * @return void
      */
-    public function updateFieldDefinition(
-        $typeId, $status, FieldDefinition $fieldDefinition,
-        StorageFieldDefinition $storageFieldDef
-    )
+    public function updateFieldDefinition( $typeId, FieldDefinition $fieldDefinition )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }

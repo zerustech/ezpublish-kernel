@@ -14,7 +14,6 @@ use eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition;
 use eZ\Publish\SPI\Persistence\Content\Type\UpdateStruct;
 use eZ\Publish\SPI\Persistence\Content\Type\Group;
 use eZ\Publish\SPI\Persistence\Content\Type\Group\UpdateStruct as GroupUpdateStruct;
-use eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition;
 
 /**
  * Base class for content type gateways.
@@ -129,52 +128,40 @@ abstract class Gateway
      * Loads an array with data about field definition referred $id and $status.
      *
      * @param mixed $id field definition id
-     * @param int $status field definition status
      *
      * @return array Data rows.
      */
-    abstract public function loadFieldDefinition( $id, $status );
+    abstract public function loadFieldDefinition( $id );
 
     /**
      * Inserts a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
-     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition $storageFieldDef
      *
      * @return mixed Field definition ID
      */
-    abstract public function insertFieldDefinition(
-        $typeId, $status, FieldDefinition $fieldDefinition,
-        StorageFieldDefinition $storageFieldDef
-    );
+    abstract public function insertFieldDefinition( $typeId, FieldDefinition $fieldDefinition );
 
     /**
      * Deletes a field definition.
      *
      * @param mixed $typeId
-     * @param int $status
      * @param mixed $fieldDefinitionId
      *
      * @return void
      */
-    abstract public function deleteFieldDefinition( $typeId, $status, $fieldDefinitionId );
+    abstract public function deleteFieldDefinition( $typeId, $fieldDefinitionId );
 
     /**
      * Updates a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
-     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition $storageFieldDef
      *
      * @return void
      */
-    abstract public function updateFieldDefinition(
-        $typeId, $status, FieldDefinition $fieldDefinition,
-        StorageFieldDefinition $storageFieldDef
-    );
+    abstract public function updateFieldDefinition( $typeId, FieldDefinition $fieldDefinition );
 
     /**
      * Update a type with $updateStruct.

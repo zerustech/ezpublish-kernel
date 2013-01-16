@@ -17,7 +17,6 @@ use eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition;
 use eZ\Publish\SPI\Persistence\Content\Type\Group;
 use eZ\Publish\SPI\Persistence\Content\Type\Group\CreateStruct as GroupCreateStruct;
 use eZ\Publish\SPI\Persistence\Content\Type\Group\UpdateStruct as GroupUpdateStruct;
-use eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Type\Update\Handler as UpdateHandler;
 use eZ\Publish\Core\Persistence\SqlNg\Exception;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
@@ -205,7 +204,59 @@ class Handler implements BaseContentTypeHandler
      */
     public function create( CreateStruct $createStruct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->internalCreate( $createStruct );
+    }
+
+    /**
+     * Internal method for creating ContentType
+     *
+     * Used by self::create(), self::createDraft() and self::copy()
+     *
+     * @param \eZ\Publish\SPI\Persistence\Content\Type\CreateStruct $createStruct
+     * @param mixed|null $contentTypeId Used by self::createDraft() to retain ContentType id in the draft
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\Type
+     */
+    protected function internalCreate( CreateStruct $createStruct, $contentTypeId = null )
+    {
+        foreach ( $createStruct->fieldDefinitions as $fieldDef )
+        {
+            if ( !is_int( $fieldDef->position ) || $fieldDef->position <= 0 )
+                throw new InvalidArgumentException(
+                    "position",
+                    "'" . var_export( $fieldDef->position, true ) .
+                    "' is wrong value in class FieldDefinition, an integer strictly greater than 0 is required."
+                );
+        }
+
+        $createStruct = clone $createStruct;
+        $contentType = $this->mapper->createTypeFromCreateStruct(
+            $createStruct
+        );
+
+        $contentType->id = $this->contentTypeGateway->insertType(
+            $contentType,
+            $contentTypeId
+        );
+
+        foreach ( $contentType->groupIds as $groupId )
+        {
+            $this->contentTypeGateway->insertGroupAssignment(
+                $groupId,
+                $contentType->id,
+                $contentType->status
+            );
+        }
+
+        foreach ( $contentType->fieldDefinitions as $fieldDefinition )
+        {
+            $fieldDefinition->id = $this->contentTypeGateway->insertFieldDefinition(
+                $contentType->id,
+                $fieldDefinition
+            );
+        }
+
+        return $contentType;
     }
 
     /**

@@ -18,6 +18,16 @@ use eZ\Publish\Core\Persistence\SqlNg;
  */
 class ContentTypeHandlerTest extends TestCase
 {
+    /**
+     * Returns a handler to test, based on mock objects
+     *
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler
+     */
+    protected function getHandler()
+    {
+        return $this->getPersistenceHandler()->contentTypeHandler();
+    }
+
     public function testCtor()
     {
         $handler = $this->getHandler();
@@ -140,6 +150,62 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
+     * @depends testCreateGroup
+     */
+    public function testCreate()
+    {
+        $handler = $this->getHandler();
+
+        $group = $handler->createGroup(
+            new Persistence\Content\Type\Group\CreateStruct( $values = array(
+                'identifier' => 'testgroup',
+                'created' => 123456789,
+                'creatorId' => $this->getUser()->id,
+                'modified' => 123456789,
+                'modifierId' => $this->getUser()->id,
+            ) )
+        );
+
+        $type = $handler->create(
+            new Persistence\Content\Type\CreateStruct( array(
+                'identifier' => 'testtype',
+                'status' => 1,
+                'groupIds' => array( $group->id ),
+                'created' => 123456789,
+                'creatorId' => $this->getUser()->id,
+                'modified' => 123456789,
+                'modifierId' => $this->getUser()->id,
+                'remoteId' => 'testtype',
+                'initialLanguageId' => $this->getLanguage()->id,
+                'fieldDefinitions' => array(
+                    new Persistence\Content\Type\FieldDefinition( array(
+                        'identifier' => 'title',
+                        'fieldGroup' => '1',
+                        'position' => 1,
+                        'fieldType' => 'ezstring',
+                        'isTranslatable' => true,
+                        'isRequired' => true,
+                        'isInfoCollector' => true,
+                        'fieldTypeConstraints' => array(
+                            'minLength' => 5,
+                            'maxLength' => 20,
+                        ),
+                        'defaultValue' => 'Hello World!',
+                        'isSearchable' => true,
+                    ) )
+                ),
+            ) )
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\Type',
+            $type
+        );
+        $this->assertNotNull( $type->id );
+        return $type;
+    }
+
+    /**
      *
      * @return void
      */
@@ -224,45 +290,6 @@ class ContentTypeHandlerTest extends TestCase
         );
     }
 
-    /**
-     *
-     * @return void
-     */
-    public function testCreate()
-    {
-        $createStructFix = $this->getContenTypeCreateStructFixture();
-
-        $handler = $this->getHandler();
-        $type = $handler->create( $createStructFix );
-
-        $this->assertInstanceOf(
-            'eZ\\Publish\\SPI\\Persistence\\Content\\Type',
-            $type,
-            'Incorrect type returned from create()'
-        );
-        $this->assertEquals(
-            23,
-            $type->id,
-            'Incorrect ID for Type.'
-        );
-
-        $this->assertEquals(
-            42,
-            $type->fieldDefinitions[0]->id,
-            'Field definition ID not set correctly'
-        );
-        $this->assertEquals(
-            42,
-            $type->fieldDefinitions[1]->id,
-            'Field definition ID not set correctly'
-        );
-
-        $this->assertEquals(
-            $createStructClone,
-            $createStructFix,
-            'Create struct manipulated'
-        );
-    }
 
     /**
      *
@@ -456,15 +483,5 @@ class ContentTypeHandlerTest extends TestCase
     {
         $handler = $this->getHandler();
         $handler->publish( 23 );
-    }
-
-    /**
-     * Returns a handler to test, based on mock objects
-     *
-     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler
-     */
-    protected function getHandler()
-    {
-        return $this->getPersistenceHandler()->contentTypeHandler();
     }
 }

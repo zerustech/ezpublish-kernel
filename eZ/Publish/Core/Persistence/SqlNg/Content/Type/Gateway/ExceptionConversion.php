@@ -15,7 +15,6 @@ use eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition;
 use eZ\Publish\SPI\Persistence\Content\Type\UpdateStruct;
 use eZ\Publish\SPI\Persistence\Content\Type\Group;
 use eZ\Publish\SPI\Persistence\Content\Type\Group\UpdateStruct as GroupUpdateStruct;
-use eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition;
 
 /**
  * Base class for content type gateways.
@@ -328,11 +327,11 @@ class ExceptionConversion extends Gateway
      *
      * @return array Data rows.
      */
-    public function loadFieldDefinition( $id, $status )
+    public function loadFieldDefinition( $id )
     {
         try
         {
-            return $this->innerGateway->loadFieldDefinition( $id, $status );
+            return $this->innerGateway->loadFieldDefinition( $id );
         }
         catch ( \ezcDbException $e )
         {
@@ -348,20 +347,15 @@ class ExceptionConversion extends Gateway
      * Inserts a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
-     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition $storageFieldDef
      *
      * @return mixed Field definition ID
      */
-    public function insertFieldDefinition(
-        $typeId, $status, FieldDefinition $fieldDefinition,
-        StorageFieldDefinition $storageFieldDef
-    )
+    public function insertFieldDefinition( $typeId, FieldDefinition $fieldDefinition )
     {
         try
         {
-            return $this->innerGateway->insertFieldDefinition( $typeId, $status, $fieldDefinition, $storageFieldDef );
+            return $this->innerGateway->insertFieldDefinition( $typeId, $fieldDefinition );
         }
         catch ( \ezcDbException $e )
         {
@@ -377,16 +371,15 @@ class ExceptionConversion extends Gateway
      * Deletes a field definition.
      *
      * @param mixed $typeId
-     * @param int $status
      * @param mixed $fieldDefinitionId
      *
      * @return void
      */
-    public function deleteFieldDefinition( $typeId, $status, $fieldDefinitionId )
+    public function deleteFieldDefinition( $typeId, $fieldDefinitionId )
     {
         try
         {
-            return $this->innerGateway->deleteFieldDefinition( $typeId, $status, $fieldDefinitionId );
+            return $this->innerGateway->deleteFieldDefinition( $typeId, $fieldDefinitionId );
         }
         catch ( \ezcDbException $e )
         {
@@ -402,20 +395,15 @@ class ExceptionConversion extends Gateway
      * Updates a $fieldDefinition for $typeId.
      *
      * @param mixed $typeId
-     * @param int $status
      * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition $storageFieldDef
      *
      * @return void
      */
-    public function updateFieldDefinition(
-        $typeId, $status, FieldDefinition $fieldDefinition,
-        StorageFieldDefinition $storageFieldDef
-    )
+    public function updateFieldDefinition( $typeId, FieldDefinition $fieldDefinition )
     {
         try
         {
-            return $this->innerGateway->updateFieldDefinition( $typeId, $status, $fieldDefinition, $storageFieldDef );
+            return $this->innerGateway->updateFieldDefinition( $typeId, $fieldDefinition );
         }
         catch ( \ezcDbException $e )
         {

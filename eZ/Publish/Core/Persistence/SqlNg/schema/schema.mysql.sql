@@ -34,9 +34,9 @@ CREATE TABLE ezcontenttype (
     `name_list` LONGTEXT,
     `sort_field` INT(11) NOT NULL DEFAULT '1',
     `sort_order` INT(11) NOT NULL DEFAULT '1',
-    `version_no` INT(11) NOT NULL DEFAULT '0',
+    `status` INT(11) NOT NULL DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id, version_no),
+    PRIMARY KEY (id, status),
     FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
     FOREIGN KEY (modifier_id) REFERENCES ezuser(id) ON DELETE RESTRICT
@@ -46,20 +46,20 @@ DROP TABLE IF EXISTS ezcontenttype_field;
 CREATE TABLE ezcontenttype_field (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `identifier` VARCHAR(50) NOT NULL DEFAULT '',
+    `field_group` VARCHAR(25) NOT NULL DEFAULT '',
     `contenttype_id` INT(11) NOT NULL DEFAULT '0',
-    `data` LONGTEXT NOT NULL,
     `can_translate` INT(11) DEFAULT '1',
-    `field_type_string` VARCHAR(50) NOT NULL DEFAULT '',
+    `type_string` VARCHAR(50) NOT NULL DEFAULT '',
     `is_information_collector` INT(11) NOT NULL DEFAULT '0',
     `is_required` INT(11) NOT NULL DEFAULT '0',
     `is_searchable` INT(11) NOT NULL DEFAULT '0',
     `placement` INT(11) NOT NULL DEFAULT '0',
-    `data_text` LONGTEXT,
     `description_list` LONGTEXT,
     `name_list` LONGTEXT NOT NULL,
-    `version_no` INT(11) NOT NULL DEFAULT '0',
+    `constraints` LONGTEXT,
+    `default_value` LONGTEXT,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id, version_no),
+    PRIMARY KEY (id),
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -82,11 +82,10 @@ CREATE TABLE ezcontenttype_group (
 DROP TABLE IF EXISTS ezcontenttype_group_rel;
 CREATE TABLE ezcontenttype_group_rel (
     `contenttype_id` INT(11) NOT NULL DEFAULT '0',
-    `version_no` INT(11) NOT NULL DEFAULT '0',
     `group_id` INT(11) NOT NULL DEFAULT '0',
-    `group_name` VARCHAR(255) DEFAULT NULL,
+    `status` INT(11) NOT NULL DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (contenttype_id, version_no, group_id),
+    PRIMARY KEY (contenttype_id, group_id, status),
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE,
     FOREIGN KEY (group_id) REFERENCES ezcontenttype_group(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;

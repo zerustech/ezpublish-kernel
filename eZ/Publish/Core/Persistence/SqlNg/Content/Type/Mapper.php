@@ -102,9 +102,30 @@ class Mapper
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Type
      */
-    public function createTypeFromCreateStruct( CreateStruct $createStruct )
+    public function createTypeFromCreateStruct( Persistence\Content\Type\CreateStruct $createStruct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $type = new Persistence\Content\Type();
+
+        $type->name = $createStruct->name;
+        $type->status = $createStruct->status;
+        $type->description = $createStruct->description;
+        $type->identifier = $createStruct->identifier;
+        $type->created = $createStruct->created;
+        $type->modified = $createStruct->modified;
+        $type->creatorId = $createStruct->creatorId;
+        $type->modifierId = $createStruct->modifierId;
+        $type->remoteId = $createStruct->remoteId;
+        $type->urlAliasSchema = $createStruct->urlAliasSchema;
+        $type->nameSchema = $createStruct->nameSchema;
+        $type->isContainer = $createStruct->isContainer;
+        $type->initialLanguageId = $createStruct->initialLanguageId;
+        $type->groupIds = $createStruct->groupIds;
+        $type->fieldDefinitions = $createStruct->fieldDefinitions;
+        $type->defaultAlwaysAvailable = $createStruct->defaultAlwaysAvailable;
+        $type->sortField = $createStruct->sortField;
+        $type->sortOrder = $createStruct->sortOrder;
+
+        return $type;
     }
 
     /**
@@ -120,29 +141,12 @@ class Mapper
     }
 
     /**
-     * Maps $fieldDef to the legacy storage specific StorageFieldDefinition
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDef
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition $storageFieldDef
-     *
-     * @return void
-     */
-    public function toStorageFieldDefinition(
-        FieldDefinition $fieldDef, StorageFieldDefinition $storageFieldDef )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Maps a FieldDefinition from the given $storageFieldDef
      *
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition $storageFieldDef
-     * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDef
-     *
-     * @return void
+     * @param array $row
+     * @return Persistence\Content\Type\FieldDefinition
      */
-    public function toFieldDefinition(
-        StorageFieldDefinition $storageFieldDef, FieldDefinition $fieldDef )
+    public function toFieldDefinition( array $row )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
