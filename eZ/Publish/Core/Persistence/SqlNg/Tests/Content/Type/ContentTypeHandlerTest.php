@@ -47,6 +47,12 @@ class ContentTypeHandlerTest extends TestCase
                 'creatorId' => $this->getUser()->id,
                 'modified' => 123456789,
                 'modifierId' => $this->getUser()->id,
+                'name' => array(
+                    'de' => 'Test-Gruppe',
+                ),
+                'description' => array(
+                    'de' => 'Test-Gruppe',
+                ),
             ) )
         );
 
@@ -192,7 +198,19 @@ class ContentTypeHandlerTest extends TestCase
                         ),
                         'defaultValue' => 'Hello World!',
                         'isSearchable' => true,
+                        'name' => array(
+                            'de' => 'Test-Feld',
+                        ),
+                        'description' => array(
+                            'de' => 'Test-Feld',
+                        ),
                     ) )
+                ),
+                'name' => array(
+                    'de' => 'Test-Typ',
+                ),
+                'description' => array(
+                    'de' => 'Test-Typ',
                 ),
             ) )
         );
@@ -272,19 +290,21 @@ class ContentTypeHandlerTest extends TestCase
 
 
     /**
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testUpdate()
+    public function testUpdate( $type )
     {
         $handler = $this->getHandler();
-        $res = $handler->update(
-            23, 1, new UpdateStruct()
+        $updated = $handler->update(
+            $type->id,
+            $type->status,
+            new Persistence\Content\Type\UpdateStruct( array(
+            ) )
         );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content\\Type',
-            $res
+            $updated
         );
     }
 

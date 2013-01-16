@@ -73,10 +73,10 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( 'modifier_id' ),
             $query->bindValue( $group->modifierId, null, \PDO::PARAM_INT )
         )->set(
-            $this->dbHandler->quoteColumn( 'name' ),
+            $this->dbHandler->quoteColumn( 'name_list' ),
             $query->bindValue( json_encode( $group->name ) )
         )->set(
-            $this->dbHandler->quoteColumn( 'description' ),
+            $this->dbHandler->quoteColumn( 'description_list' ),
             $query->bindValue( json_encode( $group->description ) )
         );
         $query->prepare()->execute();
@@ -108,10 +108,10 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( 'modifier_id' ),
             $query->bindValue( $group->modifierId, null, \PDO::PARAM_INT )
         )->set(
-            $this->dbHandler->quoteColumn( 'name' ),
+            $this->dbHandler->quoteColumn( 'name_list' ),
             $query->bindValue( json_encode( $group->name ) )
         )->set(
-            $this->dbHandler->quoteColumn( 'description' ),
+            $this->dbHandler->quoteColumn( 'description_list' ),
             $query->bindValue( json_encode( $group->description ) )
         )->where(
             $query->expr->eq(
@@ -720,8 +720,8 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( 'creator_id' ),
             $this->dbHandler->quoteColumn( 'modified' ),
             $this->dbHandler->quoteColumn( 'modifier_id' ),
-            $this->dbHandler->quoteColumn( 'name' ),
-            $this->dbHandler->quoteColumn( 'description' )
+            $this->dbHandler->quoteColumn( 'name_list' ),
+            $this->dbHandler->quoteColumn( 'description_list' )
         )->from(
             $this->dbHandler->quoteTable( 'ezcontenttype_group' )
         );

@@ -62,8 +62,8 @@ class Mapper
             $group->modified = (int)$row['modified'];
             $group->modifierId = (int)$row['modifier_id'];
             $group->identifier = $row['identifier'];
-            $group->name = json_decode( $row['name'], true );
-            $group->description = json_decode( $row['description'], true );
+            $group->name = json_decode( $row['name_list'], true );
+            $group->description = json_decode( $row['description_list'], true );
 
             $groups[] = $group;
         }
