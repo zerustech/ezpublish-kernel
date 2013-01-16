@@ -545,7 +545,23 @@ class EzcDatabase extends Gateway
      */
     public function loadTypeData( $typeId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->getLoadTypeQuery();
+        $query->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id', 'ezcontenttype' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status', 'ezcontenttype' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return $stmt->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -559,7 +575,23 @@ class EzcDatabase extends Gateway
      */
     public function loadTypeDataByIdentifier( $identifier, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->getLoadTypeQuery();
+        $query->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'identifier', 'ezcontenttype' ),
+                    $query->bindValue( $identifier, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status', 'ezcontenttype' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return $stmt->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -573,7 +605,23 @@ class EzcDatabase extends Gateway
      */
     public function loadTypeDataByRemoteId( $remoteId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->getLoadTypeQuery();
+        $query->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'remote_id', 'ezcontenttype' ),
+                    $query->bindValue( $remoteId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status', 'ezcontenttype' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return $stmt->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**

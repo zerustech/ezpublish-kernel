@@ -169,7 +169,7 @@ class ContentTypeHandlerTest extends TestCase
         $type = $handler->create(
             new Persistence\Content\Type\CreateStruct( array(
                 'identifier' => 'testtype',
-                'status' => 1,
+                'status' => 0,
                 'groupIds' => array( $group->id ),
                 'created' => 123456789,
                 'creatorId' => $this->getUser()->id,
@@ -217,73 +217,57 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @return void
+     * @depends testCreate
      */
-    public function testLoad()
+    public function testLoad( $type )
     {
         $handler = $this->getHandler();
-        $type = $handler->load( 23, 1 );
+        $loaded = $handler->load( $type->id, $type->status );
 
-        $this->assertEquals(
-            new Type(),
-            $type,
-            'Type not loaded correctly'
-        );
+        $this->assertEquals( $type, $loaded );
     }
 
     /**
      * @return void
-     * @expectedException \eZ\Publish\Core\Persistence\SqlNg\Exception\TypeNotFound
+     * @expectedException \eZ\Publish\Core\Base\Exceptions\NotFoundException
      */
     public function testLoadNotFound()
     {
         $handler = $this->getHandler();
-        $type = $handler->load( 23, 1 );
+        $type = $handler->load( 1337 );
     }
 
     /**
-     * @return void
+     * @depends testCreate
      */
-    public function testLoadDefaultVersion()
+    public function testLoadDefaultVersion( $type )
     {
         $handler = $this->getHandler();
-        $type = $handler->load( 23 );
+        $loaded = $handler->load( $type->id );
 
-        $this->assertEquals(
-            new Type(),
-            $type,
-            'Type not loaded correctly'
-        );
+        $this->assertEquals( $type, $loaded );
     }
 
     /**
-     * @return void
+     * @depends testCreate
      */
-    public function testLoadByIdentifier()
+    public function testLoadByIdentifier( $type )
     {
         $handler = $this->getHandler();
-        $type = $handler->loadByIdentifier( 'blogentry' );
+        $loaded = $handler->loadByIdentifier( $type->identifier );
 
-        $this->assertEquals(
-            new Type(),
-            $type,
-            'Type not loaded correctly'
-        );
+        $this->assertEquals( $type, $loaded );
     }
 
     /**
-     * @return void
+     * @depends testCreate
      */
-    public function testLoadByRemoteId()
+    public function testLoadByRemoteId( $type )
     {
         $handler = $this->getHandler();
-        $type = $handler->loadByRemoteId( 'someLongHash' );
+        $loaded = $handler->loadByRemoteId( $type->remoteId );
 
-        $this->assertEquals(
-            new Type(),
-            $type,
-            'Type not loaded correctly'
-        );
+        $this->assertEquals( $type, $loaded );
     }
 
 

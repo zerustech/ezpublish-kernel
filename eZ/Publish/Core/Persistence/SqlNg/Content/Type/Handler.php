@@ -168,7 +168,13 @@ class Handler implements BaseContentTypeHandler
      */
     public function load( $contentTypeId, $status = Type::STATUS_DEFINED )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->loadFromRows(
+            $this->contentTypeGateway->loadTypeData(
+                $contentTypeId, $status
+            ),
+            $contentTypeId,
+            $status
+        );
     }
 
     /**
@@ -182,7 +188,14 @@ class Handler implements BaseContentTypeHandler
      */
     public function loadByIdentifier( $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $status = Type::STATUS_DEFINED;
+        return $this->loadFromRows(
+            $this->contentTypeGateway->loadTypeDataByIdentifier(
+                $identifier, $status
+            ),
+            $identifier,
+            $status
+        );
     }
 
     /**
@@ -196,7 +209,34 @@ class Handler implements BaseContentTypeHandler
      */
     public function loadByRemoteId( $remoteId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $status = Type::STATUS_DEFINED;
+        return $this->loadFromRows(
+            $this->contentTypeGateway->loadTypeDataByRemoteId(
+                $remoteId, $status
+            ),
+            $remoteId,
+            $status
+        );
+    }
+
+    /**
+     * Loads a single Type from $rows
+     *
+     * @param array $rows
+     * @param mixed $typeIdentifier
+     * @param int $status
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\Type
+     */
+    protected function loadFromRows( array $rows, $typeIdentifier, $status )
+    {
+        $types = $this->mapper->extractTypesFromRows( $rows );
+        if ( count( $types ) !== 1 )
+        {
+            throw new NotFoundException( 'type', $typeIdentifier );
+        }
+
+        return $types[0];
     }
 
     /**
