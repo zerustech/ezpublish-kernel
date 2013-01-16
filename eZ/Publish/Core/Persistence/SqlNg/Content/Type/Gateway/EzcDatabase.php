@@ -543,7 +543,41 @@ class EzcDatabase extends Gateway
      */
     public function loadFieldDefinition( $id, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+
+        $query->select(
+            $this->dbHandler->aliasedColumn( $query, 'id', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'name_list', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'description_list', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'field_group', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'placement', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'type_string', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'can_translate', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'is_required', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'is_information_collector', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'constraints', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'default_value', 'ezcontenttype_field' ),
+            $this->dbHandler->aliasedColumn( $query, 'is_searchable', 'ezcontenttype_field' )
+        )->from(
+            $this->dbHandler->quoteTable( "ezcontenttype_field" )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "id", "ezcontenttype_field" ),
+                    $query->bindValue( $id, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "status", "ezcontenttype_field" ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return $stmt->fetch( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -557,7 +591,33 @@ class EzcDatabase extends Gateway
      */
     public function deleteFieldDefinition( $typeId, $status, $fieldDefinitionId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom(
+            $this->dbHandler->quoteTable( 'ezcontenttype_field' )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $query->bindValue( $fieldDefinitionId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'contenttype_id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'FieldDefinition', $fieldDefinitionId );
+        }
     }
 
     /**
@@ -571,7 +631,33 @@ class EzcDatabase extends Gateway
      */
     public function updateFieldDefinition( $typeId, $status, FieldDefinition $fieldDefinition )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update(
+                $this->dbHandler->quoteTable( 'ezcontenttype_field' )
+            )->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $query->bindValue( $fieldDefinition->id, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'contenttype_id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            );
+        $this->setCommonFieldColumns( $query, $fieldDefinition );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'FieldDefinition', $fieldDefinitionId );
+        }
     }
 
     /**

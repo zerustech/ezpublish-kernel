@@ -405,13 +405,15 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testGetFieldDefinition()
+    public function testGetFieldDefinition( $type )
     {
         $handler = $this->getHandler();
-        $fieldDefinition = $handler->getFieldDefinition( 42, Type::STATUS_DEFINED );
+        $fieldDefinition = $handler->getFieldDefinition(
+            $type->fieldDefinitions[0]->id,
+            $type->status
+        );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content\\Type\\FieldDefinition',
@@ -420,66 +422,75 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testAddFieldDefinition()
+    public function testAddFieldDefinition( $type )
     {
-        $fieldDef = new FieldDefinition();
+        $fieldDefinition = new Persistence\Content\Type\FieldDefinition( array(
+            'identifier' => 'text',
+            'fieldGroup' => '1',
+            'position' => 2,
+            'fieldType' => 'eztext',
+            'isTranslatable' => true,
+            'isRequired' => false,
+        ) );
 
         $handler = $this->getHandler();
-        $handler->addFieldDefinition( 23, 1, $fieldDef );
+        $handler->addFieldDefinition( $type->id, $type->status, $fieldDefinition );
 
-        $this->assertEquals(
-            42,
-            $fieldDef->id
+        $this->assertNotNull( $fieldDefinition->id );
+
+        return $handler->load( $type->id, $type->status );
+    }
+
+    /**
+     * @depends testAddFieldDefinition
+     */
+    public function testRemoveFieldDefinition( $type )
+    {
+        $handler = $this->getHandler();
+        $this->assertTrue(
+            $handler->removeFieldDefinition( $type->id, $type->status, $type->fieldDefinitions[1]->id )
+        );
+
+        $type = $handler->load( $type->id, $type->status );
+        $this->assertEquals( 1, count( $type->fieldDefinitions ) );
+    }
+
+    /**
+     * @depends testCreate
+     */
+    public function testUpdateFieldDefinition( $type )
+    {
+        $fieldDefinition = $type->fieldDefinitions[0];
+        $fieldDefinition->defaultValue = "Hello Earth!";
+
+        $handler = $this->getHandler();
+        $this->assertTrue(
+            $handler->updateFieldDefinition( $type->id, $type->status, $fieldDefinition )
         );
     }
 
     /**
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testRemoveFieldDefinition()
+    public function testPublish( $type )
     {
-        $handler = $this->getHandler();
-        $res = $handler->removeFieldDefinition( 23, 1, 42 );
+        $this->markTestIncomplete( "Discuss how type updates should be handled." );
 
-        $this->assertTrue( $res );
+        $handler = $this->getHandler();
+        $handler->publish( $type->id );
     }
 
     /**
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testUpdateFieldDefinition()
+    public function testPublishNoOldType( $type )
     {
-        $fieldDef = new FieldDefinition();
+        $this->markTestIncomplete( "Discuss how type updates should be handled." );
 
         $handler = $this->getHandler();
-        $res = $handler->updateFieldDefinition( 23, 1, $fieldDef );
-
-        $this->assertNull( $res );
-    }
-
-    /**
-     *
-     * @return void
-     */
-    public function testPublish()
-    {
-        $handler = $this->getHandler();
-        $handler->publish( 23 );
-    }
-
-    /**
-     *
-     * @return void
-     */
-    public function testPublishNoOldType()
-    {
-        $handler = $this->getHandler();
-        $handler->publish( 23 );
+        $handler->publish( $type->id );
     }
 
     /**

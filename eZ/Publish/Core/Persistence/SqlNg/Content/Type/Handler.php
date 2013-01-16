@@ -447,7 +447,20 @@ class Handler implements BaseContentTypeHandler
      */
     public function getFieldDefinition( $id, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $row = $this->contentTypeGateway->loadFieldDefinition( $id, $status );
+
+        if ( $row === false )
+        {
+            throw new NotFoundException(
+                "FieldDefinition",
+                array(
+                    "id" => $id,
+                    "status" => $status
+                )
+            );
+        }
+
+        return $this->mapper->extractFieldFromRow( $row );
     }
 
     /**
@@ -465,7 +478,9 @@ class Handler implements BaseContentTypeHandler
      */
     public function addFieldDefinition( $contentTypeId, $status, FieldDefinition $fieldDefinition )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $fieldDefinition->id = $this->contentTypeGateway->insertFieldDefinition(
+            $contentTypeId, $status, $fieldDefinition
+        );
     }
 
     /**
@@ -482,7 +497,11 @@ class Handler implements BaseContentTypeHandler
      */
     public function removeFieldDefinition( $contentTypeId, $status, $fieldDefinitionId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentTypeGateway->deleteFieldDefinition(
+            $contentTypeId, $status, $fieldDefinitionId
+        );
+
+        return true;
     }
 
     /**
@@ -500,7 +519,11 @@ class Handler implements BaseContentTypeHandler
      */
     public function updateFieldDefinition( $contentTypeId, $status, FieldDefinition $fieldDefinition )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentTypeGateway->updateFieldDefinition(
+            $contentTypeId, $status, $fieldDefinition
+        );
+
+        return true;
     }
 
     /**
