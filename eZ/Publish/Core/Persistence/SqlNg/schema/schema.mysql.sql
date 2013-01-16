@@ -42,19 +42,6 @@ CREATE TABLE ezcontenttype (
     FOREIGN KEY (modifier_id) REFERENCES ezuser(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontenttype_name;
-CREATE TABLE ezcontenttype_name (
-    `contenttype_id` INT(11) NOT NULL DEFAULT '0',
-    `version_no` INT(11) NOT NULL DEFAULT '0',
-    `language_id` INT(11) NOT NULL DEFAULT '0',
-    `language_code` VARCHAR(20) NOT NULL DEFAULT '',
-    `name` VARCHAR(255) NOT NULL DEFAULT '',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (contenttype_id, version_no, language_id),
-    FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE,
-    FOREIGN KEY (language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT
-) ENGINE=InnoDB;
-
 DROP TABLE IF EXISTS ezcontenttype_field;
 CREATE TABLE ezcontenttype_field (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
