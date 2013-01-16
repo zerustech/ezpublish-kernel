@@ -311,7 +311,12 @@ class Handler implements BaseContentTypeHandler
      */
     public function update( $typeId, $status, UpdateStruct $contentType )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentTypeGateway->updateType(
+            $typeId, $status, $contentType
+        );
+        return $this->load(
+            $typeId, $status
+        );
     }
 
     /**
@@ -325,7 +330,11 @@ class Handler implements BaseContentTypeHandler
      */
     public function delete( $contentTypeId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentTypeGateway->delete(
+            $contentTypeId, $status
+        );
+
+        return true;
     }
 
     /**
@@ -342,7 +351,14 @@ class Handler implements BaseContentTypeHandler
      */
     public function createDraft( $modifierId, $contentTypeId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $createStruct = $this->mapper->createCreateStructFromType(
+            $this->load( $contentTypeId, Type::STATUS_DEFINED )
+        );
+        $createStruct->status = Type::STATUS_DRAFT;
+        $createStruct->modifierId = $modifierId;
+        $createStruct->modified = time();
+
+        return $this->internalCreate( $createStruct, $contentTypeId );
     }
 
     /**
@@ -354,7 +370,20 @@ class Handler implements BaseContentTypeHandler
      */
     public function copy( $userId, $contentTypeId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $createStruct = $this->mapper->createCreateStructFromType(
+            $this->load( $contentTypeId, $status )
+        );
+        $createStruct->modifierId = $userId;
+        $createStruct->created = $createStruct->modified = time();
+        $createStruct->creatorId = $userId;
+        $createStruct->identifier .= '_' . ( $createStruct->remoteId = md5( uniqid( get_class( $createStruct ), true ) ) );
+        // Set FieldDefinition ids to null to trigger creating new id
+        foreach ( $createStruct->fieldDefinitions as $fieldDefinition )
+        {
+            $fieldDefinition->id = null;
+        }
+
+        return $this->internalCreate( $createStruct );
     }
 
     /**
@@ -371,7 +400,21 @@ class Handler implements BaseContentTypeHandler
      */
     public function unlink( $groupId, $contentTypeId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $groupCount = $this->contentTypeGateway->countGroupsForType(
+            $contentTypeId, $status
+        );
+        if ( $groupCount < 2 )
+        {
+            throw new \RuntimeException(
+                "Cannot remove last group from type $contentTypeId"
+            );
+        }
+
+        $this->contentTypeGateway->deleteGroupAssignment(
+            $groupId, $contentTypeId, $status
+        );
+
+        return true;
     }
 
     /**
@@ -382,11 +425,14 @@ class Handler implements BaseContentTypeHandler
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException If group or type with provided status is not found
      * @throws \eZ\Publish\API\Repository\Exceptions\BadStateException If type is already part of group
-     * @todo Above throws are not implemented
      */
     public function link( $groupId, $contentTypeId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentTypeGateway->insertGroupAssignment(
+            $groupId, $contentTypeId, $status
+        );
+
+        return true;
     }
 
     /**

@@ -210,8 +210,29 @@ class Mapper
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Type\CreateStruct
      */
-    public function createCreateStructFromType( Type $type )
+    public function createCreateStructFromType( Persistence\Content\Type $type )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $createStruct = new Persistence\Content\Type\CreateStruct();
+
+        $createStruct->name = $type->name;
+        $createStruct->status = $type->status;
+        $createStruct->description = $type->description;
+        $createStruct->identifier = $type->identifier;
+        $createStruct->created = $type->created;
+        $createStruct->modified = $type->modified;
+        $createStruct->creatorId = $type->creatorId;
+        $createStruct->modifierId = $type->modifierId;
+        $createStruct->remoteId = $type->remoteId;
+        $createStruct->urlAliasSchema = $type->urlAliasSchema;
+        $createStruct->nameSchema = $type->nameSchema;
+        $createStruct->isContainer = $type->isContainer;
+        $createStruct->initialLanguageId = $type->initialLanguageId;
+        $createStruct->groupIds = $type->groupIds;
+        $createStruct->fieldDefinitions = $type->fieldDefinitions;
+        $createStruct->defaultAlwaysAvailable = $type->defaultAlwaysAvailable;
+        $createStruct->sortField = $type->sortField;
+        $createStruct->sortOrder = $type->sortOrder;
+
+        return $createStruct;
     }
 }

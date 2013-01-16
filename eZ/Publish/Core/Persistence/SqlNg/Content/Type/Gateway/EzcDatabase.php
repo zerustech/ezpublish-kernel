@@ -133,7 +133,35 @@ class EzcDatabase extends Gateway
      */
     public function countGroupsForType( $typeId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $query->alias(
+                $query->expr->count(
+                    $this->dbHandler->quoteColumn( 'group_id' )
+                ),
+                'count'
+            )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontenttype_group_rel' )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'contenttype_id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                )
+            ),
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return (int)$stmt->fetchColumn();
     }
 
     /**
@@ -294,7 +322,32 @@ class EzcDatabase extends Gateway
      */
     public function deleteGroupAssignment( $groupId, $typeId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom(
+            $this->dbHandler->quoteTable( 'ezcontenttype_group_rel' )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'contenttype_id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'group_id' ),
+                    $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'group_assignment', $groupId );
+        }
     }
 
     /**
@@ -532,7 +585,31 @@ class EzcDatabase extends Gateway
      */
     public function updateType( $typeId, $status, UpdateStruct $updateStruct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update( $this->dbHandler->quoteTable( 'ezcontenttype' ) );
+
+        $this->setCommonTypeColumns( $query, $updateStruct );
+
+        $query->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'type', $typeId );
+        }
     }
 
     /**
@@ -625,31 +702,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Counts the number of instances that exists of the identified type.
-     *
-     * @param int $typeId
-     *
-     * @return int
-     */
-    public function countInstancesOfType( $typeId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Deletes all field definitions of a Type.
-     *
-     * @param mixed $typeId
-     * @param int $status
-     *
-     * @return void
-     */
-    public function deleteFieldDefinitionsForType( $typeId, $status )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Deletes a Type completely.
      *
      * @param mixed $typeId
@@ -659,35 +711,29 @@ class EzcDatabase extends Gateway
      */
     public function delete( $typeId, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom(
+            $this->dbHandler->quoteTable( 'ezcontenttype' )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
+            )
+        );
 
-    /**
-     * Deletes a the Type.
-     *
-     * Does no delete the field definitions!
-     *
-     * @param mixed $typeId
-     * @param int $status
-     *
-     * @return void
-     */
-    public function deleteType( $typeId, $status )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
+        $statement = $query->prepare();
+        $statement->execute();
 
-    /**
-     * Deletes all group assignments for a Type.
-     *
-     * @param mixed $typeId
-     * @param int $status
-     *
-     * @return void
-     */
-    public function deleteGroupAssignmentsForType( $typeId, $status )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'type', $typeId );
+        }
     }
 
     /**

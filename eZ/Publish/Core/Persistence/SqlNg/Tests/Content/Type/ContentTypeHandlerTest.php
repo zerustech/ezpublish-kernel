@@ -299,6 +299,19 @@ class ContentTypeHandlerTest extends TestCase
             $type->id,
             $type->status,
             new Persistence\Content\Type\UpdateStruct( array(
+                'name' => $type->name,
+                'description' => $type->description,
+                'identifier' => 'updated',
+                'modified' => $type->modified,
+                'modifierId' => $type->modifierId,
+                'remoteId' => $type->remoteId,
+                'urlAliasSchema' => $type->urlAliasSchema,
+                'nameSchema' => $type->nameSchema,
+                'isContainer' => $type->isContainer,
+                'initialLanguageId' => $type->initialLanguageId,
+                'sortField' => $type->sortField,
+                'sortOrder' => $type->sortOrder,
+                'defaultAlwaysAvailable' => $type->defaultAlwaysAvailable,
             ) )
         );
 
@@ -306,105 +319,89 @@ class ContentTypeHandlerTest extends TestCase
             'eZ\\Publish\\SPI\\Persistence\\Content\\Type',
             $updated
         );
+
+        $this->assertEquals( 'updated', $updated->identifier );
     }
 
     /**
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testDeleteSuccess()
+    public function testCreateDraft( $type )
     {
         $handler = $this->getHandler();
-        $res = $handler->delete( 23, 0 );
-
-        $this->assertTrue( $res );
-    }
-
-    /**
-     * @return void
-     * @expectedException \eZ\Publish\Core\Base\Exceptions\NotFoundException
-     */
-    public function testDeleteThrowsNotFoundException()
-    {
-        $handler = $this->getHandler();
-        $res = $handler->delete( 23, 0 );
-    }
-
-    /**
-     * @return void
-     * @expectedException \eZ\Publish\Core\Base\Exceptions\BadStateException
-     */
-    public function testDeleteThrowsBadStateException()
-    {
-        $handler = $this->getHandler();
-        $res = $handler->delete( 23, 0 );
-    }
-
-    /**
-     *
-     * @return void
-     */
-    public function testCreateVersion()
-    {
-        $res = $handlerMock->createDraft(
-            42, 23
+        $typeDraft = $handler->createDraft(
+            $this->getUser()->id,
+            $type->id
         );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content\\Type',
-            $res
+            $typeDraft
         );
     }
 
     /**
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testCopy()
+    public function testCopy( $type )
     {
-        $res = $handlerMock->copy(
-            42, 23, 0
+        $handler = $this->getHandler();
+        $copy = $handler->copy(
+            $this->getUser()->id,
+            $type->id,
+            0
         );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content\\Type',
-            $res
+            $copy
         );
     }
 
     /**
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testLink()
+    public function testLink( $type )
     {
         $handler = $this->getHandler();
-        $res = $handler->link( 3, 23, 1 );
+        $newGroup = $handler->createGroup(
+            new Persistence\Content\Type\Group\CreateStruct( $values = array(
+                'identifier' => 'linkgroup',
+                'created' => 123456789,
+                'creatorId' => $this->getUser()->id,
+                'modified' => 123456789,
+                'modifierId' => $this->getUser()->id,
+            ) )
+        );
 
-        $this->assertTrue( $res );
+        $this->assertTrue(
+            $handler->link( $newGroup->id, $type->id, $type->status )
+        );
+
+        return $handler->load( $type->id, $type->status );
     }
 
     /**
-     *
-     * @return void
+     * @depends testLink
      */
-    public function testUnlinkSuccess()
+    public function testUnlinkSuccess( $type )
     {
         $handler = $this->getHandler();
-        $res = $handler->unlink( 3, 23, 1 );
+        $this->assertTrue(
+            $handler->unlink( $type->groupIds[1], $type->id, $type->status )
+        );
 
-        $this->assertTrue( $res );
+        return $handler->load( $type->id, $type->status );
     }
 
     /**
-     * @return void
-     * @expectedException eZ\Publish\Core\Persistence\SqlNg\Exception\RemoveLastGroupFromType
-     * @expectedExceptionMessage Type with ID "23" in status "1" cannot be unlinked from its last group.
+     * @depends testUnlinkSuccess
+     * @expectedException \RuntimeException
      */
-    public function testUnlinkFailure()
+    public function testUnlinkFailure( $type )
     {
         $handler = $this->getHandler();
-        $res = $handler->unlink( 3, 23, 1 );
+        $handler->unlink( $type->groupIds[0], $type->id, $type->status );
     }
 
     /**
@@ -483,5 +480,42 @@ class ContentTypeHandlerTest extends TestCase
     {
         $handler = $this->getHandler();
         $handler->publish( 23 );
+    }
+
+    /**
+     * @depends testCreate
+     */
+    public function testDelete( $type )
+    {
+        $handler = $this->getHandler();
+        $this->assertTrue(
+            $handler->delete( $type->id, $type->status )
+        );
+
+        return $type;
+    }
+
+    /**
+     * @depends testDelete
+     * @expectedException \eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testDeleteThrowsNotFoundException( $type )
+    {
+        $handler = $this->getHandler();
+        $this->assertFalse(
+            $handler->delete( $type->id, $type->status )
+        );
+    }
+
+    /**
+     * @return void
+     * @expectedException \eZ\Publish\Core\Base\Exceptions\BadStateException
+     */
+    public function testDeleteThrowsBadStateException()
+    {
+        $this->markTestIncomplete( "Requires creation of content." );
+
+        $handler = $this->getHandler();
+        $res = $handler->delete( 23, 0 );
     }
 }

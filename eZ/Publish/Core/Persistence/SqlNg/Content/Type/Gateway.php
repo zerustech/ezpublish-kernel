@@ -211,15 +211,6 @@ abstract class Gateway
     abstract public function loadTypeDataByRemoteId( $remoteId, $status );
 
     /**
-     * Counts the number of instances that exists of the identified type.
-     *
-     * @param int $typeId
-     *
-     * @return int
-     */
-    abstract public function countInstancesOfType( $typeId );
-
-    /**
      * Deletes a Type completely.
      *
      * @param mixed $typeId
@@ -228,38 +219,6 @@ abstract class Gateway
      * @return void
      */
     abstract public function delete( $typeId, $status );
-
-    /**
-     * Deletes all field definitions of a Type.
-     *
-     * @param mixed $typeId
-     * @param int $status
-     *
-     * @return void
-     */
-    abstract public function deleteFieldDefinitionsForType( $typeId, $status );
-
-    /**
-     * Deletes a the Type.
-     *
-     * Does no delete the field definitions!
-     *
-     * @param mixed $typeId
-     * @param int $status
-     *
-     * @return void
-     */
-    abstract public function deleteType( $typeId, $status );
-
-    /**
-     * Deletes all group assignments for a Type.
-     *
-     * @param mixed $typeId
-     * @param int $status
-     *
-     * @return void
-     */
-    abstract public function deleteGroupAssignmentsForType( $typeId, $status );
 
     /**
      * Publishes the Type with $typeId from $sourceVersion to $targetVersion,
