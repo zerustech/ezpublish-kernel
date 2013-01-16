@@ -17,6 +17,7 @@ use eZ\Publish\SPI\Persistence\Content\Type\UpdateStruct;
 use eZ\Publish\SPI\Persistence\Content\Type\Group;
 use eZ\Publish\SPI\Persistence\Content\Type\Group\UpdateStruct as GroupUpdateStruct;
 use eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldDefinition;
+use eZ\Publish\Core\Base\Exceptions\NotFoundException as NotFound;
 use ezcQuery;
 use ezcQuerySelect;
 
@@ -124,18 +125,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Returns the number of types in a certain group.
-     *
-     * @param int $groupId
-     *
-     * @return int
-     */
-    public function countTypesInGroup( $groupId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Returns the number of Groups the type is assigned to.
      *
      * @param int $typeId
@@ -157,7 +146,21 @@ class EzcDatabase extends Gateway
      */
     public function deleteGroup( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom( $this->dbHandler->quoteTable( 'ezcontenttype_group' ) )
+            ->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+                )
+            );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'group', $groupId );
+        }
     }
 
     /**
@@ -232,7 +235,17 @@ class EzcDatabase extends Gateway
      */
     public function loadGroupDataByIdentifier( $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createGroupLoadQuery();
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'identifier' ),
+                $query->bindValue( $identifier, null, \PDO::PARAM_STR )
+            )
+        );
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return $stmt->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -242,7 +255,12 @@ class EzcDatabase extends Gateway
      */
     public function loadAllGroupsData()
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createGroupLoadQuery();
+
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return $stmt->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**

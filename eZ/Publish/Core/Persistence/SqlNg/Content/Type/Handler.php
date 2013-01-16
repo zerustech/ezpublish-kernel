@@ -93,7 +93,7 @@ class Handler implements BaseContentTypeHandler
      */
     public function deleteGroup( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentTypeGateway->deleteGroup( $groupId );
     }
 
     /**
@@ -126,7 +126,16 @@ class Handler implements BaseContentTypeHandler
      */
     public function loadGroupByIdentifier( $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $groups = $this->mapper->extractGroupsFromRows(
+            $this->contentTypeGateway->loadGroupDataByIdentifier( $identifier )
+        );
+
+        if ( count( $groups ) !== 1 )
+        {
+            throw new NotFoundException( 'group', $identifier );
+        }
+
+        return $groups[0];
     }
 
     /**
@@ -134,7 +143,9 @@ class Handler implements BaseContentTypeHandler
      */
     public function loadAllGroups()
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->mapper->extractGroupsFromRows(
+            $this->contentTypeGateway->loadAllGroupsData()
+        );
     }
 
     /**

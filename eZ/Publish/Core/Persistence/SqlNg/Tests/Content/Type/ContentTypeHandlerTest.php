@@ -18,11 +18,6 @@ use eZ\Publish\Core\Persistence\SqlNg;
  */
 class ContentTypeHandlerTest extends TestCase
 {
-    /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::__construct
-     *
-     * @return void
-     */
     public function testCtor()
     {
         $handler = $this->getHandler();
@@ -69,6 +64,28 @@ class ContentTypeHandlerTest extends TestCase
     /**
      * @depends testCreateGroup
      */
+    public function testLoadGroupByIdentifier( $group )
+    {
+        $handler = $this->getHandler();
+        $loaded = $handler->loadGroupByIdentifier( $group->identifier );
+
+        $this->assertEquals( $group, $loaded );
+    }
+
+    /**
+     * @depends testCreateGroup
+     */
+    public function testLoadAllGroups( $group )
+    {
+        $handler = $this->getHandler();
+        $loaded = $handler->loadAllGroups();
+
+        $this->assertEquals( array( $group ), $loaded );
+    }
+
+    /**
+     * @depends testCreateGroup
+     */
     public function testUpdateGroup( $group )
     {
 
@@ -91,63 +108,38 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::deleteGroup
-     *
-     * @return void
+     * @depends testCreateGroup
      */
-    public function testDeleteGroupSuccess()
+    public function testDeleteGroupSuccess( $group )
     {
         $handler = $this->getHandler();
-        $handler->deleteGroup( 23 );
+        $handler->deleteGroup( $group->id );
+
+        return $group;
     }
 
     /**
-     * @return void
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::deleteGroup
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Exception\GroupNotEmpty
-     * @expectedException eZ\Publish\Core\Persistence\SqlNg\Exception\GroupNotEmpty
-     * @expectedExceptionMessage Group with ID "23" is not empty.
+     * @depends testDeleteGroupSuccess
+     * @expectedException \eZ\Publish\Core\Base\Exceptions\NotFoundException
      */
-    public function testDeleteGroupFailure()
+    public function testDeleteNotExistingGroup( $group )
     {
         $handler = $this->getHandler();
-        $handler->deleteGroup( 23 );
+        $handler->deleteGroup( $group->id );
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadGroupByIdentifier
-     *
-     * @return void
+     * @depends testDeleteGroupSuccess
      */
-    public function testLoadGroupByIdentifier()
+    public function testDeleteNonEmptyGroup( $group )
     {
-        $handler = $this->getHandler();
-        $res = $handler->loadGroupByIdentifier( 'content' );
+        $this->markTestIncomplete( "Requires creation of a type first." );
 
-        $this->assertEquals(
-            new Group(),
-            $res
-        );
+        $handler = $this->getHandler();
+        $handler->deleteGroup( $group->id );
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadAllGroups
-     *
-     * @return void
-     */
-    public function testLoadAllGroups()
-    {
-        $handler = $this->getHandler();
-        $res = $handler->loadAllGroups();
-
-        $this->assertEquals(
-            array( new Group() ),
-            $res
-        );
-    }
-
-    /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadContentTypes
      *
      * @return void
      */
@@ -164,8 +156,6 @@ class ContentTypeHandlerTest extends TestCase
 
     /**
      * @return void
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::load
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadFromRows
      */
     public function testLoad()
     {
@@ -181,8 +171,6 @@ class ContentTypeHandlerTest extends TestCase
 
     /**
      * @return void
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::load
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadFromRows
      * @expectedException \eZ\Publish\Core\Persistence\SqlNg\Exception\TypeNotFound
      */
     public function testLoadNotFound()
@@ -193,8 +181,6 @@ class ContentTypeHandlerTest extends TestCase
 
     /**
      * @return void
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::load
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadFromRows
      */
     public function testLoadDefaultVersion()
     {
@@ -210,8 +196,6 @@ class ContentTypeHandlerTest extends TestCase
 
     /**
      * @return void
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadByIdentifier
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadFromRows
      */
     public function testLoadByIdentifier()
     {
@@ -227,8 +211,6 @@ class ContentTypeHandlerTest extends TestCase
 
     /**
      * @return void
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadByRemoteId
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::loadFromRows
      */
     public function testLoadByRemoteId()
     {
@@ -243,7 +225,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::create
      *
      * @return void
      */
@@ -284,7 +265,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::update
      *
      * @return void
      */
@@ -302,7 +282,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::delete
      *
      * @return void
      */
@@ -316,7 +295,6 @@ class ContentTypeHandlerTest extends TestCase
 
     /**
      * @return void
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::delete
      * @expectedException \eZ\Publish\Core\Base\Exceptions\NotFoundException
      */
     public function testDeleteThrowsNotFoundException()
@@ -327,7 +305,6 @@ class ContentTypeHandlerTest extends TestCase
 
     /**
      * @return void
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::delete
      * @expectedException \eZ\Publish\Core\Base\Exceptions\BadStateException
      */
     public function testDeleteThrowsBadStateException()
@@ -337,7 +314,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::createDraft
      *
      * @return void
      */
@@ -354,7 +330,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::copy
      *
      * @return void
      */
@@ -371,7 +346,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::link
      *
      * @return void
      */
@@ -384,7 +358,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::unlink
      *
      * @return void
      */
@@ -398,8 +371,6 @@ class ContentTypeHandlerTest extends TestCase
 
     /**
      * @return void
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::unlink
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Exception\RemoveLastGroupFromType
      * @expectedException eZ\Publish\Core\Persistence\SqlNg\Exception\RemoveLastGroupFromType
      * @expectedExceptionMessage Type with ID "23" in status "1" cannot be unlinked from its last group.
      */
@@ -410,7 +381,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::getFieldDefinition
      *
      * @return void
      */
@@ -426,7 +396,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::addFieldDefinition
      *
      * @return void
      */
@@ -444,7 +413,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::removeFieldDefinition
      *
      * @return void
      */
@@ -457,7 +425,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::updateFieldDefinition
      *
      * @return void
      */
@@ -472,7 +439,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::publish
      *
      * @return void
      */
@@ -483,7 +449,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler::publish
      *
      * @return void
      */

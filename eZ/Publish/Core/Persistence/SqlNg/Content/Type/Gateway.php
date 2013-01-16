@@ -40,15 +40,6 @@ abstract class Gateway
     abstract public function updateGroup( GroupUpdateStruct $group );
 
     /**
-     * Returns the number of types in a certain group.
-     *
-     * @param int $groupId
-     *
-     * @return int
-     */
-    abstract public function countTypesInGroup( $groupId );
-
-    /**
      * Returns the number of Groups the type is assigned to.
      *
      * @param int $typeId
