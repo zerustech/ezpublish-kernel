@@ -27,6 +27,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected static $user;
 
+    protected static $language;
+
     public function setUp()
     {
     }
@@ -128,6 +130,28 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         return self::$user;
+    }
+
+    /**
+     * Get a real language in the database
+     *
+     * @return Persistence\Language
+     */
+    protected function getLanguage()
+    {
+        if ( !self::$language )
+        {
+            $languageHandler = $this->getPersistenceHandler()->contentLanguageHandler();
+            self::$language = $languageHandler->create(
+                new Persistence\Content\Language\CreateStruct( array(
+                    'languageCode' => 'de_DE',
+                    'name' => 'German',
+                    'isEnabled' => true,
+                ) )
+            );
+        }
+
+        return self::$language;
     }
 
     /**
