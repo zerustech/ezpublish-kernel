@@ -87,7 +87,64 @@ class Handler implements BaseContentHandler
      */
     public function create( CreateStruct $struct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->internalCreate( $struct );
+    }
+
+    /**
+     * Creates a new Content entity in the storage engine.
+     *
+     * The values contained inside the $content will form the basis of stored
+     * entity.
+     *
+     * Will contain always a complete list of fields.
+     *
+     * @param \eZ\Publish\SPI\Persistence\Content\CreateStruct $struct Content creation struct.
+     * @param mixed $versionNo Used by self::copy() to maintain version numbers
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content Content value object
+     */
+    protected function internalCreate( CreateStruct $struct, $versionNo = 1 )
+    {
+        $content = new Content();
+
+        // @TODO: How to generate field IDs?
+        //
+        // Options:
+        // * Compund IDs: VersionID . padded( i )
+        //
+        //   Padding width is critical: Limits number of fields and is limited
+        //   by int width
+        //
+        // * field_sequence
+        //
+        //   No consistency checks possible, might lead to double IDs
+        //
+        // * field table with auto increment
+        //
+        //   Will again a really really large table, but with only 4 int
+        //   columns.
+        $content->fields = $struct->fields;
+        $content->versionInfo = $this->mapper->createVersionInfoFromCreateStruct( $struct, $versionNo );
+
+        $content->versionInfo->contentInfo->id = $this->contentGateway->insertContentObject( $struct, $versionNo );
+        $content->versionInfo->id = $this->contentGateway->insertVersion(
+            $content->versionInfo,
+            $content->fields
+        );
+
+        // Create node assignments
+        foreach ( $struct->locations as $location )
+        {
+            $location->contentId = $content->versionInfo->contentInfo->id;
+            $location->contentVersion = $content->versionInfo->versionNo;
+            $this->locationGateway->createNodeAssignment(
+                $location,
+                $location->parentId,
+                LocationGateway::NODE_ASSIGNMENT_OP_CODE_CREATE
+            );
+        }
+
+        return $content;
     }
 
     /**
