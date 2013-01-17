@@ -47,10 +47,31 @@ class ContentHandlerTest extends TestCase
     {
         $handler = $this->getContentHandler();
 
-        $content = $handler->create(
-            new Persistence\Content\CreateStruct( array(
-            ) )
-        );
+        $contentType = $this->getContentType();
+
+        $createStruct = new Persistence\Content\CreateStruct( array(
+            'typeId' => $contentType->id,
+            'sectionId' => $this->getSection()->id,
+            'ownerId' => $this->getUser()->id,
+            'alwaysAvailable' => true,
+            'remoteId' => 'testobject',
+            'initialLanguageId' => $this->getLanguage()->id,
+            'modified' => 123456789,
+            'locations' => array(),
+            'fields' => array(),
+        ) );
+
+        foreach ( $contentType->fieldDefinitions as $fieldDefinition )
+        {
+            $content->fields[] = new Persistence\Content\Field( array(
+                'fieldDefinitionId' => $fieldDefinition->id,
+                'type' => $fieldDefinition->type,
+                'value' => 'Hello World!',
+                'languageCode' => $this->getLanguage()->languageCode,
+            ) );
+        }
+
+        $content = $handler->create( $createStruct );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content',
