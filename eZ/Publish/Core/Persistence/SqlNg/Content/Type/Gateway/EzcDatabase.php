@@ -120,7 +120,13 @@ class EzcDatabase extends Gateway
             )
         );
 
-        $query->prepare()->execute();
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'group', $group->id );
+        }
     }
 
     /**
