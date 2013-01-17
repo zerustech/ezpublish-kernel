@@ -29,11 +29,6 @@ class ContentHandlerTest extends TestCase
         return $this->getPersistenceHandler()->contentHandler();
     }
 
-    /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Content\Handler::__construct
-     *
-     * @return void
-     */
     public function testCtor()
     {
         $handler = $this->getContentHandler();
@@ -63,9 +58,9 @@ class ContentHandlerTest extends TestCase
 
         foreach ( $contentType->fieldDefinitions as $fieldDefinition )
         {
-            $content->fields[] = new Persistence\Content\Field( array(
+            $createStruct->fields[] = new Persistence\Content\Field( array(
                 'fieldDefinitionId' => $fieldDefinition->id,
-                'type' => $fieldDefinition->type,
+                'type' => $fieldDefinition->fieldType,
                 'value' => 'Hello World!',
                 'languageCode' => $this->getLanguage()->languageCode,
             ) );
