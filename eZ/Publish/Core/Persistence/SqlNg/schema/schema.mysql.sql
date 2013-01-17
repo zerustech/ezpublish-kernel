@@ -100,10 +100,12 @@ CREATE TABLE ezcontent(
     `contenttype_id` INT NOT NULL DEFAULT '0',
     `current_version_no` INT DEFAULT NULL,
     `initial_language_id` INT NOT NULL DEFAULT '0',
-    `language_mask` INT NOT NULL DEFAULT '0',
     `name` VARCHAR(255) DEFAULT NULL,
-    `owner_id` INT NOT NULL DEFAULT '0', -- Keep this name, or change to modifier_id?
+    `creator_id` INT NOT NULL DEFAULT '0',
+    `created` INT NOT NULL DEFAULT '0',
+    `modifier_id` INT NOT NULL DEFAULT '0',
     `modified` INT NOT NULL DEFAULT '0',
+    `publisher_id` INT NOT NULL DEFAULT '0',
     `published` INT NOT NULL DEFAULT '0',
     `remote_id` VARCHAR(100) DEFAULT NULL,
     `section_id` INT NOT NULL DEFAULT '0',
@@ -114,11 +116,13 @@ CREATE TABLE ezcontent(
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE RESTRICT,
     FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
     FOREIGN KEY (section_id) REFERENCES ezsection(id) ON DELETE RESTRICT,
-    FOREIGN KEY (owner_id) REFERENCES ezuser(id) ON DELETE RESTRICT
+    FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
+    FOREIGN KEY (modifier_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
+    FOREIGN KEY (publisher_id) REFERENCES ezuser(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontentobject_name;
-CREATE TABLE ezcontentobject_name (
+DROP TABLE IF EXISTS ezcontent_name;
+CREATE TABLE ezcontent_name (
     `content_id` INT NOT NULL DEFAULT '0',
     `content_version_no` INT NOT NULL DEFAULT '0',
     `language_id` INT NOT NULL DEFAULT '0',
@@ -167,9 +171,10 @@ CREATE TABLE ezcontentobject_relation (
 --
 -- Locations (and trash) formelly known as tree
 --
-DROP TABLE IF EXISTS ezcontentlocation;
-CREATE TABLE ezcontentlocation (
+DROP TABLE IF EXISTS ezcontent_location;
+CREATE TABLE ezcontent_location (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `status` INT NOT NULL DEFAULT '0',
     `main_id` INT DEFAULT NULL,
     `parent_id` INT NOT NULL DEFAULT '0',
     `content_id` INT DEFAULT NULL,
@@ -184,14 +189,14 @@ CREATE TABLE ezcontentlocation (
     `sort_field` INT DEFAULT '1',
     `sort_order` INT DEFAULT '1',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
+    PRIMARY KEY (id, status),
     FOREIGN KEY (main_id) REFERENCES ezcontentlocation(id) ON DELETE RESTRICT,
     FOREIGN KEY (parent_id) REFERENCES ezcontentlocation(id) ON DELETE RESTRICT,
     FOREIGN KEY (content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontentobject_trash;
-CREATE TABLE ezcontentobject_trash (
+DROP TABLE IF EXISTS ezcontent_trash;
+CREATE TABLE ezcontent_trash (
     `id` INT NOT NULL AUTO_INCREMENT,
     `main_id` INT DEFAULT NULL,
     `parent_id` INT NOT NULL DEFAULT '0',
