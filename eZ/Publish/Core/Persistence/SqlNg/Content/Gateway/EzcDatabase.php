@@ -80,7 +80,49 @@ class EzcDatabase extends Gateway
      */
     public function insertContentObject( CreateStruct $struct, $currentVersionNo = 1 )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontent' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent', 'id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'current_version_no' ),
+            $query->bindValue( $currentVersionNo, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name_list' ),
+            $query->bindValue( json_encode( $struct->name ), null, \PDO::PARAM_STR )
+        )->set(
+            $this->dbHandler->quoteColumn( 'contenttype_id' ),
+            $query->bindValue( $struct->typeId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'section_id' ),
+            $query->bindValue( $struct->sectionId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'owner_id' ),
+            $query->bindValue( $struct->ownerId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'initial_language_id' ),
+            $query->bindValue( $struct->initialLanguageId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'remote_id' ),
+            $query->bindValue( $struct->remoteId, null, \PDO::PARAM_STR )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modified' ),
+            $query->bindValue( 0, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'published' ),
+            $query->bindValue( 0, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( ContentInfo::STATUS_DRAFT, null, \PDO::PARAM_INT )
+        );
+
+        $query->prepare()->execute();
+
+        return $this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontent', 'id' )
+        );
     }
 
     /**
@@ -93,7 +135,44 @@ class EzcDatabase extends Gateway
      */
     public function insertVersion( VersionInfo $versionInfo, array $fields )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        var_dump($fields);
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontent_version' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent_version', 'id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'content_id' ),
+            $query->bindValue( $versionInfo->contentInfo->id, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'version_no' ),
+            $query->bindValue( $versionInfo->versionNo, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modified' ),
+            $query->bindValue( $versionInfo->modificationDate, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'creator_id' ),
+            $query->bindValue( $versionInfo->creatorId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'created' ),
+            $query->bindValue( $versionInfo->creationDate, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( $versionInfo->status, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'initial_language_id' ),
+            $query->bindValue( $this->languageHandler->loadByLanguageCode( $versionInfo->initialLanguageCode )->id, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'fields' ),
+            $query->bindValue( json_encode( $fields ), null, \PDO::PARAM_STR )
+        );
+
+        $query->prepare()->execute();
+
+        return $this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontent_version', 'id' )
+        );
     }
 
     /**
@@ -245,7 +324,7 @@ class EzcDatabase extends Gateway
 
     /**
      * Loads info for content identified by $contentId.
-     * Will basically return a hash containing all field values for ezcontentobject table plus some additional keys:
+     * Will basically return a hash containing all field values for ezcontent table plus some additional keys:
      *  - always_available => Boolean indicating if content's language mask contains alwaysAvailable bit field
      *  - main_language_code => Language code for main (initial) language. E.g. "eng-GB"
      *
@@ -296,7 +375,7 @@ class EzcDatabase extends Gateway
 
     /**
      * Loads version info for content identified by $contentId and $versionNo.
-     * Will basically return a hash containing all field values from ezcontentobject_version table plus following keys:
+     * Will basically return a hash containing all field values from ezcontent_version table plus following keys:
      *  - names => Hash of content object names. Key is the language code, value is the name.
      *  - languages => Hash of language ids. Key is the language code (e.g. "eng-GB"), value is the language numeric id without the always available bit.
      *  - initial_language_code => Language code for initial language in this version.
