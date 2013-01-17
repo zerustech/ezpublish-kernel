@@ -29,6 +29,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected static $language;
 
+    protected static $section;
+
     protected static $contentTypeGroup;
 
     protected static $contentType;
@@ -156,6 +158,25 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         return self::$language;
+    }
+
+    /**
+     * Get a real section in the database
+     *
+     * @return Persistence\Content\Section
+     */
+    protected function getSection()
+    {
+        if ( !self::$section )
+        {
+            $sectionHandler = $this->getPersistenceHandler()->sectionHandler();
+            self::$section = $sectionHandler->create(
+                "Test Section",
+                "testsection"
+            );
+        }
+
+        return self::$section;
     }
 
     /**
