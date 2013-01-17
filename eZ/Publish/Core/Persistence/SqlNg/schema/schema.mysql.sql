@@ -100,12 +100,9 @@ CREATE TABLE ezcontent(
     `contenttype_id` INT NOT NULL DEFAULT '0',
     `current_version_no` INT DEFAULT NULL,
     `initial_language_id` INT NOT NULL DEFAULT '0',
-    `name` VARCHAR(255) DEFAULT NULL,
-    `creator_id` INT NOT NULL DEFAULT '0',
-    `created` INT NOT NULL DEFAULT '0',
-    `modifier_id` INT NOT NULL DEFAULT '0',
+    `name_list` LONGTEXT,
+    `owner_id` INT NOT NULL DEFAULT '0',
     `modified` INT NOT NULL DEFAULT '0',
-    `publisher_id` INT NOT NULL DEFAULT '0',
     `published` INT NOT NULL DEFAULT '0',
     `remote_id` VARCHAR(100) DEFAULT NULL,
     `section_id` INT NOT NULL DEFAULT '0',
@@ -116,30 +113,15 @@ CREATE TABLE ezcontent(
     FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE RESTRICT,
     FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
     FOREIGN KEY (section_id) REFERENCES ezsection(id) ON DELETE RESTRICT,
-    FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
-    FOREIGN KEY (modifier_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
-    FOREIGN KEY (publisher_id) REFERENCES ezuser(id) ON DELETE RESTRICT
+    FOREIGN KEY (owner_id) REFERENCES ezuser(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontent_name;
-CREATE TABLE ezcontent_name (
-    `content_id` INT NOT NULL DEFAULT '0',
-    `content_version_no` INT NOT NULL DEFAULT '0',
-    `language_id` INT NOT NULL DEFAULT '0',
-    `content_translation` VARCHAR(20) NOT NULL DEFAULT '',
-    `name` VARCHAR(255) DEFAULT NULL,
-    `real_translation` VARCHAR(20) DEFAULT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (content_id, content_version_no, content_translation),
-    FOREIGN KEY (content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE,
-    FOREIGN KEY (language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezcontentversion;
-CREATE TABLE ezcontentversion (
+DROP TABLE IF EXISTS ezcontent_version;
+CREATE TABLE ezcontent_version (
     `id` INT NOT NULL AUTO_INCREMENT,
     `content_id` INT DEFAULT NULL,
     `version_no` INT NOT NULL DEFAULT '0',
+    `modified` INT NOT NULL DEFAULT '0',
     `creator_id` INT NOT NULL DEFAULT '0',
     `created` INT NOT NULL DEFAULT '0',
     `initial_language_id` INT NOT NULL DEFAULT '0',
@@ -147,13 +129,26 @@ CREATE TABLE ezcontentversion (
     `fields` LONGTEXT NOT NULL,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    FOREIGN KEY (content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE,
+    FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE,
     FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontentobject_relation; -- Formerlly ezcontentobject_link
-CREATE TABLE ezcontentobject_relation (
+DROP TABLE IF EXISTS ezcontent_field;
+CREATE TABLE ezcontent_version (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `contenttype_field_id` INT DEFAULT NULL,
+    `content_id` INT DEFAULT NULL,
+    `version_no` INT NOT NULL DEFAULT '0',
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE,
+    FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
+    FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS ezcontent_relation; -- Formerlly ezcontentobject_link
+CREATE TABLE ezcontent_relation (
     `id` INT NOT NULL AUTO_INCREMENT,
     `contenttype_field_id` INT NOT NULL DEFAULT '0',
     `from_content_id` INT NOT NULL DEFAULT '0',
