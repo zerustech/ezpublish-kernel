@@ -9,15 +9,7 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content;
 
-use eZ\Publish\SPI\Persistence\Content;
-use eZ\Publish\SPI\Persistence\Content\CreateStruct;
-use eZ\Publish\SPI\Persistence\Content\Field;
-use eZ\Publish\SPI\Persistence\Content\FieldValue;
-use eZ\Publish\SPI\Persistence\Content\Relation;
-use eZ\Publish\SPI\Persistence\Content\Relation\CreateStruct as RelationCreateStruct;
-use eZ\Publish\SPI\Persistence\Content\Language\Handler as LanguageHandler;
-use eZ\Publish\SPI\Persistence\Content\ContentInfo;
-use eZ\Publish\SPI\Persistence\Content\VersionInfo;
+use eZ\Publish\SPI\Persistence;
 
 /**
  * Mapper for Content Handler.
@@ -38,7 +30,7 @@ class Mapper
      *
      * @param \eZ\Publish\SPI\Persistence\Content\Language\Handler $languageHandler
      */
-    public function __construct( LanguageHandler $languageHandler )
+    public function __construct( Persistence\Content\Language\Handler $languageHandler )
     {
         $this->languageHandler = $languageHandler;
     }
@@ -51,9 +43,27 @@ class Mapper
      *
      * @return \eZ\Publish\SPI\Persistence\Content\ContentInfo
      */
-    private function createContentInfoFromCreateStruct( CreateStruct $struct, $currentVersionNo = 1 )
+    private function createContentInfoFromCreateStruct( Persistence\Content\CreateStruct $struct, $currentVersionNo = 1 )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $contentInfo = new Persistence\Content\ContentInfo;
+
+        $contentInfo->id = null;
+        $contentInfo->contentTypeId = $struct->typeId;
+        $contentInfo->sectionId = $struct->sectionId;
+        $contentInfo->ownerId = $struct->ownerId;
+        $contentInfo->alwaysAvailable = $struct->alwaysAvailable;
+        $contentInfo->remoteId = $struct->remoteId;
+        $contentInfo->mainLanguageCode = $this->languageHandler->load( $struct->initialLanguageId )->languageCode;
+        $contentInfo->name = isset( $struct->name[$contentInfo->mainLanguageCode] )
+            ? $struct->name[$contentInfo->mainLanguageCode]
+            : "";
+        // For drafts published and modified timestamps should be 0
+        $contentInfo->publicationDate = 0;
+        $contentInfo->modificationDate = 0;
+        $contentInfo->currentVersionNo = $currentVersionNo;
+        $contentInfo->isPublished = false;
+
+        return $contentInfo;
     }
 
     /**
@@ -64,9 +74,32 @@ class Mapper
      *
      * @return \eZ\Publish\SPI\Persistence\Content\VersionInfo
      */
-    public function createVersionInfoFromCreateStruct( CreateStruct $struct, $versionNo )
+    public function createVersionInfoFromCreateStruct( Persistence\Content\CreateStruct $struct, $versionNo )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $versionInfo = new Persistence\Content\VersionInfo();
+
+        $versionInfo->id = null;
+        $versionInfo->contentInfo = $this->createContentInfoFromCreateStruct( $struct, $versionNo );
+        $versionInfo->versionNo = $versionNo;
+        $versionInfo->creatorId = $struct->ownerId;
+        $versionInfo->status = Persistence\Content\VersionInfo::STATUS_DRAFT;
+        $versionInfo->initialLanguageCode = $this->languageHandler->load( $struct->initialLanguageId )->languageCode;
+        $versionInfo->creationDate = $struct->modified;
+        $versionInfo->modificationDate = $struct->modified;
+        $versionInfo->names = $struct->name;
+
+        $languageIds = array();
+        foreach ( $struct->fields as $field )
+        {
+            if ( !isset( $languageIds[$field->languageCode] ) )
+            {
+                $languageIds[$field->languageCode] =
+                    $this->languageHandler->loadByLanguageCode( $field->languageCode )->id;
+            }
+        }
+        $versionInfo->languageIds = array_values( $languageIds );
+
+        return $versionInfo;
     }
 
     /**
