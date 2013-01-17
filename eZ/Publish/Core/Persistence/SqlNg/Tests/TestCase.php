@@ -29,6 +29,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected static $language;
 
+    protected static $contentTypeGroup;
+
+    protected static $contentType;
+
     public function setUp()
     {
     }
@@ -152,6 +156,80 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         return self::$language;
+    }
+
+    /**
+     * Get a functional content type group
+     *
+     * @return Persistence\Content\Type\Group
+     */
+    protected function getContentTypeGroup()
+    {
+        if ( !self::$contentTypeGroup )
+        {
+            $contentTypeHandler = $this->getPersistenceHandler()->contentTypeHandler();
+            self::$contentTypeGroup = $contentTypeHandler->createGroup(
+                new Persistence\Content\Type\Group\CreateStruct( $values = array(
+                    'identifier' => 'testgroup',
+                    'created' => time(),
+                    'creatorId' => $this->getUser()->id,
+                    'modified' => time(),
+                    'modifierId' => $this->getUser()->id,
+                ) )
+            );
+        }
+
+        return self::$contentTypeGroup;
+    }
+
+    /**
+     * Get a functional content type
+     *
+     * @return Persistence\Content\Type
+     */
+    protected function getContentType()
+    {
+        if ( !self::$contentType )
+        {
+            $contentTypeHandler = $this->getPersistenceHandler()->contentTypeHandler();
+            self::$contentType = $contentTypeHandler->create(
+                new Persistence\Content\Type\CreateStruct( array(
+                    'identifier' => 'testtype',
+                    'status' => 1,
+                    'groupIds' => array( $this->getContentTypeGroup()->id ),
+                    'created' => time(),
+                    'creatorId' => $this->getUser()->id,
+                    'modified' => time(),
+                    'modifierId' => $this->getUser()->id,
+                    'remoteId' => 'testtype',
+                    'initialLanguageId' => $this->getLanguage()->id,
+                    'fieldDefinitions' => array(
+                        new Persistence\Content\Type\FieldDefinition( array(
+                            'identifier' => 'title',
+                            'fieldGroup' => '1',
+                            'position' => 1,
+                            'fieldType' => 'ezstring',
+                            'isTranslatable' => true,
+                            'isRequired' => true,
+                            'isInfoCollector' => true,
+                            'isSearchable' => true,
+                        ) ),
+                        new Persistence\Content\Type\FieldDefinition( array(
+                            'identifier' => 'text',
+                            'fieldGroup' => '1',
+                            'position' => 2,
+                            'fieldType' => 'eztext',
+                            'isTranslatable' => true,
+                            'isRequired' => true,
+                            'isInfoCollector' => true,
+                            'isSearchable' => true,
+                        ) ),
+                    ),
+                ) )
+            );
+        }
+
+        return self::$contentType;
     }
 
     /**
