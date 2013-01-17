@@ -184,18 +184,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Counts the number of content objects assigned to section with $id
-     *
-     * @param int $id
-     *
-     * @return int
-     */
-    public function countContentObjectsInSection( $id )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Deletes the Section with $id
      *
      * @param int $id
