@@ -477,6 +477,7 @@ class Handler implements HandlerInterface
         if ( !isset( $this->sectionHandler ) )
         {
             $this->sectionHandler = new Content\Section\Handler(
+                new Content\Section\Gateway\EzcDatabase( $this->dbHandler )
             );
         }
         return $this->sectionHandler;

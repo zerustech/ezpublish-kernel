@@ -12,6 +12,8 @@ namespace eZ\Publish\Core\Persistence\SqlNg\Content\Section\Gateway;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Section\Gateway;
 use eZ\Publish\Core\Persistence\Legacy\EzcDbHandler;
 
+use eZ\Publish\Core\Base\Exceptions\NotFoundException as NotFound;
+
 /**
  * Section Handler
  */
@@ -31,7 +33,7 @@ class EzcDatabase extends Gateway
      */
     public function __construct ( EzcDbHandler $dbHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
     }
 
     /**
@@ -44,7 +46,25 @@ class EzcDatabase extends Gateway
      */
     public function insertSection( $name, $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezsection' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezsection', 'id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( $name )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $identifier )
+        );
+
+        $query->prepare()->execute();
+
+        return $this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezsection', 'id' )
+        );
     }
 
     /**
@@ -58,7 +78,29 @@ class EzcDatabase extends Gateway
      */
     public function updateSection( $id, $name, $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezsection' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( $name )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $identifier )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $query->bindValue( $id, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'section', $id );
+        }
     }
 
     /**
@@ -70,7 +112,24 @@ class EzcDatabase extends Gateway
      */
     public function loadSectionData( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $this->dbHandler->quoteColumn( 'name' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezsection' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $query->bindValue( $id, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -80,7 +139,19 @@ class EzcDatabase extends Gateway
      */
     public function loadAllSectionData()
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $this->dbHandler->quoteColumn( 'name' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezsection' )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -92,7 +163,24 @@ class EzcDatabase extends Gateway
      */
     public function loadSectionDataByIdentifier( $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $this->dbHandler->quoteColumn( 'name' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezsection' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'identifier' ),
+                $query->bindValue( $identifier, null, \PDO::PARAM_STR )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -116,7 +204,23 @@ class EzcDatabase extends Gateway
      */
     public function deleteSection( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom(
+            $this->dbHandler->quoteTable( 'ezsection' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $query->bindValue( $id, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'section', $id );
+        }
     }
 
     /**

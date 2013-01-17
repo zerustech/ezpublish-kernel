@@ -10,9 +10,9 @@
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\Section;
 
 use eZ\Publish\SPI\Persistence\Content\Section\Handler as BaseSectionHandler;
-use eZ\Publish\SPI\Persistence\Content\Section;
+use eZ\Publish\SPI\Persistence;
+
 use eZ\Publish\Core\Base\Exceptions\NotFoundException as NotFound;
-use RuntimeException;
 
 /**
  * Section Handler
@@ -33,7 +33,7 @@ class Handler implements BaseSectionHandler
      */
     public function __construct( Gateway $sectionGateway  )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->sectionGateway = $sectionGateway;
     }
 
     /**
@@ -46,7 +46,14 @@ class Handler implements BaseSectionHandler
      */
     public function create( $name, $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return new Persistence\Content\Section( array(
+            'id' => $this->sectionGateway->insertSection(
+                $name,
+                $identifier
+            ),
+            'name' => $name,
+            'identifier' => $identifier,
+        ) );
     }
 
     /**
@@ -60,7 +67,13 @@ class Handler implements BaseSectionHandler
      */
     public function update( $id, $name, $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->sectionGateway->updateSection( $id, $name, $identifier );
+
+        return new Persistence\Content\Section( array(
+            'id' => $id,
+            'name' => $name,
+            'identifier' => $identifier,
+        ) );
     }
 
     /**
@@ -74,7 +87,13 @@ class Handler implements BaseSectionHandler
      */
     public function load( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $rows = $this->sectionGateway->loadSectionData( $id );
+
+        if ( empty( $rows ) )
+        {
+            throw new NotFound( "Section", $id );
+        }
+        return $this->createSectionFromArray( reset( $rows ) );
     }
 
     /**
@@ -84,7 +103,9 @@ class Handler implements BaseSectionHandler
      */
     public function loadAll()
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->createSectionsFromArray(
+            $this->sectionGateway->loadAllSectionData()
+        );
     }
 
     /**
@@ -98,7 +119,13 @@ class Handler implements BaseSectionHandler
      */
     public function loadByIdentifier( $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $rows = $this->sectionGateway->loadSectionDataByIdentifier( $identifier );
+
+        if ( empty( $rows ) )
+        {
+            throw new NotFound( "Section", $identifier );
+        }
+        return $this->createSectionFromArray( reset( $rows ) );
     }
 
     /**
@@ -112,7 +139,7 @@ class Handler implements BaseSectionHandler
      */
     public function delete( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->sectionGateway->deleteSection( $id );
     }
 
     /**
@@ -136,5 +163,38 @@ class Handler implements BaseSectionHandler
     public function assignmentsCount( $sectionId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
+    }
+
+    /**
+     * Creates a Section from the given $data
+     *
+     * @param array $data
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\Section[]
+     */
+    protected function createSectionsFromArray( array $data )
+    {
+        $sections = array();
+        foreach ( $data as $sectionData )
+        {
+            $sections[] = $this->createSectionFromArray( $sectionData );
+        }
+        return $sections;
+    }
+
+    /**
+     * Creates a Section from the given $data
+     *
+     * @param array $data
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\Section
+     */
+    protected function createSectionFromArray( array $data )
+    {
+        return new Persistence\Content\Section( array(
+            'id' => (int)$data['id'],
+            'name' => $data['name'],
+            'identifier' => $data['identifier'],
+        ) );
     }
 }
