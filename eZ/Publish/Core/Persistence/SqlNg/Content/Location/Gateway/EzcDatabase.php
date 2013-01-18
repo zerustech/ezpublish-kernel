@@ -50,7 +50,6 @@ class EzcDatabase extends Gateway
      * We might want to cache this, since this method is used by about every
      * method in the location handler.
      *
-     * @todo optimize
      * @param mixed $nodeId
      *
      * @return array
@@ -63,7 +62,6 @@ class EzcDatabase extends Gateway
     /**
      * Returns an array with basic node data
      *
-     * @todo optimize
      * @param mixed $remoteId
      *
      * @return array
@@ -129,19 +127,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Updated subtree modification time for all nodes on path
-     *
-     * @param string $pathString
-     * @param int|null $timestamp
-     *
-     * @return void
-     */
-    public function updateSubtreeModificationTime( $pathString, $timestamp = null )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Sets a location to be hidden, and it self + all children to invisible.
      *
      * @param string $pathString
@@ -186,66 +171,7 @@ class EzcDatabase extends Gateway
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
-    public function create( CreateStruct $createStruct, array $parentNode )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Create an entry in the node assignment table
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\Location\CreateStruct $createStruct
-     * @param mixed $parentNodeId
-     * @param int $type
-     *
-     * @return void
-     */
-    public function createNodeAssignment( CreateStruct $createStruct, $parentNodeId, $type = self::NODE_ASSIGNMENT_OP_CODE_CREATE_NOP )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Deletes node assignment for given $contentId and $versionNo
-     *
-     * If $versionNo is not passed all node assignments for given $contentId are deleted
-     *
-     * @param int $contentId
-     * @param int|null $versionNo
-     *
-     * @return void
-     */
-    public function deleteNodeAssignment( $contentId, $versionNo = null )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Update node assignment table
-     *
-     * @param int $contentObjectId
-     * @param int $oldParent
-     * @param int $newParent
-     * @param int $opcode
-     *
-     * @return void
-     */
-    public function updateNodeAssignment( $contentObjectId, $oldParent, $newParent, $opcode )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Create locations from node assignments
-     *
-     * Convert existing node assignments into real locations.
-     *
-     * @param mixed $contentId
-     * @param mixed $versionNo
-     *
-     * @return void
-     */
-    public function createLocationsFromNodeAssignments( $contentId, $versionNo )
+    public function create( CreateStruct $createStruct, array $parentNode, $status )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
@@ -308,23 +234,6 @@ class EzcDatabase extends Gateway
      * @param mixed $locationId
      */
     public function removeLocation( $locationId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Returns id of the next in line node to be set as a new main node
-     *
-     * This returns lowest node id for content identified by $contentId, and not of
-     * the node identified by given $locationId (current main node).
-     * Assumes that content has more than one location.
-     *
-     * @param mixed $contentId
-     * @param mixed $locationId
-     *
-     * @return array
-     */
-    public function getFallbackMainNodeData( $contentId, $locationId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
@@ -422,18 +331,6 @@ class EzcDatabase extends Gateway
      * @return boolean
      */
     public function setSectionForSubtree( $pathString, $sectionId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Returns how many locations given content object identified by $contentId has
-     *
-     * @param int $contentId
-     *
-     * @return int
-     */
-    public function countLocationsByContentId( $contentId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }

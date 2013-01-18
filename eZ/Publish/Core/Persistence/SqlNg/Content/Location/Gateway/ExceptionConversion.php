@@ -41,7 +41,6 @@ class ExceptionConversion extends Gateway
      * We might want to cache this, since this method is used by about every
      * method in the location handler.
      *
-     * @todo optimize
      * @param mixed $nodeId
      *
      * @return array
@@ -65,7 +64,6 @@ class ExceptionConversion extends Gateway
     /**
      * Returns an array with basic node data for the node with $remoteId
      *
-     * @todo optimize
      * @param mixed $remoteId
      *
      * @return array
@@ -163,7 +161,6 @@ class ExceptionConversion extends Gateway
      * This query can likely be optimized to use some more advanced string
      * operations, which then depend on the respective database.
      *
-     * @todo optimize
      * @param string $fromPathString
      * @param string $toPathString
      *
@@ -174,82 +171,6 @@ class ExceptionConversion extends Gateway
         try
         {
             return $this->innerGateway->moveSubtreeNodes( $fromPathString, $toPathString );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Updated subtree modification time for all nodes on path
-     *
-     * @param string $pathString
-     * @param int|null $timestamp
-     *
-     * @return void
-     */
-    public function updateSubtreeModificationTime( $pathString, $timestamp = null )
-    {
-        try
-        {
-            return $this->innerGateway->updateSubtreeModificationTime( $pathString, $timestamp );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Update node assignment table
-     *
-     * @param int $contentObjectId
-     * @param int $oldParent
-     * @param int $newParent
-     * @param int $opcode
-     *
-     * @return void
-     */
-    public function updateNodeAssignment( $contentObjectId, $oldParent, $newParent, $opcode )
-    {
-        try
-        {
-            return $this->innerGateway->updateNodeAssignment( $contentObjectId, $oldParent, $newParent, $opcode );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Create locations from node assignments
-     *
-     * Convert existing node assignments into real locations.
-     *
-     * @param mixed $contentId
-     * @param mixed $versionNo
-     *
-     * @return void
-     */
-    public function createLocationsFromNodeAssignments( $contentId, $versionNo )
-    {
-        try
-        {
-            return $this->innerGateway->createLocationsFromNodeAssignments( $contentId, $versionNo );
         }
         catch ( \ezcDbException $e )
         {
@@ -360,63 +281,15 @@ class ExceptionConversion extends Gateway
      *
      * @param \eZ\Publish\SPI\Persistence\Content\Location\CreateStruct $createStruct
      * @param array $parentNode
+     * @param int $status
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
-    public function create( CreateStruct $createStruct, array $parentNode )
+    public function create( CreateStruct $createStruct, array $parentNode, $status )
     {
         try
         {
             return $this->innerGateway->create( $createStruct, $parentNode );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Create an entry in the node assignment table
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\Location\CreateStruct $createStruct
-     * @param mixed $parentNodeId
-     * @param int $type
-     *
-     * @return void
-     */
-    public function createNodeAssignment( CreateStruct $createStruct, $parentNodeId, $type = self::NODE_ASSIGNMENT_OP_CODE_CREATE_NOP )
-    {
-        try
-        {
-            return $this->innerGateway->createNodeAssignment( $createStruct, $parentNodeId, $type );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Deletes node assignment for given $contentId and $versionNo
-     *
-     * @param int $contentId
-     * @param int $versionNo
-     *
-     * @return void
-     */
-    public function deleteNodeAssignment( $contentId, $versionNo = null )
-    {
-        try
-        {
-            return $this->innerGateway->deleteNodeAssignment( $contentId, $versionNo );
         }
         catch ( \ezcDbException $e )
         {
@@ -487,34 +360,6 @@ class ExceptionConversion extends Gateway
         try
         {
             return $this->innerGateway->removeLocation( $locationId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Returns id of the next in line node to be set as a new main node
-     *
-     * This returns lowest node id for content identified by $contentId, and not of
-     * the node identified by given $locationId (current main node).
-     * Assumes that content has more than one location.
-     *
-     * @param mixed $contentId
-     * @param mixed $locationId
-     *
-     * @return array
-     */
-    public function getFallbackMainNodeData( $contentId, $locationId )
-    {
-        try
-        {
-            return $this->innerGateway->getFallbackMainNodeData( $contentId, $locationId );
         }
         catch ( \ezcDbException $e )
         {
@@ -690,29 +535,6 @@ class ExceptionConversion extends Gateway
         try
         {
             return $this->innerGateway->setSectionForSubtree( $pathString, $sectionId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Returns how many locations given content object identified by $contentId has
-     *
-     * @param int $contentId
-     *
-     * @return int
-     */
-    public function countLocationsByContentId( $contentId )
-    {
-        try
-        {
-            return $this->innerGateway->countLocationsByContentId( $contentId );
         }
         catch ( \ezcDbException $e )
         {
