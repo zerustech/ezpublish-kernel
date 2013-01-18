@@ -134,19 +134,6 @@ CREATE TABLE ezcontent_version (
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontent_field;
-CREATE TABLE ezcontent_version (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `contenttype_field_id` INT DEFAULT NULL,
-    `content_id` INT DEFAULT NULL,
-    `version_no` INT NOT NULL DEFAULT '0',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE,
-    FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
-    FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT
-) ENGINE=InnoDB;
-
 DROP TABLE IF EXISTS ezcontent_relation; -- Formerlly ezcontentobject_link
 CREATE TABLE ezcontent_relation (
     `id` INT NOT NULL AUTO_INCREMENT,
