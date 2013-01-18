@@ -135,7 +135,6 @@ class EzcDatabase extends Gateway
      */
     public function insertVersion( VersionInfo $versionInfo, array $fields )
     {
-        var_dump($fields);
         $query = $this->dbHandler->createInsertQuery();
         $query->insertInto(
             $this->dbHandler->quoteTable( 'ezcontent_version' )
