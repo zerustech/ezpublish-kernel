@@ -46,11 +46,11 @@ class Handler implements BaseContentHandler
     protected $mapper;
 
     /**
-     * FieldHandler
+     * FieldIdGenerator
      *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\FieldIdGenerator
      */
-    protected $fieldHandler;
+    protected $fieldIdGenerator;
 
     /**
      * Creates a new content handler.
@@ -58,19 +58,19 @@ class Handler implements BaseContentHandler
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Gateway $contentGateway
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway $locationGateway
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper $mapper
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler $fieldHandler
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldIdGenerator $fieldIdGenerator
      */
     public function __construct(
         Gateway $contentGateway,
         LocationGateway $locationGateway,
         Mapper $mapper,
-        FieldHandler $fieldHandler
+        FieldIdGenerator $fieldIdGenerator
     )
     {
         $this->contentGateway = $contentGateway;
         $this->locationGateway = $locationGateway;
         $this->mapper = $mapper;
-        $this->fieldHandler = $fieldHandler;
+        $this->fieldIdGenerator = $fieldIdGenerator;
     }
 
     /**
@@ -107,26 +107,16 @@ class Handler implements BaseContentHandler
     {
         $content = new Content();
 
-        // @TODO: How to generate field IDs?
-        //
-        // Options:
-        // * Compund IDs: VersionID . padded( i )
-        //
-        //   Padding width is critical: Limits number of fields and is limited
-        //   by int width
-        //
-        // * field_sequence
-        //
-        //   No consistency checks possible, might lead to double IDs
-        //
-        // * field table with auto increment
-        //
-        //   Will again a really really large table, but with only 4 int
-        //   columns.
         $content->fields = $struct->fields;
         $content->versionInfo = $this->mapper->createVersionInfoFromCreateStruct( $struct, $versionNo );
-
         $content->versionInfo->contentInfo->id = $this->contentGateway->insertContentObject( $struct, $versionNo );
+
+        foreach ( $content->fields as $field )
+        {
+            $field->id = $this->fieldIdGenerator->generateFieldId( $content->versionInfo, $field );
+            $field->versionNo = $content->versionInfo->versionNo;
+        }
+
         $content->versionInfo->id = $this->contentGateway->insertVersion(
             $content->versionInfo,
             $content->fields
@@ -137,7 +127,7 @@ class Handler implements BaseContentHandler
         {
             $location->contentId = $content->versionInfo->contentInfo->id;
             $location->contentVersion = $content->versionInfo->versionNo;
-            $this->locationGateway->createNodeAssignment(
+            $this->locationGateway->create(
                 $location,
                 $location->parentId,
                 LocationGateway::NODE_ASSIGNMENT_OP_CODE_CREATE
@@ -166,7 +156,30 @@ class Handler implements BaseContentHandler
      */
     public function publish( $contentId, $versionNo, MetadataUpdateStruct $metaDataUpdateStruct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        // Archive currently published version
+        $versionInfo = $this->loadVersionInfo( $contentId, $versionNo );
+        if ( $versionInfo->contentInfo->currentVersionNo != $versionNo )
+        {
+            $this->setStatus(
+                $contentId,
+                VersionInfo::STATUS_ARCHIVED,
+                $versionInfo->contentInfo->currentVersionNo
+            );
+        }
+
+        // Set always available name for the content
+        $metaDataUpdateStruct->name = $versionInfo->names[$versionInfo->contentInfo->mainLanguageCode];
+
+        $this->contentGateway->updateContent( $contentId, $metaDataUpdateStruct );
+        $this->locationGateway->createLocationsFromNodeAssignments(
+            $contentId,
+            $versionNo
+        );
+
+        $this->locationGateway->updateLocationsContentVersionNo( $contentId, $versionNo );
+        $this->setStatus( $contentId, VersionInfo::STATUS_PUBLISHED, $versionNo );
+
+        return $this->load( $contentId, $versionNo );
     }
 
     /**

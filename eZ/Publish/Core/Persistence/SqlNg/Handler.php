@@ -40,13 +40,6 @@ class Handler implements HandlerInterface
     protected $storageHandler;
 
     /**
-     * Field handler
-     *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
-     */
-    protected $fieldHandler;
-
-    /**
      * Search handler
      *
      * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Search\Handler
@@ -262,7 +255,7 @@ class Handler implements HandlerInterface
                 $this->getContentGateway(),
                 $this->getLocationGateway(),
                 $this->getContentMapper(),
-                $this->getFieldHandler()
+                $this->getFieldIdGenerator()
             );
         }
         return $this->contentHandler;
@@ -305,22 +298,17 @@ class Handler implements HandlerInterface
     }
 
     /**
-     * Returns a field handler
+     * Returns a field ID generator
      *
-     * @return \eZ\Publish\Core\Persistence\Legacy\Content\FieldHandler
+     * @return \eZ\Publish\Core\Persistence\Legacy\Content\FieldIdGenerator
      */
-    protected function getFieldHandler()
+    protected function getFieldIdGenerator()
     {
-        if ( !isset( $this->fieldHandler ) )
+        if ( !isset( $this->fieldIdGenerator ) )
         {
-            $this->fieldHandler = new Content\FieldHandler(
-                $this->getContentGateway(),
-                $this->getContentTypeGateway(),
-                $this->getContentMapper(),
-                $this->getStorageHandler()
-            );
+            $this->fieldIdGenerator = new Content\FieldIdGenerator\Random();
         }
-        return $this->fieldHandler;
+        return $this->fieldIdGenerator;
     }
 
     /**
