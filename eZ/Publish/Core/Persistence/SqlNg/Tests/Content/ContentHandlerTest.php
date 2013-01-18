@@ -52,7 +52,12 @@ class ContentHandlerTest extends TestCase
             'remoteId' => 'testobject',
             'initialLanguageId' => $this->getLanguage()->id,
             'modified' => 123456789,
-            'locations' => array(),
+            'locations' => array(
+                new Persistence\Content\Location\CreateStruct( array(
+                    'remoteId' => 'testobject-location',
+                    'parentId' => 1,
+                ) )
+            ),
             'fields' => array(),
         ) );
 
@@ -85,6 +90,8 @@ class ContentHandlerTest extends TestCase
             count( $content->fields ),
             'Fields not set correctly in version'
         );
+
+        return $content;
     }
 
     /**
@@ -94,8 +101,12 @@ class ContentHandlerTest extends TestCase
     {
         $handler = $this->getContentHandler();
 
-        $metadataUpdateStruct = new MetadataUpdateStruct();
-        $content = $handler->publish( $content->id, $content->versionNo, $metadataUpdateStruct );
+        $content = $handler->publish(
+            $content->versionInfo->contentInfo->id,
+            $content->versionInfo->versionNo,
+            new Persistence\Content\MetadataUpdateStruct( array(
+            ) )
+        );
 
         return $content;
     }
@@ -108,7 +119,7 @@ class ContentHandlerTest extends TestCase
         $handler = $this->getContentHandler();
 
         $metadataUpdateStruct = new MetadataUpdateStruct();
-        $content = $handler->publish( $content->id, $content->versionNo, $metadataUpdateStruct );
+        $content = $handler->publish( $content->versionInfo->contentInfo->id, $content->versionInfo->versionNo, $metadataUpdateStruct );
 
         return $content;
     }
