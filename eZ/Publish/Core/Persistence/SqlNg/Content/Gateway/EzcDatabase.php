@@ -163,6 +163,9 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( 'initial_language_id' ),
             $query->bindValue( $this->languageHandler->loadByLanguageCode( $versionInfo->initialLanguageCode )->id, null, \PDO::PARAM_INT )
         )->set(
+            $this->dbHandler->quoteColumn( 'always_available' ),
+            $query->bindValue( $versionInfo->contentInfo->alwaysAvailable, null, \PDO::PARAM_INT )
+        )->set(
             $this->dbHandler->quoteColumn( 'fields' ),
             $query->bindValue( json_encode( $fields ), null, \PDO::PARAM_STR )
         );
@@ -305,7 +308,23 @@ class EzcDatabase extends Gateway
      */
     public function load( $contentId, $version, $translations = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->queryBuilder->createFindQuery( $translations );
+        $query->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
+                    $query->bindValue( $contentId )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'version_no', 'ezcontent_version' ),
+                    $query->bindValue( $version )
+                )
+            )
+        );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**

@@ -141,20 +141,96 @@ class Mapper
      */
     public function extractContentFromRows( array $rows )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $contentInfos = array();
+        $versionInfos = array();
+
+        $fields = array();
+
+        foreach ( $rows as $row )
+        {
+            $contentId = (int)$row['ezcontent_id'];
+            if ( !isset( $contentInfos[$contentId] ) )
+            {
+                $contentInfos[$contentId] = $this->extractContentInfoFromRow( $row, 'ezcontent_' );
+            }
+            if ( !isset( $versionInfos[$contentId] ) )
+            {
+                $versionInfos[$contentId] = array();
+            }
+
+            $versionId = (int)$row['ezcontent_version_id'];
+            if ( !isset( $versionInfos[$contentId][$versionId] ) )
+            {
+                $versionInfos[$contentId][$versionId] = $this->extractVersionInfoFromRow( $row );
+            }
+
+            // Filter out fields, which are not defined in content type any
+            // more
+            $fields[$contentId][$versionId] = $this->readFields(
+                json_decode( $row['ezcontent_version_fields'], true )
+            );
+        }
+
+        $results = array();
+        foreach ( $contentInfos as $contentId => $contentInfo )
+        {
+            foreach ( $versionInfos[$contentId] as $versionId => $versionInfo )
+            {
+                $content = new Persistence\Content();
+                $content->versionInfo = $versionInfo;
+                $content->versionInfo->contentInfo = $contentInfo;
+                $content->fields = array_values( $fields[$contentId][$versionId] );
+                $results[] = $content;
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Read fields
+     *
+     * @param array $fields
+     * @return array
+     */
+    protected function readFields( array $fields )
+    {
+        return array_map(
+            function ( $data )
+            {
+                return new Persistence\Content\Field( $data );
+            },
+            $fields
+        );
     }
 
     /**
      * Extracts a ContentInfo object from $row
      *
      * @param array $row
-     * @param string $prefix Prefix for row keys, which are initially mapped by ezcontentobject fields
+     * @param string $prefix Prefix for row keys, which are initially mapped by ezcontent fields
      *
      * @return \eZ\Publish\SPI\Persistence\Content\ContentInfo
      */
     public function extractContentInfoFromRow( array $row, $prefix = '' )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $contentInfo = new Persistence\Content\ContentInfo();
+        $contentInfo->id = (int)$row["{$prefix}id"];
+        $contentInfo->contentTypeId = (int)$row["{$prefix}contenttype_id"];
+        $contentInfo->sectionId = (int)$row["{$prefix}section_id"];
+        $contentInfo->currentVersionNo = (int)$row["{$prefix}current_version_no"];
+        $contentInfo->isPublished = (bool)( $row["{$prefix}status"] == Persistence\Content\ContentInfo::STATUS_PUBLISHED );
+        $contentInfo->ownerId = (int)$row["{$prefix}owner_id"];
+        $contentInfo->publicationDate = (int)$row["{$prefix}published"];
+        $contentInfo->modificationDate = (int)$row["{$prefix}modified"];
+        $contentInfo->mainLanguageCode = $this->languageHandler->load( $row["{$prefix}initial_language_id"] )->languageCode;
+        $contentInfo->alwaysAvailable = (bool)$row["ezcontent_version_always_available"];
+        $contentInfo->remoteId = $row["{$prefix}remote_id"];
+        $contentInfo->mainLocationId = $row["ezcontent_location_main_id"];
+
+        $names = json_decode( $row["{$prefix}name_list"], true );
+        $contentInfo->name = $names[$contentInfo->mainLanguageCode];
+
+        return $contentInfo;
     }
 
     /**
@@ -169,7 +245,21 @@ class Mapper
      */
     private function extractVersionInfoFromRow( array $row )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $versionInfo = new Persistence\Content\VersionInfo();
+        $versionInfo->id = (int)$row["ezcontent_version_id"];
+        $versionInfo->contentInfo = null;
+        $versionInfo->versionNo = (int)$row["ezcontent_version_version_no"];
+        $versionInfo->creatorId = (int)$row["ezcontent_version_creator_id"];
+        $versionInfo->creationDate = (int)$row["ezcontent_version_created"];
+        $versionInfo->modificationDate = (int)$row["ezcontent_version_modified"];
+        $versionInfo->initialLanguageCode = $this->languageHandler->load( $row["ezcontent_version_initial_language_id"] )->languageCode;
+        $versionInfo->status = (int)$row["ezcontent_version_status"];
+        $versionInfo->names = json_decode( $row["ezcontent_name_list"], true );
+        $versionInfo->languageIds = array(
+            $row["ezcontent_version_initial_language_id"],
+        );
+
+        return $versionInfo;
     }
 
     /**

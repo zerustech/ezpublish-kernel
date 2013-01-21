@@ -285,11 +285,11 @@ class ExceptionConversion extends Gateway
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
-    public function create( CreateStruct $createStruct, array $parentNode, $status )
+    public function create( CreateStruct $createStruct, $parentNodeData, $status )
     {
         try
         {
-            return $this->innerGateway->create( $createStruct, $parentNode );
+            return $this->innerGateway->create( $createStruct, $parentNodeData, $status );
         }
         catch ( \ezcDbException $e )
         {

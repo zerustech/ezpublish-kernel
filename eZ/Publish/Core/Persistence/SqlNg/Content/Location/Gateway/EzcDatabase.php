@@ -26,14 +26,14 @@ use RuntimeException;
 class EzcDatabase extends Gateway
 {
     /**
-     * Database handler
+     * Database dbHandler
      *
      * @var \EzcDbHandler
      */
     protected $dbHandler;
 
     /**
-     * Construct from database handler
+     * Construct from database dbHandler
      *
      * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $dbHandler
      *
@@ -48,7 +48,7 @@ class EzcDatabase extends Gateway
      * Returns an array with basic node data
      *
      * We might want to cache this, since this method is used by about every
-     * method in the location handler.
+     * method in the location dbHandler.
      *
      * @param mixed $nodeId
      *
@@ -171,9 +171,81 @@ class EzcDatabase extends Gateway
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
-    public function create( CreateStruct $createStruct, array $parentNode, $status )
+    public function create( CreateStruct $createStruct, $parentNodeData, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $location = new Location();
+
+        $this->dbHandler->beginTransaction();
+        $query = $this->dbHandler->createInsertQuery();
+        $query
+            ->insertInto(
+                $this->dbHandler->quoteTable( 'ezcontent_location' )
+            )->set(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->getAutoIncrementValue( 'ezcontent_location', 'id' )
+            )->set(
+                $this->dbHandler->quoteColumn( 'status' ),
+                $query->bindValue( $status, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'content_id' ),
+                $query->bindValue( $location->contentId = $createStruct->contentId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'content_version_no' ),
+                $query->bindValue( $createStruct->contentVersion, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'depth' ),
+                $query->bindValue( $location->depth = $parentNodeData ? $parentNodeData['depth'] + 1 : 1, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'priority' ),
+                $query->bindValue( $location->priority = $createStruct->priority, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'remote_id' ),
+                $query->bindValue( $location->remoteId = $createStruct->remoteId, null, \PDO::PARAM_STR )
+            )->set(
+                $this->dbHandler->quoteColumn( 'is_hidden' ),
+                $query->bindValue( $location->hidden = $createStruct->hidden, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'is_invisible' ),
+                $query->bindValue( $location->invisible = $createStruct->invisible, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'sort_field' ),
+                $query->bindValue( $location->sortField = $createStruct->sortField, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'sort_order' ),
+                $query->bindValue( $location->sortOrder = $createStruct->sortOrder, null, \PDO::PARAM_INT )
+            );
+        $query->prepare()->execute();
+
+        $location->id = $this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontent_location', 'id' )
+        );
+
+        $location->mainLocationId = $createStruct->mainLocationId === true ? $location->id : $createStruct->mainLocationId;
+        $location->pathString = ( $parentNodeData ? $parentNodeData['path_string'] : '/' ) . $location->id . '/';
+        $location->parentId = $parentNodeData ? $parentNodeData['id'] : $location->id;
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'path_string' ),
+                $query->bindValue( $location->pathString )
+            )->set(
+                $this->dbHandler->quoteColumn( 'main_id' ),
+                $query->bindValue( $location->mainLocationId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'parent_id' ),
+                $query->bindValue( $location->parentId, null, \PDO::PARAM_INT )
+            )->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $query->bindValue( $location->id, null, \PDO::PARAM_INT )
+                )
+            );
+        $query->prepare()->execute();
+        $this->dbHandler->commit();
+
+        return $location;
     }
 
     /**

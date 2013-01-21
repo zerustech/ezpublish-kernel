@@ -18,18 +18,11 @@ use eZ\Publish\SPI\Persistence\Content\Location\CreateStruct;
 abstract class Gateway
 {
     /**
-     * Constants for node assignment op codes
+     * Constants for location states
      */
-    const NODE_ASSIGNMENT_OP_CODE_NOP = 0;
-    const NODE_ASSIGNMENT_OP_CODE_EXECUTE = 1;
-    const NODE_ASSIGNMENT_OP_CODE_CREATE_NOP = 2;
-    const NODE_ASSIGNMENT_OP_CODE_CREATE = 3;
-    const NODE_ASSIGNMENT_OP_CODE_MOVE_NOP = 4;
-    const NODE_ASSIGNMENT_OP_CODE_MOVE = 5;
-    const NODE_ASSIGNMENT_OP_CODE_REMOVE_NOP = 6;
-    const NODE_ASSIGNMENT_OP_CODE_REMOVE = 7;
-    const NODE_ASSIGNMENT_OP_CODE_SET_NOP = 8;
-    const NODE_ASSIGNMENT_OP_CODE_SET = 9;
+    const CREATED = 0;
+    const PUBLISHED = 1;
+    const DELETED = 2;
 
     /**
      * Returns an array with basic node data
@@ -141,7 +134,7 @@ abstract class Gateway
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
-    abstract public function create( CreateStruct $createStruct, array $parentNode, $status );
+    abstract public function create( CreateStruct $createStruct, $parentNodeData, $status );
 
     /**
      * Updates an existing location.

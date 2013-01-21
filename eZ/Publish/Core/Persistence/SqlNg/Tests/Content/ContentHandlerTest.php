@@ -55,10 +55,13 @@ class ContentHandlerTest extends TestCase
             'locations' => array(
                 new Persistence\Content\Location\CreateStruct( array(
                     'remoteId' => 'testobject-location',
-                    'parentId' => 1,
+                    'parentId' => null,
                 ) )
             ),
             'fields' => array(),
+            'name' => array(
+                $this->getLanguage()->languageCode => "Test Objekt",
+            ),
         ) );
 
         foreach ( $contentType->fieldDefinitions as $fieldDefinition )
@@ -93,6 +96,28 @@ class ContentHandlerTest extends TestCase
 
         return $content;
     }
+
+    /**
+     * @depends testCreate
+     */
+    public function testLoad( $content )
+    {
+        $handler = $this->getContentHandler();
+
+        $loaded = $handler->load(
+            $content->versionInfo->contentInfo->id,
+            $content->versionInfo->versionNo
+        );
+
+        $this->assertEquals(
+            $content,
+            $loaded
+        );
+    }
+
+    // @TODO:
+    // - Test create multilang content object
+    // - Test loading modified content types object
 
     /**
      * @depends testCreate
@@ -146,7 +171,7 @@ class ContentHandlerTest extends TestCase
     /**
      * @depends testPublishFirstVersion
      */
-    public function testLoad( $content )
+    public function testLoadPublishedVersion( $content )
     {
         $handler = $this->getContentHandler();
 

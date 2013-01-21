@@ -123,15 +123,19 @@ class Handler implements BaseContentHandler
         );
 
         // Create node assignments
-        foreach ( $struct->locations as $location )
+        foreach ( $struct->locations as $locationCreateStruct )
         {
-            $location->contentId = $content->versionInfo->contentInfo->id;
-            $location->contentVersion = $content->versionInfo->versionNo;
-            $this->locationGateway->create(
-                $location,
-                $location->parentId,
-                LocationGateway::NODE_ASSIGNMENT_OP_CODE_CREATE
+            $locationCreateStruct->contentId = $content->versionInfo->contentInfo->id;
+            $locationCreateStruct->contentVersion = $content->versionInfo->versionNo;
+            $location = $this->locationGateway->create(
+                $locationCreateStruct,
+                $locationCreateStruct->parentId ?
+                    $this->locationGateway->getBasicNodeData( $location->parentId ) :
+                    null,
+                LocationGateway::CREATED
             );
+
+            $content->versionInfo->contentInfo->mainLocationId = $location->mainLocationId;
         }
 
         return $content;
@@ -222,7 +226,19 @@ class Handler implements BaseContentHandler
      */
     public function load( $id, $version, $translations = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $rows = $this->contentGateway->load( $id, $version, $translations );
+
+        if ( empty( $rows ) )
+        {
+            throw new NotFound( 'content', "contentId: $id, versionNo: $version" );
+        }
+
+        $contentObjects = $this->mapper->extractContentFromRows( $rows );
+        $content = $contentObjects[0];
+
+        // $this->fieldHandler->loadExternalFieldData( $content );
+
+        return $content;
     }
 
     /**
