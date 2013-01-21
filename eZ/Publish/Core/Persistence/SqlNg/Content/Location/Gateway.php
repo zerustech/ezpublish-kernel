@@ -88,14 +88,14 @@ abstract class Gateway
     abstract public function moveSubtreeNodes( $fromPathString, $toPathString );
 
     /**
-     * Updates all Locations of content identified with $contentId with $versionNo
+     * Publish locations for content and update the version
      *
      * @param mixed $contentId
      * @param mixed $versionNo
      *
      * @return void
      */
-    abstract public function updateLocationsContentVersionNo( $contentId, $versionNo );
+    abstract public function publishLocations( $contentId, $versionNo );
 
     /**
      * Sets a location to be hidden, and it self + all children to invisible.

@@ -105,6 +105,9 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( 'initial_language_id' ),
             $query->bindValue( $struct->initialLanguageId, null, \PDO::PARAM_INT )
         )->set(
+            $this->dbHandler->quoteColumn( 'always_available' ),
+            $query->bindValue( $struct->alwaysAvailable, null, \PDO::PARAM_INT )
+        )->set(
             $this->dbHandler->quoteColumn( 'remote_id' ),
             $query->bindValue( $struct->remoteId, null, \PDO::PARAM_STR )
         )->set(
@@ -163,9 +166,6 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( 'initial_language_id' ),
             $query->bindValue( $this->languageHandler->loadByLanguageCode( $versionInfo->initialLanguageCode )->id, null, \PDO::PARAM_INT )
         )->set(
-            $this->dbHandler->quoteColumn( 'always_available' ),
-            $query->bindValue( $versionInfo->contentInfo->alwaysAvailable, null, \PDO::PARAM_INT )
-        )->set(
             $this->dbHandler->quoteColumn( 'fields' ),
             $query->bindValue( json_encode( $fields ), null, \PDO::PARAM_STR )
         );
@@ -187,7 +187,59 @@ class EzcDatabase extends Gateway
      */
     public function updateContent( $contentId, MetadataUpdateStruct $struct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update( $this->dbHandler->quoteTable( 'ezcontent' ) );
+
+        if ( isset( $struct->mainLanguageId ) )
+        {
+            $query->set(
+                $this->dbHandler->quoteColumn( 'initial_language_id' ),
+                $query->bindValue( $struct->mainLanguageId, null, \PDO::PARAM_INT )
+            );
+        }
+        if ( isset( $struct->modificationDate ) )
+        {
+            $query->set(
+                $this->dbHandler->quoteColumn( 'modified' ),
+                $query->bindValue( $struct->modificationDate, null, \PDO::PARAM_INT )
+            );
+        }
+        if ( isset( $struct->ownerId ) )
+        {
+            $query->set(
+                $this->dbHandler->quoteColumn( 'owner_id' ),
+                $query->bindValue( $struct->ownerId, null, \PDO::PARAM_INT )
+            );
+        }
+        if ( isset( $struct->publicationDate ) )
+        {
+            $query->set(
+                $this->dbHandler->quoteColumn( 'published' ),
+                $query->bindValue( $struct->publicationDate, null, \PDO::PARAM_INT )
+            );
+        }
+        if ( isset( $struct->remoteId ) )
+        {
+            $query->set(
+                $this->dbHandler->quoteColumn( 'remote_id' ),
+                $query->bindValue( $struct->remoteId, null, \PDO::PARAM_STR )
+            );
+        }
+        if ( isset( $struct->alwaysAvailable ) )
+        {
+            $query->set(
+                $this->dbHandler->quoteColumn( 'always_available' ),
+                $query->bindValue( $struct->alwaysAvailable, null, \PDO::PARAM_STR )
+            );
+        }
+
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )
+        );
+        $query->prepare()->execute();
     }
 
     /**
@@ -228,7 +280,58 @@ class EzcDatabase extends Gateway
      */
     public function setStatus( $contentId, $version, $status )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent_version' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( $status, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modified' ),
+            $query->bindValue( time(), null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'content_id' ),
+                    $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'version_no' ),
+                    $query->bindValue( $version, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( (bool)$statement->rowCount() === false )
+            return false;
+
+        if ( $status !== APIVersionInfo::STATUS_PUBLISHED )
+        {
+            return true;
+        }
+
+        // If the version's status is PUBLISHED, we set the content to published status as well
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( ContentInfo::STATUS_PUBLISHED, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'current_version_no' ),
+            $query->bindValue( $version, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )
+        );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return (bool)$statement->rowCount();
     }
 
     /**
@@ -405,7 +508,23 @@ class EzcDatabase extends Gateway
      */
     public function loadVersionInfo( $contentId, $versionNo )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->queryBuilder->createVersionInfoFindQuery();
+        $query->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_version' ),
+                    $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'version_no', 'ezcontent_version' ),
+                    $query->bindValue( $versionNo, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**

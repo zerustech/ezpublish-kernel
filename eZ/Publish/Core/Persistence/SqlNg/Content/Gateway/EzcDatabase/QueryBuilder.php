@@ -50,6 +50,7 @@ class QueryBuilder
             $this->dbHandler->aliasedColumn( $query, 'contenttype_id', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'current_version_no', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'initial_language_id', 'ezcontent' ),
+            $this->dbHandler->aliasedColumn( $query, 'always_available', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'name_list', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'owner_id', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'modified', 'ezcontent' ),
@@ -64,7 +65,6 @@ class QueryBuilder
             $this->dbHandler->aliasedColumn( $query, 'creator_id', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'created', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'initial_language_id', 'ezcontent_version' ),
-            $this->dbHandler->aliasedColumn( $query, 'always_available', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'status', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'fields', 'ezcontent_version' ),
             // Content object locations
@@ -136,6 +136,7 @@ class QueryBuilder
             $this->dbHandler->aliasedColumn( $query, 'contenttype_id', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'current_version_no', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'initial_language_id', 'ezcontent' ),
+            $this->dbHandler->aliasedColumn( $query, 'always_available', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'name_list', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'owner_id', 'ezcontent' ),
             $this->dbHandler->aliasedColumn( $query, 'modified', 'ezcontent' ),
@@ -150,7 +151,6 @@ class QueryBuilder
             $this->dbHandler->aliasedColumn( $query, 'creator_id', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'created', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'initial_language_id', 'ezcontent_version' ),
-            $this->dbHandler->aliasedColumn( $query, 'always_available', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'status', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'fields', 'ezcontent_version' ),
             // Content object locations

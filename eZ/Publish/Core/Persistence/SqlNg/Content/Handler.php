@@ -175,13 +175,16 @@ class Handler implements BaseContentHandler
         $metaDataUpdateStruct->name = $versionInfo->names[$versionInfo->contentInfo->mainLanguageCode];
 
         $this->contentGateway->updateContent( $contentId, $metaDataUpdateStruct );
-        $this->locationGateway->createLocationsFromNodeAssignments(
+        $this->locationGateway->publishLocations(
             $contentId,
             $versionNo
         );
 
-        $this->locationGateway->updateLocationsContentVersionNo( $contentId, $versionNo );
-        $this->setStatus( $contentId, VersionInfo::STATUS_PUBLISHED, $versionNo );
+        $this->setStatus(
+            $contentId,
+            VersionInfo::STATUS_PUBLISHED,
+            $versionNo
+        );
 
         return $this->load( $contentId, $versionNo );
     }
@@ -236,6 +239,7 @@ class Handler implements BaseContentHandler
         $contentObjects = $this->mapper->extractContentFromRows( $rows );
         $content = $contentObjects[0];
 
+        // @TODO: Reactivate
         // $this->fieldHandler->loadExternalFieldData( $content );
 
         return $content;
@@ -267,7 +271,15 @@ class Handler implements BaseContentHandler
      */
     public function loadVersionInfo( $contentId, $versionNo )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $rows = $this->contentGateway->loadVersionInfo( $contentId, $versionNo );
+        if ( empty( $rows ) )
+        {
+            throw new NotFound( 'content', $contentId );
+        }
+
+        $versionInfo = $this->mapper->extractVersionInfoListFromRows( $rows );
+
+        return reset( $versionInfo );
     }
 
     /**
@@ -296,7 +308,7 @@ class Handler implements BaseContentHandler
      */
     public function setStatus( $contentId, $status, $version )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->contentGateway->setStatus( $contentId, $version, $status );
     }
 
     /**

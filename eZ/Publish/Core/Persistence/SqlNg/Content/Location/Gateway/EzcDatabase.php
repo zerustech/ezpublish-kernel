@@ -249,16 +249,31 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Updates all Locations of content identified with $contentId with $versionNo
+     * Publish locations for content and update the version
      *
      * @param mixed $contentId
      * @param mixed $versionNo
      *
      * @return void
      */
-    public function updateLocationsContentVersionNo( $contentId, $versionNo )
+    public function publishLocations( $contentId, $versionNo )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'status' ),
+                $query->bindValue( self::PUBLISHED, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'content_version_no' ),
+                $query->bindValue( $versionNo, null, \PDO::PARAM_INT )
+            )->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'content_id' ),
+                    $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                )
+            );
+        $query->prepare()->execute();
     }
 
     /**

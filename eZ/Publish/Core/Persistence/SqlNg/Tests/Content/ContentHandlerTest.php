@@ -38,7 +38,7 @@ class ContentHandlerTest extends TestCase
         );
     }
 
-    public function testCreate()
+    public function testCreateRoot()
     {
         $handler = $this->getContentHandler();
 
@@ -98,9 +98,9 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testCreate
+     * @depends testCreateRoot
      */
-    public function testLoad( $content )
+    public function testLoadRoot( $content )
     {
         $handler = $this->getContentHandler();
 
@@ -115,14 +115,10 @@ class ContentHandlerTest extends TestCase
         );
     }
 
-    // @TODO:
-    // - Test create multilang content object
-    // - Test loading modified content types object
-
     /**
-     * @depends testCreate
+     * @depends testCreateRoot
      */
-    public function testPublishFirstVersion( $content )
+    public function testPublishRoot( $content )
     {
         $handler = $this->getContentHandler();
 
@@ -130,14 +126,26 @@ class ContentHandlerTest extends TestCase
             $content->versionInfo->contentInfo->id,
             $content->versionInfo->versionNo,
             new Persistence\Content\MetadataUpdateStruct( array(
+                'ownerId' => $this->getUser()->id,
+                'publicationDate' => 123456,
+                'modificationDate' => 123456,
+                'mainLanguageId' => $this->getLanguage()->id,
+                'alwaysAvailable' => true,
+                'remoteId' => 'aktualisiert',
+
             ) )
         );
 
         return $content;
     }
 
+    // @TODO:
+    // - Test create child content object
+    // - Test create multilang content object
+    // - Test loading modified content types object
+
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testPublishPublishedVersion( $content )
     {

@@ -223,7 +223,7 @@ class Mapper
         $contentInfo->publicationDate = (int)$row["{$prefix}published"];
         $contentInfo->modificationDate = (int)$row["{$prefix}modified"];
         $contentInfo->mainLanguageCode = $this->languageHandler->load( $row["{$prefix}initial_language_id"] )->languageCode;
-        $contentInfo->alwaysAvailable = (bool)$row["ezcontent_version_always_available"];
+        $contentInfo->alwaysAvailable = (bool)$row["ezcontent_always_available"];
         $contentInfo->remoteId = $row["{$prefix}remote_id"];
         $contentInfo->mainLocationId = $row["ezcontent_location_main_id"];
 
@@ -271,7 +271,15 @@ class Mapper
      */
     public function extractVersionInfoListFromRows( array $rows )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $versionInfoList = array();
+        foreach ( $rows as $row )
+        {
+            $versionInfo = $this->extractVersionInfoFromRow( $row );
+            $versionInfo->contentInfo = $this->extractContentInfoFromRow( $row, 'ezcontent_' );
+            $versionInfoList[$versionInfo->id] = $versionInfo;
+        }
+
+        return array_values( $versionInfoList );
     }
 
     /**

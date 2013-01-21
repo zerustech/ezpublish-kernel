@@ -183,18 +183,18 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Updates all Locations of content identified with $contentId with $versionNo
+     * Publish locations for content and update the version
      *
      * @param mixed $contentId
      * @param mixed $versionNo
      *
      * @return void
      */
-    public function updateLocationsContentVersionNo( $contentId, $versionNo )
+    public function publishLocations( $contentId, $versionNo )
     {
         try
         {
-            return $this->innerGateway->updateLocationsContentVersionNo( $contentId, $versionNo );
+            return $this->innerGateway->publishLocations( $contentId, $versionNo );
         }
         catch ( \ezcDbException $e )
         {
