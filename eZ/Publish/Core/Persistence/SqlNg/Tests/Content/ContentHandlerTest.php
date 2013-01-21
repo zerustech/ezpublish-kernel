@@ -289,8 +289,6 @@ class ContentHandlerTest extends TestCase
             $content->versionInfo->versionNo,
             $updateStruct
         );
-
-        var_dump($updatedContent);
     }
 
     /**
