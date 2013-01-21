@@ -125,10 +125,12 @@ CREATE TABLE ezcontent_version (
     `creator_id` INT NOT NULL DEFAULT '0',
     `created` INT NOT NULL DEFAULT '0',
     `initial_language_id` INT NOT NULL DEFAULT '0',
+    `always_available` INT NOT NULL DEFAULT '0',
     `status` INT NOT NULL DEFAULT '0',
     `fields` LONGTEXT NOT NULL,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
+    KEY (content_id, version_no),
     FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE,
     FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT
@@ -146,7 +148,7 @@ CREATE TABLE ezcontent_relation (
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (contenttype_field_id) REFERENCES ezcontenttype_field(id) ON DELETE RESTRICT,
-    FOREIGN KEY (from_content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE,
+    FOREIGN KEY (from_content_id, from_contentobject_version_no) REFERENCES ezcontent_version(content_id, version_no) ON DELETE CASCADE,
     FOREIGN KEY (to_content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -158,10 +160,9 @@ CREATE TABLE ezcontent_location (
     `id` INT NOT NULL AUTO_INCREMENT,
     `status` INT NOT NULL DEFAULT '0',
     `main_id` INT DEFAULT NULL,
-    `parent_id` INT NOT NULL DEFAULT '0',
+    `parent_id` INT DEFAULT NULL,
     `content_id` INT DEFAULT NULL,
-    `contentobject_version_no` INT DEFAULT NULL,
-    `contentobject_is_published` INT DEFAULT NULL,
+    `content_version_no` INT DEFAULT NULL,
     `path_string` VARCHAR(255) NOT NULL DEFAULT '',
     `depth` INT NOT NULL DEFAULT '0',
     `priority` INT NOT NULL DEFAULT '0',
@@ -172,29 +173,9 @@ CREATE TABLE ezcontent_location (
     `sort_order` INT DEFAULT '1',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id, status),
-    FOREIGN KEY (main_id) REFERENCES ezcontentlocation(id) ON DELETE RESTRICT,
-    FOREIGN KEY (parent_id) REFERENCES ezcontentlocation(id) ON DELETE RESTRICT,
-    FOREIGN KEY (content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezcontent_trash;
-CREATE TABLE ezcontent_trash (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `main_id` INT DEFAULT NULL,
-    `parent_id` INT NOT NULL DEFAULT '0',
-    `content_id` INT DEFAULT NULL,
-    `contentobject_version_no` INT DEFAULT NULL,
-    `contentobject_is_published` INT DEFAULT NULL,
-    `path_string` VARCHAR(255) NOT NULL DEFAULT '',
-    `depth` INT NOT NULL DEFAULT '0',
-    `priority` INT NOT NULL DEFAULT '0',
-    `remote_id` VARCHAR(100) NOT NULL DEFAULT '',
-    `is_hidden` INT NOT NULL DEFAULT '0',
-    `is_invisible` INT NOT NULL DEFAULT '0',
-    `sort_field` INT DEFAULT '1',
-    `sort_order` INT DEFAULT '1',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
+    FOREIGN KEY (main_id) REFERENCES ezcontent_location(id) ON DELETE RESTRICT,
+    FOREIGN KEY (parent_id) REFERENCES ezcontent_location(id) ON DELETE RESTRICT,
+    FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `ezsection`;
