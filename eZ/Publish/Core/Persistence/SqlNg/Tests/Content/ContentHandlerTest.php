@@ -138,6 +138,24 @@ class ContentHandlerTest extends TestCase
         return $content;
     }
 
+    /**
+     * @depends testPublishRoot
+     */
+    public function testLoadPublishedVersion( $content )
+    {
+        $handler = $this->getContentHandler();
+
+        $loaded = $handler->load(
+            $content->versionInfo->contentInfo->id,
+            $content->versionInfo->versionNo
+        );
+
+        $this->assertEquals(
+            $content,
+            $loaded
+        );
+    }
+
     // @TODO:
     // - Test create multilang content object
     // - Test loading modified content types object
@@ -212,38 +230,32 @@ class ContentHandlerTest extends TestCase
     {
         $handler = $this->getContentHandler();
 
-        $draft = $handler->createDraftFromVersion( $content->versionInfo->contentInfo->id, 2, 14 );
+        $draft = $handler->createDraftFromVersion(
+            $content->versionInfo->contentInfo->id,
+            $content->versionInfo->versionNo,
+            $this->getUser()->id
+        );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content',
             $draft
         );
         $this->assertEquals(
-            42,
-            $draft->versionInfo->id
+            2,
+            $draft->versionInfo->versionNo
         );
+
+
     }
 
     /**
-     * @depends testPublishRoot
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
      */
-    public function testLoadPublishedVersion( $content )
-    {
-        $handler = $this->getContentHandler();
-
-        $loaded = $handler->load( $content->versionInfo->contentInfo->id, 2, array( 'eng-GB' ) );
-
-        $this->assertEquals(
-            $content,
-            $loaded
-        );
-    }
-
     public function testLoadErrorNotFound()
     {
         $handler = $this->getContentHandler();
 
-        $handler->load( 1337, 2, array( 'eng-GB' ) );
+        $handler->load( 1337, 2 );
     }
 
     /**
@@ -253,31 +265,32 @@ class ContentHandlerTest extends TestCase
     {
         $handler = $this->getContentHandler();
 
+        $updateStruct = new Persistence\Content\UpdateStruct( array(
+            'creatorId' => $this->getUser()->id,
+            'modificationDate' => 12345467890,
+            'initialLanguageId' => $this->getLanguage()->id,
+            'fields' => array(),
+        ) );
+
+        $contentType = $this->getContentType();
+        foreach ( $contentType->fieldDefinitions as $fieldDefinition )
+        {
+            $updateStruct->fields[] = new Persistence\Content\Field( array(
+                'fieldDefinitionId' => $fieldDefinition->id,
+                'type' => $fieldDefinition->fieldType,
+                'value' => 'Updated!',
+                'languageCode' => $this->getLanguage()->languageCode,
+                'versionNo' => $content->versionInfo->versionNo,
+            ) );
+        }
+
         $updatedContent = $handler->updateContent(
-            14, // ContentId
-            4, // VersionNo
-            new UpdateStruct( array(
-                'creatorId' => 14,
-                'modificationDate' => time(),
-                'initialLanguageId' => 2,
-                'fields' => array(
-                    new Field( array(
-                        'id' => $content->versionInfo->contentInfo->id,
-                        'fieldDefinitionId' => 42,
-                        'type' => 'some-type',
-                        'value' => new FieldValue(),
-                    ) ),
-                    new Field( array(
-                        'id' => $content->versionInfo->contentInfo->id,
-                        'fieldDefinitionId' => 43,
-                        'type' => 'some-type',
-                        'value' => new FieldValue(),
-                    ) ),
-                )
-            ) )
+            $content->versionInfo->contentInfo->id,
+            $content->versionInfo->versionNo,
+            $updateStruct
         );
 
-        // @TODO: Assertions
+        var_dump($updatedContent);
     }
 
     /**

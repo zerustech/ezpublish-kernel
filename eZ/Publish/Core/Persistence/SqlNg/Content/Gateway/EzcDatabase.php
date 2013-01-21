@@ -253,7 +253,34 @@ class EzcDatabase extends Gateway
      */
     public function updateVersion( $contentId, $versionNo, UpdateStruct $struct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent_version' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'creator_id' ),
+            $query->bindValue( $struct->creatorId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'modified' ),
+            $query->bindValue( $struct->modificationDate, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'initial_language_id' ),
+            $query->bindValue( $struct->initialLanguageId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'fields' ),
+            $query->bindValue( json_encode( $struct->fields ), null, \PDO::PARAM_STR )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'content_id' ),
+                    $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'version_no' ),
+                    $query->bindValue( $versionNo, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+        $query->prepare()->execute();
     }
 
     /**
@@ -561,7 +588,22 @@ class EzcDatabase extends Gateway
      */
     public function getLastVersionNumber( $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $query->expr->max( $this->dbHandler->quoteColumn( 'version_no' ) )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_version' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'content_id' ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return (int)$statement->fetchColumn();
     }
 
     /**

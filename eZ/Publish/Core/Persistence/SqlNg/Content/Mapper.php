@@ -111,9 +111,21 @@ class Mapper
      *
      * @return \eZ\Publish\SPI\Persistence\Content\VersionInfo
      */
-    public function createVersionInfoForContent( Content $content, $versionNo, $userId )
+    public function createVersionInfoForContent( Persistence\Content $content, $versionNo, $userId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $versionInfo = new Persistence\Content\VersionInfo();
+
+        $versionInfo->contentInfo = $content->versionInfo->contentInfo;
+        $versionInfo->versionNo = $versionNo;
+        $versionInfo->creatorId = $userId;
+        $versionInfo->status = Persistence\Content\VersionInfo::STATUS_DRAFT;
+        $versionInfo->initialLanguageCode = $content->versionInfo->initialLanguageCode;
+        $versionInfo->creationDate = time();
+        $versionInfo->modificationDate = $versionInfo->creationDate;
+        $versionInfo->names = is_object( $content->versionInfo ) ? $content->versionInfo->names : array();
+        $versionInfo->languageIds = $content->versionInfo->languageIds;
+
+        return $versionInfo;
     }
 
     /**

@@ -207,7 +207,34 @@ class Handler implements BaseContentHandler
      */
     public function createDraftFromVersion( $contentId, $srcVersion, $userId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $content = $this->load( $contentId, $srcVersion );
+
+        // Create new version
+        $content->versionInfo = $this->mapper->createVersionInfoForContent(
+            $content,
+            $this->contentGateway->getLastVersionNumber( $contentId ) + 1,
+            $userId
+        );
+
+        $content->versionInfo->id = $this->contentGateway->insertVersion(
+            $content->versionInfo,
+            $content->fields
+        );
+
+        // Clone fields from previous version and append them to the new one
+        $fields = $content->fields;
+        $content->fields = array();
+        foreach ( $fields as $field )
+        {
+            $newField = clone $field;
+            $newField->versionNo = $content->versionInfo->versionNo;
+            $content->fields[] = $newField;
+        }
+
+        // @TODO: Reactivate
+        // $this->fieldHandler->createExistingFieldsInNewVersion( $content );
+
+        return $content;
     }
 
     /**
@@ -335,7 +362,8 @@ class Handler implements BaseContentHandler
      */
     public function updateContent( $contentId, $versionNo, UpdateStruct $updateStruct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentGateway->updateVersion( $contentId, $versionNo, $updateStruct );
+        return $this->load( $contentId, $versionNo );
     }
 
     /**
