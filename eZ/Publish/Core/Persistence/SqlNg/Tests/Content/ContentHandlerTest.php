@@ -60,7 +60,7 @@ class ContentHandlerTest extends TestCase
             ),
             'fields' => array(),
             'name' => array(
-                $this->getLanguage()->languageCode => "Test Objekt",
+                $this->getLanguage()->languageCode => "Test-Objekt",
             ),
         ) );
 
@@ -131,8 +131,7 @@ class ContentHandlerTest extends TestCase
                 'modificationDate' => 123456,
                 'mainLanguageId' => $this->getLanguage()->id,
                 'alwaysAvailable' => true,
-                'remoteId' => 'aktualisiert',
-
+                'remoteId' => 'updated',
             ) )
         );
 
@@ -140,25 +139,74 @@ class ContentHandlerTest extends TestCase
     }
 
     // @TODO:
-    // - Test create child content object
     // - Test create multilang content object
     // - Test loading modified content types object
 
     /**
      * @depends testPublishRoot
      */
-    public function testPublishPublishedVersion( $content )
+    public function testCreateChildContent( $parent )
     {
         $handler = $this->getContentHandler();
 
-        $metadataUpdateStruct = new MetadataUpdateStruct();
-        $content = $handler->publish( $content->versionInfo->contentInfo->id, $content->versionInfo->versionNo, $metadataUpdateStruct );
+        $contentType = $this->getContentType();
 
-        return $content;
+        $createStruct = new Persistence\Content\CreateStruct( array(
+            'typeId' => $contentType->id,
+            'sectionId' => $this->getSection()->id,
+            'ownerId' => $this->getUser()->id,
+            'alwaysAvailable' => true,
+            'remoteId' => 'testobject-child',
+            'initialLanguageId' => $this->getLanguage()->id,
+            'modified' => 123456789,
+            'locations' => array(
+                new Persistence\Content\Location\CreateStruct( array(
+                    'remoteId' => 'testobject-child-location',
+                    'parentId' => $parent->versionInfo->contentInfo->id,
+                ) )
+            ),
+            'fields' => array(),
+            'name' => array(
+                $this->getLanguage()->languageCode => "Kind-Objekt",
+            ),
+        ) );
+
+        foreach ( $contentType->fieldDefinitions as $fieldDefinition )
+        {
+            $createStruct->fields[] = new Persistence\Content\Field( array(
+                'fieldDefinitionId' => $fieldDefinition->id,
+                'type' => $fieldDefinition->fieldType,
+                'value' => 'Hello World!',
+                'languageCode' => $this->getLanguage()->languageCode,
+            ) );
+        }
+
+        $child = $handler->create( $createStruct );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content',
+            $child,
+            'Content not created'
+        );
+
+        $child = $handler->publish(
+            $child->versionInfo->contentInfo->id,
+            $child->versionInfo->versionNo,
+            new Persistence\Content\MetadataUpdateStruct( array(
+                'ownerId' => $this->getUser()->id,
+                'publicationDate' => 123456,
+                'modificationDate' => 123456,
+                'mainLanguageId' => $this->getLanguage()->id,
+                'alwaysAvailable' => true,
+                'remoteId' => 'updated-child',
+            ) )
+        );
+
+        return $child;
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testCreateDraftFromVersion( $content )
     {
@@ -177,7 +225,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testLoadPublishedVersion( $content )
     {
@@ -199,7 +247,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testUpdateContent( $content )
     {
@@ -233,7 +281,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testUpdateMetadata( $content )
     {
@@ -256,7 +304,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testAddRelation( $content )
     {
@@ -320,7 +368,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testLoadDraftsForUser( $content )
     {
@@ -335,7 +383,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testListVersions( $content )
     {
@@ -350,7 +398,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testRemoveRawContent( $content )
     {
@@ -360,7 +408,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testDeleteContentWithLocations( $content )
     {
@@ -370,7 +418,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testDeleteContentWithoutLocations( $content )
     {
@@ -380,7 +428,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testDeleteVersion( $content )
     {
@@ -390,7 +438,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testCopySingleVersion( $content )
     {
@@ -405,7 +453,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testCopyAllVersions( $content )
     {
@@ -420,7 +468,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testCopyThrowsNotFoundExceptionContentNotFound( $content )
     {
@@ -430,7 +478,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testCopyThrowsNotFoundExceptionVersionNotFound( $content )
     {
@@ -440,7 +488,7 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishFirstVersion
+     * @depends testPublishRoot
      */
     public function testSetStatus( $content )
     {

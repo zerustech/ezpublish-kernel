@@ -37,6 +37,7 @@ CREATE TABLE ezcontenttype (
     `status` INT NOT NULL DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id, status),
+    UNIQUE KEY ezcontenttype_remote_id (remote_id),
     FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
     FOREIGN KEY (modifier_id) REFERENCES ezuser(id) ON DELETE RESTRICT
@@ -173,6 +174,7 @@ CREATE TABLE ezcontent_location (
     `sort_order` INT DEFAULT '1',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id, status),
+    UNIQUE KEY ezcontent_location_remote_id (remote_id),
     FOREIGN KEY (main_id) REFERENCES ezcontent_location(id) ON DELETE RESTRICT,
     FOREIGN KEY (parent_id) REFERENCES ezcontent_location(id) ON DELETE RESTRICT,
     FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE

@@ -130,7 +130,7 @@ class Handler implements BaseContentHandler
             $location = $this->locationGateway->create(
                 $locationCreateStruct,
                 $locationCreateStruct->parentId ?
-                    $this->locationGateway->getBasicNodeData( $location->parentId ) :
+                    $this->locationGateway->getBasicNodeData( $locationCreateStruct->parentId ) :
                     null,
                 LocationGateway::CREATED
             );
