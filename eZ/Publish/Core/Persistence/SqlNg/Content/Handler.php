@@ -417,7 +417,7 @@ class Handler implements BaseContentHandler
      */
     public function deleteVersion( $contentId, $versionNo )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentGateway->deleteVersion( $contentId, $versionNo );
     }
 
     /**

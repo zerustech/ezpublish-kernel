@@ -729,9 +729,30 @@ class EzcDatabase extends Gateway
      *
      * @return void
      */
-    public function deleteVersions( $contentId, $versionNo = null )
+    public function deleteVersion( $contentId, $versionNo )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom( 'ezcontent_version' )
+            ->where(
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'content_id' ),
+                        $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                    ),
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'version_no' ),
+                        $query->bindValue( $versionNo, null, \PDO::PARAM_INT )
+                    )
+                )
+            );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'content-version', "$contentId/$versionNo" );
+        }
     }
 
     /**

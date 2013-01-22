@@ -266,7 +266,7 @@ abstract class Gateway
      *
      * @return void
      */
-    abstract public function deleteVersions( $contentId, $versionNo = null );
+    abstract public function deleteVersion( $contentId, $versionNo );
 
     /**
      * Deletes all names of $contentId.

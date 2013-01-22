@@ -602,11 +602,11 @@ class ExceptionConversion extends Gateway
      *
      * @return void
      */
-    public function deleteVersions( $contentId, $versionNo = null )
+    public function deleteVersion( $contentId, $versionNo )
     {
         try
         {
-            return $this->innerGateway->deleteVersions( $contentId, $versionNo );
+            return $this->innerGateway->deleteVersion( $contentId, $versionNo );
         }
         catch ( \ezcDbException $e )
         {

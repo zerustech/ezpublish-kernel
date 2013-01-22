@@ -458,7 +458,7 @@ class ContentHandlerTest extends TestCase
     /**
      * @depends testPublishRoot
      */
-    public function testDeleteContentWithLocations( $content )
+    public function testDeleteContentWithLocations()
     {
         $this->markTestIncomplete( "This is more a location handler test … thus pending." );
         $handler = $this->getContentHandler();
@@ -469,7 +469,7 @@ class ContentHandlerTest extends TestCase
     /**
      * @depends testPublishRoot
      */
-    public function testDeleteContentWithoutLocations( $content )
+    public function testDeleteContentWithoutLocations()
     {
         $handler = $this->getContentHandler();
 
@@ -502,13 +502,32 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishRoot
+     * @depends testCreateDraftFromVersion
      */
-    public function testDeleteVersion( $content )
+    public function testDeleteVersion( $draft )
     {
         $handler = $this->getContentHandler();
 
-        $handler->deleteVersion( 225, 2 );
+        $handler->deleteVersion(
+            $draft->versionInfo->contentInfo->id,
+            $draft->versionInfo->versionNo
+        );
+
+        return $draft;
+    }
+
+    /**
+     * @depends testDeleteVersion
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testDeleteVersionNotFound( $draft )
+    {
+        $handler = $this->getContentHandler();
+
+        $handler->deleteVersion(
+            $draft->versionInfo->contentInfo->id,
+            $draft->versionInfo->versionNo
+        );
     }
 
     /**
