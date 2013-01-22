@@ -391,7 +391,7 @@ class Handler implements BaseContentHandler
      */
     public function removeRawContent( $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentGateway->deleteContent( $contentId );
     }
 
     /**

@@ -238,7 +238,6 @@ class EzcDatabase extends Gateway
             $this->dbHandler->getSequenceName( 'ezcontent_location', 'id' )
         );
 
-        $location->mainLocationId = $createStruct->mainLocationId === true ? $location->id : $createStruct->mainLocationId;
         $location->pathString = ( $parentNodeData ? $parentNodeData['path_string'] : '/' ) . $location->id . '/';
         $location->parentId = $parentNodeData ? $parentNodeData['id'] : $location->id;
 
@@ -249,9 +248,6 @@ class EzcDatabase extends Gateway
                 $this->dbHandler->quoteColumn( 'path_string' ),
                 $query->bindValue( $location->pathString )
             )->set(
-                $this->dbHandler->quoteColumn( 'main_id' ),
-                $query->bindValue( $location->mainLocationId, null, \PDO::PARAM_INT )
-            )->set(
                 $this->dbHandler->quoteColumn( 'parent_id' ),
                 $query->bindValue( $location->parentId, null, \PDO::PARAM_INT )
             )->where(
@@ -260,6 +256,17 @@ class EzcDatabase extends Gateway
                     $query->bindValue( $location->id, null, \PDO::PARAM_INT )
                 )
             );
+
+        // Only set main_id, if it references another node. Otherwise deletion
+        // of row is impossible
+        if ( $createStruct->mainLocationId )
+        {
+            $query->set(
+                $this->dbHandler->quoteColumn( 'main_id' ),
+                $query->bindValue( $location->mainLocationId, null, \PDO::PARAM_INT )
+            );
+        }
+
         $query->prepare()->execute();
         $this->dbHandler->commit();
 

@@ -423,12 +423,36 @@ class ContentHandlerTest extends TestCase
 
     /**
      * @depends testPublishRoot
+     * @expectedException RuntimeException
      */
-    public function testRemoveRawContent( $content )
+    public function testRemoveRawContentFail( $content )
     {
         $handler = $this->getContentHandler();
 
         $handler->removeRawContent( $content->versionInfo->contentInfo->id );
+    }
+
+    /**
+     * @depends testCreateChildContent
+     */
+    public function testRemoveRawContentChild( $child )
+    {
+        $handler = $this->getContentHandler();
+
+        $handler->removeRawContent( $child->versionInfo->contentInfo->id );
+
+        return $child;
+    }
+
+    /**
+     * @depends testRemoveRawContentChild
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testRemoveRawContentChildNotFound( $child )
+    {
+        $handler = $this->getContentHandler();
+
+        $handler->removeRawContent( $child->versionInfo->contentInfo->id );
     }
 
     /**
