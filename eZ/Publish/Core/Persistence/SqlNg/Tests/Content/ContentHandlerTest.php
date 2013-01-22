@@ -13,6 +13,7 @@ use eZ\Publish\Core\Persistence\SqlNg\Tests\TestCase;
 
 use eZ\Publish\SPI\Persistence;
 use eZ\Publish\Core\Persistence\SqlNg;
+use eZ\Publish\API\Repository;
 
 /**
  * Test case for Content Handler
@@ -324,34 +325,34 @@ class ContentHandlerTest extends TestCase
         $handler = $this->getContentHandler();
 
         $relation = $handler->addRelation(
-            new Relation\CreateStruct( array(
-                'destinationContentId' => 66,
+            new Persistence\Content\Relation\CreateStruct( array(
+                'destinationContentId' => 2, // Child
                 'sourceContentId' => $content->versionInfo->contentInfo->id,
-                'sourceContentVersionNo' => 1,
-                'type' => RelationValue::COMMON,
+                'sourceContentVersionNo' => $content->versionInfo->versionNo,
+                'type' => Repository\Values\Content\Relation::COMMON,
             ) )
         );
 
-        $this->assertEquals(
-            array(),
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\Relation',
             $relation
         );
 
-        return $content;
+        return $relation;
     }
 
     /**
      * @depends testAddRelation
      */
-    public function testLoadRelations( $content )
+    public function testLoadRelations( $relation )
     {
         $handler = $this->getContentHandler();
 
-        $relations = $handler->loadRelations( $content->versionInfo->contentInfo->id );
+        $loaded = $handler->loadRelations( $relation->sourceContentId );
 
         $this->assertEquals(
-            array(),
-            $relations
+            array( $relation ),
+            $loaded
         );
     }
 

@@ -451,7 +451,11 @@ class Handler implements BaseContentHandler
      */
     public function addRelation( RelationCreateStruct $createStruct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $relation = $this->mapper->createRelationFromCreateStruct( $createStruct );
+
+        $relation->id = $this->contentGateway->insertRelation( $createStruct );
+
+        return $relation;
     }
 
     /**

@@ -766,7 +766,39 @@ class EzcDatabase extends Gateway
      */
     public function insertRelation( RelationCreateStruct $createStruct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontent_relation' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent_relation', 'id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'from_content_id' ),
+            $query->bindValue( $createStruct->sourceContentId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'from_content_version_no' ),
+            $query->bindValue( $createStruct->sourceContentVersionNo, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'to_content_id' ),
+            $query->bindValue( $createStruct->destinationContentId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'relation_type' ),
+            $query->bindValue( $createStruct->type, null, \PDO::PARAM_INT )
+        );
+
+        if ( $createStruct->sourceFieldDefinitionId )
+        {
+            $query->set(
+                $this->dbHandler->quoteColumn( 'contenttype_field_id' ),
+                $query->bindValue( (int)$createStruct->sourceFieldDefinitionId, null, \PDO::PARAM_INT )
+            );
+        }
+
+        $query->prepare()->execute();
+
+        return $this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontent_relation', 'id' )
+        );
     }
 
     /**

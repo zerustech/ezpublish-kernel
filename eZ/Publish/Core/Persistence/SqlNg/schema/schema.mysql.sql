@@ -1,4 +1,4 @@
--- We recreate the DB entirely -- so that we do not care about violated constraints
+-- We recreate the DB entirely - so that we do not care about violated constraints
 SET foreign_key_checks = 0;
 
 --
@@ -137,20 +137,20 @@ CREATE TABLE ezcontent_version (
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontent_relation; -- Formerlly ezcontentobject_link
+-- Formerlly ezcontentobject_link
+DROP TABLE IF EXISTS ezcontent_relation;
 CREATE TABLE ezcontent_relation (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `contenttype_field_id` INT NOT NULL DEFAULT '0',
+    `contenttype_field_id` INT DEFAULT NULL,
     `from_content_id` INT NOT NULL DEFAULT '0',
-    `from_contentobject_version_no` INT NOT NULL DEFAULT '0',
+    `from_content_version_no` INT NOT NULL DEFAULT '0',
     `to_content_id` INT NOT NULL DEFAULT '0',
-    `op_code` INT NOT NULL DEFAULT '0',
     `relation_type` INT NOT NULL DEFAULT '1',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (contenttype_field_id) REFERENCES ezcontenttype_field(id) ON DELETE RESTRICT,
-    FOREIGN KEY (from_content_id, from_contentobject_version_no) REFERENCES ezcontent_version(content_id, version_no) ON DELETE CASCADE,
-    FOREIGN KEY (to_content_id) REFERENCES ezcontentobject(id) ON DELETE CASCADE
+    FOREIGN KEY (from_content_id, from_content_version_no) REFERENCES ezcontent_version(content_id, version_no) ON DELETE CASCADE,
+    FOREIGN KEY (to_content_id) REFERENCES ezcontent(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 --
@@ -196,7 +196,7 @@ CREATE TABLE `ezsection` (
 DROP TABLE IF EXISTS ezuser;
 CREATE TABLE ezuser (
     `id` INT NOT NULL DEFAULT '0',
-    `content_id` INT DEFAULT NULL, -- Introduced as an optional content relation
+    `content_id` INT DEFAULT NULL,
     `email` VARCHAR(150) NOT NULL DEFAULT '',
     `login` VARCHAR(150) NOT NULL DEFAULT '',
     `password_hash` VARCHAR(50) DEFAULT NULL,
@@ -226,8 +226,8 @@ CREATE TABLE `ezuser_accountkey` (
     FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `ezuservisit`;
-CREATE TABLE `ezuservisit` (
+DROP TABLE IF EXISTS `ezuser_visit`;
+CREATE TABLE `ezuser_visit` (
     `user_id` INT NOT NULL DEFAULT '0',
     `current_visit_timestamp` INT NOT NULL DEFAULT '0',
     `failed_login_attempts` INT NOT NULL DEFAULT '0',

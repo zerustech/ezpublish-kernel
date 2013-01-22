@@ -331,8 +331,8 @@ class Mapper
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Relation
      */
-    public function createRelationFromCreateStruct( RelationCreateStruct $struct )
+    public function createRelationFromCreateStruct( Persistence\Content\Relation\CreateStruct $struct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return new Persistence\Content\Relation( (array) $struct );
     }
 }
