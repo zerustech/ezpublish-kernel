@@ -418,7 +418,9 @@ class Handler implements BaseContentHandler
      */
     public function listVersions( $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->mapper->extractVersionInfoListFromRows(
+            $this->contentGateway->listVersions( $contentId )
+        );
     }
 
     /**

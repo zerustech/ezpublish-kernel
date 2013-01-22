@@ -595,7 +595,20 @@ class EzcDatabase extends Gateway
      */
     public function listVersions( $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->queryBuilder->createVersionInfoFindQuery();
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_version' ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )
+        )->groupBy(
+            $this->dbHandler->quoteColumn( 'id', 'ezcontent_version' )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**

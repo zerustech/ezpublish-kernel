@@ -418,10 +418,7 @@ class ContentHandlerTest extends TestCase
 
         $versions = $handler->listVersions( $content->versionInfo->contentInfo->id );
 
-        $this->assertEquals(
-            array( new VersionInfo() ),
-            $versions
-        );
+        $this->assertEquals( 2, count( $versions ) );
     }
 
     /**
