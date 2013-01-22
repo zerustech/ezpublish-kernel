@@ -440,8 +440,6 @@ class Handler implements BaseContentHandler
      * Copies all fields from $contentId in $versionNo (or all versions if null)
      * to a new object which is returned. Version numbers are maintained.
      *
-     * @todo Should relations be copied? Which ones?
-     *
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException If content or version is not found
      *
      * @param mixed $contentId
@@ -451,7 +449,60 @@ class Handler implements BaseContentHandler
      */
     public function copy( $contentId, $versionNo = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        if ( $versionNo === null )
+        {
+            return $this->copyAllVersions( $contentId );
+        }
+
+        $createStruct = $this->mapper->createCreateStructFromContent(
+            $this->load( $contentId, $versionNo )
+        );
+        return $this->internalCreate( $createStruct, $versionNo );
+    }
+
+    /**
+     * Copy Content with Fields and Versions from $contentId in all versions
+     *
+     * Copies all fields from $contentId in $versionNo (or all versions if null)
+     * to a new object which is returned. Version numbers are maintained.
+     *
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException If content or version is not found
+     *
+     * @param mixed $contentId
+     * @param mixed|null $versionNo Copy all versions if left null
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content
+     */
+    public function copyAllVersions( $contentId )
+    {
+        $currentVersionNo = $this->loadContentInfo( $contentId )->currentVersionNo;
+        $createStruct = $this->mapper->createCreateStructFromContent(
+            $this->load( $contentId, $currentVersionNo )
+        );
+        $content = $this->internalCreate( $createStruct, $currentVersionNo );
+
+        foreach ( $this->listVersions( $contentId ) as $versionInfo )
+        {
+            if ( $versionInfo->versionNo === $currentVersionNo )
+            {
+                continue;
+            }
+
+            $versionContent = $this->load( $contentId, $versionInfo->versionNo );
+
+            $versionContent->versionInfo->contentInfo->id = $content->versionInfo->contentInfo->id;
+            $versionContent->versionInfo->modificationDate = $createStruct->modified;
+            $versionContent->versionInfo->creationDate = $createStruct->modified;
+            $versionContent->versionInfo->id = $this->contentGateway->insertVersion(
+                $versionContent->versionInfo,
+                $versionContent->fields
+            );
+
+            // @TODO: Reactivate
+            // $this->fieldHandler->createNewFields( $versionContent );
+        }
+
+        return $content;
     }
 
     /**

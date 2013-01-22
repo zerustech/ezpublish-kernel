@@ -537,11 +537,14 @@ class ContentHandlerTest extends TestCase
     {
         $handler = $this->getContentHandler();
 
-        $content = $handler->copy( $content->versionInfo->contentInfo->id, 32 );
+        $copy = $handler->copy(
+            $content->versionInfo->contentInfo->id,
+            $content->versionInfo->versionNo
+        );
 
         $this->assertInstanceOf(
             "eZ\\Publish\\SPI\\Persistence\\Content",
-            $content
+            $copy
         );
     }
 

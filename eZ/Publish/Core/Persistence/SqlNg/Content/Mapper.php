@@ -311,9 +311,27 @@ class Mapper
      *
      * @return \eZ\Publish\SPI\Persistence\Content\CreateStruct
      */
-    public function createCreateStructFromContent( Content $content )
+    public function createCreateStructFromContent( Persistence\Content $content )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $struct = new Persistence\Content\CreateStruct();
+        $struct->name = $content->versionInfo->names;
+        $struct->typeId = $content->versionInfo->contentInfo->contentTypeId;
+        $struct->sectionId = $content->versionInfo->contentInfo->sectionId;
+        $struct->ownerId = $content->versionInfo->contentInfo->ownerId;
+        $struct->locations = array();
+        $struct->alwaysAvailable = $content->versionInfo->contentInfo->alwaysAvailable;
+        $struct->remoteId = md5( uniqid( get_class( $this ), true ) );
+        $struct->initialLanguageId = $this->languageHandler->loadByLanguageCode( $content->versionInfo->initialLanguageCode )->id;
+        $struct->modified = time();
+
+        foreach ( $content->fields as $field )
+        {
+            $newField = clone $field;
+            $newField->id = null;
+            $struct->fields[] = $newField;
+        }
+
+        return $struct;
     }
 
     /**
