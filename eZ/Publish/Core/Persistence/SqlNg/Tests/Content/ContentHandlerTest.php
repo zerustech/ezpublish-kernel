@@ -359,15 +359,15 @@ class ContentHandlerTest extends TestCase
     /**
      * @depends testAddRelation
      */
-    public function testLoadReverseRelations( $content )
+    public function testLoadReverseRelations( $relation )
     {
         $handler = $this->getContentHandler();
 
-        $relations = $handler->loadReverseRelations( $content->versionInfo->contentInfo->id );
+        $loaded = $handler->loadReverseRelations( $relation->destinationContentId );
 
         $this->assertEquals(
-            array(),
-            $relations
+            array( $relation ),
+            $loaded
         );
     }
 

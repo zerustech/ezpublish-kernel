@@ -503,6 +503,9 @@ class Handler implements BaseContentHandler
      */
     public function loadReverseRelations( $destinationContentId, $type = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $rows = $this->contentGateway->loadReverseRelations( $destinationContentId, $type );
+
+        $relationObjects = $this->mapper->extractRelationsFromRows( $rows );
+        return $relationObjects;
     }
 }
