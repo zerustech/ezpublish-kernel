@@ -170,10 +170,6 @@ class QueryBuilder
                     $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_version' )
                 ),
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'content_version_no', 'ezcontent_location' ),
-                    $this->dbHandler->quoteColumn( 'version_no', 'ezcontent_version' )
-                ),
-                $query->expr->eq(
                     $this->dbHandler->quoteColumn( 'main_id', 'ezcontent_location' ),
                     $this->dbHandler->quoteColumn( 'id', 'ezcontent_location' )
                 )

@@ -246,7 +246,7 @@ class ContentHandlerTest extends TestCase
             $draft->versionInfo->versionNo
         );
 
-
+        return $draft;
     }
 
     /**
@@ -395,17 +395,17 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishRoot
+     * @depends testCreateDraftFromVersion
      */
-    public function testLoadDraftsForUser( $content )
+    public function testLoadDraftsForUser( $draft )
     {
         $handler = $this->getContentHandler();
 
-        $draft = $handler->loadDraftsForUser( $content->versionInfo->contentInfo->id );
+        $loaded = $handler->loadDraftsForUser( $this->getUser()->id );
 
         $this->assertEquals(
-            array( new VersionInfo() ),
-            $draft
+            array( $draft->versionInfo ),
+            $loaded
         );
     }
 

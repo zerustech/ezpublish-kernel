@@ -318,7 +318,9 @@ class Handler implements BaseContentHandler
      */
     public function loadDraftsForUser( $userId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->mapper->extractVersionInfoListFromRows(
+            $this->contentGateway->listVersionsForUser( $userId, VersionInfo::STATUS_DRAFT )
+        );
     }
 
     /**
