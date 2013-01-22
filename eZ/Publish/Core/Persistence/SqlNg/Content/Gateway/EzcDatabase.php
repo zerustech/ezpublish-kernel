@@ -331,8 +331,10 @@ class EzcDatabase extends Gateway
         $statement = $query->prepare();
         $statement->execute();
 
-        if ( (bool)$statement->rowCount() === false )
+        if ( !$statement->rowCount() )
+        {
             return false;
+        }
 
         if ( $status !== APIVersionInfo::STATUS_PUBLISHED )
         {

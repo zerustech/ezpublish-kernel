@@ -564,23 +564,21 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testPublishRoot
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
      */
-    public function testCopyThrowsNotFoundExceptionContentNotFound( $content )
+    public function testCopyThrowsNotFoundExceptionContentNotFound()
     {
         $handler = $this->getContentHandler();
-
-        $result = $handler->copy( $content->versionInfo->contentInfo->id );
+        $handler->copy( 1337 );
     }
 
     /**
-     * @depends testPublishRoot
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
      */
-    public function testCopyThrowsNotFoundExceptionVersionNotFound( $content )
+    public function testCopyThrowsNotFoundExceptionVersionNotFound()
     {
         $handler = $this->getContentHandler();
-
-        $result = $handler->copy( $content->versionInfo->contentInfo->id, 32 );
+        $handler->copy( 1337, 1 );
     }
 
     /**
@@ -591,7 +589,11 @@ class ContentHandlerTest extends TestCase
         $handler = $this->getContentHandler();
 
         $this->assertTrue(
-            $handler->setStatus( $content->versionInfo->contentInfo->id, 2, 5 )
+            $handler->setStatus(
+                $content->versionInfo->contentInfo->id,
+                5,
+                $content->versionInfo->versionNo
+            )
         );
     }
 }
