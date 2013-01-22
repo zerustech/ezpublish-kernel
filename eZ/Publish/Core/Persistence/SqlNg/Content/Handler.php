@@ -483,7 +483,10 @@ class Handler implements BaseContentHandler
      */
     public function loadRelations( $sourceContentId, $sourceContentVersionNo = null, $type = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $rows = $this->contentGateway->loadRelations( $sourceContentId, $sourceContentVersionNo, $type );
+
+        $relationObjects = $this->mapper->extractRelationsFromRows( $rows );
+        return $relationObjects;
     }
 
     /**

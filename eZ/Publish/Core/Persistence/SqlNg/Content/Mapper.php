@@ -321,7 +321,43 @@ class Mapper
      */
     public function extractRelationsFromRows( array $rows )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $relations = array();
+
+        foreach ( $rows as $row )
+        {
+            $id = (int)$row['ezcontent_relation_id'];
+            if ( !isset( $relations[$id] ) )
+            {
+                $relations[$id] = $this->extractRelationFromRow( $row );
+            }
+        }
+
+        return array_values( $relations );
+    }
+
+    /**
+     * Extracts a Relation object from a $row
+     *
+     * @param array $row Associative array representing a relation
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\Relation
+     */
+    protected function extractRelationFromRow( array $row )
+    {
+        $relation = new Persistence\Content\Relation();
+        $relation->id = (int)$row['ezcontent_relation_id'];
+        $relation->sourceContentId = (int)$row['ezcontent_relation_from_content_id'];
+        $relation->sourceContentVersionNo = (int)$row['ezcontent_relation_from_content_version_no'];
+        $relation->destinationContentId = (int)$row['ezcontent_relation_to_content_id'];
+        $relation->type = (int)$row['ezcontent_relation_relation_type'];
+
+        $contentClassAttributeId = (int)$row['ezcontent_relation_contenttype_field_id'];
+        if ( $contentClassAttributeId > 0 )
+        {
+            $relation->sourceFieldDefinitionId = $contentClassAttributeId;
+        }
+
+        return $relation;
     }
 
     /**

@@ -105,12 +105,11 @@ class QueryBuilder
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
             $this->dbHandler->aliasedColumn( $query, 'id', 'ezcontent_relation' ),
-            $this->dbHandler->aliasedColumn( $query, 'contenttypeattribute_id', 'ezcontent_relation' ),
+            $this->dbHandler->aliasedColumn( $query, 'contenttype_field_id', 'ezcontent_relation' ),
             $this->dbHandler->aliasedColumn( $query, 'from_content_id', 'ezcontent_relation' ),
-            $this->dbHandler->aliasedColumn( $query, 'from_content_version', 'ezcontent_relation' ),
-            $this->dbHandler->aliasedColumn( $query, 'op_code', 'ezcontent_relation' ),
-            $this->dbHandler->aliasedColumn( $query, 'relation_type', 'ezcontent_relation' ),
-            $this->dbHandler->aliasedColumn( $query, 'to_content_id', 'ezcontent_relation' )
+            $this->dbHandler->aliasedColumn( $query, 'from_content_version_no', 'ezcontent_relation' ),
+            $this->dbHandler->aliasedColumn( $query, 'to_content_id', 'ezcontent_relation' ),
+            $this->dbHandler->aliasedColumn( $query, 'relation_type', 'ezcontent_relation' )
         )->from(
             $this->dbHandler->quoteTable( 'ezcontent_relation' )
         );

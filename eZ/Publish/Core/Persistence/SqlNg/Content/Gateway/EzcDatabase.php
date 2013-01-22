@@ -741,7 +741,58 @@ class EzcDatabase extends Gateway
      */
     public function loadRelations( $contentId, $contentVersionNo = null, $relationType = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->queryBuilder->createRelationFindQuery();
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'from_content_id', 'ezcontent_relation' ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        // source version number
+        if ( isset( $contentVersionNo ) )
+        {
+            $query->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'from_content_version_no', 'ezcontent_relation' ),
+                    $query->bindValue( $contentVersionNo, null, \PDO::PARAM_INT  )
+                )
+            );
+        }
+        // from published version only
+        else
+        {
+            $query->from(
+                $this->dbHandler->quoteTable( 'ezcontent' )
+            )->where(
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
+                        $this->dbHandler->quoteColumn( 'from_content_id', 'ezcontent_relation' )
+                    ),
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'current_version_no', 'ezcontent' ),
+                        $this->dbHandler->quoteColumn( 'from_content_version_no', 'ezcontent_relation' )
+                    )
+                )
+            );
+        }
+
+        // relation type
+        if ( isset( $relationType ) )
+        {
+            $query->where(
+                $query->expr->bitAnd(
+                    $this->dbHandler->quoteColumn( 'relation_type', 'ezcontent_relation' ),
+                    $query->bindValue( $relationType, null, \PDO::PARAM_INT )
+                )
+            );
+        }
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
