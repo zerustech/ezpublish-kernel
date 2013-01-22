@@ -647,7 +647,22 @@ class EzcDatabase extends Gateway
      */
     public function getAllLocationIds( $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'id' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_location' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'content_id' ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_COLUMN );
     }
 
     /**

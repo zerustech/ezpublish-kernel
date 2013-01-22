@@ -381,7 +381,18 @@ class Handler implements BaseContentHandler
      */
     public function deleteContent( $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $contentLocations = $this->contentGateway->getAllLocationIds( $contentId );
+        if ( empty( $contentLocations ) )
+        {
+            $this->removeRawContent( $contentId );
+        }
+        else
+        {
+            foreach ( $contentLocations as $locationId )
+            {
+                $this->locationHandler->removeSubtree( $locationId );
+            }
+        }
     }
 
     /**

@@ -460,9 +460,10 @@ class ContentHandlerTest extends TestCase
      */
     public function testDeleteContentWithLocations( $content )
     {
+        $this->markTestIncomplete( "This is more a location handler test … thus pending." );
         $handler = $this->getContentHandler();
 
-        $handlerMock->deleteContent( $content->versionInfo->contentInfo->id );
+        $handler->deleteContent( $content->versionInfo->contentInfo->id );
     }
 
     /**
@@ -472,7 +473,32 @@ class ContentHandlerTest extends TestCase
     {
         $handler = $this->getContentHandler();
 
-        $handlerMock->deleteContent( $content->versionInfo->contentInfo->id );
+        $contentType = $this->getContentType();
+        $createStruct = new Persistence\Content\CreateStruct( array(
+            'typeId' => $contentType->id,
+            'sectionId' => $this->getSection()->id,
+            'ownerId' => $this->getUser()->id,
+            'alwaysAvailable' => true,
+            'remoteId' => 'testobject',
+            'initialLanguageId' => $this->getLanguage()->id,
+            'modified' => 123456789,
+            'locations' => array(),
+            'fields' => array(),
+        ) );
+
+        foreach ( $contentType->fieldDefinitions as $fieldDefinition )
+        {
+            $createStruct->fields[] = new Persistence\Content\Field( array(
+                'fieldDefinitionId' => $fieldDefinition->id,
+                'type' => $fieldDefinition->fieldType,
+                'value' => 'Hello World!',
+                'languageCode' => $this->getLanguage()->languageCode,
+            ) );
+        }
+
+        $content = $handler->create( $createStruct );
+
+        $handler->deleteContent( $content->versionInfo->contentInfo->id );
     }
 
     /**
