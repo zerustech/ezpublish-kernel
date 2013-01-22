@@ -374,11 +374,24 @@ class ContentHandlerTest extends TestCase
     /**
      * @depends testAddRelation
      */
-    public function testRemoveRelation( $content )
+    public function testRemoveRelation( $relation )
     {
         $handler = $this->getContentHandler();
 
-        $this->getContentHandler()->removeRelation( 1 );
+        $this->getContentHandler()->removeRelation( $relation->id );
+
+        return $relation;
+    }
+
+    /**
+     * @depends testRemoveRelation
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testRemoveNonExistingRelation( $relation )
+    {
+        $handler = $this->getContentHandler();
+
+        $this->getContentHandler()->removeRelation( $relation->id );
     }
 
     /**

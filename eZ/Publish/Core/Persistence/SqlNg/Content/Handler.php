@@ -467,7 +467,7 @@ class Handler implements BaseContentHandler
      */
     public function removeRelation( $relationId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentGateway->deleteRelation( $relationId );
     }
 
     /**
