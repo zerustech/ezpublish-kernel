@@ -299,16 +299,18 @@ class ContentHandlerTest extends TestCase
         $handler = $this->getContentHandler();
 
         $updatedContentInfo = $handler->updateMetadata(
-            14, // ContentId
-            new MetadataUpdateStruct( array(
-                'ownerId' => 14,
-                'name' => 'Some name',
-                'modificationDate' => time(),
-                'alwaysAvailable' => true
+            $content->versionInfo->contentInfo->id,
+            new Persistence\Content\MetadataUpdateStruct( array(
+                'ownerId' => $this->getUser()->id,
+                'publicationDate' => 123456,
+                'modificationDate' => 123456,
+                'mainLanguageId' => $this->getLanguage()->id,
+                'alwaysAvailable' => true,
+                'remoteId' => 'updated',
             ) )
         );
 
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content\\ContentInfo',
             $updatedContentInfo
         );

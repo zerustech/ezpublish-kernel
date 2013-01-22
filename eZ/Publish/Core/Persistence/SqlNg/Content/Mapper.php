@@ -235,7 +235,7 @@ class Mapper
         $contentInfo->publicationDate = (int)$row["{$prefix}published"];
         $contentInfo->modificationDate = (int)$row["{$prefix}modified"];
         $contentInfo->mainLanguageCode = $this->languageHandler->load( $row["{$prefix}initial_language_id"] )->languageCode;
-        $contentInfo->alwaysAvailable = (bool)$row["ezcontent_always_available"];
+        $contentInfo->alwaysAvailable = (bool)$row["{$prefix}always_available"];
         $contentInfo->remoteId = $row["{$prefix}remote_id"];
         $contentInfo->mainLocationId = $row["ezcontent_location_main_id"];
 

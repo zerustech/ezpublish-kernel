@@ -348,7 +348,8 @@ class Handler implements BaseContentHandler
      */
     public function updateMetadata( $contentId, MetadataUpdateStruct $content )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->contentGateway->updateContent( $contentId, $content );
+        return $this->loadContentInfo( $contentId );
     }
 
     /**
