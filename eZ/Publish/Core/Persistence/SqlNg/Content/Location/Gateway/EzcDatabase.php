@@ -680,15 +680,38 @@ class EzcDatabase extends Gateway
      *
      * @param mixed $contentId
      * @param mixed $locationId
-     * @param mixed $versionNo version number, needed to update eznode_assignment table
-     * @param mixed $parentLocationId parent location of location identified by $locationId, needed to update
-     *        eznode_assignment table
      *
      * @return void
      */
-    public function changeMainLocation( $contentId, $locationId, $versionNo, $parentLocationId )
+    public function changeMainLocation( $contentId, $locationId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( "ezcontent_location" )
+        )->set(
+            $this->dbHandler->quoteColumn( "main_id" ),
+            $query->bindValue( $locationId, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( "content_id" ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )
+        );
+        $query->prepare()->execute();
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( "ezcontent_location" )
+        )->set(
+            $this->dbHandler->quoteColumn( "main_id" ),
+            $query->bindValue( null )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( "id" ),
+                $query->bindValue( $locationId, null, \PDO::PARAM_INT )
+            )
+        );
+        $query->prepare()->execute();
     }
 
     /**

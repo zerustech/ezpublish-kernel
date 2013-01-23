@@ -554,17 +554,14 @@ class ExceptionConversion extends Gateway
      *
      * @param mixed $contentId
      * @param mixed $locationId
-     * @param mixed $versionNo version number, needed to update eznode_assignment table
-     * @param mixed $parentLocationId parent location of location identified by $locationId, needed to update
-     *        eznode_assignment table
      *
      * @return void
      */
-    public function changeMainLocation( $contentId, $locationId, $versionNo, $parentLocationId )
+    public function changeMainLocation( $contentId, $locationId )
     {
         try
         {
-            return $this->innerGateway->changeMainLocation( $contentId, $locationId, $versionNo, $parentLocationId );
+            return $this->innerGateway->changeMainLocation( $contentId, $locationId );
         }
         catch ( \ezcDbException $e )
         {

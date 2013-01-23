@@ -249,11 +249,8 @@ abstract class Gateway
      *
      * @param mixed $contentId
      * @param mixed $locationId
-     * @param mixed $versionNo version number, needed to update eznode_assignment table
-     * @param mixed $parentLocationId parent location of location identified by $locationId, needed to update
-     *        eznode_assignment table
      *
      * @return void
      */
-    abstract public function changeMainLocation( $contentId, $locationId, $versionNo, $parentLocationId );
+    abstract public function changeMainLocation( $contentId, $locationId );
 }

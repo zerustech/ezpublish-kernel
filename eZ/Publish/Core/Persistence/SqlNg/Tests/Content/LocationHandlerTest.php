@@ -299,11 +299,17 @@ class LocationHandlerTest extends TestCase
         // No sensible assertions here…
     }
 
-    public function testChangeMainLocation()
+    /**
+     * @depends testCreateChildLocation
+     */
+    public function testChangeMainLocation( $location )
     {
         $handler = $this->getLocationHandler();
 
-        $handler->changeMainLocation( 12, 34 );
+        $handler->changeMainLocation( $location->contentId, $location->id );
+
+        $this->assertEquals( $location->id, $handler->load( $location->parentId )->mainLocationId );
+        $this->assertEquals( null, $handler->load( $location->id )->mainLocationId );
     }
 
     public function testSwapLocations()

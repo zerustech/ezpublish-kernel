@@ -292,6 +292,18 @@ class Handler implements BaseLocationHandler
      */
     public function changeMainLocation( $contentId, $locationId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $parentLocationId = $this->load( $locationId )->parentId;
+
+        $this->locationGateway->changeMainLocation(
+            $contentId,
+            $locationId,
+            $this->contentHandler->loadContentInfo( $contentId )->currentVersionNo,
+            $parentLocationId
+        );
+
+        $this->setSectionForSubtree(
+            $locationId,
+            $this->contentHandler->loadContentInfo( $this->load( $parentLocationId )->contentId )->sectionId
+        );
     }
 }
