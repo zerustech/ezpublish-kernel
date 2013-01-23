@@ -639,7 +639,32 @@ class EzcDatabase extends Gateway
      */
     public function setSectionForSubtree( $pathString, $sectionId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+
+        $subSelect = $query->subSelect();
+        $subSelect
+            ->select( $this->dbHandler->quoteColumn( 'content_id' ) )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->where(
+                $subSelect->expr->like(
+                    $this->dbHandler->quoteColumn( 'path_string' ),
+                    $subSelect->bindValue( $pathString . '%' )
+                )
+            );
+
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'section_id' ),
+                $query->bindValue( $sectionId )
+            )
+            ->where(
+                $query->expr->in(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $subSelect
+                )
+            );
+        $query->prepare()->execute();
     }
 
     /**

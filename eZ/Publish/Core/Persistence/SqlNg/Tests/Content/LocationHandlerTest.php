@@ -284,18 +284,19 @@ class LocationHandlerTest extends TestCase
         $this->assertFalse( $handler->load( $location->id )->invisible );
     }
 
-    public function testSwapLocations()
+    /**
+     * @depends testCreateChildLocation
+     */
+    public function testSetSectionForSubtree( $location )
     {
         $handler = $this->getLocationHandler();
 
-        $handler->swap( 70, 78 );
-    }
+        $handler->setSectionForSubtree(
+            $location->parentId,
+            $sectionId = $this->getSection()->id
+        );
 
-    public function testSetSectionForSubtree()
-    {
-        $handler = $this->getLocationHandler();
-
-        $handler->setSectionForSubtree( 69, 3 );
+        // No sensible assertions here…
     }
 
     public function testChangeMainLocation()
@@ -303,6 +304,13 @@ class LocationHandlerTest extends TestCase
         $handler = $this->getLocationHandler();
 
         $handler->changeMainLocation( 12, 34 );
+    }
+
+    public function testSwapLocations()
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->swap( 70, 78 );
     }
 
     public function testMoveSubtree()
