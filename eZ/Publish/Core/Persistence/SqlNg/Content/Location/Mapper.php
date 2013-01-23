@@ -60,7 +60,18 @@ class Mapper
      */
     public function createLocationsFromRows( array $rows, $prefix = '' )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $locations = array();
+
+        foreach ( $rows as $row )
+        {
+            $id = $row[$prefix . 'id'];
+            if ( !isset( $locations[$id] ) )
+            {
+                $locations[$id] = $this->createLocationFromRow( $row, $prefix );
+            }
+        }
+
+        return array_values( $locations );
     }
 
     /**

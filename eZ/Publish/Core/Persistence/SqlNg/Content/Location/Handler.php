@@ -85,8 +85,9 @@ class Handler implements BaseLocationHandler
      */
     public function load( $locationId )
     {
-        $data = $this->locationGateway->getBasicNodeData( $locationId );
-        return $this->locationMapper->createLocationFromRow( $data );
+        return $this->locationMapper->createLocationFromRow(
+            $this->locationGateway->getBasicNodeData( $locationId )
+        );
     }
 
     /**
@@ -100,7 +101,9 @@ class Handler implements BaseLocationHandler
      */
     public function loadByRemoteId( $remoteId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->locationMapper->createLocationFromRow(
+            $this->locationGateway->getBasicNodeDataByRemoteId( $remoteId )
+        );
     }
 
     /**
@@ -114,7 +117,9 @@ class Handler implements BaseLocationHandler
      */
     public function loadLocationsByContent( $contentId, $rootLocationId = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->locationMapper->createLocationsFromRows(
+            $this->locationGateway->loadLocationDataByContent( $contentId, $rootLocationId )
+        );
     }
 
     /**

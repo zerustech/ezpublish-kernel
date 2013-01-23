@@ -125,22 +125,66 @@ class LocationHandlerTest extends TestCase
         );
     }
 
-    public function testLoadLocationByRemoteId()
+    /**
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testLoadLocationNotFound()
     {
         $handler = $this->getLocationHandler();
 
-        $location = $handler->loadByRemoteId( 'abc123' );
-
-        $this->assertTrue( $location instanceof \eZ\Publish\SPI\Persistence\Content\Location );
+        $handler->load( 1337 );
     }
 
-    public function testLoadLocationsByContent()
+    /**
+     * @depends testCreateChildLocation
+     */
+    public function testLoadLocationByRemoteId( $location )
     {
         $handler = $this->getLocationHandler();
 
-        $locations = $handler->loadLocationsByContent( 23, 42 );
+        $loaded = $handler->loadByRemoteId( $location->remoteId );
 
-        $this->assertInternalType( 'array', $locations );
+        $this->assertEquals(
+            $location,
+            $loaded
+        );
+    }
+
+    /**
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testLoadLocationByRemoteIdNotFound()
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->loadByRemoteId( 'not_existing' );
+    }
+
+    /**
+     * @depends testCreateChildLocation
+     */
+    public function testLoadLocationsByContent( $location )
+    {
+        $handler = $this->getLocationHandler();
+
+        $loaded = $handler->loadLocationsByContent( $location->contentId );
+
+        $this->assertEquals( 2, count( $loaded ) );
+    }
+
+    /**
+     * @depends testCreateChildLocation
+     */
+    public function testLoadLocationsByContentSubtree( $location )
+    {
+        $handler = $this->getLocationHandler();
+
+        $loaded = $handler->loadLocationsByContent( $location->contentId, $location->id );
+
+        $this->assertEquals(
+            array( $location ),
+            $loaded
+        );
     }
 
     public function testMoveSubtree()

@@ -86,7 +86,25 @@ class EzcDatabase extends Gateway
      */
     public function getBasicNodeDataByRemoteId( $remoteId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query
+            ->select( '*' )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'remote_id' ),
+                    $query->bindValue( $remoteId )
+                )
+            );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $row = $statement->fetch( \PDO::FETCH_ASSOC ) )
+        {
+            return $row;
+        }
+
+        throw new NotFound( 'location', $remoteId );
     }
 
     /**
@@ -100,7 +118,26 @@ class EzcDatabase extends Gateway
      */
     public function loadLocationDataByContent( $contentId, $rootLocationId = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query
+            ->select( '*' )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'content_id' ),
+                    $query->bindValue( $contentId )
+                )
+            );
+
+        if ( $rootLocationId !== null )
+        {
+            $this->applySubtreeLimitation( $query, $rootLocationId );
+        }
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -496,5 +533,23 @@ class EzcDatabase extends Gateway
     public function changeMainLocation( $contentId, $locationId, $versionNo, $parentLocationId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
+    }
+
+    /**
+     * Limits the given $query to the subtree starting at $rootLocationId
+     *
+     * @param \ezcQuery $query
+     * @param string $rootLocationId
+     *
+     * @return void
+     */
+    protected function applySubtreeLimitation( \ezcQuery $query, $rootLocationId )
+    {
+        $query->where(
+            $query->expr->like(
+                $this->dbHandler->quoteColumn( 'path_string', 'ezcontent_location' ),
+                $query->bindValue( '%/' . $rootLocationId . '/%' )
+            )
+        );
     }
 }
