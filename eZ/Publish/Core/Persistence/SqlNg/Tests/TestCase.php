@@ -37,8 +37,23 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected static $content;
 
+    protected static $currentTest;
+
     public function setUp()
     {
+        // Resets database between test cases
+        if ( self::$currentTest !== get_called_class() )
+        {
+            self::$persistenceHandler = null;
+            self::$user = null;
+            self::$language = null;
+            self::$section = null;
+            self::$contentTypeGroup = null;
+            self::$contentType = null;
+            self::$content = null;
+
+            self::$currentTest = get_called_class();
+        }
     }
 
     public function tearDown()
