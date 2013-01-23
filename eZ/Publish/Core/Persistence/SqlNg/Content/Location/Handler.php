@@ -70,7 +70,10 @@ class Handler implements BaseLocationHandler
         ContentMapper $contentMapper
     )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->locationGateway = $locationGateway;
+        $this->locationMapper = $locationMapper;
+        $this->contentHandler = $contentHandler;
+        $this->contentMapper = $contentMapper;
     }
 
     /**
@@ -82,7 +85,8 @@ class Handler implements BaseLocationHandler
      */
     public function load( $locationId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $data = $this->locationGateway->getBasicNodeData( $locationId );
+        return $this->locationMapper->createLocationFromRow( $data );
     }
 
     /**
@@ -213,7 +217,7 @@ class Handler implements BaseLocationHandler
      */
     public function update( UpdateStruct $location, $locationId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->locationGateway->update( $location, $locationId );
     }
 
     /**
@@ -225,7 +229,13 @@ class Handler implements BaseLocationHandler
      */
     public function create( CreateStruct $createStruct )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $locationStruct = $this->locationGateway->create(
+            $createStruct,
+            $createStruct->parentId ? $this->locationGateway->getBasicNodeData( $createStruct->parentId ) : null,
+            Gateway::PUBLISHED
+        );
+
+        return $locationStruct;
     }
 
     /**

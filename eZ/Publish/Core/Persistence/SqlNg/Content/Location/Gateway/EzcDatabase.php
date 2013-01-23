@@ -323,7 +323,39 @@ class EzcDatabase extends Gateway
      */
     public function update( UpdateStruct $location, $locationId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'priority' ),
+                $query->bindValue( $location->priority )
+            )
+            ->set(
+                $this->dbHandler->quoteColumn( 'remote_id' ),
+                $query->bindValue( $location->remoteId )
+            )
+            ->set(
+                $this->dbHandler->quoteColumn( 'sort_order' ),
+                $query->bindValue( $location->sortOrder )
+            )
+            ->set(
+                $this->dbHandler->quoteColumn( 'sort_field' ),
+                $query->bindValue( $location->sortField )
+            )
+            ->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $locationId
+                )
+            );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'location', $locationId );
+        }
     }
 
     /**

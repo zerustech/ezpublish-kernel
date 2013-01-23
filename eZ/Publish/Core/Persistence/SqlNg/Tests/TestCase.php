@@ -35,6 +35,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected static $contentType;
 
+    protected static $content;
+
     public function setUp()
     {
     }
@@ -251,6 +253,49 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         return self::$contentType;
+    }
+
+    /**
+     * Get a functional content object, without locations
+     *
+     * @return Persistence\Content
+     */
+    protected function getContent()
+    {
+        if ( !self::$content )
+        {
+            $contentHandler = $this->getPersistenceHandler()->contentHandler();
+
+            $contentType = self::getContentType();
+            $createStruct = new Persistence\Content\CreateStruct( array(
+                'typeId' => $contentType->id,
+                'sectionId' => self::getSection()->id,
+                'ownerId' => self::getUser()->id,
+                'alwaysAvailable' => true,
+                'remoteId' => 'testobject',
+                'initialLanguageId' => self::getLanguage()->id,
+                'modified' => 123456789,
+                'locations' => array(),
+                'fields' => array(),
+                'name' => array(
+                    self::getLanguage()->languageCode => "Test-Objekt",
+                ),
+            ) );
+
+            foreach ( $contentType->fieldDefinitions as $fieldDefinition )
+            {
+                $createStruct->fields[] = new Persistence\Content\Field( array(
+                    'fieldDefinitionId' => $fieldDefinition->id,
+                    'type' => $fieldDefinition->fieldType,
+                    'value' => 'Hello World!',
+                    'languageCode' => self::getLanguage()->languageCode,
+                ) );
+            }
+
+            self::$content = $contentHandler->create( $createStruct );
+        }
+
+        return self::$content;
     }
 
     /**

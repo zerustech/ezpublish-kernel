@@ -405,6 +405,10 @@ class Handler implements HandlerInterface
         if ( !isset( $this->locationHandler ) )
         {
             $this->locationHandler = new Content\Location\Handler(
+                $this->getLocationGateway(),
+                new Content\Location\Mapper(),
+                $this->contentHandler(),
+                $this->getContentMapper()
             );
         }
         return $this->locationHandler;

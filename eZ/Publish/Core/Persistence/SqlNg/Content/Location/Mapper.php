@@ -9,8 +9,7 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\Location;
 
-use eZ\Publish\SPI\Persistence\Content\Location;
-use eZ\Publish\SPI\Persistence\Content\Location\CreateStruct;
+use eZ\Publish\SPI\Persistence;
 
 /**
  * Mapper for Location objects
@@ -32,7 +31,22 @@ class Mapper
      */
     public function createLocationFromRow( array $data, $prefix = '', Location $location = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $location = $location ?: new Persistence\Content\Location();
+
+        $location->id = $data[$prefix . 'id'];
+        $location->priority = $data[$prefix . 'priority'];
+        $location->hidden = (bool)$data[$prefix . 'is_hidden'];
+        $location->invisible = (bool)$data[$prefix . 'is_invisible'];
+        $location->remoteId = $data[$prefix . 'remote_id'];
+        $location->contentId = $data[$prefix . 'content_id'];
+        $location->parentId = $data[$prefix . 'parent_id'];
+        $location->pathString = $data[$prefix . 'path_string'];
+        $location->mainLocationId = $data[$prefix . 'main_id'];
+        $location->depth = $data[$prefix . 'depth'];
+        $location->sortField = $data[$prefix . 'sort_field'];
+        $location->sortOrder = $data[$prefix . 'sort_order'];
+
+        return $location;
     }
 
     /**
