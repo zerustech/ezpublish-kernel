@@ -422,12 +422,17 @@ class EzcDatabase extends Gateway
 
         // Only set main_id, if it references another node. Otherwise deletion
         // of row is impossible
-        if ( $createStruct->mainLocationId )
+        if ( $createStruct->mainLocationId !== true )
         {
+            $location->mainLocationId = $createStruct->mainLocationId;
             $query->set(
                 $this->dbHandler->quoteColumn( 'main_id' ),
-                $query->bindValue( $location->mainLocationId, null, \PDO::PARAM_INT )
+                $query->bindValue( $createStruct->mainLocationId, null, \PDO::PARAM_INT )
             );
+        }
+        else
+        {
+            $location->mainLocationId = $location->id;
         }
 
         $query->prepare()->execute();

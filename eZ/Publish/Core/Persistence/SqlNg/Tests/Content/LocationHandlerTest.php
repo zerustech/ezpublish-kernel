@@ -64,7 +64,7 @@ class LocationHandlerTest extends TestCase
                 'remoteId' => 'test-location-child',
                 'contentId' => $content->versionInfo->contentInfo->id,
                 'contentVersion' => $content->versionInfo->versionNo,
-                'mainLocationId' => true,
+                'mainLocationId' => $root->id,
                 'parentId' => $root->id,
             ) )
         );
