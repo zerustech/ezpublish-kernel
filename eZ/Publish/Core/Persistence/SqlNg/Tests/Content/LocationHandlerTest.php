@@ -187,28 +187,101 @@ class LocationHandlerTest extends TestCase
         );
     }
 
-    public function testMoveSubtree()
+    /**
+     * @depends testCreateChildLocation
+     */
+    public function testHideUpdateHidden( $location )
     {
         $handler = $this->getLocationHandler();
 
-        $handler->move( 69, 77 );
-    }
+        $handler->hide( $location->parentId );
 
-    public function testHideUpdateHidden()
-    {
-        $handler = $this->getLocationHandler();
+        $this->assertTrue(  $handler->load( $location->parentId )->hidden );
+        $this->assertTrue(  $handler->load( $location->parentId )->invisible );
+        $this->assertFalse( $handler->load( $location->id )->hidden );
+        $this->assertTrue(  $handler->load( $location->id )->invisible );
 
-        $handler->hide( 69 );
+        return $location;
     }
 
     /**
      * @depends testHideUpdateHidden
      */
-    public function testHideUnhideUpdateHidden()
+    public function testHideUnhideUpdateHidden( $location )
     {
         $handler = $this->getLocationHandler();
 
-        $handler->unhide( 69 );
+        $handler->unhide( $location->parentId );
+
+        $this->assertFalse( $handler->load( $location->parentId )->hidden );
+        $this->assertFalse( $handler->load( $location->parentId )->invisible );
+        $this->assertFalse( $handler->load( $location->id )->hidden );
+        $this->assertFalse( $handler->load( $location->id )->invisible );
+    }
+
+    /**
+     * @depends testCreateChildLocation
+     */
+    public function testHideChildAndParent( $location )
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->hide( $location->id );
+        $handler->hide( $location->parentId );
+
+        $this->assertTrue( $handler->load( $location->parentId )->hidden );
+        $this->assertTrue( $handler->load( $location->parentId )->invisible );
+        $this->assertTrue( $handler->load( $location->id )->hidden );
+        $this->assertTrue( $handler->load( $location->id )->invisible );
+
+        return $location;
+    }
+
+    /**
+     * @depends testHideChildAndParent
+     */
+    public function testUnhideChildHiddenParent( $location )
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->unhide( $location->id );
+
+        $this->assertTrue(  $handler->load( $location->parentId )->hidden );
+        $this->assertTrue(  $handler->load( $location->parentId )->invisible );
+        $this->assertFalse( $handler->load( $location->id )->hidden );
+        $this->assertTrue(  $handler->load( $location->id )->invisible );
+    }
+
+    /**
+     * @depends testHideChildAndParent
+     */
+    public function testUnhideParentHiddenChild( $location )
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->hide( $location->id );
+        $handler->unhide( $location->parentId );
+
+        $this->assertFalse( $handler->load( $location->parentId )->hidden );
+        $this->assertFalse( $handler->load( $location->parentId )->invisible );
+        $this->assertTrue(  $handler->load( $location->id )->hidden );
+        $this->assertTrue(  $handler->load( $location->id )->invisible );
+    }
+
+    /**
+     * @depends testHideChildAndParent
+     */
+    public function testUnhideAll( $location )
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->unhide( $location->id );
+        $handler->unhide( $location->parentId );
+
+        $this->assertFalse( $handler->load( $location->parentId )->hidden );
+        $this->assertFalse( $handler->load( $location->parentId )->invisible );
+        $this->assertFalse( $handler->load( $location->id )->hidden );
+        $this->assertFalse( $handler->load( $location->id )->invisible );
     }
 
     public function testSwapLocations()
@@ -232,11 +305,11 @@ class LocationHandlerTest extends TestCase
         $handler->changeMainLocation( 12, 34 );
     }
 
-    public function testRemoveSubtree()
+    public function testMoveSubtree()
     {
         $handler = $this->getLocationHandler();
 
-        $handler->removeSubtree( 42 );
+        $handler->move( 69, 77 );
     }
 
     public function testCopySubtree()
@@ -247,5 +320,12 @@ class LocationHandlerTest extends TestCase
             $subtreeContentRows[0]["node_id"],
             $destinationData["node_id"]
         );
+    }
+
+    public function testRemoveSubtree()
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->removeSubtree( 42 );
     }
 }

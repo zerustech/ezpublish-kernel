@@ -182,7 +182,9 @@ class Handler implements BaseLocationHandler
      */
     public function hide( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $sourceNodeData = $this->locationGateway->getBasicNodeData( $id );
+
+        $this->locationGateway->hideSubtree( $sourceNodeData['path_string'] );
     }
 
     /**
@@ -193,7 +195,9 @@ class Handler implements BaseLocationHandler
      */
     public function unHide( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $sourceNodeData = $this->locationGateway->getBasicNodeData( $id );
+
+        $this->locationGateway->unhideSubtree( $sourceNodeData['path_string'] );
     }
 
     /**

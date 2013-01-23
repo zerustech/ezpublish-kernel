@@ -165,7 +165,7 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Update path strings to move nodes in the ezcontentobject_tree table
+     * Update path strings to move nodes in the ezcontent_location table
      *
      * This query can likely be optimized to use some more advanced string
      * operations, which then depend on the respective database.
@@ -188,7 +188,33 @@ class EzcDatabase extends Gateway
      */
     public function hideSubtree( $pathString )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'is_hidden' ),
+                $query->bindValue( 1 )
+            )->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'path_string' ),
+                    $query->bindValue( $pathString )
+                )
+            );
+        $query->prepare()->execute();
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'is_invisible' ),
+                $query->bindValue( 1 )
+            )->where(
+                $query->expr->like(
+                    $this->dbHandler->quoteColumn( 'path_string' ),
+                    $query->bindValue( $pathString . '%' )
+                )
+            );
+        $query->prepare()->execute();
     }
 
     /**
@@ -199,7 +225,107 @@ class EzcDatabase extends Gateway
      */
     public function unHideSubtree( $pathString )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        // Unhide the requested node
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'is_hidden' ),
+                $query->bindValue( 0 )
+            )
+            ->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'path_string' ),
+                    $query->bindValue( $pathString )
+                )
+            );
+        $query->prepare()->execute();
+
+        // Check if any parent nodes are explicitly hidden
+        $query = $this->dbHandler->createSelectQuery();
+        $query
+            ->select( $this->dbHandler->quoteColumn( 'path_string' ) )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->where(
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'is_hidden' ),
+                        $query->bindValue( 1 )
+                    ),
+                    $query->expr->in(
+                        $this->dbHandler->quoteColumn( 'id' ),
+                        array_filter( explode( '/', $pathString ) )
+                    )
+                )
+            );
+        $statement = $query->prepare();
+        $statement->execute();
+        if ( count( $statement->fetchAll( \PDO::FETCH_COLUMN ) ) )
+        {
+            // There are parent nodes set hidden, so that we can skip marking
+            // something visible again.
+            return;
+        }
+
+        // Find nodes of explicitly hidden subtrees in the subtree which
+        // should be unhidden
+        $query = $this->dbHandler->createSelectQuery();
+        $query
+            ->select( $this->dbHandler->quoteColumn( 'path_string' ) )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->where(
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'is_hidden' ),
+                        $query->bindValue( 1 )
+                    ),
+                    $query->expr->like(
+                        $this->dbHandler->quoteColumn( 'path_string' ),
+                        $query->bindValue( $pathString . '%' )
+                    )
+                )
+            );
+        $statement = $query->prepare();
+        $statement->execute();
+        $hiddenSubtrees = $statement->fetchAll( \PDO::FETCH_COLUMN );
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'is_invisible' ),
+                $query->bindValue( 0 )
+            );
+
+        // Build where expression selecting the nodes, which should be made
+        // visible again
+        $where = $query->expr->like(
+            $this->dbHandler->quoteColumn( 'path_string' ),
+            $query->bindValue( $pathString . '%' )
+        );
+        if ( count( $hiddenSubtrees ) )
+        {
+            $dbHandler = $this->dbHandler;
+            $where = $query->expr->lAnd(
+                $where,
+                $query->expr->lAnd(
+                    array_map(
+                        function ( $pathString ) use ( $query, $dbHandler )
+                        {
+                            return $query->expr->not(
+                                $query->expr->like(
+                                    $dbHandler->quoteColumn( 'path_string' ),
+                                    $query->bindValue( $pathString . '%' )
+                                )
+                            );
+                        },
+                        $hiddenSubtrees
+                    )
+                )
+            );
+        }
+        $query->where( $where );
+        $statement = $query->prepare()->execute();
     }
 
     /**
@@ -410,7 +536,7 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Deletes ezcontentobject_tree row for given $locationId (node_id)
+     * Deletes ezcontent_location row for given $locationId (id)
      *
      * @param mixed $locationId
      */
@@ -519,7 +645,7 @@ class EzcDatabase extends Gateway
     /**
      * Changes main location of content identified by given $contentId to location identified by given $locationId
      *
-     * Updates ezcontentobject_tree table for the given $contentId and eznode_assignment table for the given
+     * Updates ezcontent_location table for the given $contentId and eznode_assignment table for the given
      * $contentId, $parentLocationId and $versionNo
      *
      * @param mixed $contentId
