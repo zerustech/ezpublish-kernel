@@ -312,28 +312,65 @@ class LocationHandlerTest extends TestCase
         $this->assertEquals( null, $handler->load( $location->id )->mainLocationId );
     }
 
+    /**
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testSwapLocationsNotFound()
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->swap( 1337, 1338 );
+    }
+
     public function testSwapLocations()
     {
         $handler = $this->getLocationHandler();
 
-        $handler->swap( 70, 78 );
+        $handler->swap( 42, 43 );
+    }
+
+    /**
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testMoveSubtreeNotFound()
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->move( 1337, 1338 );
     }
 
     public function testMoveSubtree()
     {
         $handler = $this->getLocationHandler();
 
-        $handler->move( 69, 77 );
+        $handler->move( 42, 43 );
+    }
+
+    /**
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testCopySubtreeNotFound()
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->copySubtree( 1337, 1338 );
     }
 
     public function testCopySubtree()
     {
         $handler = $this->getLocationHandler();
 
-        $handler->copySubtree(
-            $subtreeContentRows[0]["node_id"],
-            $destinationData["node_id"]
-        );
+        $handler->copySubtree( 42, 43 );
+    }
+
+    /**
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testRemoveSubtreeNotFound()
+    {
+        $handler = $this->getLocationHandler();
+
+        $handler->removeSubtree( 1337 );
     }
 
     public function testRemoveSubtree()
