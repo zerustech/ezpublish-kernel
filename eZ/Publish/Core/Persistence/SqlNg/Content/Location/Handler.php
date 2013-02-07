@@ -213,7 +213,7 @@ class Handler implements BaseLocationHandler
      */
     public function swap( $locationId1, $locationId2 )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->locationGateway->swap( $locationId1, $locationId2 );
     }
 
     /**

@@ -341,7 +341,75 @@ class EzcDatabase extends Gateway
      */
     public function swap( $locationId1, $locationId2 )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query
+            ->select(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'content_id' ),
+                $this->dbHandler->quoteColumn( 'content_version_no' )
+            )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->where(
+                $query->expr->in(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    array( $locationId1, $locationId2 )
+                )
+            );
+        $statement = $query->prepare();
+        $statement->execute();
+        $contentObjects = array();
+        foreach ( $statement->fetchAll() as $row )
+        {
+            $contentObjects[$row['id']] = $row;
+        }
+
+        if ( !isset($contentObjects[$locationId1] ) )
+        {
+            throw new NotFound( 'location', $locationId1 );
+        }
+
+        if ( !isset($contentObjects[$locationId2] ) )
+        {
+            throw new NotFound( 'location', $locationId2 );
+        }
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'content_id' ),
+                $query->bindValue( $contentObjects[$locationId2]['content_id'] )
+            )
+            ->set(
+                $this->dbHandler->quoteColumn( 'content_version_no' ),
+                $query->bindValue( $contentObjects[$locationId2]['content_version_no'] )
+            )
+            ->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $query->bindValue( $locationId1 )
+                )
+            );
+        $query->prepare()->execute();
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'content_id' ),
+                $query->bindValue( $contentObjects[$locationId1]['content_id'] )
+            )
+            ->set(
+                $this->dbHandler->quoteColumn( 'content_version_no' ),
+                $query->bindValue( $contentObjects[$locationId1]['content_version_no'] )
+            )
+            ->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $query->bindValue( $locationId2 )
+                )
+            );
+        $query->prepare()->execute();
     }
 
     /**
