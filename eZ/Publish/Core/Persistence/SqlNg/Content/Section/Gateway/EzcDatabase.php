@@ -221,6 +221,19 @@ class EzcDatabase extends Gateway
      */
     public function assignSectionToContent( $sectionId, $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'section_id' ),
+            $query->bindValue( $sectionId, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $query->prepare()->execute();
     }
 }

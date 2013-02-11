@@ -13,6 +13,7 @@ use eZ\Publish\SPI\Persistence\Content\Section\Handler as BaseSectionHandler;
 use eZ\Publish\SPI\Persistence;
 
 use eZ\Publish\Core\Base\Exceptions\NotFoundException as NotFound;
+use eZ\Publish\Core\Base\Exceptions\BadStateException;
 
 /**
  * Section Handler
@@ -139,7 +140,18 @@ class Handler implements BaseSectionHandler
      */
     public function delete( $id )
     {
-        $this->sectionGateway->deleteSection( $id );
+        try
+        {
+            $this->sectionGateway->deleteSection( $id );
+        }
+        catch ( \PDOException $e )
+        {
+            throw new BadStateException(
+                "section",
+                "Depending objects exist",
+                $e
+            );
+        }
     }
 
     /**
@@ -150,7 +162,7 @@ class Handler implements BaseSectionHandler
      */
     public function assign( $sectionId, $contentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->sectionGateway->assignSectionToContent( $sectionId, $contentId );
     }
 
     /**

@@ -80,7 +80,7 @@ class SectionHandlerTest extends TestCase
     {
         $handler = $this->getSectionHandler();
 
-        $section = $handler->update( 1337, '', '' );
+        $handler->update( 1337, '', '' );
     }
 
     /**
@@ -105,7 +105,7 @@ class SectionHandlerTest extends TestCase
     {
         $handler = $this->getSectionHandler();
 
-        $loaded = $handler->load( 1337 );
+        $handler->load( 1337 );
     }
 
     /**
@@ -145,7 +145,7 @@ class SectionHandlerTest extends TestCase
     {
         $handler = $this->getSectionHandler();
 
-        $loaded = $handler->loadByIdentifier( 'not_existing' );
+        $handler->loadByIdentifier( 'not_existing' );
     }
 
     /**
@@ -172,27 +172,27 @@ class SectionHandlerTest extends TestCase
     }
 
     /**
-     * @depends testDelete
+     * @depends testCreate
+     */
+    public function testAssign()
+    {
+        $handler = $this->getSectionHandler();
+
+        $section = $this->getSection();
+        $content = $this->getContent();
+        $handler->assign( $section->id, $content->versionInfo->contentInfo->id );
+
+        return $section;
+    }
+
+    /**
+     * @depends testAssign
      * @expectedException eZ\Publish\Core\Base\Exceptions\BadStateException
      */
     public function testDeleteBadState( $section )
     {
-        $this->markTestIncomplete( "Requires an existing content obkject" );
-
         $handler = $this->getSectionHandler();
 
         $handler->delete( $section->id );
-    }
-
-    /**
-     * @depends testCreate
-     */
-    public function testAssign( $section )
-    {
-        $this->markTestIncomplete( "Requires an existing content obkject" );
-
-        $handler = $this->getSectionHandler();
-
-        $result = $handler->assign( $section->id, $this->getContent()->id );
     }
 }
