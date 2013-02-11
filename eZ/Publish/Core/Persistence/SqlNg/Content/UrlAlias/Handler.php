@@ -75,12 +75,13 @@ class Handler implements UrlAliasHandlerInterface
      * @param array $configuration
      */
     public function __construct(
+    /*
         Gateway $gateway,
         Mapper $mapper,
         LocationGateway $locationGateway,
         LanguageHandler $languageHandler,
         TransformationProcessor $transformationProcessor,
-        array $configuration = array()
+        array $configuration = array() */
     )
     {
         throw new \RuntimeException( "@TODO: Implement" );

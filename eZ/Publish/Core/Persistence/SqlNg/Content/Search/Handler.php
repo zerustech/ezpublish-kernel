@@ -73,7 +73,7 @@ class Handler extends BaseSearchHandler
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper $contentMapper
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler $fieldHandler
      */
-    public function __construct( Gateway $gateway, ContentMapper $contentMapper, FieldHandler $fieldHandler )
+    public function __construct( /* Gateway $gateway, ContentMapper $contentMapper, FieldHandler $fieldHandler */ )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
