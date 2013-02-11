@@ -145,17 +145,6 @@ class ContentTypeHandlerTest extends TestCase
     }
 
     /**
-     * @depends testDeleteGroupSuccess
-     */
-    public function testDeleteNonEmptyGroup( $group )
-    {
-        $this->markTestIncomplete( "Requires creation of a type first." );
-
-        $handler = $this->getHandler();
-        $handler->deleteGroup( $group->id );
-    }
-
-    /**
      * @depends testCreateGroup
      */
     public function testCreate()
@@ -221,6 +210,16 @@ class ContentTypeHandlerTest extends TestCase
         );
         $this->assertNotNull( $type->id );
         return $type;
+    }
+
+    /**
+     * @depends testCreate
+     * @expectedException eZ\Publish\Core\Base\Exceptions\BadStateException
+     */
+    public function testDeleteNonEmptyGroup( $type )
+    {
+        $handler = $this->getHandler();
+        $handler->deleteGroup( $type->groupIds[0] );
     }
 
     /**

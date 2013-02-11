@@ -92,7 +92,18 @@ class Handler implements BaseContentTypeHandler
      */
     public function deleteGroup( $groupId )
     {
-        $this->contentTypeGateway->deleteGroup( $groupId );
+        try
+        {
+            $this->contentTypeGateway->deleteGroup( $groupId );
+        }
+        catch ( \RuntimeException $e )
+        {
+            throw new BadStateException(
+                "group",
+                "Depending objects exist",
+                $e
+            );
+        }
     }
 
     /**
