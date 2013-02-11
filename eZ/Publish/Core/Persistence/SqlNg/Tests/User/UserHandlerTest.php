@@ -499,72 +499,99 @@ class UserHandlerTest extends TestCase
     {
         $handler = $this->getUserHandler();
 
-        $this->markTestIncomplete( "This test requires creation of content objects first." );
-
         $role = new Persistence\User\Role();
         $role->identifier = 'Test';
 
         $handler->createRole( $role );
 
-        $user = $this->getValidUser();
-        $handler->assignRole( $user->id, $role->id );
+        $content = $this->getContent();
+        $handler->assignRole( $content->versionInfo->contentInfo->id, $role->id );
 
-        // @TODO: Assert role assignment
+        return array( $content, $role );
+    }
+
+    /**
+     * @depends testAddRoleToUser
+     */
+    public function testLoadRoleAssignments( array $data )
+    {
+        list( $content, $role ) = $data;
+        $role->groupIds[] = $content->versionInfo->contentInfo->id;
+
+        $handler = $this->getUserHandler();
+
+        $this->assertEquals(
+            array(
+                new Persistence\User\RoleAssignment( array(
+                    'contentId' => $content->versionInfo->contentInfo->id,
+                    'role' => $role,
+                ) ),
+            ),
+            $handler->loadRoleAssignmentsByGroupId( $content->versionInfo->contentInfo->id )
+        );
+    }
+
+    /**
+     * @depends testAddRoleToUser
+     */
+    public function testRemoveUserRoleAssociation( array $data )
+    {
+        list( $content, $role ) = $data;
+        $handler = $this->getUserHandler();
+
+        $handler->unAssignRole( $content->versionInfo->contentInfo->id, $role->id );
+        $this->assertEquals(
+            array(),
+            $handler->loadRoleAssignmentsByGroupId( $content->versionInfo->contentInfo->id )
+        );
     }
 
     public function testAddRoleToUserWithLimitation()
     {
         $handler = $this->getUserHandler();
 
-        $this->markTestIncomplete( "This test requires creation of content objects first." );
-
         $role = new Persistence\User\Role();
         $role->identifier = 'Test';
         $role->policies[] = $policy = new Persistence\User\Policy();
+
         $policy->module = 'foo';
         $policy->function = 'bar';
+        $policy->limitations = '*';
 
-        $handler->createRole( $role );
+        $role = $handler->createRole( $role );
 
-        $user = $this->getValidUser();
+        $content = $this->getContent();
         $handler->assignRole(
-            $user->id,
+            $content->versionInfo->contentInfo->id,
             $role->id,
             array(
                 'Subtree' => array( '/1' ),
             )
         );
 
-        // @TODO: Fetch policies for user
+        return array( $content, $role );
     }
 
-    public function testRemoveUserRoleAssociation()
+    /**
+     * @depends testAddRoleToUserWithLimitation
+     */
+    public function testLoadRoleAssignmentsWithLimitation( array $data )
     {
+        list( $content, $role ) = $data;
+        $role->groupIds[] = $content->versionInfo->contentInfo->id;
+
         $handler = $this->getUserHandler();
 
-        $this->markTestIncomplete( "This test requires creation of content objects first." );
-
-        $role = new Persistence\User\Role();
-        $role->identifier = 'Test';
-        $role->policies[] = $policy = new Persistence\User\Policy();
-        $policy->module = 'foo';
-        $policy->function = 'bar';
-
-        $handler->createRole( $role );
-
-        $handler->create( $user = $this->getValidUser() );
-
-        $handler->assignRole(
-            $user->id,
-            $role->id,
+        $this->assertEquals(
             array(
-                'Subtree' => array( '/1', '/1/2' ),
-                'Foo' => array( 'Bar' ),
-            )
+                new Persistence\User\RoleAssignment( array(
+                    'contentId' => $content->versionInfo->contentInfo->id,
+                    'role' => $role,
+                    'limitationIdentifier' => 'Subtree',
+                    'values' => array( '/1' ),
+                ) ),
+            ),
+            $handler->loadRoleAssignmentsByGroupId( $content->versionInfo->contentInfo->id )
         );
-
-        $handler->unAssignRole( $user->id, $role->id );
-
-        // @TODO: Fetch policies for user
     }
 }

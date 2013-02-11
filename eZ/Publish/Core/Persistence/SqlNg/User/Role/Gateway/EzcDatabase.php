@@ -211,7 +211,64 @@ class EzcDatabase extends Gateway
      */
     public function loadRolesForContentObjects( $contentIds )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->aliasedColumn( $query, 'content_id', 'ezrole_content_rel' ),
+            $this->dbHandler->aliasedColumn( $query, 'id', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'name', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'description', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'id', 'ezpolicy' ),
+            $this->dbHandler->aliasedColumn( $query, 'function_name', 'ezpolicy' ),
+            $this->dbHandler->aliasedColumn( $query, 'module_name', 'ezpolicy' ),
+            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezpolicy_limitation' ),
+            $this->dbHandler->aliasedColumn( $query, 'value', 'ezpolicy_limitation_value' )
+        )->from(
+            $query->alias(
+                $this->dbHandler->quoteTable( 'ezrole_content_rel' ),
+                $this->dbHandler->quoteIdentifier( 'ezrole_content_rel_search' )
+            )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( 'ezrole' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id', 'ezrole' ),
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole_content_rel_search' )
+            )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( 'ezrole_content_rel' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole_content_rel' ),
+                $this->dbHandler->quoteColumn( 'id', 'ezrole' )
+            )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( 'ezpolicy' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'role_id', 'ezpolicy' ),
+                $this->dbHandler->quoteColumn( 'id', 'ezrole' )
+            )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( 'ezpolicy_limitation' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'policy_id', 'ezpolicy_limitation' ),
+                $this->dbHandler->quoteColumn( 'id', 'ezpolicy' )
+            )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( 'ezpolicy_limitation_value' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'limitation_id', 'ezpolicy_limitation_value' ),
+                $this->dbHandler->quoteColumn( 'id', 'ezpolicy_limitation' )
+            )
+        )->where(
+            $query->expr->in(
+                $this->dbHandler->quoteColumn( 'content_id', 'ezrole_content_rel_search' ),
+                $contentIds
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -224,7 +281,41 @@ class EzcDatabase extends Gateway
      */
     public function loadRoleAssignmentsByGroupId( $groupId, $inherited = false )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'content_id' ),
+            $this->dbHandler->quoteColumn( 'limit_identifier' ),
+            $this->dbHandler->quoteColumn( 'limit_value' ),
+            $this->dbHandler->quoteColumn( 'role_id' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezrole_content_rel' )
+        );
+
+        if ( $inherited )
+        {
+            $groupIds = $this->fetchUserGroups( $groupId );
+            $groupIds[] = $groupId;
+            $query->where(
+                $query->expr->in(
+                    $this->dbHandler->quoteColumn( 'content_id' ),
+                    $groupIds
+                )
+            );
+        }
+        else
+        {
+            $query->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'content_id' ),
+                    $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+                )
+            );
+        }
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -320,6 +411,7 @@ class EzcDatabase extends Gateway
             );
         $query->prepare()->execute();
 
+        $policy->roleId = $roleId;
         $policy->id = $this->dbHandler->lastInsertId(
             $this->dbHandler->getSequenceName( 'ezpolicy', 'id' )
         );

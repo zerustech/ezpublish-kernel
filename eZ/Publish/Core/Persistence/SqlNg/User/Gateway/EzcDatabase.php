@@ -261,7 +261,29 @@ class EzcDatabase extends Gateway
      */
     public function assignRole( $contentId, $roleId, array $limitation )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        foreach ( $limitation as $identifier => $values )
+        {
+            foreach ( $values as $value )
+            {
+                $query = $this->dbHandler->createInsertQuery();
+                $query
+                    ->insertInto( $this->dbHandler->quoteTable( 'ezrole_content_rel' ) )
+                    ->set(
+                        $this->dbHandler->quoteColumn( 'content_id' ),
+                        $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                    )->set(
+                        $this->dbHandler->quoteColumn( 'role_id' ),
+                        $query->bindValue( $roleId, null, \PDO::PARAM_INT )
+                    )->set(
+                        $this->dbHandler->quoteColumn( 'limit_identifier' ),
+                        $query->bindValue( $identifier )
+                    )->set(
+                        $this->dbHandler->quoteColumn( 'limit_value' ),
+                        $query->bindValue( $value )
+                    );
+                $query->prepare()->execute();
+            }
+        }
     }
 
     /**
@@ -272,6 +294,21 @@ class EzcDatabase extends Gateway
      */
     public function removeRole( $contentId, $roleId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createDeleteQuery();
+        $query
+            ->deleteFrom( $this->dbHandler->quoteTable( 'ezrole_content_rel' ) )
+            ->where(
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'content_id' ),
+                        $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                    ),
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'role_id' ),
+                        $query->bindValue( $roleId, null, \PDO::PARAM_INT )
+                    )
+                )
+            );
+        $query->prepare()->execute();
     }
 }

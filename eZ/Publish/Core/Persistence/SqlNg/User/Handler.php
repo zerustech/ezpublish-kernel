@@ -314,7 +314,8 @@ class Handler implements BaseUserHandler
      */
     public function assignRole( $contentId, $roleId, array $limitation = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $limitation = $limitation ?: array( '' => array( '' ) );
+        $this->userGateway->assignRole( $contentId, $roleId, $limitation );
     }
 
     /**
@@ -325,7 +326,7 @@ class Handler implements BaseUserHandler
      */
     public function unAssignRole( $contentId, $roleId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->userGateway->removeRole( $contentId, $roleId );
     }
 
     /**
@@ -339,7 +340,7 @@ class Handler implements BaseUserHandler
      */
     public function loadRoleAssignmentsByRoleId( $roleId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \eZ\Publish\API\Repository\Exceptions\NotImplementedException( __METHOD__ );
     }
 
     /**
@@ -355,6 +356,20 @@ class Handler implements BaseUserHandler
      */
     public function loadRoleAssignmentsByGroupId( $groupId, $inherit = false )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $data = $this->roleGateway->loadRoleAssignmentsByGroupId( $groupId, $inherit );
+
+        if ( empty( $data ) )
+        {
+            return array();
+        }
+
+        $contentIds = array();
+        foreach ( $data as $item )
+        {
+            $contentIds[] = $item['content_id'];
+        }
+
+        $roleData = $this->roleGateway->loadRolesForContentObjects( $contentIds );
+        return $this->mapper->mapRoleAssignments( $data, $roleData );
     }
 }

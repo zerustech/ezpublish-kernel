@@ -178,6 +178,57 @@ class Mapper
      */
     public function mapRoleAssignments( array $data, array $roleData )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $roles = $this->mapRoles( $roleData, true );
+
+        $roleAssignmentData = array();
+        foreach ( $data as $row )
+        {
+            $roleId = (int)$row['role_id'];
+            $contentId = (int)$row['content_id'];
+             // if user already have full access to a role, continue
+            if ( isset( $roleAssignmentData[$roleId][$contentId] )
+              && $roleAssignmentData[$roleId][$contentId] instanceof RoleAssignment )
+                continue;
+
+            $limitIdentifier = $row['limit_identifier'];
+            if ( !empty( $limitIdentifier ) )
+            {
+                if ( !isset( $roleAssignmentData[$roleId][$contentId][$limitIdentifier] ) )
+                {
+                    $roleAssignmentData[$roleId][$contentId][$limitIdentifier] = new RoleAssignment(
+                        array(
+                            'role' => $roles[$roleId],
+                            'contentId' => $contentId,
+                            'limitationIdentifier' => $limitIdentifier,
+                            'values' => array( $row['limit_value'] )
+                        )
+                    );
+                }
+                else
+                {
+                    $roleAssignmentData[$roleId][$contentId][$limitIdentifier]->values[] = $row['limit_value'];
+                }
+            }
+            else
+            {
+                $roleAssignmentData[$roleId][$contentId] = new RoleAssignment(
+                    array(
+                        'role' => $roles[$roleId],
+                        'contentId' => $contentId
+                    )
+                );
+            }
+        }
+
+        $roleAssignments = array();
+        array_walk_recursive(
+            $roleAssignmentData,
+            function( $roleAssignment ) use ( &$roleAssignments )
+            {
+                $roleAssignments[] = $roleAssignment;
+            }
+        );
+
+        return $roleAssignments;
     }
 }
