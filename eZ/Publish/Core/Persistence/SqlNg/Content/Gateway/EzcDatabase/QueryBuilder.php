@@ -171,7 +171,9 @@ class QueryBuilder
                     $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_location' ),
                     $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_version' )
                 ),
-                $this->dbHandler->quoteColumn( 'main_id', 'ezcontent_location' ) . ' IS NULL'
+                $query->expr->isNull(
+                    $this->dbHandler->quoteColumn( 'main_id', 'ezcontent_location' )
+                )
             )
         );
 
