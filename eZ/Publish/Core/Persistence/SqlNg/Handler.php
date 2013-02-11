@@ -483,6 +483,10 @@ class Handler implements HandlerInterface
         if ( !isset( $this->trashHandler ) )
         {
             $this->trashHandler = new Content\Location\Trash\Handler(
+                $this->locationHandler(),
+                $this->getLocationGateway(),
+                new Content\Location\Mapper(),
+                $this->contentHandler()
             );
         }
 
