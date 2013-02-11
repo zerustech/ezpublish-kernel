@@ -222,7 +222,7 @@ class Mapper
         $createStruct->modified = $type->modified;
         $createStruct->creatorId = $type->creatorId;
         $createStruct->modifierId = $type->modifierId;
-        $createStruct->remoteId = $type->remoteId;
+        $createStruct->remoteId = md5( uniqid( get_class( $this ), true ) );
         $createStruct->urlAliasSchema = $type->urlAliasSchema;
         $createStruct->nameSchema = $type->nameSchema;
         $createStruct->isContainer = $type->isContainer;
