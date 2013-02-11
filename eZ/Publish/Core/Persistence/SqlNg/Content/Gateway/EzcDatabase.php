@@ -490,7 +490,8 @@ class EzcDatabase extends Gateway
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
             "ezcontent.*",
-            $this->dbHandler->aliasedColumn( $query, 'main_id', 'ezcontent_location' )
+            $this->dbHandler->aliasedColumn( $query, 'main_id', 'ezcontent_location' ),
+            $this->dbHandler->aliasedColumn( $query, 'id', 'ezcontent_location' )
         )->from(
             $this->dbHandler->quoteTable( "ezcontent" )
         )->leftJoin(

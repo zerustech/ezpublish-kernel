@@ -237,7 +237,7 @@ class Mapper
         $contentInfo->mainLanguageCode = $this->languageHandler->load( $row["{$prefix}initial_language_id"] )->languageCode;
         $contentInfo->alwaysAvailable = (bool)$row["{$prefix}always_available"];
         $contentInfo->remoteId = $row["{$prefix}remote_id"];
-        $contentInfo->mainLocationId = $row["ezcontent_location_main_id"];
+        $contentInfo->mainLocationId = $row["ezcontent_location_main_id"] ?: $row['ezcontent_location_id'];
 
         $names = json_decode( $row["{$prefix}name_list"], true );
         $contentInfo->name = $names[$contentInfo->mainLanguageCode];

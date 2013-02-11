@@ -68,7 +68,8 @@ class QueryBuilder
             $this->dbHandler->aliasedColumn( $query, 'status', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'fields', 'ezcontent_version' ),
             // Content object locations
-            $this->dbHandler->aliasedColumn( $query, 'main_id', 'ezcontent_location' )
+            $this->dbHandler->aliasedColumn( $query, 'main_id', 'ezcontent_location' ),
+            $this->dbHandler->aliasedColumn( $query, 'id', 'ezcontent_location' )
         )->from(
             $this->dbHandler->quoteTable( 'ezcontent' )
         )->leftJoin(
@@ -153,7 +154,8 @@ class QueryBuilder
             $this->dbHandler->aliasedColumn( $query, 'status', 'ezcontent_version' ),
             $this->dbHandler->aliasedColumn( $query, 'fields', 'ezcontent_version' ),
             // Content object locations
-            $this->dbHandler->aliasedColumn( $query, 'main_id', 'ezcontent_location' )
+            $this->dbHandler->aliasedColumn( $query, 'main_id', 'ezcontent_location' ),
+            $this->dbHandler->aliasedColumn( $query, 'id', 'ezcontent_location' )
         )->from(
             $this->dbHandler->quoteTable( 'ezcontent_version' )
         )->leftJoin(
@@ -169,10 +171,7 @@ class QueryBuilder
                     $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_location' ),
                     $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_version' )
                 ),
-                $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'main_id', 'ezcontent_location' ),
-                    $this->dbHandler->quoteColumn( 'id', 'ezcontent_location' )
-                )
+                $this->dbHandler->quoteColumn( 'main_id', 'ezcontent_location' ) . ' IS NULL'
             )
         );
 
