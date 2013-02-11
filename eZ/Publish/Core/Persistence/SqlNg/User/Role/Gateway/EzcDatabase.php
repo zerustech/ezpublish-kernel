@@ -103,7 +103,7 @@ class EzcDatabase extends Gateway
         )->leftJoin(
             $this->dbHandler->quoteTable( 'ezrole_content_rel' ),
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'content_id', 'ezrole_content_rel' ),
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole_content_rel' ),
                 $this->dbHandler->quoteColumn( 'id', 'ezrole' )
             )
         )->leftJoin(

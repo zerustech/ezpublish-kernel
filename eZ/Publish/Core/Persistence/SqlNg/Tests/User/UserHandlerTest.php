@@ -251,19 +251,17 @@ class UserHandlerTest extends TestCase
     {
         $handler = $this->getUserHandler();
 
-        $this->markTestIncomplete( "This test requires creation of content objects first." );
-
         $role = new Persistence\User\Role();
         $role->identifier = 'GroupTest';
 
         $role = $handler->createRole( $role );
 
-        $handler->assignRole( 23, $role->id );
-        $handler->assignRole( 42, $role->id );
+        $content = $this->getContent();
+        $handler->assignRole( $content->versionInfo->contentInfo->id, $role->id );
 
         $loaded = $handler->loadRole( $role->id );
         $this->assertEquals(
-            array( 23, 42 ),
+            array( $content->versionInfo->contentInfo->id ),
             $loaded->groupIds
         );
 
@@ -308,15 +306,19 @@ class UserHandlerTest extends TestCase
     {
         $handler = $this->getUserHandler();
 
-        $this->markTestIncomplete( "This test requires creation of content objects first." );
-
         $role = new Persistence\User\Role();
         $role->identifier = 'PoliciesGroupTest';
 
         $role = $handler->createRole( $role );
 
-        $handler->assignRole( 23, $role->id );
-        $handler->assignRole( 42, $role->id );
+        $policy = new Persistence\User\Policy();
+        $policy->module = 'foo';
+        $policy->function = 'bar';
+
+        $handler->addPolicy( $role->id, $policy );
+
+        $content = $this->getContent();
+        $handler->assignRole( $content->versionInfo->contentInfo->id, $role->id );
 
         $loaded = $handler->loadRole( $role->id );
         $this->assertPropertiesCorrect(
@@ -329,7 +331,7 @@ class UserHandlerTest extends TestCase
         );
 
         $this->assertEquals(
-            array( 23, 42 ),
+            array( $content->versionInfo->contentInfo->id ),
             $loaded->groupIds
         );
 
