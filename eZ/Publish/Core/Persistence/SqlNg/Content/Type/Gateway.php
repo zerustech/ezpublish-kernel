@@ -179,6 +179,15 @@ abstract class Gateway
     abstract public function updateType( $typeId, $status, UpdateStruct $updateStruct );
 
     /**
+     * Update a type status
+     *
+     * @param mixed $typeId
+     *
+     * @return void
+     */
+    abstract public function publish( $typeId );
+
+    /**
      * Loads an array with data about $typeId in $status.
      *
      * @param mixed $typeId

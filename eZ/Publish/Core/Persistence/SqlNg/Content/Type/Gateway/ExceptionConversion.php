@@ -445,6 +445,29 @@ class ExceptionConversion extends Gateway
     }
 
     /**
+     * Update a type status
+     *
+     * @param mixed $typeId
+     *
+     * @return void
+     */
+    public function publish( $typeId )
+    {
+        try
+        {
+            return $this->innerGateway->publish( $typeId );
+        }
+        catch ( \ezcDbException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+        catch ( \PDOException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+    }
+
+    /**
      * Loads an array with data about $typeId in $status.
      *
      * @param mixed $typeId

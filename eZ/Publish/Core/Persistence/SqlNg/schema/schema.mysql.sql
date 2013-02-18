@@ -20,6 +20,7 @@ CREATE TABLE ezcontent_language (
 DROP TABLE IF EXISTS ezcontenttype;
 CREATE TABLE ezcontenttype (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `source_id` INT NULL,
     `identifier` VARCHAR(50) NOT NULL DEFAULT '',
     `initial_language_id` INT NOT NULL DEFAULT '0',
     `always_available` INT NOT NULL DEFAULT '0',
@@ -36,8 +37,9 @@ CREATE TABLE ezcontenttype (
     `sort_order` INT NOT NULL DEFAULT '1',
     `status` INT NOT NULL DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id, status),
+    PRIMARY KEY (id),
     UNIQUE KEY ezcontenttype_remote_id (remote_id),
+    FOREIGN KEY (source_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE,
     FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
     FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
     FOREIGN KEY (modifier_id) REFERENCES ezuser(id) ON DELETE RESTRICT

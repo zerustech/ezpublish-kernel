@@ -204,18 +204,19 @@ class EzcDatabase extends Gateway
      *
      * @return mixed Type ID
      */
-    public function insertType( Type $type, $typeId = null )
+    public function insertType( Type $type, $sourceTypeId = null )
     {
         $query = $this->dbHandler->createInsertQuery();
         $query->insertInto( $this->dbHandler->quoteTable( 'ezcontenttype' ) );
         $query->set(
             $this->dbHandler->quoteColumn( 'id' ),
-            isset( $typeId ) ?
-                $query->bindValue( $typeId, null, \PDO::PARAM_INT ) :
-                $this->dbHandler->getAutoIncrementValue( 'ezcontenttype', 'id' )
+            $this->dbHandler->getAutoIncrementValue( 'ezcontenttype', 'id' )
         )->set(
             $this->dbHandler->quoteColumn( 'status' ),
             $query->bindValue( $type->status, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'source_id' ),
+            $query->bindValue( $sourceTypeId, null, \PDO::PARAM_INT )
         )->set(
             $this->dbHandler->quoteColumn( 'created' ),
             $query->bindValue( $type->created, null, \PDO::PARAM_INT )
@@ -702,6 +703,112 @@ class EzcDatabase extends Gateway
         {
             throw new NotFound( 'type', $typeId );
         }
+    }
+
+    /**
+     * Get source ID for type
+     *
+     * @param string $typeId
+     * @return mixed
+     */
+    protected function getTypeSourceId( $typeId )
+    {
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'source_id' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontenttype' )
+        );
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+            )
+        );
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        $data = $stmt->fetchAll( \PDO::FETCH_ASSOC );
+        return $data[0]['source_id'] ?: null;
+    }
+
+    /**
+     * Update a type status
+     *
+     * @param mixed $typeId
+     * @param int $status
+     *
+     * @return void
+     */
+    public function publish( $typeId )
+    {
+        $sourceId = $this->getTypeSourceId( $typeId );
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontenttype' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( Type::STATUS_DEFINED, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'source_id' ),
+            $query->bindValue( null, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'type', $typeId );
+        }
+
+        if ( !$sourceId )
+        {
+            return;
+        }
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'contenttype_id' ),
+            $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'contenttype_id' ),
+                    $query->bindValue( $sourceId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontenttype_group_rel' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'contenttype_id' ),
+            $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'contenttype_id' ),
+                    $query->bindValue( $sourceId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        $this->delete( $sourceId, Type::STATUS_DEFINED );
     }
 
     /**

@@ -325,23 +325,6 @@ class ContentTypeHandlerTest extends TestCase
     /**
      * @depends testCreate
      */
-    public function testCreateDraft( $type )
-    {
-        $handler = $this->getHandler();
-        $typeDraft = $handler->createDraft(
-            $this->getUser()->id,
-            $type->id
-        );
-
-        $this->assertInstanceOf(
-            'eZ\\Publish\\SPI\\Persistence\\Content\\Type',
-            $typeDraft
-        );
-    }
-
-    /**
-     * @depends testCreate
-     */
     public function testCopy( $type )
     {
         $handler = $this->getHandler();
@@ -473,27 +456,36 @@ class ContentTypeHandlerTest extends TestCase
     /**
      * @depends testCreate
      */
+    public function testCreateDraft( $type )
+    {
+        $handler = $this->getHandler();
+        $typeDraft = $handler->createDraft(
+            $this->getUser()->id,
+            $type->id
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\Type',
+            $typeDraft
+        );
+
+        return $typeDraft;
+    }
+
+    /**
+     * @depends testCreateDraft
+     */
     public function testPublish( $type )
     {
-        $this->markTestIncomplete( "Discuss how type updates should be handled." );
-
         $handler = $this->getHandler();
         $handler->publish( $type->id );
+
+        $type->status = Persistence\Content\Type::STATUS_DEFINED;
+        return $type;
     }
 
     /**
-     * @depends testCreate
-     */
-    public function testPublishNoOldType( $type )
-    {
-        $this->markTestIncomplete( "Discuss how type updates should be handled." );
-
-        $handler = $this->getHandler();
-        $handler->publish( $type->id );
-    }
-
-    /**
-     * @depends testCreate
+     * @depends testPublish
      */
     public function testDelete( $type )
     {
@@ -523,9 +515,10 @@ class ContentTypeHandlerTest extends TestCase
      */
     public function testDeleteThrowsBadStateException()
     {
-        $this->markTestIncomplete( "Requires creation of content." );
+        $this->getContent();
+        $type = $this->getContentType();
 
         $handler = $this->getHandler();
-        $res = $handler->delete( 23, 0 );
+        $handler->delete( $type->id, $type->status );
     }
 }

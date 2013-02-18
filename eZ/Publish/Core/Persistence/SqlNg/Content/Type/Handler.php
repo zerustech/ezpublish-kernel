@@ -270,7 +270,7 @@ class Handler implements BaseContentTypeHandler
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Type
      */
-    protected function internalCreate( CreateStruct $createStruct, $contentTypeId = null )
+    protected function internalCreate( CreateStruct $createStruct, $sourceTypeId = null )
     {
         foreach ( $createStruct->fieldDefinitions as $fieldDef )
         {
@@ -289,7 +289,7 @@ class Handler implements BaseContentTypeHandler
 
         $contentType->id = $this->contentTypeGateway->insertType(
             $contentType,
-            $contentTypeId
+            $sourceTypeId
         );
 
         foreach ( $contentType->groupIds as $groupId )
@@ -341,9 +341,20 @@ class Handler implements BaseContentTypeHandler
      */
     public function delete( $contentTypeId, $status )
     {
-        $this->contentTypeGateway->delete(
-            $contentTypeId, $status
-        );
+        try
+        {
+            $this->contentTypeGateway->delete(
+                $contentTypeId, $status
+            );
+        }
+        catch ( \RuntimeException $e )
+        {
+            throw new BadStateException(
+                "type",
+                "Depending objects exist",
+                $e
+            );
+        }
 
         return true;
     }
@@ -553,6 +564,6 @@ class Handler implements BaseContentTypeHandler
      */
     public function publish( $contentTypeId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $toType = $this->contentTypeGateway->publish( $contentTypeId );
     }
 }
