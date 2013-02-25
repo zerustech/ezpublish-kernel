@@ -378,7 +378,7 @@ class ContentHandlerTest extends TestCase
     {
         $handler = $this->getContentHandler();
 
-        $this->getContentHandler()->removeRelation( $relation->id );
+        $this->getContentHandler()->removeRelation( $relation->id, $relation->type );
 
         return $relation;
     }
@@ -391,7 +391,7 @@ class ContentHandlerTest extends TestCase
     {
         $handler = $this->getContentHandler();
 
-        $this->getContentHandler()->removeRelation( $relation->id );
+        $this->getContentHandler()->removeRelation( $relation->id, $relation->type );
     }
 
     /**

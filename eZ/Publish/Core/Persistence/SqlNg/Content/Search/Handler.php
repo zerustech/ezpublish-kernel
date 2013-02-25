@@ -136,5 +136,18 @@ class Handler extends BaseSearchHandler
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
+
+    /**
+     * Deletes a content object from the index
+     *
+     * @param int $contentID
+     * @param int|null $versionID
+     *
+     * @return void
+     */
+    public function deleteContent( $contentID, $versionID = null )
+    {
+        throw new \RuntimeException("Not implemented, yet.");
+    }
 }
 
