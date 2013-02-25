@@ -384,7 +384,7 @@ $userContent = $spi->contentHandler()->create( $usersContentCreate );
 $userContent = $spi->contentHandler()->publish(
     $userContent->versionInfo->id,
     $userContent->versionInfo->versionNo,
-    new MetadataUpdateStruct()
+    new eZ\Publish\SPI\Persistence\Content\MetadataUpdateStruct()
 );
 
 // Home location:
@@ -456,7 +456,7 @@ $homeContent = $spi->contentHandler()->create( $homeContentCreate );
 $homeContent = $spi->contentHandler()->publish(
     $homeContent->versionInfo->id,
     $homeContent->versionInfo->versionNo,
-    new MetadataUpdateStruct()
+    new eZ\Publish\SPI\Persistence\Content\MetadataUpdateStruct()
 );
 
 function getFieldDefinition( $type, $position )
