@@ -2,7 +2,7 @@
 /**
  * File contains: eZ\Publish\Core\Persistence\Legacy\Tests\HandlerTest class
  *
- * @copyright Copyright (C) 1999-2012 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  */
@@ -56,13 +56,13 @@ class RelationListIntegrationTest extends BaseIntegrationTest
     {
         $handler = $this->getHandler();
 
+        $handler->getFieldTypeRegistry()->register(
+            'ezobjectrelationlist',
+            new FieldType\RelationList\Type()
+        );
         $handler->getStorageRegistry()->register(
             'ezobjectrelationlist',
-            new FieldType\Relation\RelationStorage(
-                array(
-                    'LegacyStorage' => new FieldType\RelationList\RelationListStorage\Gateway\LegacyStorage(),
-                )
-            )
+            new FieldType\NullStorage()
         );
         $handler->getFieldValueConverterRegistry()->register(
             'ezobjectrelationlist',
@@ -122,7 +122,7 @@ class RelationListIntegrationTest extends BaseIntegrationTest
         return new Content\FieldValue(
             array(
                 'data'         => array( 'destinationContentIds' => array( 4 ) ),
-                'externalData' => array( 'destinationContentIds' => array( 4 ) ),
+                'externalData' => null,
                 'sortKey'      => null,
             )
         );
@@ -166,7 +166,7 @@ class RelationListIntegrationTest extends BaseIntegrationTest
         return new Content\FieldValue(
             array(
                 'data'         => array( 'destinationContentIds' => array( 11 ) ),
-                'externalData' => array( 'destinationContentIds' => array( 11 ) ),
+                'externalData' => null,
                 'sortKey'      => null,
             )
         );

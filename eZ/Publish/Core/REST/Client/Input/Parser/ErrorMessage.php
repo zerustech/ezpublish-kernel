@@ -2,7 +2,7 @@
 /**
  * File containing the ErrorMessage parser class
  *
- * @copyright Copyright (C) 1999-2012 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  */
@@ -22,6 +22,7 @@ class ErrorMessage extends Parser
      * @var array
      */
     protected $errorCodeMapping = array(
+        403 => '\\eZ\\Publish\\Core\\REST\\Common\\Exceptions\\ForbiddenException',
         404 => '\\eZ\\Publish\\Core\\REST\\Common\\Exceptions\\NotFoundException',
         406 => '\\eZ\\Publish\\Core\\REST\\Client\\Exceptions\\InvalidArgumentException',
         409 => '\\eZ\\Publish\\Core\\REST\\Client\\Exceptions\\BadStateException',

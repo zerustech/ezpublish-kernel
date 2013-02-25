@@ -2,7 +2,7 @@
 /**
  * File containing the ContentTypeServiceTest class
  *
- * @copyright Copyright (C) 1999-2012 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  */
@@ -91,7 +91,7 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
         $groupCreate = $contentTypeService->newContentTypeGroupCreateStruct(
             'new-group'
         );
-        $groupCreate->creatorId = $repository->getCurrentUser()->id;
+        $groupCreate->creatorId = $this->generateId( "user", $repository->getCurrentUser()->id );
         $groupCreate->creationDate = $this->createDateTime();
         /* @todo uncomment when support for multilingual names and descriptions is added
         $groupCreate->mainLanguageCode = 'ger-DE';
@@ -881,7 +881,7 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
             'Count of field definition creates did not match count of field definitions.'
         );
 
-        $sorter = function( $a, $b )
+        $sorter = function ( $a, $b )
         {
             return strcmp( $a->identifier, $b->identifier );
         };
