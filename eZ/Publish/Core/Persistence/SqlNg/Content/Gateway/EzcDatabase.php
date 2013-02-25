@@ -190,12 +190,15 @@ class EzcDatabase extends Gateway
         $query = $this->dbHandler->createUpdateQuery();
         $query->update( $this->dbHandler->quoteTable( 'ezcontent' ) );
 
+        $hasUpdatedData = false;
+
         if ( isset( $struct->mainLanguageId ) )
         {
             $query->set(
                 $this->dbHandler->quoteColumn( 'initial_language_id' ),
                 $query->bindValue( $struct->mainLanguageId, null, \PDO::PARAM_INT )
             );
+            $hasUpdatedData = true;
         }
         if ( isset( $struct->modificationDate ) )
         {
@@ -203,6 +206,7 @@ class EzcDatabase extends Gateway
                 $this->dbHandler->quoteColumn( 'modified' ),
                 $query->bindValue( $struct->modificationDate, null, \PDO::PARAM_INT )
             );
+            $hasUpdatedData = true;
         }
         if ( isset( $struct->ownerId ) )
         {
@@ -210,6 +214,7 @@ class EzcDatabase extends Gateway
                 $this->dbHandler->quoteColumn( 'owner_id' ),
                 $query->bindValue( $struct->ownerId, null, \PDO::PARAM_INT )
             );
+            $hasUpdatedData = true;
         }
         if ( isset( $struct->publicationDate ) )
         {
@@ -217,6 +222,7 @@ class EzcDatabase extends Gateway
                 $this->dbHandler->quoteColumn( 'published' ),
                 $query->bindValue( $struct->publicationDate, null, \PDO::PARAM_INT )
             );
+            $hasUpdatedData = true;
         }
         if ( isset( $struct->remoteId ) )
         {
@@ -224,6 +230,7 @@ class EzcDatabase extends Gateway
                 $this->dbHandler->quoteColumn( 'remote_id' ),
                 $query->bindValue( $struct->remoteId, null, \PDO::PARAM_STR )
             );
+            $hasUpdatedData = true;
         }
         if ( isset( $struct->alwaysAvailable ) )
         {
@@ -231,6 +238,12 @@ class EzcDatabase extends Gateway
                 $this->dbHandler->quoteColumn( 'always_available' ),
                 $query->bindValue( $struct->alwaysAvailable, null, \PDO::PARAM_STR )
             );
+            $hasUpdatedData = true;
+        }
+
+        if ( ! $hasUpdatedData )
+        {
+            return;
         }
 
         $query->where(
