@@ -30,12 +30,10 @@ class SearchHandlerTest extends TestCase
         return $this->getPersistenceHandler()->searchHandler();
     }
 
-    // - location-id
     // - status
     // - logical
     // - parent-location
     // - content-type
-    // - remote-id
 
     public function getQueries()
     {
@@ -85,6 +83,22 @@ class SearchHandlerTest extends TestCase
             array(
                 new Content\Query( array(
                     'criterion' => new Content\Query\Criterion\LocationId( 1337 )
+                ) ),
+                array()
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\RemoteId(
+                        $this->getContent()->versionInfo->contentInfo->remoteId
+                    )
+                ) ),
+                array(
+                    $this->getContent()->versionInfo->contentInfo->id
+                )
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\RemoteId( 'unknown' )
                 ) ),
                 array()
             ),
