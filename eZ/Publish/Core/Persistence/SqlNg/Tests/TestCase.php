@@ -37,6 +37,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected static $content;
 
+    protected static $location;
+
     protected static $currentTest;
 
     public function setUp()
@@ -51,6 +53,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             self::$contentTypeGroup = null;
             self::$contentType = null;
             self::$content = null;
+            self::$location = null;
 
             self::$currentTest = get_called_class();
         }
@@ -316,6 +319,31 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         return self::$content;
+    }
+
+    /**
+     * Get a functional location object
+     *
+     * @return Persistence\Content\Location
+     */
+    protected function getLocation()
+    {
+        if ( !self::$location )
+        {
+            $locationHandler = $this->getPersistenceHandler()->locationHandler();
+            $content = $this->getContent();
+            self::$location = $locationHandler->create(
+                new Persistence\Content\Location\CreateStruct( array(
+                    'remoteId' => 'test-location-root',
+                    'contentId' => $content->versionInfo->contentInfo->id,
+                    'contentVersion' => $content->versionInfo->versionNo,
+                    'mainLocationId' => true,
+                    'parentId' => null,
+                ) )
+            );
+        }
+
+        return self::$location;
     }
 
     /**
