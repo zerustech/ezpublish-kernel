@@ -401,6 +401,7 @@ class Handler implements HandlerInterface
                                 new Content\Search\Gateway\CriterionHandler\Subtree( $this->dbHandler ),
                                 new Content\Search\Gateway\CriterionHandler\LocationId( $this->dbHandler ),
                                 new Content\Search\Gateway\CriterionHandler\RemoteId( $this->dbHandler ),
+                                new Content\Search\Gateway\CriterionHandler\Status( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\LogicalNot( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\LogicalAnd( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\LogicalOr( $this->dbHandler ),
@@ -410,7 +411,6 @@ class Handler implements HandlerInterface
                                 // new Content\Search\Gateway\CriterionHandler\ParentLocationId( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\LocationRemoteId( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\SectionId( $this->dbHandler ),
-                                // new Content\Search\Gateway\CriterionHandler\Status( $this->dbHandler ),
                             )
                         ),
                         new Content\Search\Gateway\SortClauseConverter(
