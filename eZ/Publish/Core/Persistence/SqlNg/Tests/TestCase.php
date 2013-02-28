@@ -308,6 +308,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             }
 
             self::$content = $contentHandler->create( $createStruct );
+            $contentHandler->publish(
+                self::$content->versionInfo->contentInfo->id,
+                self::$content->versionInfo->versionNo,
+                new Persistence\Content\MetadataUpdateStruct()
+            );
         }
 
         return self::$content;

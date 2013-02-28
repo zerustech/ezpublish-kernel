@@ -9,11 +9,8 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\Search;
 
-use eZ\Publish\SPI\Persistence\Content;
-use eZ\Publish\SPI\Persistence\Content\Search\Handler as BaseSearchHandler;
+use eZ\Publish\SPI\Persistence;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Mapper as ContentMapper;
-use eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler;
-use eZ\Publish\API\Repository\Exceptions\NotImplementedException;
 use eZ\Publish\API\Repository\Values\Content\Search\SearchResult;
 use eZ\Publish\API\Repository\Values\Content\Search\SearchHit;
 use eZ\Publish\API\Repository\Values\Content\Query\Criterion;
@@ -21,6 +18,7 @@ use eZ\Publish\API\Repository\Values\Content\Query;
 use eZ\Publish\API\Repository\Values\Content\VersionInfo;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
+use eZ\Publish\API\Repository\Exceptions\NotImplementedException;
 
 /**
  * The Content Search handler retrieves sets of of Content objects, based on a
@@ -43,7 +41,7 @@ use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
  * content objects based on criteria, which could not be convertedd in to
  * database statements.
  */
-class Handler extends BaseSearchHandler
+class Handler extends Persistence\Content\Search\Handler
 {
     /**
      * Content locator gateway.
@@ -60,22 +58,16 @@ class Handler extends BaseSearchHandler
     protected $contentMapper;
 
     /**
-     * FieldHandler
-     *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\FieldHandler
-     */
-    protected $fieldHandler;
-
-    /**
      * Creates a new content handler.
      *
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway $gateway
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper $contentMapper
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler $fieldHandler
      */
-    public function __construct( /* Gateway $gateway, ContentMapper $contentMapper, FieldHandler $fieldHandler */ )
+    public function __construct( Gateway $gateway, ContentMapper $contentMapper )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->gateway = $gateway;
+        $this->contentMapper = $contentMapper;
     }
 
     /**
@@ -91,7 +83,30 @@ class Handler extends BaseSearchHandler
      */
     public function findContent( Query $query, array $fieldFilters = array() )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $start = microtime( true );
+
+        if ( count( $query->facetBuilders ) )
+        {
+            throw new NotImplementedException( "Facettes are not supported by the legacy search engine." );
+        }
+
+        $data  = $this->gateway->find( $query->criterion, $query->offset, $query->limit, $query->sortClauses, null );
+
+        $result = new SearchResult();
+        $result->time       = microtime( true ) - $start;
+        $result->totalCount = $data['count'];
+
+        foreach ( $this->contentMapper->extractContentFromRows( $data['rows'] ) as $content )
+        {
+            // @TODO: Re-enable this:
+            // $this->fieldHandler->loadExternalFieldData( $content );
+            $searchHit = new SearchHit();
+            $searchHit->valueObject = $content;
+
+            $result->searchHits[] = $searchHit;
+        }
+
+        return $result;
     }
 
     /**
@@ -132,9 +147,10 @@ class Handler extends BaseSearchHandler
      *
      * @return void
      */
-    public function indexContent( Content $content )
+    public function indexContent( Persistence\Content $content )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        // For most queries the default tables are sufficient, so that we don't
+        // do anything by default here.
     }
 
     /**

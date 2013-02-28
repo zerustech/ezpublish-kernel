@@ -32,7 +32,7 @@ abstract class SortClauseHandler
      */
     public function __construct( EzcDbHandler $dbHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
     }
 
     /**

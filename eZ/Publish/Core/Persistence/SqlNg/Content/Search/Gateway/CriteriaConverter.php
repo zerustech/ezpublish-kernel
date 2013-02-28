@@ -34,7 +34,7 @@ class CriteriaConverter
      */
     public function __construct( array $handler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->handler = $handler;
     }
 
     /**
@@ -47,7 +47,15 @@ class CriteriaConverter
      */
     public function convertCriteria( ezcQuerySelect $query, Criterion $criterion )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        foreach ( $this->handler as $handler )
+        {
+            if ( $handler->accept( $criterion ) )
+            {
+                return $handler->handle( $this, $query, $criterion );
+            }
+        }
+
+        throw new RuntimeException( 'No conversion for criterion found.' );
     }
 }
 

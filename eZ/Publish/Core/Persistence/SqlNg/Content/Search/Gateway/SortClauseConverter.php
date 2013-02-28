@@ -41,7 +41,7 @@ class SortClauseConverter
      */
     public function __construct( array $handlers = array() )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->handlers = $handlers;
     }
 
     /**

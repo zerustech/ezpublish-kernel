@@ -79,14 +79,15 @@ class EzcDatabase extends Gateway
         LanguageHandler $languageHandler
     )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
+        $this->criteriaConverter = $criteriaConverter;
+        $this->sortClauseConverter = $sortClauseConverter;
+        $this->queryBuilder = $queryBuilder;
+        $this->languageHandler = $languageHandler;
     }
 
     /**
      * Returns a list of object satisfying the $criterion.
-     *
-     * @todo Check Query recreation in this method. Something breaks if we reuse
-     *       the query, after we have added the applyJoin() stuff here.
      *
      * @param Criterion $criterion
      * @param int $offset
@@ -98,7 +99,168 @@ class EzcDatabase extends Gateway
      */
     public function find( Criterion $criterion, $offset = 0, $limit = null, array $sort = null, array $translations = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $limit = $limit !== null ? $limit : self::MAX_LIMIT;
+
+        $count = $this->getResultCount( $criterion, $sort, $translations );
+        if ( $count === 0 || $limit === 0 )
+        {
+            return array( 'count' => $count, 'rows' => array() );
+        }
+
+        $contentIds = $this->getContentIds( $criterion, $sort, $offset, $limit, $translations );
+
+        return array(
+            'count' => $count,
+            'rows' => $this->loadContent( $contentIds, $translations ),
+        );
+    }
+
+    /**
+     * Get query condition
+     *
+     * @param Criterion $criterion
+     * @param \ezcQuerySelect $query
+     * @param mixed $translations
+     *
+     * @return string
+     */
+    protected function getQueryCondition( Criterion $criterion, ezcQuerySelect $query, $translations )
+    {
+        $condition = $query->expr->lAnd(
+            $this->criteriaConverter->convertCriteria( $query, $criterion ),
+            $query->expr->eq(
+                'ezcontent_version.status',
+                VersionInfo::STATUS_PUBLISHED
+            )
+        );
+        return $condition;
+    }
+
+    /**
+     * Get result count
+     *
+     * @param Criterion $criterion
+     * @param array $sort
+     * @param mixed $translations
+     * @return int
+     */
+    protected function getResultCount( Criterion $criterion, $sort, $translations )
+    {
+        $query = $this->dbHandler->createSelectQuery();
+
+        $query
+            ->select( 'COUNT( * )' )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent' ) )
+            ->innerJoin(
+                'ezcontent_version',
+                'ezcontent.id',
+                'ezcontent_version.content_id'
+            );
+
+        if ( count( $sort ) )
+        {
+            $this->sortClauseConverter->applyJoin( $query, $sort );
+        }
+
+        $query->where(
+            $this->getQueryCondition( $criterion, $query, $translations )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return (int)$statement->fetchColumn();
+    }
+
+    /**
+     * Get sorted arrays of content IDs, which should be returned
+     *
+     * @param Criterion $criterion
+     * @param array $sort
+     * @param mixed $offset
+     * @param mixed $limit
+     * @param mixed $translations
+     *
+     * @return int[]
+     */
+    protected function getContentIds( Criterion $criterion, $sort, $offset, $limit, $translations )
+    {
+        $query = $this->dbHandler->createSelectQuery();
+
+        $query->select(
+            $this->dbHandler->quoteColumn( 'id', 'ezcontent' )
+        );
+
+        if ( count( $sort ) )
+        {
+            $this->sortClauseConverter->applySelect( $query, $sort );
+        }
+
+        $query->from(
+            $this->dbHandler->quoteTable( 'ezcontent' )
+        );
+        $query->innerJoin(
+            'ezcontent_version',
+            'ezcontent.id',
+            'ezcontent_version.content_id'
+        );
+
+        $query->where(
+            $this->getQueryCondition( $criterion, $query, $translations )
+        );
+
+        if ( count( $sort ) )
+        {
+            $this->sortClauseConverter->applyOrderBy( $query, $sort );
+        }
+
+        $query->limit( $limit, $offset );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_COLUMN );
+    }
+
+    /**
+     * Loads the actual content based on the provided IDs
+     *
+     * @param array $contentIds
+     * @param mixed $translations
+     *
+     * @return mixed[]
+     */
+    protected function loadContent( array $contentIds, $translations )
+    {
+        $loadQuery = $this->queryBuilder->createFindQuery( $translations );
+        $loadQuery->where(
+            $loadQuery->expr->eq(
+                'ezcontent_version.status',
+                VersionInfo::STATUS_PUBLISHED
+            ),
+            $loadQuery->expr->in(
+                $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
+                $contentIds
+            )
+        );
+
+        $statement = $loadQuery->prepare();
+        $statement->execute();
+
+        $rows = $statement->fetchAll( \PDO::FETCH_ASSOC );
+
+        // Sort array, as defined in the $contentIds array
+        $contentIdOrder = array_flip( $contentIds );
+        usort(
+            $rows,
+            function ( $current, $next ) use ( $contentIdOrder )
+            {
+                return $contentIdOrder[$current['ezcontent_id']] -
+                    $contentIdOrder[$next['ezcontent_id']];
+            }
+        );
+
+        return $rows;
     }
 }
 
