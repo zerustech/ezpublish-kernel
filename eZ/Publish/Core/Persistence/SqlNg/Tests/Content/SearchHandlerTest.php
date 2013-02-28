@@ -30,7 +30,6 @@ class SearchHandlerTest extends TestCase
         return $this->getPersistenceHandler()->searchHandler();
     }
 
-    // - logical
     // - parent-location
     // - content-type
 
@@ -150,6 +149,16 @@ class SearchHandlerTest extends TestCase
                         ),
                         new Content\Query\Criterion\ContentId( 1337 )
                     ) )
+                ) ),
+                array(
+                    $this->getContent()->versionInfo->contentInfo->id
+                )
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\ContentTypeId(
+                        $this->getContentType()->id
+                    )
                 ) ),
                 array(
                     $this->getContent()->versionInfo->contentInfo->id
