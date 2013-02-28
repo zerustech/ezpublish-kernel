@@ -30,9 +30,6 @@ class SearchHandlerTest extends TestCase
         return $this->getPersistenceHandler()->searchHandler();
     }
 
-    // - parent-location
-    // - content-type
-
     public function getQueries()
     {
         return array(
@@ -163,6 +160,22 @@ class SearchHandlerTest extends TestCase
                 array(
                     $this->getContent()->versionInfo->contentInfo->id
                 )
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\ParentLocationId(
+                        $this->getContentType()->id
+                    )
+                ) ),
+                array(
+                    $this->getContent()->versionInfo->contentInfo->id
+                )
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\ParentLocationId( 1337 )
+                ) ),
+                array()
             ),
         );
     }
