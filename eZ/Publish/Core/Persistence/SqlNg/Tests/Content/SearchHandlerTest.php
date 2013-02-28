@@ -51,6 +51,28 @@ class SearchHandlerTest extends TestCase
                     $this->getContent()->versionInfo->contentInfo->id
                 )
             ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\ContentId( 1337 )
+                ) ),
+                array()
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\Subtree(
+                        '/' . $this->getLocation()->id . '/'
+                    )
+                ) ),
+                array(
+                    $this->getContent()->versionInfo->contentInfo->id
+                )
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\Subtree( '/1337' )
+                ) ),
+                array()
+            ),
         );
     }
 
@@ -58,6 +80,7 @@ class SearchHandlerTest extends TestCase
     {
         $handler = $this->getSearchHandler();
 
+        $this->getLocation();
         $result = $handler->indexContent($this->getContent());
     }
 
