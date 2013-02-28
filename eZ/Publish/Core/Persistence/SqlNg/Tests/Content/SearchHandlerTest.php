@@ -117,6 +117,44 @@ class SearchHandlerTest extends TestCase
                 ) ),
                 array()
             ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\LogicalAnd( array(
+                        new Content\Query\Criterion\ContentId(
+                            $this->getContent()->versionInfo->contentInfo->id
+                        ),
+                        new Content\Query\Criterion\Subtree(
+                            '/' . $this->getLocation()->id . '/'
+                        )
+                    ) )
+                ) ),
+                array(
+                    $this->getContent()->versionInfo->contentInfo->id
+                )
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\LogicalNot(
+                        new Content\Query\Criterion\ContentId( 1337 )
+                    )
+                ) ),
+                array(
+                    $this->getContent()->versionInfo->contentInfo->id
+                )
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\LogicalOr( array(
+                        new Content\Query\Criterion\ContentId(
+                            $this->getContent()->versionInfo->contentInfo->id
+                        ),
+                        new Content\Query\Criterion\ContentId( 1337 )
+                    ) )
+                ) ),
+                array(
+                    $this->getContent()->versionInfo->contentInfo->id
+                )
+            ),
         );
     }
 
