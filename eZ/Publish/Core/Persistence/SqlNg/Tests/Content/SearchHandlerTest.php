@@ -30,7 +30,6 @@ class SearchHandlerTest extends TestCase
         return $this->getPersistenceHandler()->searchHandler();
     }
 
-    // - subtree
     // - location-id
     // - status
     // - logical
@@ -70,6 +69,22 @@ class SearchHandlerTest extends TestCase
             array(
                 new Content\Query( array(
                     'criterion' => new Content\Query\Criterion\Subtree( '/1337' )
+                ) ),
+                array()
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\LocationId(
+                        $this->getLocation()->id
+                    )
+                ) ),
+                array(
+                    $this->getContent()->versionInfo->contentInfo->id
+                )
+            ),
+            array(
+                new Content\Query( array(
+                    'criterion' => new Content\Query\Criterion\LocationId( 1337 )
                 ) ),
                 array()
             ),
