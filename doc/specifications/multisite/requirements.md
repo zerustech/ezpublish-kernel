@@ -58,7 +58,7 @@ This system is not without issues:
    basically adds yet more settings and systems to manage to work.
 * A lot of repeated configuration, cases you would have to create a new siteaccess:
 ** if you want a new site language
-** if you want to create a alternative website, for mobile, TV don't car or something else
+** if you want to create a alternative website, for mobile, TV, car or something else
 ** If you want to add an additional site you would need to create several
 * As most of the multi site, multi language features are built on top of the kernel, they
   all have different edge cases where they don't fully work, or break down.
@@ -108,4 +108,4 @@ Given the goal and limitations, requirements for multi site in eZ Publish 5.x Co
       of eZ Publish, thus within permission rules the media files, users and also content
       can be used across sites.
 
-Author note: The last item is a could as it might contradicts limitations #2
+Author note: The last item is a could as it might contradict limitations #2
