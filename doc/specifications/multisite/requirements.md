@@ -100,12 +100,12 @@ Given the goal and limitations, requirements for multi site in eZ Publish 5.x Co
     * Be native to the configuration system
     * Add strong conventions for how languages, sites, channels & backend is handled
 * Should haves:
-    * Native model knowledge of what a site is for multisite same-db installs so GUI to
-      create new sites, and managing sites is possible.
+    * Native model knowledge of what a site is for multisite same-repository installs
+      so GUI to create new sites, and managing sites is possible.
 * Could haves:
-    * Better separation of content in same-db installs so links to other sites content
-      does not get exposed, but same-db setups should continue to play on the strengths
-      of eZ Publish, thus within permission rules the media files, users and also content
-      can be used across sites.
+    * Better separation of content in same-repository installs so links to other sites
+      content does not get exposed, but same-repository setups should continue to play on
+      the strengths of eZ Publish, thus within permission rules the media files, users and
+      also content can be used across sites.
 
 Author note: The last item is a could as it might contradict limitations #2
