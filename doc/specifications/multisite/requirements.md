@@ -84,17 +84,17 @@ Limitations:
   SiteAccess system [improvements are: SiteAccess grouping & mapping extensibility]
 
 
-### Goal
+### Platform Goal
 
-An overall goal for multi site in eZ Publish 5 given these limitations would be to allow
-admins to be able to much more easily create new sites, either on same database or being
-allowed to 'install' more sites with new database. Another high level goal would be to
-improve maintainability of multisite installations.
+An overall goal for multi site on eZ Publish Platform would be to allow admins to be able
+to much more easily create new sites using GUI, either on same-database or with new database,
+either as empty site, using package or clone existing site. Another high level goal would be
+to improve maintainability of multisite installations and make them easier to understand.
 
 
 ### Requirements
 
-Given the high level goal and limitations, requirements for multi site in 5.x are:
+Given the goal and limitations, requirements for multi site in eZ Publish 5.x Core are:
 * Must haves:
     * Be native to the configuration system
     * Add strong conventions for how languages, sites, channels & backend is handled
@@ -103,7 +103,9 @@ Given the high level goal and limitations, requirements for multi site in 5.x ar
       create new sites, and managing sites is possible.
 * Could haves:
     * Better separation of content in same-db installs so links to other sites content
-      does not get exposed.
+      does not get exposed, but same-db setups should continue to play on the strangths
+      of eZ Publish, thus witin permission rules the media fiels, users and also content
+      can be used across sites.
 
 Author note: The last item is a could as it most likely contradicts the limitations.
 
