@@ -61,6 +61,16 @@ class SqlNg extends Legacy
     }
 
     /**
+     * Loads the data from the fixture file
+     *
+     * @return array
+     */
+    protected function loadInitialData()
+    {
+        return include __DIR__ . '/../_fixtures/database/sqlng/fixture.php';
+    }
+
+    /**
      * Returns the database schema as an array of SQL statements
      *
      * @return string[]
