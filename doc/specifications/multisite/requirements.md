@@ -98,7 +98,7 @@ would be to improve maintainability of multisite installations & make them easie
 Given the goal and limitations, requirements for multi site in eZ Publish 5.x Core are:
 * Must haves:
     * Be native to the configuration system
-    * Add strong conventions for how languages, sites, channels & backend is handled
+    * Add strong conventions for how languages, sites, groups of sites, channels & backend is handled
 * Should haves:
     * Native model knowledge of what a site is for multisite same-repository installs
       so GUI to create new sites, and managing sites is possible.
@@ -108,4 +108,7 @@ Given the goal and limitations, requirements for multi site in eZ Publish 5.x Co
       the strengths of eZ Publish, thus within permission rules the media files, users and
       also content can be used across sites.
 
-Author note: The last item is a could as it might contradict limitations #2
+Author note: The last item is limited by limitations #2 and #3. Meaning existing features like REST
+  is not suddenly expected to have knowledge of a site, as REST is connected to the reposiotry which
+  is a group of sites. Hence what is implied here is that DemoBundle and the url alias routing in Syfmony
+  stack should be aware of sites.
