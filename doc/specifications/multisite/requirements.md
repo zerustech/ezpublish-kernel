@@ -109,6 +109,6 @@ Given the goal and limitations, requirements for multi site in eZ Publish 5.x Co
       also content can be used across sites.
 
 Author note: The last item is limited by limitations #2 and #3. Meaning existing features like REST
-  is not suddenly expected to have knowledge of a site, as REST is connected to the reposiotry which
-  is a group of sites. Hence what is implied here is that DemoBundle and the url alias routing in Syfmony
-  stack should be aware of sites.
+  is not suddenly expected to have knowledge of a site, as REST is connected to a reposiotry which
+  is potentially a group of sites. Hence what is implied here is that DemoBundle and the url alias
+  routing in Syfmony stack should be aware of sites.
