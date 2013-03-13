@@ -407,6 +407,7 @@ class Handler implements HandlerInterface
                                 new Content\Search\Gateway\CriterionHandler\LogicalOr( $this->dbHandler ),
                                 new Content\Search\Gateway\CriterionHandler\ContentTypeId( $this->dbHandler ),
                                 new Content\Search\Gateway\CriterionHandler\ParentLocationId( $this->dbHandler ),
+                                new Content\Search\Gateway\CriterionHandler\Visibility( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\ContentTypeIdentifier( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\ContentTypeGroupId( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\LocationRemoteId( $this->dbHandler ),
