@@ -78,9 +78,14 @@ and languages if they don't apply to the feature in  question, here are some exa
 - AdminBundle:     --- " ---, but interface language is selected by language match.
                    Could potentially also support the design system if for mobile / tablet
                    representation, but by default just responsive.
+                   >>>NOTE: need to map to legacy somehow, so maybe the /admin should be
+                   mapped as a "design" but as route in Core and also map to "admin" design
+                   for legacy bundle<<<Alt. welcome>>>
 - EditorialBundle: Connected to Site, so provides access to all content languages
                    But interface language is selected by language match.
 - DemoBundle :     Connected to Languages*Designs, content language is defined by these settings.
+- LegacyBundle:    Connected to Languages*Designs, maps to legacy SiteAccess in form:
+                   <Site>_<Design>_<Language>
 
 
 
