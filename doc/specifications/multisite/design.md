@@ -88,7 +88,7 @@ and languages if they don't apply to the feature in  question, here are some exa
                    But interface language is selected by language match.
 - DemoBundle :     Connected to Languages*Designs, content language is defined by these settings.
 - LegacyBundle:    Connected to Languages*Designs, maps to legacy SiteAccess in form:
-                   <Site>_<Design>_<Language>
+                   "Site"_"Design"_"Language"
 
 
 
