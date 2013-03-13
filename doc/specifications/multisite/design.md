@@ -33,7 +33,10 @@ setup's with eZ Publish, we can clean up the terminology:
 
 Just like in legacy, these can be combined in same eZ Publish installation.
 But to get the difference, here is an overview of this proposal:
-Server >-< Installation -< SiteGroup (- Repository) -< SiteAccess (- Site) -< Languages*Designs
+Server >-< Installation -< SiteGroup (- Repository) -< SiteAccess (- Site) -< LanguageAccess * DesignAccess
+
+LanguageAccess and DesignAccess is here proposed as a sub access of SiteAccess, but
+could potentially be configured globally for the install, per SiteGroup or per SiteAccess.
 
 
 ### Changes to existing concepts
