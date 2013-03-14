@@ -155,12 +155,12 @@ class SiteAccessMatcher
         $this->sites = $sites;
     }
 
-    public function addSiteMatcher( $name, $instance )
+    public function addSiteMatcher( $name, SiteMatcher $instance )
     {
         $this->matchers[$name] = $instance;
     }
 
-    public function addParameterMatcher( $name, $instance )
+    public function addParameterMatcher( $name, ParameterMatcher $instance )
     {
         $this->parameterMatchers[$name] = $instance;
     }
