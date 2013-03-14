@@ -183,6 +183,7 @@ class Site extends ValueObject
     protected $name;
     protected $host;
     protected $repository;
+    protected $groups;
     protected $port;
     protected $matcherType;
     protected $properties;
