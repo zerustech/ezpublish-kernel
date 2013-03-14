@@ -15,7 +15,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 {
     public function testMatchSingleSiteInstallation()
     {
-        $matcher = $this->createSiteAccessMatcher(
+        $matcher = $this->createSiteAccessRouter(
             array(
                 $this->buildSite(
                     'test_site', 'host', 'share.ez.no', 80
@@ -30,7 +30,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchMultiSiteInstallation()
     {
-        $matcher = $this->createSiteAccessMatcher(
+        $matcher = $this->createSiteAccessRouter(
             array(
                 $this->buildSite( 'ez_publish_community', 'host', 'share.ez.no', 80 ),
                 $this->buildSite( 'Google', 'host', 'google.com', 80 ),
@@ -46,7 +46,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
      */
     public function testNoMatchThrowsException()
     {
-        $matcher = $this->createSiteAccessMatcher( array() );
+        $matcher = $this->createSiteAccessRouter( array() );
         $userContext = new UserContext( array( 'host' => 'share.ez.no' ) );
 
         $matcher->match( $userContext );
@@ -54,7 +54,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchPostForMultiSite()
     {
-        $matcher = $this->createSiteAccessMatcher(
+        $matcher = $this->createSiteAccessRouter(
             array(
                 $this->buildSite( 'ez_publish_community', 'port', 'share.ez.no', 80 ),
                 $this->buildSite( 'ez_publish_community_secure', 'port', 'share.ez.no', 443 ),
@@ -65,9 +65,9 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertSame( "ez_publish_community_secure", $siteAccess->name );
     }
 
-    private function createSiteAccessMatcher( $sites )
+    private function createSiteAccessRouter( $sites )
     {
-        $matcher = new SiteAccessMatcher( 
+        $matcher = new SiteAccessRouter( 
             new InMemorySiteRepository( $sites )
         );
         $matcher->addSiteMatcher( 'host', new HostSiteMatcher() );
@@ -78,7 +78,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchLanguage()
     {
-        $matcher = $this->createSiteAccessMatcher(
+        $matcher = $this->createSiteAccessRouter(
             array(
                 $this->buildSite(
                     'ez_publish_community', 'host', 'share.ez.no', 80,
@@ -90,14 +90,14 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
                 ),
             )
         );
-        $languageMatcherMock = $this->getMock( "eZ\\Publish\\Core\\Site\\Tests\\ParameterMatcher" );
+        $languageMatcherMock = $this->getMock( "eZ\\Publish\\Core\\Site\\Tests\\ParameterResolver" );
         $languageMatcherMock
             ->expects( $this->once() )
-            ->method( "match" )
+            ->method( "resolve" )
             ->will(
                 $this->returnValue( array( "fre-FR", "eng-GB", "ger-DE" ) )
             );
-        $matcher->addParameterMatcher( "languages", $languageMatcherMock );
+        $matcher->addParameterResolver( "languages", $languageMatcherMock );
 
         $userContext = new UserContext(
             array(
@@ -127,6 +127,29 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
             )
         );
     }
+
+    // Tests for SiteMatchers
+    public function testHostSiteMatcherMatchesOnHost()
+    {
+        $matcher = new HostSiteMatcher();
+
+        $match = $matcher->match(
+            new UserContext(
+                array(
+                    'host' => 'share.ez.no',
+                )
+            ),
+            new Site(
+                array(
+                    'host' => 'share.ez.no',
+                )
+            )
+        );
+
+        $this->assertTrue($match);
+    }
+
+
 }
 
 class SiteAccess extends ValueObject
@@ -172,11 +195,11 @@ class InMemorySiteRepository implements SiteRepository
     }
 }
 
-class SiteAccessMatcher
+class SiteAccessRouter
 {
     protected $siteRepository;
     protected $matchers = array();
-    protected $parameterMatchers = array();
+    protected $parameterResolvers = array();
 
     public function __construct( SiteRepository $siteRepository )
     {
@@ -188,9 +211,9 @@ class SiteAccessMatcher
         $this->matchers[$name] = $instance;
     }
 
-    public function addParameterMatcher( $name, ParameterMatcher $instance )
+    public function addParameterResolver( $name, ParameterResolver $instance )
     {
-        $this->parameterMatchers[$name] = $instance;
+        $this->parameterResolvers[$name] = $instance;
     }
 
     public function match( UserContext $userContext )
@@ -202,17 +225,11 @@ class SiteAccessMatcher
             $matcher = $this->matchers[$site->matcherType];
             if ( $matcher->match( $userContext, $site ) )
             {
-                $matchedParameters = array();
-                foreach ( $this->parameterMatchers as $parameterName => $parameterMatcher )
-                {
-                    $matchedParameters[$parameterName] = $parameterMatcher->match( $userContext, $site );
-                }
-
                 return new SiteAccess(
                     array(
                         'name' => $site->name,
                         'repositoryName' => $site->repositoryName,
-                        "parameters" => $matchedParameters
+                        "parameters" => $this->resolveParameters( $userContext, $site)
                     )
                 );
             }
@@ -220,10 +237,26 @@ class SiteAccessMatcher
 
         throw new NoMatchFoundException();
     }
+
+    private function resolveParameters( UserContext $userContext , Site $site)
+    {
+        $matchedParameters = array();
+        foreach ( $this->parameterResolvers as $parameterName => $parameterResolver )
+        {
+            $matchedParameters[$parameterName] = $parameterResolver->resolve( $userContext, $site );
+        }
+
+        return $matchedParameters;
+    }
 }
 
 interface SiteMatcher
 {
+    /**
+     * Check if Site matches.
+     *
+     * @return bool
+     */
     public function match( UserContext $userContext, Site $site );
 }
 
@@ -243,14 +276,12 @@ class PortSiteMatcher implements SiteMatcher
     }
 }
 
-interface ParameterMatcher
+interface ParameterResolver
 {
-    public function match( UserContext $userContext, Site $site );
-}
-
-class LanguageMatcher
-{
-
+    /**
+     * @return mixed
+     */
+    public function resolve( UserContext $userContext, Site $site );
 }
 
 class UserContext extends ValueObject
