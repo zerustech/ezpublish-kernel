@@ -25,7 +25,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $userContext = new UserContext( array( 'host' => 'share.ez.no' ) );
         $siteAccess = $matcher->match( $userContext );
         $this->assertSame( 'test_site', $siteAccess->identifier );
-        $this->assertSame( 'test_repository', $siteAccess->repositoryName );
+        $this->assertSame( 'test_repository', $siteAccess->repository );
     }
 
     public function testMatchMultiSiteInstallation()
@@ -127,11 +127,11 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $siteAccess = $matcher->match( $userContext );
         $this->assertSame(
             array( "fre-FR", "eng-GB", "ger-DE" ),
-            $siteAccess->parameters["languages"]
+            $siteAccess->properties["languages"]
         );
     }
 
-    protected function buildSite( $name, $matcherType, $host, $port, $parameters = array() )
+    protected function buildSite( $name, $matcherType, $host, $port, $properties = array() )
     {
         return new Site(
             array(
@@ -140,8 +140,8 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
                 'matcherType' => $matcherType,
                 'host' => $host,
                 'port' => $port,
-                'parameters' => $parameters,
-                "repositoryName" => 'test_repository'
+                'properties' => $properties,
+                "repository" => 'test_repository'
             )
         );
     }
@@ -173,8 +173,8 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 class SiteAccess extends ValueObject
 {
     protected $identifier;
-    protected $repositoryName;
-    protected $parameters;
+    protected $repository;
+    protected $properties;
 }
 
 class Site extends ValueObject
@@ -182,10 +182,10 @@ class Site extends ValueObject
     protected $identifier;
     protected $name;
     protected $host;
-    protected $repositoryName;
+    protected $repository;
     protected $port;
     protected $matcherType;
-    protected $parameters;
+    protected $properties;
 }
 
 interface SiteRepository
@@ -294,21 +294,21 @@ class SiteAccessRouter
         return new SiteAccess(
             array(
                 'identifier' => $site->identifier,
-                'repositoryName' => $site->repositoryName,
-                "parameters" => $this->resolveParameters( $userContext, $site)
+                'repository' => $site->repository,
+                "properties" => $this->resolveProperties( $userContext, $site)
             )
         );
     }
 
-    private function resolveParameters( UserContext $userContext , Site $site)
+    private function resolveProperties( UserContext $userContext , Site $site)
     {
-        $matchedParameters = array();
+        $matchedProperties = array();
         foreach ( $this->parameterResolvers as $parameterName => $parameterResolver )
         {
-            $matchedParameters[$parameterName] = $parameterResolver->resolve( $userContext, $site );
+            $matchedProperties[$parameterName] = $parameterResolver->resolve( $userContext, $site );
         }
 
-        return $matchedParameters;
+        return $matchedProperties;
     }
 }
 
