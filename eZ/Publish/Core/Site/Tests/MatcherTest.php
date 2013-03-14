@@ -15,7 +15,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 {
     public function testMatchSingleSiteInstallation()
     {
-        $matcher = new SiteAccessMatcher(
+        $matcher = $this->createSiteAccessMatcher(
             array(
                 $this->buildSite(
                     'test_site', 'host', 'share.ez.no', 80
@@ -30,7 +30,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchMultiSiteInstallation()
     {
-        $matcher = new SiteAccessMatcher(
+        $matcher = $this->createSiteAccessMatcher(
             array(
                 $this->buildSite( 'ez_publish_community', 'host', 'share.ez.no', 80 ),
                 $this->buildSite( 'Google', 'host', 'google.com', 80 ),
@@ -46,14 +46,15 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
      */
     public function testNoMatchThrowsException()
     {
-        $matcher = new SiteAccessMatcher( array() );
+        $matcher = $this->createSiteAccessMatcher( array() );
         $userContext = new UserContext( array( 'host' => 'share.ez.no' ) );
-        $siteAccess = $matcher->match( $userContext );
+
+        $matcher->match( $userContext );
     }
 
     public function testMatchPostForMultiSite()
     {
-        $matcher = new SiteAccessMatcher(
+        $matcher = $this->createSiteAccessMatcher(
             array(
                 $this->buildSite( 'ez_publish_community', 'port', 'share.ez.no', 80 ),
                 $this->buildSite( 'ez_publish_community_secure', 'port', 'share.ez.no', 443 ),
@@ -64,9 +65,18 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertSame( "ez_publish_community_secure", $siteAccess->name );
     }
 
+    private function createSiteAccessMatcher( $sites )
+    {
+        $matcher = new SiteAccessMatcher( $sites );
+        $matcher->addSiteMatcher( 'host', new HostSiteMatcher() );
+        $matcher->addSiteMatcher( 'port', new PortSiteMatcher() );
+
+        return $matcher;
+    }
+
     public function testMatchLanguage()
     {
-        $matcher = new SiteAccessMatcher(
+        $matcher = $this->createSiteAccessMatcher(
             array(
                 $this->buildSite(
                     'ez_publish_community', 'host', 'share.ez.no', 80,
@@ -137,17 +147,17 @@ class Site extends ValueObject
 class SiteAccessMatcher
 {
     protected $sites;
-    protected $matchers;
-    protected $parameterMatchers;
+    protected $matchers = array();
+    protected $parameterMatchers = array();
 
     public function __construct( array $sites )
     {
         $this->sites = $sites;
-        $this->matchers = array(
-            'host' => new HostSiteMatcher(),
-            'port' => new PortSiteMatcher()
-        );
-        $this->parameterMatchers = array();
+    }
+
+    public function addSiteMatcher( $name, $instance )
+    {
+        $this->matchers[$name] = $instance;
     }
 
     public function addParameterMatcher( $name, $instance )
