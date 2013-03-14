@@ -67,7 +67,9 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 
     private function createSiteAccessMatcher( $sites )
     {
-        $matcher = new SiteAccessMatcher( $sites );
+        $matcher = new SiteAccessMatcher( 
+            new InMemorySiteRepository( $sites )
+        );
         $matcher->addSiteMatcher( 'host', new HostSiteMatcher() );
         $matcher->addSiteMatcher( 'port', new PortSiteMatcher() );
 
@@ -144,15 +146,41 @@ class Site extends ValueObject
     protected $parameters;
 }
 
-class SiteAccessMatcher
+interface SiteRepository
 {
-    protected $sites;
-    protected $matchers = array();
-    protected $parameterMatchers = array();
+    /**
+     * @return Site[]
+     */
+    public function findAll();
+}
+
+class InMemorySiteRepository implements SiteRepository
+{
+    private $sites = array();
 
     public function __construct( array $sites )
     {
         $this->sites = $sites;
+    }
+
+    /**
+     * @return Site[]
+     */
+    public function findAll()
+    {
+        return $this->sites;
+    }
+}
+
+class SiteAccessMatcher
+{
+    protected $siteRepository;
+    protected $matchers = array();
+    protected $parameterMatchers = array();
+
+    public function __construct( SiteRepository $siteRepository )
+    {
+        $this->siteRepository = $siteRepository;
     }
 
     public function addSiteMatcher( $name, SiteMatcher $instance )
@@ -167,7 +195,9 @@ class SiteAccessMatcher
 
     public function match( UserContext $userContext )
     {
-        foreach ( $this->sites as $site )
+        $sites = $this->siteRepository->findAll();
+
+        foreach ( $sites as $site )
         {
             $matcher = $this->matchers[$site->matcherType];
             if ( $matcher->match( $userContext, $site ) )
