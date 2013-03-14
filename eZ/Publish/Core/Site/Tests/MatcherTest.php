@@ -24,7 +24,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         );
         $userContext = new UserContext( array( 'host' => 'share.ez.no' ) );
         $siteAccess = $matcher->match( $userContext );
-        $this->assertSame( 'test_site', $siteAccess->name );
+        $this->assertSame( 'test_site', $siteAccess->identifier );
         $this->assertSame( 'test_repository', $siteAccess->repositoryName );
     }
 
@@ -38,7 +38,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         );
         $userContext = new UserContext( array( 'host' => 'share.ez.no' ) );
         $siteAccess = $matcher->match( $userContext );
-        $this->assertSame( "ez_publish_community", $siteAccess->name );
+        $this->assertSame( "ez_publish_community", $siteAccess->identifier );
     }
 
     /**
@@ -62,7 +62,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         );
         $userContext = new UserContext( array( 'port' => 443 ) );
         $siteAccess = $matcher->match( $userContext );
-        $this->assertSame( "ez_publish_community_secure", $siteAccess->name );
+        $this->assertSame( "ez_publish_community_secure", $siteAccess->identifier );
     }
 
     private function createSiteAccessRouter( $sites )
@@ -118,6 +118,7 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
     {
         return new Site(
             array(
+                'identifier' => $name,
                 'name' => $name,
                 'matcherType' => $matcherType,
                 'host' => $host,
@@ -154,15 +155,16 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
 
 class SiteAccess extends ValueObject
 {
-    protected $name;
+    protected $identifier;
     protected $repositoryName;
     protected $parameters;
 }
 
 class Site extends ValueObject
 {
-    protected $host;
+    protected $identifier;
     protected $name;
+    protected $host;
     protected $repositoryName;
     protected $port;
     protected $matcherType;
@@ -175,15 +177,30 @@ interface SiteRepository
      * @return Site[]
      */
     public function findAll();
+
+    /**
+     * @param Site $site
+     */
+    public function add( Site $site );
 }
 
+/**
+ * Populate InMemory repository from ezpublish.yml site access configuration.
+ */
 class InMemorySiteRepository implements SiteRepository
 {
     private $sites = array();
 
     public function __construct( array $sites )
     {
-        $this->sites = $sites;
+        foreach ($sites as $site) {
+            $this->add( $site );
+        }
+    }
+
+    public function add( Site $site)
+    {
+        $this->sites[] = $site;
     }
 
     /**
@@ -227,7 +244,7 @@ class SiteAccessRouter
             {
                 return new SiteAccess(
                     array(
-                        'name' => $site->name,
+                        'identifier' => $site->identifier,
                         'repositoryName' => $site->repositoryName,
                         "parameters" => $this->resolveParameters( $userContext, $site)
                     )
