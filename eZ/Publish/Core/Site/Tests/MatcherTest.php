@@ -52,6 +52,22 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $matcher->match( $userContext );
     }
 
+    public function testNoMatchReturnsDefaultSite()
+    {
+        $matcher = $this->createSiteAccessRouter(
+            array(
+                $this->buildSite( 'default_site', 'host', 'share.ez.no', 80 )
+            ),
+            'default_site'
+        );
+
+        $userContext = new UserContext( array( 'host' => 'ez.no' ) );
+
+        $siteAccess = $matcher->match( $userContext );
+
+        $this->assertSame( "default_site", $siteAccess->identifier );
+    }
+
     public function testMatchPostForMultiSite()
     {
         $matcher = $this->createSiteAccessRouter(
@@ -65,10 +81,11 @@ class MatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertSame( "ez_publish_community_secure", $siteAccess->identifier );
     }
 
-    private function createSiteAccessRouter( $sites )
+    private function createSiteAccessRouter( $sites, $defaultSiteName = null )
     {
-        $matcher = new SiteAccessRouter( 
-            new InMemorySiteRepository( $sites )
+        $matcher = new SiteAccessRouter(
+            new InMemorySiteRepository( $sites ),
+            $defaultSiteName
         );
         $matcher->addSiteMatcher( 'host', new HostSiteMatcher() );
         $matcher->addSiteMatcher( 'port', new PortSiteMatcher() );
@@ -179,6 +196,11 @@ interface SiteRepository
     public function findAll();
 
     /**
+     * @return Site
+     */
+    public function find( $identifier );
+
+    /**
      * @param Site $site
      */
     public function add( Site $site );
@@ -200,7 +222,17 @@ class InMemorySiteRepository implements SiteRepository
 
     public function add( Site $site)
     {
-        $this->sites[] = $site;
+        $this->sites[$site->identifier] = $site;
+    }
+
+    public function find( $identifier )
+    {
+        if ( !isset( $this->sites[$identifier] ) )
+        {
+            throw new \Exception("Not found");
+        }
+
+        return $this->sites[$identifier];
     }
 
     /**
@@ -217,10 +249,12 @@ class SiteAccessRouter
     protected $siteRepository;
     protected $matchers = array();
     protected $parameterResolvers = array();
+    protected $defaultSiteName;
 
-    public function __construct( SiteRepository $siteRepository )
+    public function __construct( SiteRepository $siteRepository, $defaultSiteName )
     {
         $this->siteRepository = $siteRepository;
+        $this->defaultSiteName = $defaultSiteName;
     }
 
     public function addSiteMatcher( $name, SiteMatcher $instance )
@@ -242,17 +276,28 @@ class SiteAccessRouter
             $matcher = $this->matchers[$site->matcherType];
             if ( $matcher->match( $userContext, $site ) )
             {
-                return new SiteAccess(
-                    array(
-                        'identifier' => $site->identifier,
-                        'repositoryName' => $site->repositoryName,
-                        "parameters" => $this->resolveParameters( $userContext, $site)
-                    )
-                );
+                return $this->createSiteAccess( $userContext, $site );
             }
         }
 
+        if ($this->defaultSiteName) {
+            $defaultSite = $this->siteRepository->find( $this->defaultSiteName );
+
+            return $this->createSiteAccess( $userContext, $defaultSite);
+        }
+
         throw new NoMatchFoundException();
+    }
+
+    private function createSiteAccess(UserContext $userContext, Site $site)
+    {
+        return new SiteAccess(
+            array(
+                'identifier' => $site->identifier,
+                'repositoryName' => $site->repositoryName,
+                "parameters" => $this->resolveParameters( $userContext, $site)
+            )
+        );
     }
 
     private function resolveParameters( UserContext $userContext , Site $site)
