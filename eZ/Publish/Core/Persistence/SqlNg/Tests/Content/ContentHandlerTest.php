@@ -70,7 +70,9 @@ class ContentHandlerTest extends TestCase
             $createStruct->fields[] = new Persistence\Content\Field( array(
                 'fieldDefinitionId' => $fieldDefinition->id,
                 'type' => $fieldDefinition->fieldType,
-                'value' => 'Hello World!',
+                'value' => new Persistence\Content\FieldValue( array(
+                    "data" => "Hello World"
+                ) ),
                 'languageCode' => $this->getLanguage()->languageCode,
             ) );
         }
@@ -195,7 +197,9 @@ class ContentHandlerTest extends TestCase
             $createStruct->fields[] = new Persistence\Content\Field( array(
                 'fieldDefinitionId' => $fieldDefinition->id,
                 'type' => $fieldDefinition->fieldType,
-                'value' => 'Hello World!',
+                'value' => new Persistence\Content\FieldValue( array(
+                    "data" => "Hello World"
+                ) ),
                 'languageCode' => $this->getLanguage()->languageCode,
             ) );
         }
@@ -279,7 +283,9 @@ class ContentHandlerTest extends TestCase
             $updateStruct->fields[] = new Persistence\Content\Field( array(
                 'fieldDefinitionId' => $fieldDefinition->id,
                 'type' => $fieldDefinition->fieldType,
-                'value' => 'Updated!',
+                'value' => new Persistence\Content\FieldValue( array(
+                    "data" => "Updated"
+                ) ),
                 'languageCode' => $this->getLanguage()->languageCode,
                 'versionNo' => $content->versionInfo->versionNo,
             ) );
@@ -491,7 +497,9 @@ class ContentHandlerTest extends TestCase
             $createStruct->fields[] = new Persistence\Content\Field( array(
                 'fieldDefinitionId' => $fieldDefinition->id,
                 'type' => $fieldDefinition->fieldType,
-                'value' => 'Hello World!',
+                'value' => new Persistence\Content\FieldValue( array(
+                    "data" => "Hello World"
+                ) ),
                 'languageCode' => $this->getLanguage()->languageCode,
             ) );
         }

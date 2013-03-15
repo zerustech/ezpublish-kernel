@@ -305,7 +305,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 $createStruct->fields[] = new Persistence\Content\Field( array(
                     'fieldDefinitionId' => $fieldDefinition->id,
                     'type' => $fieldDefinition->fieldType,
-                    'value' => 'Hello World!',
+                    'value' => new Persistence\Content\FieldValue( array(
+                        "data" => "Hello World"
+                    ) ),
                     'languageCode' => self::getLanguage()->languageCode,
                 ) );
             }

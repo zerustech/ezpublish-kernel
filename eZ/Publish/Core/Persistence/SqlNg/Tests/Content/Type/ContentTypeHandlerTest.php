@@ -181,11 +181,10 @@ class ContentTypeHandlerTest extends TestCase
                         'isTranslatable' => true,
                         'isRequired' => true,
                         'isInfoCollector' => true,
-                        'fieldTypeConstraints' => array(
-                            'minLength' => 5,
-                            'maxLength' => 20,
-                        ),
-                        'defaultValue' => 'Hello World!',
+                        'fieldTypeConstraints' => new Persistence\Content\FieldTypeConstraints(),
+                        'defaultValue' => new Persistence\Content\FieldValue( array(
+                            "data" => "Hello World"
+                        ) ),
                         'isSearchable' => true,
                         'name' => array(
                             'de' => 'Test-Feld',
@@ -445,7 +444,9 @@ class ContentTypeHandlerTest extends TestCase
     public function testUpdateFieldDefinition( $type )
     {
         $fieldDefinition = $type->fieldDefinitions[0];
-        $fieldDefinition->defaultValue = "Hello Earth!";
+        $fieldDefinition->defaultValue = new Persistence\Content\FieldValue( array(
+            "data" => "Hello Earth"
+        ) );
 
         $handler = $this->getHandler();
         $this->assertTrue(
