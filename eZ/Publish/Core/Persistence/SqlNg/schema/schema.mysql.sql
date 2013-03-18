@@ -1,5 +1,4 @@
--- We recreate the DB entirely - so that we do not care about violated constraints
-SET foreign_key_checks = 0;
+SET FOREIGN_KEY_CHECKS = 0;
 
 --
 -- Language table
@@ -12,6 +11,108 @@ CREATE TABLE ezcontent_language (
     `is_enabled` INT(1) NOT NULL DEFAULT 0,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+--
+-- Users
+--
+DROP TABLE IF EXISTS ezuser;
+CREATE TABLE ezuser (
+    `id` INT NOT NULL DEFAULT '0',
+    `content_id` INT DEFAULT NULL,
+    `email` VARCHAR(150) NOT NULL DEFAULT '',
+    `login` VARCHAR(150) NOT NULL DEFAULT '',
+    `password_hash` VARCHAR(50) DEFAULT NULL,
+    `password_hash_type` INT NOT NULL DEFAULT '1',
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS ezuser_setting;
+CREATE TABLE ezuser_setting (
+    `user_id` INT NOT NULL DEFAULT '0',
+    `is_enabled` INT NOT NULL DEFAULT '0',
+    `max_login` INT DEFAULT NULL,
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id),
+    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `ezuser_accountkey`;
+CREATE TABLE `ezuser_accountkey` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `user_id` INT NOT NULL DEFAULT '0',
+    `time` INT NOT NULL DEFAULT '0',
+    `hash_key` VARCHAR(32) NOT NULL DEFAULT '',
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `ezuser_visit`;
+CREATE TABLE `ezuser_visit` (
+    `user_id` INT NOT NULL DEFAULT '0',
+    `current_visit_timestamp` INT NOT NULL DEFAULT '0',
+    `failed_login_attempts` INT NOT NULL DEFAULT '0',
+    `last_visit_timestamp` INT NOT NULL DEFAULT '0',
+    `login_count` INT NOT NULL DEFAULT '0',
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`user_id`),
+    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS ezrole;
+CREATE TABLE ezrole (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `identifier` VARCHAR(255) NOT NULL DEFAULT '',
+    `name` LONGTEXT,
+    `description` LONGTEXT,
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS ezrole_content_rel;
+CREATE TABLE ezrole_content_rel (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `role_id` INT DEFAULT NULL,
+    `content_id` INT DEFAULT NULL,
+    `limit_identifier` VARCHAR(255) DEFAULT '',
+    `limit_value` VARCHAR(255) DEFAULT '',
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES ezrole(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS ezpolicy;
+CREATE TABLE ezpolicy (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `role_id` INT DEFAULT NULL,
+    `function_name` VARCHAR(255) DEFAULT NULL,
+    `module_name` VARCHAR(255) DEFAULT NULL,
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (role_id) REFERENCES ezrole(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS ezpolicy_limitation;
+CREATE TABLE ezpolicy_limitation (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `policy_id` INT DEFAULT NULL,
+    `identifier` VARCHAR(255) NOT NULL DEFAULT '',
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (policy_id) REFERENCES ezpolicy(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS ezpolicy_limitation_value;
+CREATE TABLE ezpolicy_limitation_value (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `limitation_id` INT DEFAULT NULL,
+    `value` VARCHAR(255) DEFAULT NULL,
+    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (limitation_id) REFERENCES ezpolicy_limitation(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 --
@@ -192,104 +293,4 @@ CREATE TABLE `ezsection` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
---
--- Users
---
-DROP TABLE IF EXISTS ezuser;
-CREATE TABLE ezuser (
-    `id` INT NOT NULL DEFAULT '0',
-    `content_id` INT DEFAULT NULL,
-    `email` VARCHAR(150) NOT NULL DEFAULT '',
-    `login` VARCHAR(150) NOT NULL DEFAULT '',
-    `password_hash` VARCHAR(50) DEFAULT NULL,
-    `password_hash_type` INT NOT NULL DEFAULT '1',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezuser_setting;
-CREATE TABLE ezuser_setting (
-    `user_id` INT NOT NULL DEFAULT '0',
-    `is_enabled` INT NOT NULL DEFAULT '0',
-    `max_login` INT DEFAULT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id),
-    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS `ezuser_accountkey`;
-CREATE TABLE `ezuser_accountkey` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL DEFAULT '0',
-    `time` INT NOT NULL DEFAULT '0',
-    `hash_key` VARCHAR(32) NOT NULL DEFAULT '',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `ezuser_visit`;
-CREATE TABLE `ezuser_visit` (
-    `user_id` INT NOT NULL DEFAULT '0',
-    `current_visit_timestamp` INT NOT NULL DEFAULT '0',
-    `failed_login_attempts` INT NOT NULL DEFAULT '0',
-    `last_visit_timestamp` INT NOT NULL DEFAULT '0',
-    `login_count` INT NOT NULL DEFAULT '0',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`user_id`),
-    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS ezrole;
-CREATE TABLE ezrole (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `identifier` VARCHAR(255) NOT NULL DEFAULT '',
-    `name` LONGTEXT,
-    `description` LONGTEXT,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezrole_content_rel;
-CREATE TABLE ezrole_content_rel (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `role_id` INT DEFAULT NULL,
-    `content_id` INT DEFAULT NULL,
-    `limit_identifier` VARCHAR(255) DEFAULT '',
-    `limit_value` VARCHAR(255) DEFAULT '',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES ezrole(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezpolicy;
-CREATE TABLE ezpolicy (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `role_id` INT DEFAULT NULL,
-    `function_name` VARCHAR(255) DEFAULT NULL,
-    `module_name` VARCHAR(255) DEFAULT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (role_id) REFERENCES ezrole(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezpolicy_limitation;
-CREATE TABLE ezpolicy_limitation (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `policy_id` INT DEFAULT NULL,
-    `identifier` VARCHAR(255) NOT NULL DEFAULT '',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (policy_id) REFERENCES ezpolicy(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezpolicy_limitation_value;
-CREATE TABLE ezpolicy_limitation_value (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `limitation_id` INT DEFAULT NULL,
-    `value` VARCHAR(255) DEFAULT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (limitation_id) REFERENCES ezpolicy_limitation(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+SET FOREIGN_KEY_CHECKS = 1;
