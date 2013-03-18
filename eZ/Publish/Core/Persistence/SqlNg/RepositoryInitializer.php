@@ -76,10 +76,10 @@ class RepositoryInitializer
         $userGroup = $this->createRootUserGroup( $importUser, $userGroupType, $usersSection, $rootLocation, $language );
         $userRoot = $userGroup->versionInfo->contentInfo->mainLocationId;
 
-        $home = $this->createHome( $importUser, $landingPageType, $standardSection, $rootLocation, $language );
-
         $this->createUser( $importUser, $userType, $usersSection, $userRoot, $role, $language, 'anonymous', '4e6f6184135228ccd45f8233d72a0363' );
         $adminUser = $this->createUser( $importUser, $userType, $usersSection, $userRoot, $role, $language, 'admin', 'c78e3b0f3d9244ed8c6d1c29464bdff9' );
+
+        $home = $this->createHome( $adminUser, $landingPageType, $standardSection, $rootLocation, $language );
     }
 
     protected function createImportUser()
@@ -127,7 +127,7 @@ class RepositoryInitializer
         );
     }
 
-    protected function createUserGroupType( $importUser, $language, $usersContentTypeGroup )
+    protected function createUserGroupType( $user, $language, $usersContentTypeGroup )
     {
         $userGroupTypeCreate = new Persistence\Content\Type\CreateStruct(
             array(
@@ -140,8 +140,8 @@ class RepositoryInitializer
 
                 'created' => time(),
                 'modified' => time(),
-                'creatorId' => $importUser->id,
-                'modifierId' => $importUser->id,
+                'creatorId' => $user->id,
+                'modifierId' => $user->id,
 
                 'remoteId' => '25b4268cdcd01921b808a0d854b877ef',
 
@@ -232,7 +232,7 @@ class RepositoryInitializer
         return $this->handler->contentTypeHandler()->create( $userGroupTypeCreate );
     }
 
-    protected function createUserType( $importUser, $language, $usersContentTypeGroup )
+    protected function createUserType( $user, $language, $usersContentTypeGroup )
     {
         $userGroupTypeCreate = new Persistence\Content\Type\CreateStruct(
             array(
@@ -245,8 +245,8 @@ class RepositoryInitializer
 
                 'created' => time(),
                 'modified' => time(),
-                'creatorId' => $importUser->id,
-                'modifierId' => $importUser->id,
+                'creatorId' => $user->id,
+                'modifierId' => $user->id,
 
                 'remoteId' => 'user-8432795823475923',
 
@@ -304,7 +304,7 @@ class RepositoryInitializer
         return $this->handler->contentTypeHandler()->create( $userGroupTypeCreate );
     }
 
-    protected function createLandingPageType( $importUser, $language, $contentContentTypeGroup )
+    protected function createLandingPageType( $user, $language, $contentContentTypeGroup )
     {
         $landingPageTypeCreate = new Persistence\Content\Type\CreateStruct(
             array(
@@ -317,8 +317,8 @@ class RepositoryInitializer
 
                 'created' => time(),
                 'modified' => time(),
-                'creatorId' => $importUser->id,
-                'modifierId' => $importUser->id,
+                'creatorId' => $user->id,
+                'modifierId' => $user->id,
 
                 'remoteId' => 'e36c458e3e4a81298a0945f53a2c81f4',
 
@@ -412,14 +412,14 @@ class RepositoryInitializer
         return $this->handler->contentTypeHandler()->create( $landingPageTypeCreate );
     }
 
-    protected function createRootUserGroup( $importUser, $userGroupType, $usersSection, $rootLocation, $language )
+    protected function createRootUserGroup( $user, $userGroupType, $usersSection, $rootLocation, $language )
     {
         $usersContentCreate = new Persistence\Content\CreateStruct(
             array(
                 'name' => 'Users',
                 'typeId' => $userGroupType->id,
                 'sectionId' => $usersSection->id,
-                'ownerId' => $importUser->id,
+                'ownerId' => $user->id,
                 'modified' => time(),
 
                 'locations' => array(
@@ -485,14 +485,14 @@ class RepositoryInitializer
         );
     }
 
-    protected function createHome( $importUser, $landingPageType, $standardSection, $rootLocation, $language )
+    protected function createHome( $user, $landingPageType, $standardSection, $rootLocation, $language )
     {
         $homeContentCreate = new Persistence\Content\CreateStruct(
             array(
                 'name' => 'Home',
                 'typeId' => $landingPageType->id,
                 'sectionId' => $standardSection->id,
-                'ownerId' => $importUser->id,
+                'ownerId' => $user->id,
                 'modified' => time(),
 
                 'locations' => array(
@@ -558,14 +558,14 @@ class RepositoryInitializer
         );
     }
 
-    protected function createUser( $importUser, $userGroupType, $usersSection, $rootLocation, $role, $language, $name, $passwordHash )
+    protected function createUser( $user, $userGroupType, $usersSection, $rootLocation, $role, $language, $name, $passwordHash )
     {
         $userContentCreate = new Persistence\Content\CreateStruct(
             array(
                 'name' => 'Users',
                 'typeId' => $userGroupType->id,
                 'sectionId' => $usersSection->id,
-                'ownerId' => $importUser->id,
+                'ownerId' => $user->id,
                 'modified' => time(),
 
                 'locations' => array(
@@ -632,6 +632,8 @@ class RepositoryInitializer
             $user->id,
             $role->id
         );
+
+        return $user;
     }
 
     protected function createRole()
