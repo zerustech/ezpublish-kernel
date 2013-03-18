@@ -111,6 +111,8 @@ class RepositoryInitializer
                 $adminUser->id
             )
         );
+
+        $this->handler->userHandler()->delete( $importUser->id );
     }
 
     protected function createImportUser()
