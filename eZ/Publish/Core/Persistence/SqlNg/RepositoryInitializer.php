@@ -14,6 +14,11 @@ use eZ\Publish\Core\Persistence\Legacy\EzcDbHandler;
 
 /**
  * The repository handler for the legacy storage engine
+ *
+ * @TODO:
+ * * Use some generic data input format (see data.json)
+ * * Make sure all relevant contents are created, the current data set might be
+ *   slightly too minimal.
  */
 class RepositoryInitializer
 {
