@@ -80,6 +80,37 @@ class RepositoryInitializer
         $adminUser = $this->createUser( $importUser, $userType, $usersSection, $userRoot, $role, $language, 'admin', 'c78e3b0f3d9244ed8c6d1c29464bdff9' );
 
         $home = $this->createHome( $adminUser, $landingPageType, $standardSection, $rootLocation, $language );
+
+        // Reown everything to admin user
+        $this->database->exec(
+            sprintf(
+                'UPDATE ezcontenttype SET creator_id = %d, modifier_id = %d',
+                $adminUser->id,
+                $adminUser->id
+            )
+        );
+
+        $this->database->exec(
+            sprintf(
+                'UPDATE ezcontenttype_group SET creator_id = %d, modifier_id = %d',
+                $adminUser->id,
+                $adminUser->id
+            )
+        );
+
+        $this->database->exec(
+            sprintf(
+                'UPDATE ezcontent SET owner_id = %d',
+                $adminUser->id
+            )
+        );
+
+        $this->database->exec(
+            sprintf(
+                'UPDATE ezcontent_version SET creator_id = %d',
+                $adminUser->id
+            )
+        );
     }
 
     protected function createImportUser()
