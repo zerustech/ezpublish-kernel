@@ -143,6 +143,32 @@ class EzcDatabase extends Gateway
     }
 
     /**
+     * Load all direct children of given location
+     *
+     * @param int $locationId
+     *
+     * @return array
+     */
+    public function loadChildren( $locationId )
+    {
+        $query = $this->handler->createSelectQuery();
+        $query
+            ->select( '*' )
+            ->from( $this->handler->quoteTable( 'ezcontentobject_tree' ) )
+            ->where(
+                $query->expr->eq(
+                    $this->handler->quoteColumn( 'parent_node_id' ),
+                    $query->bindValue( $locationId )
+                )
+            );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
+    }
+
+    /**
      * Find all content in the given subtree
      *
      * @param mixed $sourceId

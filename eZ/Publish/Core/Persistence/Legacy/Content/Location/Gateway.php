@@ -66,6 +66,15 @@ abstract class Gateway
     abstract public function loadLocationDataByContent( $contentId, $rootLocationId = null );
 
     /**
+     * Load all direct children of given location
+     *
+     * @param int $locationId
+     *
+     * @return array
+     */
+    abstract public function loadChildren( $locationId );
+
+    /**
      * Find all content in the given subtree
      *
      * @param mixed $sourceId

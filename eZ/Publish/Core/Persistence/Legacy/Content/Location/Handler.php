@@ -132,6 +132,23 @@ class Handler implements BaseLocationHandler
     }
 
     /**
+     * Load all direct children of given location
+     *
+     * @HACK: This method is not part of the SPI API, but very useful for the
+     * converter to traverse the content tree. There is currently no other
+     * method to do this. Used until we agreed on a sane method here.
+     *
+     * @param int $locationId
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\Location[]
+     */
+    public function loadChildren( $locationId )
+    {
+        $rows = $this->locationGateway->loadChildren( $locationId );
+        return $this->locationMapper->createLocationsFromRows( $rows );
+    }
+
+    /**
      * Copy location object identified by $sourceId, into destination identified by $destinationParentId.
      *
      * Performs a deep copy of the location identified by $sourceId and all of

@@ -112,6 +112,29 @@ class ExceptionConversion extends Gateway
     }
 
     /**
+     * Load all direct children of given location
+     *
+     * @param int $locationId
+     *
+     * @return array
+     */
+    public function loadChildren( $locationId )
+    {
+        try
+        {
+            return $this->innerGateway->loadChildren( $locationId );
+        }
+        catch ( \ezcDbException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+        catch ( \PDOException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+    }
+
+    /**
      * Find all content in the given subtree
      *
      * @param mixed $sourceId
