@@ -663,7 +663,7 @@ class EzcDatabase extends Gateway
 
         if ( $statement->rowCount() < 1 )
         {
-            throw new NotFound( 'FieldDefinition', $fieldDefinitionId );
+            throw new NotFound( 'FieldDefinition', $fieldDefinition->id );
         }
     }
 
