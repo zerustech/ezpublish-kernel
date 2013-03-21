@@ -178,7 +178,67 @@ class EzcDatabase extends Gateway
      */
     public function moveSubtreeNodes( $sourceNodeData, $destinationNodeData )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $fromPathString = $sourceNodeData["path_string"];
+
+        /** @var $query \ezcQuerySelect */
+        $query = $this->dbHandler->createSelectQuery();
+        $query
+            ->select(
+                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'parent_id' ),
+                $this->dbHandler->quoteColumn( 'path_string' )
+            )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->where(
+                $query->expr->like(
+                    $this->dbHandler->quoteColumn( 'path_string' ),
+                    $query->bindValue( $fromPathString . '%' )
+                )
+            );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        $rows = $statement->fetchAll();
+        $oldParentPathString = implode( '/', array_slice( explode( '/', $fromPathString ), 0, -2 ) ) . '/';
+        foreach ( $rows as $row )
+        {
+            // Prefixing ensures correct replacement when old parent is root node
+            $newPathString = str_replace(
+                "prefix" . $oldParentPathString,
+                $destinationNodeData["path_string"],
+                "prefix" . $row['path_string']
+            );
+
+            $newParentId = $row['parent_id'];
+            if ( $row['path_string'] === $fromPathString )
+            {
+                $newParentId = (int)implode( '', array_slice( explode( '/', $newPathString ), -3, 1 ) );
+            }
+
+            /** @var $query \ezcQueryUpdate */
+            $query = $this->dbHandler->createUpdateQuery();
+            $query
+                ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+                ->set(
+                    $this->dbHandler->quoteColumn( 'path_string' ),
+                    $query->bindValue( $newPathString )
+                )
+                ->set(
+                    $this->dbHandler->quoteColumn( 'depth' ),
+                    $query->bindValue( substr_count( $newPathString, '/' ) - 2 )
+                )
+                ->set(
+                    $this->dbHandler->quoteColumn( 'parent_id' ),
+                    $query->bindValue( $newParentId )
+                )
+                ->where(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'id' ),
+                        $query->bindValue( $row['id'] )
+                    )
+                );
+            $query->prepare()->execute();
+        }
     }
 
     /**

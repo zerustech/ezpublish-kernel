@@ -156,7 +156,13 @@ class Handler implements BaseLocationHandler
      */
     public function move( $sourceId, $destinationParentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $sourceNodeData = $this->locationGateway->getBasicNodeData( $sourceId );
+        $destinationNodeData = $this->locationGateway->getBasicNodeData( $destinationParentId );
+
+        $this->locationGateway->moveSubtreeNodes(
+            $sourceNodeData,
+            $destinationNodeData
+        );
     }
 
     /**
