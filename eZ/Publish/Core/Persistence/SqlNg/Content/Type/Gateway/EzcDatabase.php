@@ -663,7 +663,9 @@ class EzcDatabase extends Gateway
 
         if ( $statement->rowCount() < 1 )
         {
-            throw new NotFound( 'FieldDefinition', $fieldDefinition->id );
+            // @TODO: This also happens, if no data changes, but the is still
+            // found. We need a better chack for all update queries.
+            // throw new NotFound( 'FieldDefinition', $fieldDefinition->id );
         }
     }
 
