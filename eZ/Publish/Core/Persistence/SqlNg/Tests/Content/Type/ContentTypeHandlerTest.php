@@ -481,8 +481,27 @@ class ContentTypeHandlerTest extends TestCase
         $handler = $this->getHandler();
         $handler->publish( $type->id );
 
-        $type->status = Persistence\Content\Type::STATUS_DEFINED;
-        return $type;
+        $loadedType = $handler->load( $type->id );
+
+        $this->assertEquals(
+            Persistence\Content\Type::STATUS_DEFINED,
+            $loadedType->status
+        );
+
+        return $loadedType;
+    }
+
+    /**
+     * @depends testCreateDraft
+     */
+    public function testPublishedTypeHasFieldDefinitions( $type )
+    {
+        $this->assertCount( 1, $type->fieldDefinitions );
+
+        $this->assertEquals(
+            'title',
+            $type->fieldDefinitions[0]->identifier
+        );
     }
 
     /**

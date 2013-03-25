@@ -772,6 +772,29 @@ class EzcDatabase extends Gateway
             throw new NotFound( 'type', $typeId );
         }
 
+        if ( $sourceId )
+        {
+            $this->delete( $sourceId, Type::STATUS_DEFINED );
+        }
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontenttype_field' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( Type::STATUS_DEFINED, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'contenttype_id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
         if ( !$sourceId )
         {
             return;
@@ -809,8 +832,6 @@ class EzcDatabase extends Gateway
 
         $statement = $query->prepare();
         $statement->execute();
-
-        $this->delete( $sourceId, Type::STATUS_DEFINED );
     }
 
     /**
