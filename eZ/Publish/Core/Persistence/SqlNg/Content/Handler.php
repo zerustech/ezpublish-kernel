@@ -53,24 +53,34 @@ class Handler implements BaseContentHandler
     protected $fieldIdGenerator;
 
     /**
+     * FieldIdGenerator
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldConverter
+     */
+    protected $storageFieldConverter;
+
+    /**
      * Creates a new content handler.
      *
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Gateway $contentGateway
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway $locationGateway
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper $mapper
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldIdGenerator $fieldIdGenerator
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldConverter $storageFieldConverter
      */
     public function __construct(
         Gateway $contentGateway,
         LocationGateway $locationGateway,
         Mapper $mapper,
-        FieldIdGenerator $fieldIdGenerator
+        FieldIdGenerator $fieldIdGenerator,
+        StorageFieldConverter $storageFieldConverter
     )
     {
         $this->contentGateway = $contentGateway;
         $this->locationGateway = $locationGateway;
         $this->mapper = $mapper;
         $this->fieldIdGenerator = $fieldIdGenerator;
+        $this->storageFieldConverter = $storageFieldConverter;
     }
 
     /**

@@ -255,7 +255,8 @@ class Handler implements HandlerInterface
                 $this->getContentGateway(),
                 $this->getLocationGateway(),
                 $this->getContentMapper(),
-                $this->getFieldIdGenerator()
+                $this->getFieldIdGenerator(),
+                $this->storageFieldConverter()
             );
         }
         return $this->contentHandler;
