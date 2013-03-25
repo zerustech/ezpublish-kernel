@@ -551,6 +551,23 @@ class Handler implements HandlerInterface
     }
 
     /**
+     * Attention: This method is not part of the Handler interface.
+     *
+     * @return eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldConverter
+     * @access private
+     */
+    public function storageFieldConverter()
+    {
+        if ( !isset( $this->storageFieldConverter ) )
+        {
+            $this->storageFieldConverter = new Content\StorageFieldConverter(
+                $this->contentTypeHandler()
+            );
+        }
+        return $this->storageFieldConverter;
+    }
+
+    /**
      * Begin transaction
      *
      * Begins an transaction, make sure you'll call commit or rollback when done,
