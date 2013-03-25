@@ -139,13 +139,26 @@ class Legacy extends SetupFactory
     public function insertData()
     {
         $data = $this->getInitialData();
-        $handler = $this->getDatabaseHandler();
 
         // @todo FIXME: Needs to be in fixture
         $data['ezcontentobject_trash'] = array();
         $data['ezurlwildcard'] = array();
 
-        foreach ( $data as $table => $rows )
+        $this->insertFixture( $data );
+
+        $this->applyStatements( $this->getPostInsertStatements() );
+    }
+
+    /**
+     * Inserts the data from $fixtureData
+     *
+     * @param array $fixtureData
+     */
+    protected function insertFixture( array $fixtureData )
+    {
+        $handler = $this->getDatabaseHandler();
+
+        foreach ( $fixtureData as $table => $rows )
         {
             // Cleanup before inserting
             $deleteQuery = $handler->createDeleteQuery();
@@ -198,8 +211,6 @@ class Legacy extends SetupFactory
                 }
             }
         }
-
-        $this->applyStatements( $this->getPostInsertStatements() );
     }
 
     /**

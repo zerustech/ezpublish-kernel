@@ -41,6 +41,9 @@ class SqlNg extends Legacy
         if ( $initializeFromScratch )
         {
             $this->initializeSchema();
+            $this->getDatabaseHandler()->query( 'SET foreign_key_checks = 0;' );
+            $this->insertFixture( $this->getInitialData() );
+            $this->getDatabaseHandler()->query( 'SET foreign_key_checks = 1;' );
         }
 
         $repository = $this->getServiceContainer()->get( 'inner_repository' );
@@ -55,7 +58,7 @@ class SqlNg extends Legacy
         );
 
         $repository->setCurrentUser(
-            $repository->getUserService()->loadUser( 14 )
+            $repository->getUserService()->loadUser( 3 )
         );
         return $repository;
     }
