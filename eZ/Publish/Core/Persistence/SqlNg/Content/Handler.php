@@ -129,7 +129,7 @@ class Handler implements BaseContentHandler
 
         $content->versionInfo->id = $this->contentGateway->insertVersion(
             $content->versionInfo,
-            $content->fields
+            $this->storageFieldConverter->createStorageFields( $content->fields, $struct->typeId )
         );
 
         // Create node assignments
@@ -226,11 +226,6 @@ class Handler implements BaseContentHandler
             $userId
         );
 
-        $content->versionInfo->id = $this->contentGateway->insertVersion(
-            $content->versionInfo,
-            $content->fields
-        );
-
         // Clone fields from previous version and append them to the new one
         $fields = $content->fields;
         $content->fields = array();
@@ -240,6 +235,11 @@ class Handler implements BaseContentHandler
             $newField->versionNo = $content->versionInfo->versionNo;
             $content->fields[] = $newField;
         }
+
+        $content->versionInfo->id = $this->contentGateway->insertVersion(
+            $content->versionInfo,
+            $this->storageFieldConverter->createStorageFields( $fields, $content->versionInfo->contentInfo->contentTypeId )
+        );
 
         // @TODO: Reactivate
         // $this->fieldHandler->createExistingFieldsInNewVersion( $content );
@@ -275,6 +275,8 @@ class Handler implements BaseContentHandler
 
         $contentObjects = $this->mapper->extractContentFromRows( $rows );
         $content = $contentObjects[0];
+
+        $content->fields = $this->storageFieldConverter->extractFields( $content->fields );
 
         // @TODO: Reactivate
         // $this->fieldHandler->loadExternalFieldData( $content );
@@ -375,7 +377,14 @@ class Handler implements BaseContentHandler
      */
     public function updateContent( $contentId, $versionNo, UpdateStruct $updateStruct )
     {
+        $contentInfo = $this->loadContentInfo( $contentId, $versionNo );
+
+        $updateStruct->fields = $this->storageFieldConverter->createStorageFields(
+            $updateStruct->fields,
+            $contentInfo->contentTypeId
+        );
         $this->contentGateway->updateVersion( $contentId, $versionNo, $updateStruct );
+
         return $this->load( $contentId, $versionNo );
     }
 

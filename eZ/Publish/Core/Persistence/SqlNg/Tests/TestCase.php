@@ -233,7 +233,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         if ( !self::$contentType )
         {
             $contentTypeHandler = $this->getPersistenceHandler()->contentTypeHandler();
-            self::$contentType = $contentTypeHandler->create(
+            $contentType = $contentTypeHandler->create(
                 new Persistence\Content\Type\CreateStruct( array(
                     'identifier' => 'testtype',
                     'status' => 1,
@@ -268,6 +268,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                     ),
                 ) )
             );
+
+            $contentTypeHandler->publish( $contentType->id );
+
+            self::$contentType = $contentTypeHandler->load( $contentType->id );
         }
 
         return self::$contentType;
