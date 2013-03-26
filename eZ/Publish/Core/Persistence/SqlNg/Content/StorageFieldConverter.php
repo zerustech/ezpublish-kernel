@@ -74,9 +74,18 @@ class StorageFieldConverter
 
         foreach ( $storageFields as $id => $storageField )
         {
-            if ( !isset( $fieldDefsByIdentifier[$storageField->fieldDefinitionIdentifier] ) )
+            $identifier = $storageField->fieldDefinitionIdentifier;
+
+            if ( !isset( $fieldDefsByIdentifier[$identifier] ) )
             {
                 unset( $storageFields[$id] );
+                continue;
+            }
+
+            // TODO: Notify content handler for update!
+            if ( $fieldDefsByIdentifier[$identifier]->id != $storageField->field->fieldDefinitionId )
+            {
+                $storageField->field->fieldDefinitionId = $fieldDefsByIdentifier[$identifier]->id;
             }
         }
 
