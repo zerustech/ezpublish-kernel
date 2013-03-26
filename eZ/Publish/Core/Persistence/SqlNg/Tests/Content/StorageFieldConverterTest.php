@@ -13,6 +13,7 @@ use eZ\Publish\Core\Persistence\SqlNg\Tests\TestCase;
 
 use eZ\Publish\SPI\Persistence\Content\Field;
 use eZ\Publish\SPI\Persistence\Content\Type;
+use eZ\Publish\Core\Persistence\SqlNg\Content\StorageField;
 
 /**
  * Test case for StorageField Handler
@@ -44,7 +45,7 @@ class StorageFieldHandlerTest extends TestCase
 
         $contentType = $this->getContentType();
 
-        $fields = $this->getFieldsFixture( $contentType );
+        $fields = $this->getFieldsFixture();
 
         $convertedFields = $converter->createStorageFields( $fields, $contentType->id );
 
@@ -116,6 +117,77 @@ class StorageFieldHandlerTest extends TestCase
         $this->assertCount( count( $storageFields ), $fields );
     }
 
+    public function testUpdateFieldsToNewContentType()
+    {
+        $converter = $this->getStorageFieldConverter();
+
+        $contentType = $this->getContentType();
+
+        $fields = $this->getFieldsFixture();
+        $storageFields = $converter->createStorageFields( $fields, $contentType->id );
+
+        $storageFieldsBeforeUpdate = $this->cloneArray( $storageFields );
+
+        $storageFields[] = new StorageField(
+            array(
+                'field' => new Field(),
+                'fieldDefinitionIdentifier' => 'removed-from-type',
+            )
+        );
+
+        $updatedStorageFields = $converter->updateFieldsToNewContentType(
+            $storageFields,
+            $contentType->id
+        );
+
+        $this->assertEquals(
+            $storageFieldsBeforeUpdate,
+            $updatedStorageFields
+        );
+    }
+
+    public function testCompleteFieldsByContentType()
+    {
+        $converter = $this->getStorageFieldConverter();
+
+        $contentType = $this->getContentType();
+
+        $fields = $this->getFieldsFixture();
+        $storageFields = $converter->createStorageFields( $fields, $contentType->id );
+
+        $beforeCount = count( $storageFields );
+
+        $completeStorageFields = $converter->completeFieldsByContentType(
+            $storageFields,
+            $contentType->id,
+            array( self::LANGUAGE_CODE, 'eng-GB' )
+        );
+
+        $this->assertCount(
+            $beforeCount * 2,
+            $completeStorageFields
+        );
+    }
+
+    protected function cloneArray( array $array )
+    {
+        $clonedArray = array();
+
+        foreach ( $array as $key => $value )
+        {
+            if ( is_object( $value ) )
+            {
+                $clonedArray[$key] = clone $value;
+            }
+            else
+            {
+                $clonedArray[$key] = $value;
+            }
+        }
+
+        return $clonedArray;
+    }
+
     protected function getFieldTypeIdentiefierMap( Type $type )
     {
         $identifierMap = array();
@@ -126,19 +198,9 @@ class StorageFieldHandlerTest extends TestCase
         return $identifierMap;
     }
 
-    protected function getFieldsFixture( Type $type )
+    protected function getFieldsFixture()
     {
-        $fields = array();
-
-        foreach ( $type->fieldDefinitions as $fieldDefinition )
-        {
-            $fields[] = new Field(
-                array(
-                    'fieldDefinitionId' => $fieldDefinition->id,
-                )
-            );
-        }
-
-        return $fields;
+        $content = $this->getContent();
+        return $content->fields;
     }
 }

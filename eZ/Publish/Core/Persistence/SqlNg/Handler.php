@@ -562,7 +562,8 @@ class Handler implements HandlerInterface
         if ( !isset( $this->storageFieldConverter ) )
         {
             $this->storageFieldConverter = new Content\StorageFieldConverter(
-                $this->contentTypeHandler()
+                $this->contentTypeHandler(),
+                $this->contentLanguageHandler()
             );
         }
         return $this->storageFieldConverter;

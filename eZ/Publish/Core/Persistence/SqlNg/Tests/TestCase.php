@@ -19,6 +19,8 @@ use eZ\Publish\SPI\Persistence;
  */
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
+    const LANGUAGE_CODE = 'de_DE';
+
     protected static $dsn;
 
     protected static $db;
@@ -170,7 +172,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $languageHandler = $this->getPersistenceHandler()->contentLanguageHandler();
             self::$language = $languageHandler->create(
                 new Persistence\Content\Language\CreateStruct( array(
-                    'languageCode' => 'de_DE',
+                    'languageCode' => self::LANGUAGE_CODE,
                     'name' => 'German',
                     'isEnabled' => true,
                 ) )

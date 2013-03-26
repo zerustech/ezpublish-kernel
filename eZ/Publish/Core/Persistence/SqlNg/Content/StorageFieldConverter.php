@@ -15,11 +15,18 @@ class StorageFieldConverter
     protected $contentTypeHandler;
 
     /**
-     * @param eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler $contentTypeHandler
+     * @var eZ\Publish\Core\Persistence\SqlNg\Language\Handler
      */
-    public function __construct( ContentTypeHandler $contentTypeHandler )
+    protected $languageHandler;
+
+    /**
+     * @param eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler $contentTypeHandler
+     * @param eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler $languageHandler
+     */
+    public function __construct( ContentTypeHandler $contentTypeHandler, Language\Handler $languageHandler )
     {
         $this->contentTypeHandler = $contentTypeHandler;
+        $this->languageHandler = $languageHandler;
     }
 
     /**
@@ -50,6 +57,113 @@ class StorageFieldConverter
             $fields[] = $storageField->field;
         }
         return $fields;
+    }
+
+    /**
+     * Updates given $storageFields to fit to an updated version of $contentTypeId
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $storageFields
+     * @param mixed $contentTypeId
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[]
+     */
+    public function updateFieldsToNewContentType( array $storageFields, $contentTypeId )
+    {
+        $type = $this->contentTypeHandler->load( $contentTypeId );
+
+        $fieldDefsByIdentifier = $this->getFieldDefinitionsByIdentifier( $type->fieldDefinitions );
+
+        foreach ( $storageFields as $id => $storageField )
+        {
+            if ( !isset( $fieldDefsByIdentifier[$storageField->fieldDefinitionIdentifier] ) )
+            {
+                unset( $storageFields[$id] );
+            }
+        }
+
+        return $storageFields;
+    }
+
+    /**
+     * Completes $storageFields for $contentTypeId in $languages
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $storageFields
+     * @param mixed $contentTypeId
+     * @param string[] $languages
+     */
+    public function completeFieldsByContentType( array $storageFields, $contentTypeId, array $languages )
+    {
+        $fieldsMap = $this->getFieldsByIdentifierAndLanguage( $storageFields );
+        $contentType = $this->contentTypeHandler->load( $contentTypeId );
+
+        $defaultLanguageCode = $this->languageHandler->load( $contentType->initialLanguageId )->languageCode;
+
+        foreach ( $contentType->fieldDefinitions as $fieldDefinition )
+        {
+            $identifier = $fieldDefinition->identifier;
+
+            if ( !isset( $fieldsMap[$identifier] ) )
+            {
+                $fieldsMap[$identifier] = array();
+            }
+
+            if ( !isset( $fieldsMap[$identifier][$defaultLanguageCode] ) )
+            {
+                $fieldsMap[$identifier][$defaultLanguageCode] = clone $fieldDefinition->defaultValue;
+            }
+
+            foreach ( $languages as $languageCode )
+            {
+                if ( !isset( $fieldsMap[$identifier][$languageCode] ) )
+                {
+                    $fieldsMap[$identifier][$languageCode] = clone $fieldsMap[$identifier][$defaultLanguageCode];
+                }
+            }
+        }
+
+        return $this->flattenFieldsMap( $fieldsMap );
+    }
+
+    /**
+     * Returns the $storageFields indexed by field definition identifier and language
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $storageFields
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[][]
+     */
+    protected function getFieldsByIdentifierAndLanguage( array $storageFields )
+    {
+        $fieldsMap = array();
+
+        foreach ( $storageFields as $storageField )
+        {
+            if ( !isset( $fieldsMap[$storageField->fieldDefinitionIdentifier] ) )
+            {
+                $fieldsMap[$storageField->fieldDefinitionIdentifier] = array();
+            }
+            $fieldsMap[$storageField->fieldDefinitionIdentifier][$storageField->field->languageCode] = $storageField;
+        }
+
+        return $fieldsMap;
+    }
+
+    /**
+     * Merges the $fieldsMap back to a flatt array
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[][] $fieldsMap
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[]
+     */
+    protected function flattenFieldsMap( array $fieldsMap )
+    {
+        $flattenedFields = array();
+
+        foreach ( $fieldsMap as $languageFields )
+        {
+            foreach ( $languageFields as $fields )
+            {
+                $flattenedFields[] = $fields;
+            }
+        }
+
+        return $flattenedFields;
     }
 
     /**
@@ -88,5 +202,23 @@ class StorageFieldConverter
                 $contentType->id
             )
         );
+    }
+
+    /**
+     * Returns field definitions indexed by their identifier
+     *
+     * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition[] $fieldDefinitions
+     * @return \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition[string]
+     */
+    protected function getFieldDefinitionsByIdentifier( array $fieldDefinitions )
+    {
+        $fieldDefinitionMap = array();
+
+        foreach ( $fieldDefinitions as $fieldDefinition )
+        {
+            $fieldDefinitionMap[$fieldDefinition->identifier] = $fieldDefinition;
+        }
+
+        return $fieldDefinitionMap;
     }
 }
