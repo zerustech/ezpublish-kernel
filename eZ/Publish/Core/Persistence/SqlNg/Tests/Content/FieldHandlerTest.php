@@ -25,23 +25,23 @@ class StorageFieldHandlerTest extends TestCase
      *
      * @return \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldHandler
      */
-    protected function getStorageFieldConverter()
+    protected function getFieldHandler()
     {
-        return $this->getPersistenceHandler()->storageFieldConverter();
+        return $this->getPersistenceHandler()->fieldHandler();
     }
 
     public function testCtor()
     {
-        $converter = $this->getStorageFieldConverter();
+        $converter = $this->getFieldHandler();
         $this->assertInstanceOf(
-            'eZ\\Publish\\Core\\Persistence\\SqlNg\\Content\\StorageFieldConverter',
+            'eZ\\Publish\\Core\\Persistence\\SqlNg\\Content\\FieldHandler',
             $converter
         );
     }
 
     public function testCreateStorageFields()
     {
-        $converter = $this->getStorageFieldConverter();
+        $converter = $this->getFieldHandler();
 
         $contentType = $this->getContentType();
 
@@ -108,7 +108,7 @@ class StorageFieldHandlerTest extends TestCase
      */
     public function testExtractFields( array $testData )
     {
-        $converter = $this->getStorageFieldConverter();
+        $converter = $this->getFieldHandler();
 
         $storageFields = $testData['fields'];
 
@@ -119,7 +119,7 @@ class StorageFieldHandlerTest extends TestCase
 
     public function testUpdateFieldsToNewContentType()
     {
-        $converter = $this->getStorageFieldConverter();
+        $converter = $this->getFieldHandler();
 
         $contentType = $this->getContentType();
 
@@ -148,7 +148,7 @@ class StorageFieldHandlerTest extends TestCase
 
     public function testCompleteFieldsByContentType()
     {
-        $converter = $this->getStorageFieldConverter();
+        $converter = $this->getFieldHandler();
 
         $contentType = $this->getContentType();
 

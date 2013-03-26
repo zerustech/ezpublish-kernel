@@ -7,7 +7,7 @@ use eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler as ContentTypeHandler
 use eZ\Publish\SPI\Persistence\Content\Type;
 use eZ\Publish\SPI\Persistence\Content\Field;
 
-class StorageFieldConverter
+class FieldHandler
 {
     /**
      * @var eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler

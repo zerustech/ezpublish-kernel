@@ -256,7 +256,7 @@ class Handler implements HandlerInterface
                 $this->getLocationGateway(),
                 $this->getContentMapper(),
                 $this->getFieldIdGenerator(),
-                $this->storageFieldConverter()
+                $this->fieldHandler()
             );
         }
         return $this->contentHandler;
@@ -554,19 +554,19 @@ class Handler implements HandlerInterface
     /**
      * Attention: This method is not part of the Handler interface.
      *
-     * @return eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldConverter
+     * @return eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
      * @access private
      */
-    public function storageFieldConverter()
+    public function fieldHandler()
     {
-        if ( !isset( $this->storageFieldConverter ) )
+        if ( !isset( $this->fieldHandler ) )
         {
-            $this->storageFieldConverter = new Content\StorageFieldConverter(
+            $this->fieldHandler = new Content\FieldHandler(
                 $this->contentTypeHandler(),
                 $this->contentLanguageHandler()
             );
         }
-        return $this->storageFieldConverter;
+        return $this->fieldHandler;
     }
 
     /**

@@ -55,9 +55,9 @@ class Handler implements BaseContentHandler
     /**
      * FieldIdGenerator
      *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldConverter
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
      */
-    protected $storageFieldConverter;
+    protected $fieldHandler;
 
     /**
      * Creates a new content handler.
@@ -66,21 +66,21 @@ class Handler implements BaseContentHandler
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway $locationGateway
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper $mapper
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldIdGenerator $fieldIdGenerator
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldConverter $storageFieldConverter
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler $fieldHandler
      */
     public function __construct(
         Gateway $contentGateway,
         LocationGateway $locationGateway,
         Mapper $mapper,
         FieldIdGenerator $fieldIdGenerator,
-        StorageFieldConverter $storageFieldConverter
+        FieldHandler $fieldHandler
     )
     {
         $this->contentGateway = $contentGateway;
         $this->locationGateway = $locationGateway;
         $this->mapper = $mapper;
         $this->fieldIdGenerator = $fieldIdGenerator;
-        $this->storageFieldConverter = $storageFieldConverter;
+        $this->fieldHandler = $fieldHandler;
     }
 
     /**
@@ -129,7 +129,7 @@ class Handler implements BaseContentHandler
 
         $content->versionInfo->id = $this->contentGateway->insertVersion(
             $content->versionInfo,
-            $this->storageFieldConverter->createStorageFields( $content->fields, $struct->typeId )
+            $this->fieldHandler->createStorageFields( $content->fields, $struct->typeId )
         );
 
         // Create node assignments
@@ -238,7 +238,7 @@ class Handler implements BaseContentHandler
 
         $content->versionInfo->id = $this->contentGateway->insertVersion(
             $content->versionInfo,
-            $this->storageFieldConverter->createStorageFields( $fields, $content->versionInfo->contentInfo->contentTypeId )
+            $this->fieldHandler->createStorageFields( $fields, $content->versionInfo->contentInfo->contentTypeId )
         );
 
         // @TODO: Reactivate
@@ -276,7 +276,7 @@ class Handler implements BaseContentHandler
         $contentObjects = $this->mapper->extractContentFromRows( $rows );
         $content = $contentObjects[0];
 
-        $updatedFields = $this->storageFieldConverter->updateFieldsToNewContentType(
+        $updatedFields = $this->fieldHandler->updateFieldsToNewContentType(
             $content->fields,
             $content->versionInfo->contentInfo->contentTypeId
         );
@@ -289,13 +289,13 @@ class Handler implements BaseContentHandler
             // @TODO: Do we need another load here?
         }
 
-        $content->fields = $this->storageFieldConverter->completeFieldsByContentType(
+        $content->fields = $this->fieldHandler->completeFieldsByContentType(
             $content->fields,
             $content->versionInfo->contentInfo->contentTypeId,
             $content->versionInfo->languageIds
         );
 
-        $content->fields = $this->storageFieldConverter->extractFields( $content->fields );
+        $content->fields = $this->fieldHandler->extractFields( $content->fields );
 
         // @TODO: Reactivate
         // $this->fieldHandler->loadExternalFieldData( $content );
@@ -398,7 +398,7 @@ class Handler implements BaseContentHandler
     {
         $contentInfo = $this->loadContentInfo( $contentId, $versionNo );
 
-        $updateStruct->fields = $this->storageFieldConverter->createStorageFields(
+        $updateStruct->fields = $this->fieldHandler->createStorageFields(
             $updateStruct->fields,
             $contentInfo->contentTypeId
         );
