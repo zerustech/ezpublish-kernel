@@ -29,6 +29,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected static $language;
 
+    protected static $secondLanguage;
+
     protected static $section;
 
     protected static $contentTypeGroup;
@@ -178,6 +180,28 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         return self::$language;
+    }
+
+    /**
+     * Get as second real language in the database
+     *
+     * @return Persistence\Language
+     */
+    protected function getSecondLanguage()
+    {
+        if ( !self::$secondLanguage )
+        {
+            $languageHandler = $this->getPersistenceHandler()->contentLanguageHandler();
+            self::$secondLanguage = $languageHandler->create(
+                new Persistence\Content\Language\CreateStruct( array(
+                    'languageCode' => 'eng-US',
+                    'name' => 'English (US)',
+                    'isEnabled' => true,
+                ) )
+            );
+        }
+
+        return self::$secondLanguage;
     }
 
     /**

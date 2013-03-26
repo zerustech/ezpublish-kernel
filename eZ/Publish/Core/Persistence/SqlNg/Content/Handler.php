@@ -276,6 +276,25 @@ class Handler implements BaseContentHandler
         $contentObjects = $this->mapper->extractContentFromRows( $rows );
         $content = $contentObjects[0];
 
+        $updatedFields = $this->storageFieldConverter->updateFieldsToNewContentType(
+            $content->fields,
+            $content->versionInfo->contentInfo->contentTypeId
+        );
+
+        if ( count( $updatedFields ) !== count( $content->fields ) )
+        {
+            $content->fields = $updatedFields;
+            $updateStruct = $this->mapper->createUpdateStructFromContent( $content );
+            $this->gateway->updateVersion( $updateStruct );
+            // @TODO: Do we need another load here?
+        }
+
+        $content->fields = $this->storageFieldConverter->completeFieldsByContentType(
+            $content->fields,
+            $content->versionInfo->contentInfo->contentTypeId,
+            $content->versionInfo->languageIds
+        );
+
         $content->fields = $this->storageFieldConverter->extractFields( $content->fields );
 
         // @TODO: Reactivate

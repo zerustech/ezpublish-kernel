@@ -160,7 +160,7 @@ class StorageFieldHandlerTest extends TestCase
         $completeStorageFields = $converter->completeFieldsByContentType(
             $storageFields,
             $contentType->id,
-            array( self::LANGUAGE_CODE, 'eng-GB' )
+            array( $this->getLanguage()->id, $this->getSecondLanguage()->id )
         );
 
         $this->assertCount(

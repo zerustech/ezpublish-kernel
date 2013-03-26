@@ -88,13 +88,22 @@ class StorageFieldConverter
      *
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $storageFields
      * @param mixed $contentTypeId
-     * @param string[] $languages
+     * @param mixed[] $languageIds
      */
-    public function completeFieldsByContentType( array $storageFields, $contentTypeId, array $languages )
+    public function completeFieldsByContentType( array $storageFields, $contentTypeId, array $languageIds )
     {
         $fieldsMap = $this->getFieldsByIdentifierAndLanguage( $storageFields );
         $contentType = $this->contentTypeHandler->load( $contentTypeId );
 
+        $languageHandler = $this->languageHandler;
+
+        $languageCodes = array_map(
+            function ( $languageId ) use ( $languageHandler )
+            {
+                return $languageHandler->load( $languageId )->languageCode;
+            },
+            $languageIds
+        );
         $defaultLanguageCode = $this->languageHandler->load( $contentType->initialLanguageId )->languageCode;
 
         foreach ( $contentType->fieldDefinitions as $fieldDefinition )
@@ -111,7 +120,7 @@ class StorageFieldConverter
                 $fieldsMap[$identifier][$defaultLanguageCode] = clone $fieldDefinition->defaultValue;
             }
 
-            foreach ( $languages as $languageCode )
+            foreach ( $languageCodes as $languageCode )
             {
                 if ( !isset( $fieldsMap[$identifier][$languageCode] ) )
                 {
