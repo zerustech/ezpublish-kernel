@@ -129,6 +129,22 @@ class Mapper
     }
 
     /**
+     * Returns an update struct that would store the exact information from $content
+     *
+     * @param \eZ\Publish\SPI\Persistence\Content $content
+     * @return \eZ\Publish\SPI\Persistence\Content\UpdateStruct
+     */
+    public function createUpdateStructFromContent( Content $content )
+    {
+        $updateStruct = new UpdateStruct();
+        $updateStruct->name = $content->names;
+        $updatestruct->creatorId = $content->versionInfo->creatorId;
+        $updateStruct->fields = $content->fields;
+        $updateStruct->modificationDate = $content->versionInfo->modificationDate;
+        $updateStruct->initialLanguageId = $this->languageHandler->loadByLanguageCode( $content->versionInfo->initialLanguageCode )->id;
+    }
+
+    /**
      * Converts value of $field to storage value
      *
      * @param \eZ\Publish\SPI\Persistence\Content\Field $field
