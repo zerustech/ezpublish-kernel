@@ -141,11 +141,4 @@ class StorageFieldHandlerTest extends TestCase
 
         return $fields;
     }
-
-    protected function getContentType()
-    {
-        $contentType = parent::getContentType();
-        $this->getPersistenceHandler()->contentTypeHandler()->publish( $contentType->id );
-        return $contentType;
-    }
 }
