@@ -3,6 +3,7 @@
 namespace eZ\Publish\Core\Persistence\SqlNg\Content;
 
 use eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler as ContentTypeHandler;
+use eZ\Publish\Core\Persistence\SqlNg\Content\Gateway as ContentGateway;
 
 use eZ\Publish\SPI\Persistence\Content\Type;
 use eZ\Publish\SPI\Persistence\Content\Field;
@@ -20,13 +21,19 @@ class FieldHandler
     protected $languageHandler;
 
     /**
+     * @var eZ\Publish\Core\Persistence\SqlNg\Content\Gateway
+     */
+    protected $contentGateway;
+
+    /**
      * @param eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler $contentTypeHandler
      * @param eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler $languageHandler
      */
-    public function __construct( ContentTypeHandler $contentTypeHandler, Language\Handler $languageHandler )
+    public function __construct( ContentTypeHandler $contentTypeHandler, Language\Handler $languageHandler, ContentGateway $contentGateway )
     {
         $this->contentTypeHandler = $contentTypeHandler;
         $this->languageHandler = $languageHandler;
+        $this->contentGateway = $contentGateway;
     }
 
     /**
