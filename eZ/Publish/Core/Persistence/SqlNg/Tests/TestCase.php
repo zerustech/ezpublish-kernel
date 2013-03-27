@@ -287,7 +287,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                             'fieldGroup' => '1',
                             'position' => 2,
                             'fieldType' => 'eztext',
-                            'isTranslatable' => true,
+                            'isTranslatable' => false,
                             'isRequired' => true,
                             'isInfoCollector' => true,
                             'isSearchable' => true,
