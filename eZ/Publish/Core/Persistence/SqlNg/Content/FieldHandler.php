@@ -167,7 +167,7 @@ class FieldHandler
      * @param string $languageCode
      * @return \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField
      */
-    protected function createDefaultField( FieldDefinition $fieldDefinition, $languageCode )
+    protected function createDefaultField( Type\FieldDefinition $fieldDefinition, $languageCode )
     {
         return new StorageField(
             array(
