@@ -44,10 +44,9 @@ class StorageFieldHandlerTest extends TestCase
         $converter = $this->getFieldHandler();
 
         $contentType = $this->getContentType();
+        $content = $this->getContent();
 
-        $fields = $this->getFieldsFixture();
-
-        $convertedFields = $converter->createStorageFields( $fields, $contentType->id );
+        $convertedFields = $converter->createStorageFields( $content->fields, $contentType->id );
 
         $this->assertInternalType( 'array', $convertedFields );
 
@@ -206,11 +205,5 @@ class StorageFieldHandlerTest extends TestCase
             $cachedContent->versionInfo->contentInfo->id,
             $cachedContent->versionInfo->versionNo
         );
-    }
-
-    protected function getFieldsFixture()
-    {
-        $content = $this->getContent();
-        return $content->fields;
     }
 }
