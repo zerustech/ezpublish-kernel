@@ -144,7 +144,10 @@ class FieldHandler
 
             if ( !isset( $fieldsMap[$identifier][$defaultLanguageCode] ) )
             {
-                $fieldsMap[$identifier][$defaultLanguageCode] = clone $fieldDefinition->defaultValue;
+                $fieldsMap[$identifier][$defaultLanguageCode] = $this->createDefaultField(
+                    $fieldDefinition,
+                    $defaultLanguageCode
+                );
             }
 
             foreach ( $languageCodes as $languageCode )
@@ -157,6 +160,28 @@ class FieldHandler
         }
 
         return $this->flattenFieldsMap( $fieldsMap );
+    }
+
+    /**
+     * @param \eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition $fieldDefinition
+     * @param string $languageCode
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField
+     */
+    protected function createDefaultField( FieldDefinition $fieldDefinition, $languageCode )
+    {
+        return new StorageField(
+            array(
+                'field' => new Field(
+                    array(
+                        'fieldDefinitionId' => $fieldDefinition->id,
+                        'type' => $fieldDefinition->fieldType,
+                        'value' => clone $fieldDefinition->defaultValue,
+                        'languageCode' => $languageCode,
+                    )
+                ),
+                'fieldDefinitionIdentifier' => $fieldDefinition->identifier,
+            )
+        );
     }
 
     /**
