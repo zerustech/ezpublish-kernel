@@ -12,6 +12,7 @@ namespace eZ\Publish\Core\Persistence\SqlNg\Tests\Content;
 use eZ\Publish\Core\Persistence\SqlNg\Tests\TestCase;
 
 use eZ\Publish\SPI\Persistence\Content\Field;
+use eZ\Publish\SPI\Persistence\Content\FieldValue;
 use eZ\Publish\SPI\Persistence\Content\Type;
 use eZ\Publish\Core\Persistence\SqlNg\Content\StorageField;
 
@@ -163,6 +164,80 @@ class StorageFieldHandlerTest extends TestCase
             $beforeCount * 2,
             $completeStorageFields
         );
+    }
+
+    public function testRemoveRedundantFieldValuesDoesNotRemoveNonDefaultValues()
+    {
+        $converter = $this->getFieldHandler();
+
+        $contentType = $this->getContentType();
+        $content = $this->getContent();
+
+        $storageFields = $converter->createStorageFields( $content->fields, $contentType->id );
+
+        $cleanedStorageFields = $converter->removeRedundantFieldValues( $storageFields, $contentType->id );
+
+        $this->assertEquals( $storageFields, $cleanedStorageFields );
+    }
+
+    public function testRemoveRedundantFieldValuesRemovesDefaultValues()
+    {
+        $converter = $this->getFieldHandler();
+
+        $contentType = $this->getContentType();
+        $content = $this->getContent();
+
+        $storageFields = $converter->createStorageFields( $content->fields, $contentType->id );
+
+        $storageFieldsWithDefault = $this->cloneArray( $storageFields );
+        $storageFieldsWithDefault[] = new StorageField(
+            array(
+                'field' => new Field(
+                    array(
+                        'value' => clone $contentType->fieldDefinitions[0]->defaultValue,
+                        'languageCode' => $this->getSecondLanguage()->languageCode,
+                    )
+                ),
+                'fieldDefinitionIdentifier' => $contentType->fieldDefinitions[0]->identifier,
+            )
+        );
+
+        $cleanedStorageFields = $converter->removeRedundantFieldValues(
+            $storageFieldsWithDefault,
+            $contentType->id
+        );
+
+        $this->assertCount( count( $storageFields ), $cleanedStorageFields );
+    }
+
+    public function testRemoveRedundantFieldValuesRemovesDuplicateNontranslatableValues()
+    {
+        $converter = $this->getFieldHandler();
+
+        $contentType = $this->getContentType();
+        $content = $this->getContent();
+
+        $storageFields = $converter->createStorageFields( $content->fields, $contentType->id );
+
+        $storageFieldsWithDefault = $this->cloneArray( $storageFields );
+        $storageFieldsWithDefault[] = new StorageField(
+            array(
+                'field' => new Field(
+                    array(
+                        'value' => new FieldValue( array( 'data' => 'foobar' ) ),
+                        'languageCode' => $this->getSecondLanguage()->languageCode,
+                    )
+                ),
+                'fieldDefinitionIdentifier' => $contentType->fieldDefinitions[1]->identifier,
+            )
+        );
+
+        $cleanedStorageFields = $converter->removeRedundantFieldValues(
+            $storageFieldsWithDefault,
+            $contentType->id
+        );
+
+        $this->assertCount( count( $storageFields ), $cleanedStorageFields );
     }
 
     protected function cloneArray( array $array )

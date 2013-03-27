@@ -160,6 +160,61 @@ class FieldHandler
     }
 
     /**
+     * Removes all redundant fields from $storageFields
+     *
+     * This includes:
+     * - Fields that have their default value
+     * - Fields that are not translatable, but occur in multiple languages
+     *
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $storageFields
+     * @param mixed $contentTypeId
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[]
+     */
+    public function removeRedundantFieldValues( array $storageFields, $contentTypeId )
+    {
+        $type = $this->contentTypeHandler->load( $contentTypeId );
+
+        $fieldDefsByIdentifier = $this->getFieldDefinitionsByIdentifier( $type->fieldDefinitions );
+        $defaultLanguageCode = $this->languageHandler->load( $type->initialLanguageId )->languageCode;
+
+        $fieldMap = $this->getFieldsByIdentifierAndLanguage( $storageFields );
+
+        foreach ( $fieldMap as $defIdentifier => $languageFields )
+        {
+            $fieldDefinition = $fieldDefsByIdentifier[$defIdentifier];
+
+            $missingDefaultLanguage = false;
+            if ( !$fieldDefinition->isTranslatable && !isset( $languageFields[$defaultLanguageCode] ) )
+            {
+                $missingDefaultLanguage = true;
+            }
+
+            foreach ( $languageFields as $languageCode => $storageField )
+            {
+                if ( $storageField->field->value == $fieldDefinition->defaultValue )
+                {
+                    unset( $fieldMap[$defIdentifier][$languageCode] );
+                    continue;
+                }
+
+                if ( $missingDefaultLanguage )
+                {
+                    $fieldMap[$defIdentifier][$defaultLanguageCode] = clone $storageField;
+                    $missingDefaultLanguage = false;
+                }
+
+                if ( !$fieldDefinition->isTranslatable && $storageField->field->languageCode !== $defaultLanguageCode )
+                {
+                    unset( $fieldMap[$defIdentifier][$languageCode] );
+                    continue;
+                }
+            }
+        }
+
+        return $this->flattenFieldsMap( $fieldMap );
+    }
+
+    /**
      * Returns the $storageFields indexed by field definition identifier and language
      *
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $storageFields
