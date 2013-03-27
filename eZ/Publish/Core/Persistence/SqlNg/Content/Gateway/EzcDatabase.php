@@ -266,10 +266,9 @@ class EzcDatabase extends Gateway
      */
     public function updateVersion( $contentId, $versionNo, UpdateStruct $struct )
     {
-        $query = $this->dbHandler->createUpdateQuery();
-        $query->update(
-            $this->dbHandler->quoteTable( 'ezcontent_version' )
-        )->set(
+        $query = $this->getVersionUpdateQuery( $contentId, $versionNo, $struct->fields );
+
+        $query->set(
             $this->dbHandler->quoteColumn( 'creator_id' ),
             $query->bindValue( $struct->creatorId, null, \PDO::PARAM_INT )
         )->set(
@@ -278,9 +277,25 @@ class EzcDatabase extends Gateway
         )->set(
             $this->dbHandler->quoteColumn( 'initial_language_id' ),
             $query->bindValue( $struct->initialLanguageId, null, \PDO::PARAM_INT )
+        );
+        $query->prepare()->execute();
+    }
+
+    /**
+     * Returns a query to update $contentId in $versionNo with $fields
+     *
+     * @param mixed $contentId
+     * @param mixed $versionNo
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Conten\StorageField[] $fields
+     */
+    protected function getVersionUpdateQuery( $contentId, $versionNo, array $fields )
+    {
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent_version' )
         )->set(
             $this->dbHandler->quoteColumn( 'fields' ),
-            $query->bindValue( json_encode( $struct->fields ), null, \PDO::PARAM_STR )
+            $query->bindValue( json_encode( $fields ), null, \PDO::PARAM_STR )
         )->where(
             $query->expr->lAnd(
                 $query->expr->eq(
@@ -293,6 +308,22 @@ class EzcDatabase extends Gateway
                 )
             )
         );
+
+        return $query;
+    }
+
+    /**
+     * Updates $fields for $versionNo of content identified by $contentId
+     *
+     * @param int $contentId
+     * @param int $versionNo
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $fields
+     *
+     * @return void
+     */
+    public function updateFields( $contentId, $versionNo, array $fields )
+    {
+        $query = $this->getVersionUpdateQuery( $contentId, $versionNo, $fields );
         $query->prepare()->execute();
     }
 

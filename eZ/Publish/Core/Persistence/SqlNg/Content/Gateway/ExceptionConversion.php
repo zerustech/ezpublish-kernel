@@ -160,6 +160,31 @@ class ExceptionConversion extends Gateway
     }
 
     /**
+     * Updates $fields for $versionNo of content identified by $contentId
+     *
+     * @param int $contentId
+     * @param int $versionNo
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $fields
+     *
+     * @return void
+     */
+    public function updateFields( $contentId, $versionNo, array $fields )
+    {
+        try
+        {
+            return $this->innerGateway->updateFields( $contentId, $versionNo, $fields );
+        }
+        catch ( \ezcDbException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+        catch ( \PDOException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+    }
+
+    /**
      * Updates "always available" flag for content identified by $contentId, in respect to $alwaysAvailable.
      *
      * @param int $contentId

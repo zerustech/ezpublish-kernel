@@ -122,27 +122,24 @@ class StorageFieldHandlerTest extends TestCase
         $converter = $this->getFieldHandler();
 
         $contentType = $this->getContentType();
+        $content = $this->getContent();
 
-        $fields = $this->getFieldsFixture();
-        $storageFields = $converter->createStorageFields( $fields, $contentType->id );
+        $content->fields = $converter->createStorageFields( $content->fields, $contentType->id );
 
-        $storageFieldsBeforeUpdate = $this->cloneArray( $storageFields );
+        $storageFieldsBeforeUpdate = $this->cloneArray( $content->fields );
 
-        $storageFields[] = new StorageField(
+        $content->fields[] = new StorageField(
             array(
                 'field' => new Field(),
                 'fieldDefinitionIdentifier' => 'removed-from-type',
             )
         );
 
-        $updatedStorageFields = $converter->updateFieldsToNewContentType(
-            $storageFields,
-            $contentType->id
-        );
+        $converter->updateFieldsToNewContentType( $content );
 
         $this->assertEquals(
             $storageFieldsBeforeUpdate,
-            $updatedStorageFields
+            $content->fields
         );
     }
 
@@ -151,9 +148,9 @@ class StorageFieldHandlerTest extends TestCase
         $converter = $this->getFieldHandler();
 
         $contentType = $this->getContentType();
+        $content = $this->getContent();
 
-        $fields = $this->getFieldsFixture();
-        $storageFields = $converter->createStorageFields( $fields, $contentType->id );
+        $storageFields = $converter->createStorageFields( $content->fields, $contentType->id );
 
         $beforeCount = count( $storageFields );
 
@@ -196,6 +193,19 @@ class StorageFieldHandlerTest extends TestCase
             $identifierMap[$fieldDefinition->id] = $fieldDefinition->identifier;
         }
         return $identifierMap;
+    }
+
+    /**
+     * Force re-loading of content
+     */
+    protected function getContent()
+    {
+        $cachedContent = parent::getContent();
+
+        return $this->getPersistenceHandler()->contentHandler()->load(
+            $cachedContent->versionInfo->contentInfo->id,
+            $cachedContent->versionInfo->versionNo
+        );
     }
 
     protected function getFieldsFixture()

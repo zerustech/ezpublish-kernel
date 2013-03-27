@@ -64,6 +64,17 @@ abstract class Gateway
     abstract public function updateVersion( $contentId, $versionNo, UpdateStruct $struct );
 
     /**
+     * Updates $fields for $versionNo of content identified by $contentId
+     *
+     * @param int $contentId
+     * @param int $versionNo
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $fields
+     *
+     * @return void
+     */
+    abstract public function updateFields( $contentId, $versionNo, array $fields );
+
+    /**
      * Updates "always available" flag for content identified by $contentId, in respect to $alwaysAvailable.
      *
      * @param int $contentId

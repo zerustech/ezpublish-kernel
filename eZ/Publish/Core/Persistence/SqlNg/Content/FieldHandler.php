@@ -5,6 +5,7 @@ namespace eZ\Publish\Core\Persistence\SqlNg\Content;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Type\Handler as ContentTypeHandler;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Gateway as ContentGateway;
 
+use eZ\Publish\SPI\Persistence\Content;
 use eZ\Publish\SPI\Persistence\Content\Type;
 use eZ\Publish\SPI\Persistence\Content\Field;
 
@@ -67,36 +68,46 @@ class FieldHandler
     }
 
     /**
-     * Updates given $storageFields to fit to an updated version of $contentTypeId
+     * Updates fields in given $content to fit to an updated version of $contentTypeId
      *
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[] $storageFields
-     * @param mixed $contentTypeId
+     * @param \eZ\Publish\SPI\Persistence\Content $content
      * @return \eZ\Publish\Core\Persistence\SqlNg\Content\StorageField[]
      */
-    public function updateFieldsToNewContentType( array $storageFields, $contentTypeId )
+    public function updateFieldsToNewContentType( Content $content )
     {
-        $type = $this->contentTypeHandler->load( $contentTypeId );
+        $type = $this->contentTypeHandler->load(
+            $content->versionInfo->contentInfo->contentTypeId
+        );
 
         $fieldDefsByIdentifier = $this->getFieldDefinitionsByIdentifier( $type->fieldDefinitions );
 
-        foreach ( $storageFields as $id => $storageField )
+        $updated = false;
+        foreach ( $content->fields as $id => $storageField )
         {
             $identifier = $storageField->fieldDefinitionIdentifier;
 
             if ( !isset( $fieldDefsByIdentifier[$identifier] ) )
             {
-                unset( $storageFields[$id] );
+                unset( $content->fields[$id] );
+                $updated = true;
                 continue;
             }
 
-            // TODO: Notify content handler for update!
             if ( $fieldDefsByIdentifier[$identifier]->id != $storageField->field->fieldDefinitionId )
             {
                 $storageField->field->fieldDefinitionId = $fieldDefsByIdentifier[$identifier]->id;
+                $updated = true;
             }
         }
 
-        return $storageFields;
+        if ( $updated )
+        {
+            $this->contentGateway->updateFields(
+                $content->versionInfo->contentInfo->id,
+                $content->versionInfo->versionNo,
+                $content->fields
+            );
+        }
     }
 
     /**

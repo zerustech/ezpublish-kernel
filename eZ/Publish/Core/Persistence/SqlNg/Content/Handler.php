@@ -276,18 +276,7 @@ class Handler implements BaseContentHandler
         $contentObjects = $this->mapper->extractContentFromRows( $rows );
         $content = $contentObjects[0];
 
-        $updatedFields = $this->fieldHandler->updateFieldsToNewContentType(
-            $content->fields,
-            $content->versionInfo->contentInfo->contentTypeId
-        );
-
-        if ( count( $updatedFields ) !== count( $content->fields ) )
-        {
-            $content->fields = $updatedFields;
-            $updateStruct = $this->mapper->createUpdateStructFromContent( $content );
-            $this->gateway->updateVersion( $updateStruct );
-            // @TODO: Do we need another load here?
-        }
+        $this->fieldHandler->updateFieldsToNewContentType( $content );
 
         $content->fields = $this->fieldHandler->completeFieldsByContentType(
             $content->fields,
