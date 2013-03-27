@@ -127,15 +127,9 @@ class Handler implements BaseContentHandler
             $field->versionNo = $content->versionInfo->versionNo;
         }
 
-        $content->versionInfo->id = $this->contentGateway->insertVersion(
+        $content->versionInfo->id = $this->insertVersion(
             $content->versionInfo,
-            $this->fieldHandler->removeRedundantFieldValues(
-                $this->fieldHandler->createStorageFields(
-                    $content->fields,
-                    $struct->typeId
-                ),
-                $content->versionInfo->contentInfo->contentTypeId
-            )
+            $content->fields
         );
 
         // Create node assignments
@@ -155,6 +149,29 @@ class Handler implements BaseContentHandler
         }
 
         return $content;
+    }
+
+    /**
+     * Inserts the given data as a version and returns the version ID
+     *
+     * Also takes care to remove duplicates and create storage fields.
+     *
+     * @param \eZ\Publish\SPI\Persistence\Content\VersionInfo $versionInfo
+     * @param \eZ\Publish\SPI\Persistence\Content\Field[] $fields
+     * @return mixed
+     */
+    protected function insertVersion( VersionInfo $versionInfo, array $fields )
+    {
+        return $this->contentGateway->insertVersion(
+            $versionInfo,
+            $this->fieldHandler->removeRedundantFieldValues(
+                $this->fieldHandler->createStorageFields(
+                    $fields,
+                    $versionInfo->contentInfo->contentTypeId
+                ),
+                $versionInfo->contentInfo->contentTypeId
+            )
+        );
     }
 
     /**
@@ -242,15 +259,9 @@ class Handler implements BaseContentHandler
             $content->fields[] = $newField;
         }
 
-        $content->versionInfo->id = $this->contentGateway->insertVersion(
+        $content->versionInfo->id = $this->insertVersion(
             $content->versionInfo,
-            $this->fieldHandler->removeRedundantFieldValues(
-                $this->fieldHandler->createStorageFields(
-                    $fields,
-                    $content->versionInfo->contentInfo->contentTypeId
-                ),
-                $content->versionInfo->contentInfo->contentTypeId
-            )
+            $fields
         );
 
         // @TODO: Reactivate
