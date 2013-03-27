@@ -278,6 +278,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                             'isRequired' => true,
                             'isInfoCollector' => true,
                             'isSearchable' => true,
+                            'defaultValue' => new Persistence\Content\FieldValue( array(
+                                'data' => 'foo',
+                            ) ),
                         ) ),
                         new Persistence\Content\Type\FieldDefinition( array(
                             'identifier' => 'text',
@@ -288,6 +291,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                             'isRequired' => true,
                             'isInfoCollector' => true,
                             'isSearchable' => true,
+                            'defaultValue' => new Persistence\Content\FieldValue( array(
+                                'data' => 'bar',
+                            ) ),
                         ) ),
                     ),
                 ) )
