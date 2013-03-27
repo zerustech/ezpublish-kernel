@@ -129,7 +129,13 @@ class Handler implements BaseContentHandler
 
         $content->versionInfo->id = $this->contentGateway->insertVersion(
             $content->versionInfo,
-            $this->fieldHandler->createStorageFields( $content->fields, $struct->typeId )
+            $this->fieldHandler->removeRedundantFieldValues(
+                $this->fieldHandler->createStorageFields(
+                    $content->fields,
+                    $struct->typeId
+                ),
+                $content->versionInfo->contentInfo->contentTypeId
+            )
         );
 
         // Create node assignments
@@ -238,7 +244,13 @@ class Handler implements BaseContentHandler
 
         $content->versionInfo->id = $this->contentGateway->insertVersion(
             $content->versionInfo,
-            $this->fieldHandler->createStorageFields( $fields, $content->versionInfo->contentInfo->contentTypeId )
+            $this->fieldHandler->removeRedundantFieldValues(
+                $this->fieldHandler->createStorageFields(
+                    $fields,
+                    $content->versionInfo->contentInfo->contentTypeId
+                ),
+                $content->versionInfo->contentInfo->contentTypeId
+            )
         );
 
         // @TODO: Reactivate
@@ -387,8 +399,11 @@ class Handler implements BaseContentHandler
     {
         $contentInfo = $this->loadContentInfo( $contentId, $versionNo );
 
-        $updateStruct->fields = $this->fieldHandler->createStorageFields(
-            $updateStruct->fields,
+        $updateStruct->fields = $this->fieldHandler->removeRedundantFieldValues(
+            $this->fieldHandler->createStorageFields(
+                $updateStruct->fields,
+                $contentInfo->contentTypeId
+            ),
             $contentInfo->contentTypeId
         );
         $this->contentGateway->updateVersion( $contentId, $versionNo, $updateStruct );
