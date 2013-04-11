@@ -34,9 +34,10 @@ class FieldValue extends ValueObject
      * This data is processed by the field type storage interface method
      * storeFieldData, if used by the FieldType, otherwise null.
      *
-     * Either a scalar (primitive), null or an array (map) of scalar values.
+     * Either a primitive, an array (map) or an object
+     * If object it *must* be serializable, for instance DOMDocument is not valid object.
      *
-     * @var int|float|bool|string|null|array
+     * @var mixed
      */
     public $externalData;
 
