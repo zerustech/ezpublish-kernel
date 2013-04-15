@@ -50,8 +50,8 @@ class EzcDatabase extends Gateway
         $query->insertInto(
             $this->dbHandler->quoteTable( 'ezsection' )
         )->set(
-            $this->dbHandler->quoteColumn( 'id' ),
-            $this->dbHandler->getAutoIncrementValue( 'ezsection', 'id' )
+            $this->dbHandler->quoteColumn( 'section_id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezsection', 'section_id' )
         )->set(
             $this->dbHandler->quoteColumn( 'name' ),
             $query->bindValue( $name )
@@ -63,7 +63,7 @@ class EzcDatabase extends Gateway
         $query->prepare()->execute();
 
         return $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezsection', 'id' )
+            $this->dbHandler->getSequenceName( 'ezsection', 'section_id' )
         );
     }
 
@@ -89,7 +89,7 @@ class EzcDatabase extends Gateway
             $query->bindValue( $identifier )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'section_id' ),
                 $query->bindValue( $id, null, \PDO::PARAM_INT )
             )
         );
@@ -114,14 +114,14 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
-            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->quoteColumn( 'section_id' ),
             $this->dbHandler->quoteColumn( 'identifier' ),
             $this->dbHandler->quoteColumn( 'name' )
         )->from(
             $this->dbHandler->quoteTable( 'ezsection' )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'section_id' ),
                 $query->bindValue( $id, null, \PDO::PARAM_INT )
             )
         );
@@ -141,7 +141,7 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
-            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->quoteColumn( 'section_id' ),
             $this->dbHandler->quoteColumn( 'identifier' ),
             $this->dbHandler->quoteColumn( 'name' )
         )->from(
@@ -165,7 +165,7 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
-            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->quoteColumn( 'section_id' ),
             $this->dbHandler->quoteColumn( 'identifier' ),
             $this->dbHandler->quoteColumn( 'name' )
         )->from(
@@ -197,7 +197,7 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteTable( 'ezsection' )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'section_id' ),
                 $query->bindValue( $id, null, \PDO::PARAM_INT )
             )
         );
@@ -229,7 +229,7 @@ class EzcDatabase extends Gateway
             $query->bindValue( $sectionId, null, \PDO::PARAM_INT )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'section_id' ),
                 $query->bindValue( $contentId, null, \PDO::PARAM_INT )
             )
         );

@@ -204,7 +204,7 @@ class Handler implements BaseSectionHandler
     protected function createSectionFromArray( array $data )
     {
         return new Persistence\Content\Section( array(
-            'id' => (int)$data['id'],
+            'id' => (int)$data['section_id'],
             'name' => $data['name'],
             'identifier' => $data['identifier'],
         ) );
