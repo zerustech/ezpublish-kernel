@@ -63,7 +63,7 @@ class Subtree extends CriterionHandler
                 ),
                 $query->expr->eq(
                     $this->dbHandler->quoteColumn( 'content_id', $table ),
-                    $this->dbHandler->quoteColumn( 'id', 'ezcontent' )
+                    $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' )
                 )
             );
 

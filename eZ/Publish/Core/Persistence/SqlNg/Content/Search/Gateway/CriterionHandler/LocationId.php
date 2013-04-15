@@ -52,13 +52,13 @@ class LocationId extends CriterionHandler
                 $this->dbHandler->quoteTable( 'ezcontent_location' )
             )->where(
                 $query->expr->in(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'location_id' ),
                     $criterion->value
                 )
             );
 
         return $query->expr->in(
-            $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
+            $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' ),
             $subSelect
         );
     }

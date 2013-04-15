@@ -45,7 +45,7 @@ class ContentTypeId extends CriterionHandler
     public function handle( CriteriaConverter $converter, ezcQuerySelect $query, Criterion $criterion )
     {
         return $query->expr->in(
-            $this->dbHandler->quoteColumn( 'contenttype_id', 'ezcontent' ),
+            $this->dbHandler->quoteColumn( 'type_id', 'ezcontent' ),
             $criterion->value
         );
     }

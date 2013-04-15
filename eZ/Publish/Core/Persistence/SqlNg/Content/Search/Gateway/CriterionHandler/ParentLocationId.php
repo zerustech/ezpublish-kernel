@@ -58,7 +58,7 @@ class ParentLocationId extends CriterionHandler
             );
 
         return $query->expr->in(
-            $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
+            $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' ),
             $subSelect
         );
     }

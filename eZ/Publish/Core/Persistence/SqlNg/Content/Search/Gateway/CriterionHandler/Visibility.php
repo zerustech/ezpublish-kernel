@@ -86,7 +86,7 @@ class Visibility extends CriterionHandler
             )->where( $expression );
 
         return $query->expr->in(
-            $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
+            $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' ),
             $subSelect
         );
     }

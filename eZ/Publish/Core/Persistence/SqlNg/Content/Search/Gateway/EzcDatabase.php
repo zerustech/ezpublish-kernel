@@ -153,7 +153,7 @@ class EzcDatabase extends Gateway
             ->from( $this->dbHandler->quoteTable( 'ezcontent' ) )
             ->innerJoin(
                 'ezcontent_version',
-                'ezcontent.id',
+                'ezcontent.content_id',
                 'ezcontent_version.content_id'
             );
 
@@ -188,7 +188,7 @@ class EzcDatabase extends Gateway
         $query = $this->dbHandler->createSelectQuery();
 
         $query->select(
-            $this->dbHandler->quoteColumn( 'id', 'ezcontent' )
+            $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' )
         );
 
         if ( count( $sort ) )
@@ -201,7 +201,7 @@ class EzcDatabase extends Gateway
         );
         $query->innerJoin(
             'ezcontent_version',
-            'ezcontent.id',
+            'ezcontent.content_id',
             'ezcontent_version.content_id'
         );
 
@@ -239,7 +239,7 @@ class EzcDatabase extends Gateway
                 VersionInfo::STATUS_PUBLISHED
             ),
             $loadQuery->expr->in(
-                $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
+                $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' ),
                 $contentIds
             )
         );
