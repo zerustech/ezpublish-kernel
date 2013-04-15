@@ -29,8 +29,8 @@ class RepositoryInitializerTest extends TestCase
     {
         return array(
             array( 'f3e90596361e31d496d4026eb624c983', 'Home' ),
-            array( 'admin', 'admin' ),
-            array( 'anonymous', 'anonymous' ),
+            array( 'faaeb9be3bd98ed09f606fc16d144eca', 'admin' ),
+            array( '1bb4fe25487f05527efa8bfd394cecc7', 'anonymous' ),
         );
     }
 
