@@ -59,10 +59,10 @@ CREATE TABLE IF NOT EXISTS `ezrole_content_rel` (
     FOREIGN KEY (`role_id`) REFERENCES `ezrole` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS `ezpolicy`;
-CREATE TABLE IF NOT EXISTS `ezpolicy` (
+DROP TABLE IF EXISTS `ezrole_policy`;
+CREATE TABLE IF NOT EXISTS `ezrole_policy` (
     `policy_id` INT(10) NOT NULL AUTO_INCREMENT,
-    `name` INT(10) DEFAULT NULL,
+    `role_id` INT NOT NULL DEFAULT '0',
     `limitations` LONGTEXT DEFAULT NULL,
     PRIMARY KEY (`policy_id`)
 ) ENGINE=InnoDB;
