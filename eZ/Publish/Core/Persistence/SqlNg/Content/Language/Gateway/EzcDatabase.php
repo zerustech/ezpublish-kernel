@@ -50,8 +50,8 @@ class EzcDatabase extends Gateway
         $query->insertInto(
             $this->dbHandler->quoteTable( 'ezcontent_language' )
         )->set(
-            $this->dbHandler->quoteColumn( 'id' ),
-            $this->dbHandler->getAutoIncrementValue( 'ezcontent_language', 'id' )
+            $this->dbHandler->quoteColumn( 'language_id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent_language', 'language_id' )
         )->set(
             $this->dbHandler->quoteColumn( 'language_code' ),
             $query->bindValue( $language->languageCode )
@@ -65,7 +65,7 @@ class EzcDatabase extends Gateway
         $query->prepare()->execute();
 
         return $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezcontent_language', 'id' )
+            $this->dbHandler->getSequenceName( 'ezcontent_language', 'language_id' )
         );
     }
 
@@ -92,7 +92,7 @@ class EzcDatabase extends Gateway
             $query->bindValue( $language->isEnabled, null, \PDO::PARAM_INT )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'language_id' ),
                 $query->bindValue( $language->id, null, \PDO::PARAM_INT )
             )
         );
@@ -112,7 +112,7 @@ class EzcDatabase extends Gateway
         $query = $this->createFindQuery();
         $query->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'language_id' ),
                 $query->bindValue( $id, null, \PDO::PARAM_INT )
             )
         );
@@ -170,7 +170,7 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
-            $this->dbHandler->quoteColumn( 'id' ),
+            $this->dbHandler->quoteColumn( 'language_id' ),
             $this->dbHandler->quoteColumn( 'language_code' ),
             $this->dbHandler->quoteColumn( 'name' ),
             $this->dbHandler->quoteColumn( 'is_enabled' )
@@ -195,7 +195,7 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteTable( 'ezcontent_language' )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'language_id' ),
                 $query->bindValue( $id, null, \PDO::PARAM_INT )
             )
         );

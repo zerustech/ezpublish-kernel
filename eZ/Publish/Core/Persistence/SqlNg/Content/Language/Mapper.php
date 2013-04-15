@@ -50,7 +50,7 @@ class Mapper
         {
             $language = new Language();
 
-            $language->id = (int)$row['id'];
+            $language->id = (int)$row['language_id'];
             $language->languageCode = $row['language_code'];
             $language->name = $row['name'];
             $language->isEnabled = (bool)$row['is_enabled'];
