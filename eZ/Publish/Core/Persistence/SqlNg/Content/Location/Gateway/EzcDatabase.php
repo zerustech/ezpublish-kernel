@@ -62,7 +62,7 @@ class EzcDatabase extends Gateway
             ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
             ->where(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'location_id' ),
                     $query->bindValue( $nodeId )
                 )
             );
@@ -184,7 +184,7 @@ class EzcDatabase extends Gateway
         $query = $this->dbHandler->createSelectQuery();
         $query
             ->select(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'location_id' ),
                 $this->dbHandler->quoteColumn( 'parent_id' ),
                 $this->dbHandler->quoteColumn( 'path_string' )
             )
@@ -233,8 +233,8 @@ class EzcDatabase extends Gateway
                 )
                 ->where(
                     $query->expr->eq(
-                        $this->dbHandler->quoteColumn( 'id' ),
-                        $query->bindValue( $row['id'] )
+                        $this->dbHandler->quoteColumn( 'location_id' ),
+                        $query->bindValue( $row['location_id'] )
                     )
                 );
             $query->prepare()->execute();
@@ -313,7 +313,7 @@ class EzcDatabase extends Gateway
                         $query->bindValue( 1 )
                     ),
                     $query->expr->in(
-                        $this->dbHandler->quoteColumn( 'id' ),
+                        $this->dbHandler->quoteColumn( 'location_id' ),
                         array_filter( explode( '/', $pathString ) )
                     )
                 )
@@ -404,14 +404,14 @@ class EzcDatabase extends Gateway
         $query = $this->dbHandler->createSelectQuery();
         $query
             ->select(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'location_id' ),
                 $this->dbHandler->quoteColumn( 'content_id' ),
                 $this->dbHandler->quoteColumn( 'content_version_no' )
             )
             ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
             ->where(
                 $query->expr->in(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'location_id' ),
                     array( $locationId1, $locationId2 )
                 )
             );
@@ -420,7 +420,7 @@ class EzcDatabase extends Gateway
         $contentObjects = array();
         foreach ( $statement->fetchAll() as $row )
         {
-            $contentObjects[$row['id']] = $row;
+            $contentObjects[$row['location_id']] = $row;
         }
 
         if ( !isset($contentObjects[$locationId1] ) )
@@ -446,7 +446,7 @@ class EzcDatabase extends Gateway
             )
             ->where(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'location_id' ),
                     $query->bindValue( $locationId1 )
                 )
             );
@@ -465,7 +465,7 @@ class EzcDatabase extends Gateway
             )
             ->where(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'location_id' ),
                     $query->bindValue( $locationId2 )
                 )
             );
@@ -490,8 +490,8 @@ class EzcDatabase extends Gateway
             ->insertInto(
                 $this->dbHandler->quoteTable( 'ezcontent_location' )
             )->set(
-                $this->dbHandler->quoteColumn( 'id' ),
-                $this->dbHandler->getAutoIncrementValue( 'ezcontent_location', 'id' )
+                $this->dbHandler->quoteColumn( 'location_id' ),
+                $this->dbHandler->getAutoIncrementValue( 'ezcontent_location', 'location_id' )
             )->set(
                 $this->dbHandler->quoteColumn( 'status' ),
                 $query->bindValue( $status, null, \PDO::PARAM_INT )
@@ -526,11 +526,11 @@ class EzcDatabase extends Gateway
         $query->prepare()->execute();
 
         $location->id = $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezcontent_location', 'id' )
+            $this->dbHandler->getSequenceName( 'ezcontent_location', 'location_id' )
         );
 
         $location->pathString = ( $parentNodeData ? $parentNodeData['path_string'] : '/' ) . $location->id . '/';
-        $location->parentId = $parentNodeData ? $parentNodeData['id'] : $location->id;
+        $location->parentId = $parentNodeData ? $parentNodeData['location_id'] : $location->id;
 
         $query = $this->dbHandler->createUpdateQuery();
         $query
@@ -543,7 +543,7 @@ class EzcDatabase extends Gateway
                 $query->bindValue( $location->parentId, null, \PDO::PARAM_INT )
             )->where(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'location_id' ),
                     $query->bindValue( $location->id, null, \PDO::PARAM_INT )
                 )
             );
@@ -641,7 +641,7 @@ class EzcDatabase extends Gateway
             )
             ->where(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'location_id' ),
                     $locationId
                 )
             );
@@ -793,7 +793,7 @@ class EzcDatabase extends Gateway
             )
             ->where(
                 $query->expr->in(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'content_id' ),
                     $subSelect
                 )
             );
@@ -835,7 +835,7 @@ class EzcDatabase extends Gateway
             $query->bindValue( null )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( "id" ),
+                $this->dbHandler->quoteColumn( "location_id" ),
                 $query->bindValue( $locationId, null, \PDO::PARAM_INT )
             )
         );

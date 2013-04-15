@@ -33,7 +33,7 @@ class Mapper
     {
         $location = $location ?: new Persistence\Content\Location();
 
-        $location->id = $data[$prefix . 'id'];
+        $location->id = $data[$prefix . 'location_id'];
         $location->priority = $data[$prefix . 'priority'];
         $location->hidden = (bool)$data[$prefix . 'is_hidden'];
         $location->invisible = (bool)$data[$prefix . 'is_invisible'];
@@ -64,7 +64,7 @@ class Mapper
 
         foreach ( $rows as $row )
         {
-            $id = $row[$prefix . 'id'];
+            $id = $row[$prefix . 'location_id'];
             if ( !isset( $locations[$id] ) )
             {
                 $locations[$id] = $this->createLocationFromRow( $row, $prefix );
