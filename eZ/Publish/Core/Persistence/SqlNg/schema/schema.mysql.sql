@@ -3,125 +3,77 @@ SET FOREIGN_KEY_CHECKS = 0;
 --
 -- Language table
 --
-DROP TABLE IF EXISTS ezcontent_language;
-CREATE TABLE ezcontent_language (
+DROP TABLE IF EXISTS `ezcontent_language`;
+CREATE TABLE IF NOT EXISTS `ezcontent_language` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `language_code` VARCHAR(20) NOT NULL DEFAULT '',
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `is_enabled` INT(1) NOT NULL DEFAULT 0,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
+
 
 --
 -- Users
 --
-DROP TABLE IF EXISTS ezuser;
-CREATE TABLE ezuser (
+DROP TABLE IF EXISTS `ezuser`;
+CREATE TABLE IF NOT EXISTS `ezuser` (
     `id` INT NOT NULL DEFAULT '0',
     `content_id` INT DEFAULT NULL,
     `email` VARCHAR(150) NOT NULL DEFAULT '',
     `login` VARCHAR(150) NOT NULL DEFAULT '',
     `password_hash` VARCHAR(50) DEFAULT NULL,
     `password_hash_type` INT NOT NULL DEFAULT '1',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezuser_setting;
-CREATE TABLE ezuser_setting (
-    `user_id` INT NOT NULL DEFAULT '0',
-    `is_enabled` INT NOT NULL DEFAULT '0',
+    `current_visit_timestamp` INT DEFAULT NULL,
+    `last_visit_timestamp` INT DEFAULT NULL,
+    `failed_login_attempts` INT DEFAULT NULL,
+    `login_count` INT DEFAULT NULL,
+    `is_enabled` INT DEFAULT NULL,
     `max_login` INT DEFAULT NULL,
+    `hash_key` VARCHAR(32) DEFAULT NULL,
+    `time_hash_key` INT DEFAULT NULL,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id),
-    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS `ezuser_accountkey`;
-CREATE TABLE `ezuser_accountkey` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL DEFAULT '0',
-    `time` INT NOT NULL DEFAULT '0',
-    `hash_key` VARCHAR(32) NOT NULL DEFAULT '',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `ezuser_visit`;
-CREATE TABLE `ezuser_visit` (
-    `user_id` INT NOT NULL DEFAULT '0',
-    `current_visit_timestamp` INT NOT NULL DEFAULT '0',
-    `failed_login_attempts` INT NOT NULL DEFAULT '0',
-    `last_visit_timestamp` INT NOT NULL DEFAULT '0',
-    `login_count` INT NOT NULL DEFAULT '0',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`user_id`),
-    FOREIGN KEY (user_id) REFERENCES ezuser(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS ezrole;
-CREATE TABLE ezrole (
-    `id` INT NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `ezrole`;
+CREATE TABLE IF NOT EXISTS `ezrole` (
+    `role_id` INT NOT NULL AUTO_INCREMENT,
     `identifier` VARCHAR(255) NOT NULL DEFAULT '',
     `name` LONGTEXT,
     `description` LONGTEXT,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
+    PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezrole_content_rel;
-CREATE TABLE ezrole_content_rel (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `role_id` INT DEFAULT NULL,
-    `content_id` INT DEFAULT NULL,
+DROP TABLE IF EXISTS `ezrole_content_rel`;
+CREATE TABLE IF NOT EXISTS `ezrole_content_rel` (
+    `role_id` INT NOT NULL DEFAULT '0',
+    `content_id` INT NOT NULL DEFAULT '0',
     `limit_identifier` VARCHAR(255) DEFAULT '',
     `limit_value` VARCHAR(255) DEFAULT '',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES ezrole(id) ON DELETE CASCADE
+    PRIMARY KEY (`role_id`,`content_id`),
+    FOREIGN KEY (`content_id`) REFERENCES `ezcontent` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`role_id`) REFERENCES `ezrole` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezpolicy;
-CREATE TABLE ezpolicy (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `role_id` INT DEFAULT NULL,
-    `function_name` VARCHAR(255) DEFAULT NULL,
-    `module_name` VARCHAR(255) DEFAULT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (role_id) REFERENCES ezrole(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezpolicy_limitation;
-CREATE TABLE ezpolicy_limitation (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `policy_id` INT DEFAULT NULL,
-    `identifier` VARCHAR(255) NOT NULL DEFAULT '',
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (policy_id) REFERENCES ezpolicy(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS ezpolicy_limitation_value;
-CREATE TABLE ezpolicy_limitation_value (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `limitation_id` INT DEFAULT NULL,
-    `value` VARCHAR(255) DEFAULT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (limitation_id) REFERENCES ezpolicy_limitation(id) ON DELETE CASCADE
+DROP TABLE IF EXISTS `ezpolicy`;
+CREATE TABLE IF NOT EXISTS `ezpolicy` (
+    `policy_id` INT(10) NOT NULL AUTO_INCREMENT,
+    `name` INT(10) DEFAULT NULL,
+    `limitations` LONGTEXT DEFAULT NULL,
+    PRIMARY KEY (`policy_id`)
 ) ENGINE=InnoDB;
 
 --
 -- Content type definitions (formerlly known as contentclass)
 --
-DROP TABLE IF EXISTS ezcontenttype;
-CREATE TABLE ezcontenttype (
+DROP TABLE IF EXISTS `ezcontenttype`;
+CREATE TABLE IF NOT EXISTS `ezcontenttype` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `source_id` INT NULL,
+    `source_id` INT DEFAULT NULL,
     `identifier` VARCHAR(50) NOT NULL DEFAULT '',
     `initial_language_id` INT NOT NULL DEFAULT '0',
     `always_available` INT NOT NULL DEFAULT '0',
@@ -138,21 +90,21 @@ CREATE TABLE ezcontenttype (
     `sort_order` INT NOT NULL DEFAULT '1',
     `status` INT NOT NULL DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE KEY ezcontenttype_remote_id (remote_id),
-    FOREIGN KEY (source_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE,
-    FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
-    FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
-    FOREIGN KEY (modifier_id) REFERENCES ezuser(id) ON DELETE RESTRICT
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `ezcontenttype_remote_id` (`remote_id`),
+    FOREIGN KEY (`source_id`) REFERENCES `ezcontenttype` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`initial_language_id`) REFERENCES `ezcontent_language` (`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`creator_id`) REFERENCES `ezuser` (`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`modifier_id`) REFERENCES `ezuser` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontenttype_field;
-CREATE TABLE ezcontenttype_field (
-    `id` INT NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `ezcontenttype_field`;
+CREATE TABLE IF NOT EXISTS `ezcontenttype_field` (
+    `field_id` INT NOT NULL AUTO_INCREMENT,
+    `contenttype_id` INT NOT NULL DEFAULT '0',
     `identifier` VARCHAR(50) NOT NULL DEFAULT '',
     `status` INT NOT NULL DEFAULT '0',
     `field_group` VARCHAR(25) NOT NULL DEFAULT '',
-    `contenttype_id` INT NOT NULL DEFAULT '0',
     `can_translate` INT DEFAULT '1',
     `type_string` VARCHAR(50) NOT NULL DEFAULT '',
     `is_information_collector` INT NOT NULL DEFAULT '0',
@@ -164,13 +116,13 @@ CREATE TABLE ezcontenttype_field (
     `constraints` LONGTEXT,
     `default_value` LONGTEXT,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id, status),
-    FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE
+    PRIMARY KEY (`field_id`),
+    FOREIGN KEY (`contenttype_id`) REFERENCES `ezcontenttype` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontenttype_group;
-CREATE TABLE ezcontenttype_group (
-    `id` INT NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `ezcontenttype_group`;
+CREATE TABLE IF NOT EXISTS `ezcontenttype_group` (
+    `group_id` INT NOT NULL AUTO_INCREMENT,
     `identifier` VARCHAR(255) DEFAULT NULL,
     `created` INT NOT NULL DEFAULT '0',
     `creator_id` INT NOT NULL DEFAULT '0',
@@ -179,27 +131,27 @@ CREATE TABLE ezcontenttype_group (
     `name_list` LONGTEXT,
     `description_list` LONGTEXT,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (creator_id) REFERENCES ezuser(id) ON DELETE RESTRICT,
-    FOREIGN KEY (modifier_id) REFERENCES ezuser(id) ON DELETE RESTRICT
+    PRIMARY KEY (`group_id`),
+    FOREIGN KEY (`creator_id`) REFERENCES `ezuser` (`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`modifier_id`) REFERENCES `ezuser` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS ezcontenttype_group_rel;
-CREATE TABLE ezcontenttype_group_rel (
+DROP TABLE IF EXISTS `ezcontenttype_group_rel`;
+CREATE TABLE IF NOT EXISTS `ezcontenttype_group_rel` (
     `contenttype_id` INT NOT NULL DEFAULT '0',
     `group_id` INT NOT NULL DEFAULT '0',
     `status` INT NOT NULL DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (contenttype_id, group_id, status),
-    FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE CASCADE,
-    FOREIGN KEY (group_id) REFERENCES ezcontenttype_group(id) ON DELETE RESTRICT
+    PRIMARY KEY (`contenttype_id`,`group_id`,`status`),
+    FOREIGN KEY (`group_id`) REFERENCES `ezcontenttype_group` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`contenttype_id`) REFERENCES `ezcontenttype` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 --
 -- Content object definitions (formerlly known as contentobject)
 --
-DROP TABLE IF EXISTS ezcontent;
-CREATE TABLE ezcontent(
+DROP TABLE IF EXISTS `ezcontent`;
+CREATE TABLE IF NOT EXISTS `ezcontent` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `contenttype_id` INT NOT NULL DEFAULT '0',
     `current_version_no` INT DEFAULT NULL,
@@ -213,12 +165,12 @@ CREATE TABLE ezcontent(
     `section_id` INT NOT NULL DEFAULT '0',
     `status` INT DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE KEY ezcontentobject_remote_id (remote_id),
-    FOREIGN KEY (contenttype_id) REFERENCES ezcontenttype(id) ON DELETE RESTRICT,
-    FOREIGN KEY (initial_language_id) REFERENCES ezcontent_language(id) ON DELETE RESTRICT,
-    FOREIGN KEY (section_id) REFERENCES ezsection(id) ON DELETE RESTRICT,
-    FOREIGN KEY (owner_id) REFERENCES ezuser(id) ON DELETE RESTRICT
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `ezcontentobject_remote_id` (`remote_id`),
+    FOREIGN KEY (`section_id`) REFERENCES `ezsection` (`section_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`contenttype_id`) REFERENCES `ezcontenttype` (`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`initial_language_id`) REFERENCES `ezcontent_language` (`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`owner_id`) REFERENCES `ezuser` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS ezcontent_version;
@@ -241,26 +193,55 @@ CREATE TABLE ezcontent_version (
 ) ENGINE=InnoDB;
 
 -- Formerlly ezcontentobject_link
-DROP TABLE IF EXISTS ezcontent_relation;
-CREATE TABLE ezcontent_relation (
+DROP TABLE IF EXISTS `ezcontent_relation`;
+CREATE TABLE IF NOT EXISTS `ezcontent_relation` (
+    `content_id` INT(10) NOT NULL DEFAULT '0',
+    `version_id` INT(10) NOT NULL DEFAULT '0',
+    `to_content_id` INT(10) NOT NULL DEFAULT '0',
+    `relation_type_id` INT(10) DEFAULT NULL,
+    `changed` timestamp NULL DEFAULT NULL,
+    PRIMARY KEY (`content_id`,`version_id`,`to_content_id`),
+    FOREIGN KEY (`relation_type_id`) REFERENCES `ezrelation_types` (`relation_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`content_id`, `version_id`) REFERENCES `content_versions` (`content_id`, `version_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`to_content_id`) REFERENCES `ezcontent` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `ezcontent_relation_fields`;
+CREATE TABLE IF NOT EXISTS `ezcontent_relation_fields` (
+    `content_id` INT(10) NOT NULL DEFAULT '0',
+    `version_id` INT(10) NOT NULL DEFAULT '0',
+    `to_content_id` INT(10) NOT NULL DEFAULT '0',
+    `content_type_filed_id` INT(10) NOT NULL DEFAULT '0',
+    `relation_type_id` INT(10) DEFAULT NULL,
+    `changed` INT(10) DEFAULT NULL,
+    PRIMARY KEY (`content_id`,`version_id`,`to_content_id`,`content_type_filed_id`),
+    FOREIGN KEY (`relation_type_id`) REFERENCES `ezrelation_types` (`relation_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`content_type_filed_id`) REFERENCES `ezcontenttype_field` (`field_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`content_id`, `version_id`, `to_content_id`) REFERENCES `ezcontent_relation` (`content_id`, `version_id`, `to_content_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `ezrelation_types`;
+CREATE TABLE IF NOT EXISTS `ezrelation_types` (
+    `relation_type_id` INT(10) NOT NULL AUTO_INCREMENT,
+    `name` INT(10) DEFAULT NULL,
+    PRIMARY KEY (`relation_type_id`)
+) ENGINE=InnoDB;
+
+DROP TABLE eF EXISTS `ezcontent_language`;
+CREATE TABLE IF NOT EXISTS `ezcontent_language` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `contenttype_field_id` INT DEFAULT NULL,
-    `from_content_id` INT NOT NULL DEFAULT '0',
-    `from_content_version_no` INT NOT NULL DEFAULT '0',
-    `to_content_id` INT NOT NULL DEFAULT '0',
-    `relation_type` INT NOT NULL DEFAULT '1',
+    `language_code` VARCHAR(20) NOT NULL DEFAULT '',
+    `name` VARCHAR(255) NOT NULL DEFAULT '',
+    `is_enabled` INT(1) NOT NULL DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (contenttype_field_id) REFERENCES ezcontenttype_field(id) ON DELETE RESTRICT,
-    FOREIGN KEY (from_content_id, from_content_version_no) REFERENCES ezcontent_version(content_id, version_no) ON DELETE CASCADE,
-    FOREIGN KEY (to_content_id) REFERENCES ezcontent(id) ON DELETE CASCADE
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
 --
 -- Locations (and trash) formelly known as tree
 --
-DROP TABLE IF EXISTS ezcontent_location;
-CREATE TABLE ezcontent_location (
+DROP TABLE IF EXISTS `ezcontent_location`;
+CREATE TABLE IF NOT EXISTS `ezcontent_location` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `status` INT NOT NULL DEFAULT '0',
     `main_id` INT DEFAULT NULL,
@@ -276,21 +257,21 @@ CREATE TABLE ezcontent_location (
     `sort_field` INT DEFAULT '1',
     `sort_order` INT DEFAULT '1',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id, status),
-    UNIQUE KEY ezcontent_location_remote_id (remote_id),
-    FOREIGN KEY (main_id) REFERENCES ezcontent_location(id) ON DELETE RESTRICT,
-    FOREIGN KEY (parent_id) REFERENCES ezcontent_location(id) ON DELETE RESTRICT,
-    FOREIGN KEY (content_id) REFERENCES ezcontent(id) ON DELETE CASCADE
+    PRIMARY KEY (`id`,`status`),
+    UNIQUE KEY `ezcontent_location_remote_id` (`remote_id`),
+    FOREIGN KEY (`main_id`) REFERENCES `ezcontent_location` (`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`parent_id`) REFERENCES `ezcontent_location` (`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`content_id`) REFERENCES `ezcontent` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `ezsection`;
-CREATE TABLE `ezsection` (
-    `id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `ezsection` (
+    `section_id` INT NOT NULL AUTO_INCREMENT,
     `identifier` VARCHAR(255) DEFAULT NULL,
     `language_code` VARCHAR(255) DEFAULT NULL,
     `name` VARCHAR(255) DEFAULT NULL,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+    PRIMARY KEY (`section_id`)
+) ENGINE=InnoDB;
 
 SET FOREIGN_KEY_CHECKS = 1;
