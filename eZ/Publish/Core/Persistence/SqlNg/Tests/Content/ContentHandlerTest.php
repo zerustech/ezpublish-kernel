@@ -382,6 +382,7 @@ class ContentHandlerTest extends TestCase
      */
     public function testRemoveRelation( $relation )
     {
+        $this->markTestIncomplete("@TODO: The API is supposed to be changed to delete relations by content, version, to_content.");
         $handler = $this->getContentHandler();
 
         $this->getContentHandler()->removeRelation( $relation->id, $relation->type );
