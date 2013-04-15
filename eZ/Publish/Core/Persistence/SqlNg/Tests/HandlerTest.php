@@ -283,6 +283,7 @@ class HandlerTest extends TestCase
      */
     public function testUrlAliasHandler()
     {
+        $this->markTestIncomplete("URL Alias handler still missing.");
         $handler = $this->getPersistenceHandler();
         $urlAliasHandler = $handler->urlAliasHandler();
 
@@ -303,6 +304,7 @@ class HandlerTest extends TestCase
      */
     public function testUrlAliasHandlerTwice()
     {
+        $this->markTestIncomplete("URL Alias handler still missing.");
         $handler = $this->getPersistenceHandler();
 
         $this->assertSame(

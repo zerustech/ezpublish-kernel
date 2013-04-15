@@ -335,6 +335,7 @@ class LocationHandlerTest extends TestCase
      */
     public function testMoveSubtreeNotFound()
     {
+        $this->markTestIncomplete("Missing test setup.");
         $handler = $this->getLocationHandler();
 
         $handler->move( 1337, 1338 );
@@ -353,6 +354,7 @@ class LocationHandlerTest extends TestCase
      */
     public function testCopySubtreeNotFound()
     {
+        $this->markTestIncomplete("Missing test setup.");
         $handler = $this->getLocationHandler();
 
         $handler->copySubtree( 1337, 1338 );
@@ -360,6 +362,7 @@ class LocationHandlerTest extends TestCase
 
     public function testCopySubtree()
     {
+        $this->markTestIncomplete("Missing test setup.");
         $handler = $this->getLocationHandler();
 
         $handler->copySubtree( 42, 43 );
@@ -370,6 +373,7 @@ class LocationHandlerTest extends TestCase
      */
     public function testRemoveSubtreeNotFound()
     {
+        $this->markTestIncomplete("Missing test setup.");
         $handler = $this->getLocationHandler();
 
         $handler->removeSubtree( 1337 );
@@ -377,6 +381,7 @@ class LocationHandlerTest extends TestCase
 
     public function testRemoveSubtree()
     {
+        $this->markTestIncomplete("Missing test setup.");
         $handler = $this->getLocationHandler();
 
         $handler->removeSubtree( 42 );

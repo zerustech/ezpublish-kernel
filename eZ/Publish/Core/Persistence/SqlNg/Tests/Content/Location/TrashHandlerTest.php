@@ -30,6 +30,7 @@ class TrashHandlerTest extends TestCase
 
     public function testTrashSubtree()
     {
+        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         $trashedObject = $handler->trashSubtree( 42 );
@@ -42,6 +43,7 @@ class TrashHandlerTest extends TestCase
 
     public function testTrashSubtreeReturnsNullIfLocationWasDeleted()
     {
+        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         $returnValue = $handler->trashSubtree( 42 );
@@ -53,6 +55,7 @@ class TrashHandlerTest extends TestCase
      */
     public function testLoadTrashItem( $trashedObject )
     {
+        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         $loaded = $handler->loadTrashItem( $trashedObject->id );
@@ -68,6 +71,7 @@ class TrashHandlerTest extends TestCase
      */
     public function testLoadTrashItemNotFound()
     {
+        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         $handler->loadTrashItem( 1337 );
@@ -78,6 +82,7 @@ class TrashHandlerTest extends TestCase
      */
     public function testRecover( $trashedObject )
     {
+        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         $locationId = $handler->recover( $trashedObject->id, 2 );
@@ -87,6 +92,7 @@ class TrashHandlerTest extends TestCase
 
     public function testEmptyTrash()
     {
+        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         // @TODO: Fixture?
@@ -98,6 +104,7 @@ class TrashHandlerTest extends TestCase
 
     public function testDeleteTrashItemNoMoreLocations()
     {
+        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         // @TODO: Fixture?
@@ -109,6 +116,7 @@ class TrashHandlerTest extends TestCase
 
     public function testDeleteTrashItemStillHaveLocations()
     {
+        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         // @TODO: Fixture?
