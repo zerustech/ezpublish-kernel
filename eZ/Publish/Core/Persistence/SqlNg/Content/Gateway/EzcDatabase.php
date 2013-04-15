@@ -84,8 +84,8 @@ class EzcDatabase extends Gateway
         $query->insertInto(
             $this->dbHandler->quoteTable( 'ezcontent' )
         )->set(
-            $this->dbHandler->quoteColumn( 'id' ),
-            $this->dbHandler->getAutoIncrementValue( 'ezcontent', 'id' )
+            $this->dbHandler->quoteColumn( 'content_id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent', 'content_id' )
         )->set(
             $this->dbHandler->quoteColumn( 'current_version_no' ),
             $query->bindValue( $currentVersionNo, null, \PDO::PARAM_INT )
@@ -93,7 +93,7 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( 'name_list' ),
             $query->bindValue( json_encode( $struct->name ), null, \PDO::PARAM_STR )
         )->set(
-            $this->dbHandler->quoteColumn( 'contenttype_id' ),
+            $this->dbHandler->quoteColumn( 'type_id' ),
             $query->bindValue( $struct->typeId, null, \PDO::PARAM_INT )
         )->set(
             $this->dbHandler->quoteColumn( 'section_id' ),
@@ -124,7 +124,7 @@ class EzcDatabase extends Gateway
         $query->prepare()->execute();
 
         return $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezcontent', 'id' )
+            $this->dbHandler->getSequenceName( 'ezcontent', 'content_id' )
         );
     }
 
@@ -142,8 +142,8 @@ class EzcDatabase extends Gateway
         $query->insertInto(
             $this->dbHandler->quoteTable( 'ezcontent_version' )
         )->set(
-            $this->dbHandler->quoteColumn( 'id' ),
-            $this->dbHandler->getAutoIncrementValue( 'ezcontent_version', 'id' )
+            $this->dbHandler->quoteColumn( 'version_id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent_version', 'version_id' )
         )->set(
             $this->dbHandler->quoteColumn( 'content_id' ),
             $query->bindValue( $versionInfo->contentInfo->id, null, \PDO::PARAM_INT )
@@ -173,7 +173,7 @@ class EzcDatabase extends Gateway
         $query->prepare()->execute();
 
         return $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezcontent_version', 'id' )
+            $this->dbHandler->getSequenceName( 'ezcontent_version', 'version_id' )
         );
     }
 
@@ -248,7 +248,7 @@ class EzcDatabase extends Gateway
 
         $query->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'content_id' ),
                 $query->bindValue( $contentId, null, \PDO::PARAM_INT )
             )
         );
@@ -397,7 +397,7 @@ class EzcDatabase extends Gateway
             $query->bindValue( $version, null, \PDO::PARAM_INT )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'content_id' ),
                 $query->bindValue( $contentId, null, \PDO::PARAM_INT )
             )
         );
@@ -488,7 +488,7 @@ class EzcDatabase extends Gateway
         $query->where(
             $query->expr->lAnd(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
+                    $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' ),
                     $query->bindValue( $contentId )
                 ),
                 $query->expr->eq(
@@ -535,7 +535,7 @@ class EzcDatabase extends Gateway
         $query->select(
             "ezcontent.*",
             $this->dbHandler->aliasedColumn( $query, 'main_id', 'ezcontent_location' ),
-            $this->dbHandler->aliasedColumn( $query, 'id', 'ezcontent_location' )
+            $this->dbHandler->aliasedColumn( $query, 'location_id', 'ezcontent_location' )
         )->from(
             $this->dbHandler->quoteTable( "ezcontent" )
         )->leftJoin(
@@ -543,16 +543,16 @@ class EzcDatabase extends Gateway
             $query->expr->lAnd(
                 $query->expr->eq(
                     $this->dbHandler->quoteColumn( "content_id", "ezcontent_location" ),
-                    $this->dbHandler->quoteColumn( "id", "ezcontent" )
+                    $this->dbHandler->quoteColumn( "content_id", "ezcontent" )
                 ),
                 $query->expr->eq(
                     $this->dbHandler->quoteColumn( "main_id", "ezcontent_location" ),
-                    $this->dbHandler->quoteColumn( "id", "ezcontent_location" )
+                    $this->dbHandler->quoteColumn( "location_id", "ezcontent_location" )
                 )
             )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( "id", "ezcontent" ),
+                $this->dbHandler->quoteColumn( "content_id", "ezcontent" ),
                 $query->bindValue( $contentId, null, \PDO::PARAM_INT )
             )
         );
@@ -624,7 +624,7 @@ class EzcDatabase extends Gateway
                 )
             )
         )->groupBy(
-            $this->dbHandler->quoteColumn( 'id', 'ezcontent_version' )
+            $this->dbHandler->quoteColumn( 'version_id', 'ezcontent_version' )
         );
 
         $statement = $query->prepare();
@@ -649,7 +649,7 @@ class EzcDatabase extends Gateway
                 $query->bindValue( $contentId, null, \PDO::PARAM_INT )
             )
         )->groupBy(
-            $this->dbHandler->quoteColumn( 'id', 'ezcontent_version' )
+            $this->dbHandler->quoteColumn( 'version_id', 'ezcontent_version' )
         );
 
         $statement = $query->prepare();
@@ -696,7 +696,7 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
-            $this->dbHandler->quoteColumn( 'id' )
+            $this->dbHandler->quoteColumn( 'location_id' )
         )->from(
             $this->dbHandler->quoteTable( 'ezcontent_location' )
         )->where(
@@ -844,7 +844,7 @@ class EzcDatabase extends Gateway
         $query->deleteFrom( 'ezcontent' )
             ->where(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'content_id' ),
                     $query->bindValue( $contentId, null, \PDO::PARAM_INT )
                 )
             );
@@ -874,7 +874,7 @@ class EzcDatabase extends Gateway
         $query = $this->queryBuilder->createRelationFindQuery();
         $query->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'from_content_id', 'ezcontent_relation' ),
+                $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_relation' ),
                 $query->bindValue( $contentId, null, \PDO::PARAM_INT )
             )
         );
@@ -884,7 +884,7 @@ class EzcDatabase extends Gateway
         {
             $query->where(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'from_content_version_no', 'ezcontent_relation' ),
+                    $this->dbHandler->quoteColumn( 'version_no', 'ezcontent_relation' ),
                     $query->bindValue( $contentVersionNo, null, \PDO::PARAM_INT  )
                 )
             );
@@ -897,12 +897,12 @@ class EzcDatabase extends Gateway
             )->where(
                 $query->expr->lAnd(
                     $query->expr->eq(
-                        $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
-                        $this->dbHandler->quoteColumn( 'from_content_id', 'ezcontent_relation' )
+                        $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' ),
+                        $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_relation' )
                     ),
                     $query->expr->eq(
                         $this->dbHandler->quoteColumn( 'current_version_no', 'ezcontent' ),
-                        $this->dbHandler->quoteColumn( 'from_content_version_no', 'ezcontent_relation' )
+                        $this->dbHandler->quoteColumn( 'version_no', 'ezcontent_relation' )
                     )
                 )
             );
@@ -949,12 +949,12 @@ class EzcDatabase extends Gateway
         )->where(
             $query->expr->lAnd(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id', 'ezcontent' ),
-                    $this->dbHandler->quoteColumn( 'from_content_id', 'ezcontent_relation' )
+                    $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' ),
+                    $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_relation' )
                 ),
                 $query->expr->eq(
                     $this->dbHandler->quoteColumn( 'current_version_no', 'ezcontent' ),
-                    $this->dbHandler->quoteColumn( 'from_content_version_no', 'ezcontent_relation' )
+                    $this->dbHandler->quoteColumn( 'version_no', 'ezcontent_relation' )
                 )
             )
         );
@@ -977,6 +977,54 @@ class EzcDatabase extends Gateway
     }
 
     /**
+     * Get relation type ID
+     *
+     * Selects the relation type ID, or creates the relation type.
+     *
+     * @param mixed $relationType
+     * @return int
+     */
+    protected function getRelationTypeId( $relationType )
+    {
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'relation_type_id' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_relation_types' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'name' ),
+                $query->bindValue( json_encode( $relationType ), null, \PDO::PARAM_STR )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $rows = $statement->fetchAll( \PDO::FETCH_COLUMN ) )
+        {
+            return $rows[0]['relation_type_id'];
+        }
+
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontent_relation_types' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'relation_type_id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent_relation_types', 'relation_type_id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $relationType ), null, \PDO::PARAM_STR )
+        );
+
+        $query->prepare()->execute();
+
+        return $this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontent_relation_types', 'relation_type_id' )
+        );
+    }
+
+    /**
      * Inserts a new relation database record
      *
      * @param \eZ\Publish\SPI\Persistence\Content\Relation\CreateStruct $createStruct
@@ -989,35 +1037,25 @@ class EzcDatabase extends Gateway
         $query->insertInto(
             $this->dbHandler->quoteTable( 'ezcontent_relation' )
         )->set(
-            $this->dbHandler->quoteColumn( 'id' ),
-            $this->dbHandler->getAutoIncrementValue( 'ezcontent_relation', 'id' )
-        )->set(
-            $this->dbHandler->quoteColumn( 'from_content_id' ),
+            $this->dbHandler->quoteColumn( 'content_id' ),
             $query->bindValue( $createStruct->sourceContentId, null, \PDO::PARAM_INT )
         )->set(
-            $this->dbHandler->quoteColumn( 'from_content_version_no' ),
+            $this->dbHandler->quoteColumn( 'version_no' ),
             $query->bindValue( $createStruct->sourceContentVersionNo, null, \PDO::PARAM_INT )
         )->set(
             $this->dbHandler->quoteColumn( 'to_content_id' ),
             $query->bindValue( $createStruct->destinationContentId, null, \PDO::PARAM_INT )
         )->set(
-            $this->dbHandler->quoteColumn( 'relation_type' ),
-            $query->bindValue( $createStruct->type, null, \PDO::PARAM_INT )
+            $this->dbHandler->quoteColumn( 'relation_type_id' ),
+            $query->bindValue( $this->getRelationTypeId( $createStruct->type ), null, \PDO::PARAM_INT )
         );
-
-        if ( $createStruct->sourceFieldDefinitionId )
-        {
-            $query->set(
-                $this->dbHandler->quoteColumn( 'contenttype_field_id' ),
-                $query->bindValue( (int)$createStruct->sourceFieldDefinitionId, null, \PDO::PARAM_INT )
-            );
-        }
 
         $query->prepare()->execute();
 
-        return $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezcontent_relation', 'id' )
-        );
+        if ( $createStruct->sourceFieldDefinitionId )
+        {
+            throw new \RuntimeException( "@TODO: Implement." );
+        }
     }
 
     /**
@@ -1033,7 +1071,7 @@ class EzcDatabase extends Gateway
         $query->deleteFrom( 'ezcontent_relation' )
         ->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id' ),
+                $this->dbHandler->quoteColumn( 'relation_id' ),
                 $query->bindValue( $relationId, null, \PDO::PARAM_INT )
             )
         );

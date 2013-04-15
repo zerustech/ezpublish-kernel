@@ -176,7 +176,7 @@ class Mapper
 
         foreach ( $rows as $row )
         {
-            $contentId = (int)$row['ezcontent_id'];
+            $contentId = (int)$row['ezcontent_content_id'];
             if ( !isset( $contentInfos[$contentId] ) )
             {
                 $contentInfos[$contentId] = $this->extractContentInfoFromRow( $row, 'ezcontent_' );
@@ -186,7 +186,7 @@ class Mapper
                 $versionInfos[$contentId] = array();
             }
 
-            $versionId = (int)$row['ezcontent_version_id'];
+            $versionId = (int)$row['ezcontent_version_version_id'];
             if ( !isset( $versionInfos[$contentId][$versionId] ) )
             {
                 $versionInfos[$contentId][$versionId] = $this->extractVersionInfoFromRow( $row );
@@ -244,8 +244,8 @@ class Mapper
     public function extractContentInfoFromRow( array $row, $prefix = '' )
     {
         $contentInfo = new Persistence\Content\ContentInfo();
-        $contentInfo->id = (int)$row["{$prefix}id"];
-        $contentInfo->contentTypeId = (int)$row["{$prefix}contenttype_id"];
+        $contentInfo->id = (int)$row["{$prefix}content_id"];
+        $contentInfo->contentTypeId = (int)$row["{$prefix}type_id"];
         $contentInfo->sectionId = (int)$row["{$prefix}section_id"];
         $contentInfo->currentVersionNo = (int)$row["{$prefix}current_version_no"];
         $contentInfo->isPublished = (bool)( $row["{$prefix}status"] == Persistence\Content\ContentInfo::STATUS_PUBLISHED );
@@ -255,7 +255,7 @@ class Mapper
         $contentInfo->mainLanguageCode = $this->languageHandler->load( $row["{$prefix}initial_language_id"] )->languageCode;
         $contentInfo->alwaysAvailable = (bool)$row["{$prefix}always_available"];
         $contentInfo->remoteId = $row["{$prefix}remote_id"];
-        $contentInfo->mainLocationId = $row["ezcontent_location_main_id"] ?: $row['ezcontent_location_id'];
+        $contentInfo->mainLocationId = $row["ezcontent_location_main_id"] ?: $row['ezcontent_location_location_id'];
 
         $names = json_decode( $row["{$prefix}name_list"], true );
         $contentInfo->name = $names[$contentInfo->mainLanguageCode];
@@ -276,7 +276,7 @@ class Mapper
     private function extractVersionInfoFromRow( array $row )
     {
         $versionInfo = new Persistence\Content\VersionInfo();
-        $versionInfo->id = (int)$row["ezcontent_version_id"];
+        $versionInfo->id = (int)$row["ezcontent_version_version_id"];
         $versionInfo->contentInfo = null;
         $versionInfo->versionNo = (int)$row["ezcontent_version_version_no"];
         $versionInfo->creatorId = (int)$row["ezcontent_version_creator_id"];
@@ -361,7 +361,9 @@ class Mapper
 
         foreach ( $rows as $row )
         {
-            $id = (int)$row['ezcontent_relation_id'];
+            $id = $row['ezcontent_relation_content_id'] . '_' .
+                $row['ezcontent_relation_version_no'] . '_' .
+                $row['ezcontent_relation_to_content_id'];
             if ( !isset( $relations[$id] ) )
             {
                 $relations[$id] = $this->extractRelationFromRow( $row );
@@ -381,17 +383,12 @@ class Mapper
     protected function extractRelationFromRow( array $row )
     {
         $relation = new Persistence\Content\Relation();
-        $relation->id = (int)$row['ezcontent_relation_id'];
-        $relation->sourceContentId = (int)$row['ezcontent_relation_from_content_id'];
-        $relation->sourceContentVersionNo = (int)$row['ezcontent_relation_from_content_version_no'];
+        $relation->sourceContentId = (int)$row['ezcontent_relation_content_id'];
+        $relation->sourceContentVersionNo = (int)$row['ezcontent_relation_version_no'];
         $relation->destinationContentId = (int)$row['ezcontent_relation_to_content_id'];
-        $relation->type = (int)$row['ezcontent_relation_relation_type'];
+        $relation->type = (int)$row['ezcontent_relation_types_name'];
 
-        $contentClassAttributeId = (int)$row['ezcontent_relation_contenttype_field_id'];
-        if ( $contentClassAttributeId > 0 )
-        {
-            $relation->sourceFieldDefinitionId = $contentClassAttributeId;
-        }
+        // @TODO: Handle field type ID
 
         return $relation;
     }

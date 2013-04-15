@@ -56,7 +56,7 @@ class Mapper
         foreach ( $rows as $row )
         {
             $group = new Persistence\Content\Type\Group();
-            $group->id = (int)$row['id'];
+            $group->id = (int)$row['group_id'];
             $group->created = (int)$row['created'];
             $group->creatorId = (int)$row['creator_id'];
             $group->modified = (int)$row['modified'];
@@ -85,13 +85,13 @@ class Mapper
 
         foreach ( $rows as $row )
         {
-            $typeId = (int)$row['ezcontenttype_id'];
+            $typeId = (int)$row['ezcontenttype_type_id'];
             if ( !isset( $types[$typeId] ) )
             {
                 $types[$typeId] = $this->extractTypeFromRow( $row );
             }
 
-            $fieldId = (int)$row['ezcontenttype_field_id'];
+            $fieldId = (int)$row['ezcontenttype_field_field_id'];
             if ( !isset( $fields[$fieldId] ) )
             {
                 $types[$typeId]->fieldDefinitions[] = $fields[$fieldId] = $this->extractFieldFromRow( $row );
@@ -119,7 +119,7 @@ class Mapper
     {
         $type = new Persistence\Content\Type();
 
-        $type->id = (int)$row['ezcontenttype_id'];
+        $type->id = (int)$row['ezcontenttype_type_id'];
         $type->status = (int)$row['ezcontenttype_status'];
         $type->name = json_decode( $row['ezcontenttype_name_list'], true );
         $type->description = json_decode( $row['ezcontenttype_description_list'], true );
@@ -153,7 +153,7 @@ class Mapper
     {
         $field = new Persistence\Content\Type\FieldDefinition();
 
-        $field->id = (int)$row['ezcontenttype_field_id'];
+        $field->id = (int)$row['ezcontenttype_field_field_id'];
         $field->name = json_decode( $row['ezcontenttype_field_name_list'], true );
         $field->description = json_decode( $row['ezcontenttype_field_description_list'], true );
         $field->identifier = $row['ezcontenttype_field_identifier'];
