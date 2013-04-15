@@ -324,6 +324,7 @@ class LocationHandlerTest extends TestCase
 
     public function testSwapLocations()
     {
+        $this->markTestIncomplete("Missing test setup.");
         $handler = $this->getLocationHandler();
 
         $handler->swap( 42, 43 );
@@ -341,6 +342,7 @@ class LocationHandlerTest extends TestCase
 
     public function testMoveSubtree()
     {
+        $this->markTestIncomplete("Missing test setup.");
         $handler = $this->getLocationHandler();
 
         $handler->move( 42, 43 );
