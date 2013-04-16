@@ -57,11 +57,35 @@ class TrashHandlerTest extends TestCase
      * @depends testTrashSubtree
      * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
      */
-    public function testLoadTrashedLocation( $trashedObject )
+    public function testFailLoadTrashedLocation( $trashedObject )
     {
         $handler = $this->getPersistenceHandler()->locationHandler();
 
         $handler->load( $trashedObject->id );
+    }
+
+    /**
+     * @depends testTrashSubtree
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testFailLoadTrashedLocationByRemoteId( $trashedObject )
+    {
+        $handler = $this->getPersistenceHandler()->locationHandler();
+
+        $handler->loadByRemoteId( $trashedObject->remoteId );
+    }
+
+    /**
+     * @depends testTrashSubtree
+     */
+    public function testFailLoadTrashedLocationByContent( $trashedObject )
+    {
+        $handler = $this->getPersistenceHandler()->locationHandler();
+
+        $this->assertEquals(
+            array(),
+            $handler->loadLocationsByContent( $trashedObject->contentId )
+        );
     }
 
     /**
