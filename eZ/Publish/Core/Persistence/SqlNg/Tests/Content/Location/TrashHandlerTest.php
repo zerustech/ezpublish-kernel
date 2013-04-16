@@ -93,7 +93,6 @@ class TrashHandlerTest extends TestCase
      */
     public function testLoadTrashItem( $trashedObject )
     {
-        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         $loaded = $handler->loadTrashItem( $trashedObject->id );
@@ -109,7 +108,6 @@ class TrashHandlerTest extends TestCase
      */
     public function testLoadTrashItemNotFound()
     {
-        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
         $handler->loadTrashItem( 1337 );
