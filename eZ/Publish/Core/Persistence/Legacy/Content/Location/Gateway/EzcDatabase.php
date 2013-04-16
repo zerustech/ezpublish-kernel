@@ -1198,6 +1198,9 @@ class EzcDatabase extends Gateway
             ->select( '*' )
             ->from( $this->handler->quoteTable( 'ezcontentobject_trash' ) );
 
+        // @REFACTOR: This hould use an somehow extensible handler
+        // mechanism. switch case statements are impossible to
+        // extend in any sane way.
         $sort = $sort ?: array();
         foreach ( $sort as $condition )
         {
