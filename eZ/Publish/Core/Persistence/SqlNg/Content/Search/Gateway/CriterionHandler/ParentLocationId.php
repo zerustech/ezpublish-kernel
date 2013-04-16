@@ -9,6 +9,7 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\CriterionHandler;
 
+use eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway as LocationGateway;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\CriterionHandler;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\CriteriaConverter;
 use eZ\Publish\API\Repository\Values\Content\Query\Criterion;
@@ -51,9 +52,15 @@ class ParentLocationId extends CriterionHandler
             )->from(
                 $this->dbHandler->quoteTable( 'ezcontent_location' )
             )->where(
-                $query->expr->in(
-                    $this->dbHandler->quoteColumn( 'parent_id' ),
-                    $criterion->value
+                $query->expr->lAnd(
+                    $query->expr->in(
+                        $this->dbHandler->quoteColumn( 'parent_id' ),
+                        $criterion->value
+                    ),
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'status' ),
+                        $query->bindValue( LocationGateway::PUBLISHED )
+                    )
                 )
             );
 
