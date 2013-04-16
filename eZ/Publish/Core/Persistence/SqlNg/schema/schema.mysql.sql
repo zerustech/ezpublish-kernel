@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `ezcontenttype_field` (
     `constraints` LONGTEXT,
     `default_value` LONGTEXT,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`field_id`),
+    PRIMARY KEY (`field_id`, `type_id`),
     FOREIGN KEY (`type_id`) REFERENCES `ezcontenttype` (`type_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
