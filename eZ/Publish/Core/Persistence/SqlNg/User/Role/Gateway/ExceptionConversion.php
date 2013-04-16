@@ -263,18 +263,17 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Adds limitations to an existing policy
+     * Updates a policy definition
      *
-     * @param int $policyId
-     * @param array $limitations
+     * @param Policy $policy
      *
      * @return void
      */
-    public function addPolicyLimitations( $policyId, array $limitations )
+    public function updatePolicy( Policy $policy )
     {
         try
         {
-            return $this->innerGateway->addPolicyLimitations( $policyId, $limitations );
+            return $this->innerGateway->updatePolicy( $policy );
         }
         catch ( \ezcDbException $e )
         {
@@ -298,29 +297,6 @@ class ExceptionConversion extends Gateway
         try
         {
             return $this->innerGateway->removePolicy( $policyId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Removes a policy from a role
-     *
-     * @param mixed $policyId
-     *
-     * @return void
-     */
-    public function removePolicyLimitations( $policyId )
-    {
-        try
-        {
-            return $this->innerGateway->removePolicyLimitations( $policyId );
         }
         catch ( \ezcDbException $e )
         {

@@ -29,7 +29,7 @@ class Mapper
     public function mapUser( array $data )
     {
         $user = new User();
-        $user->id = (int)$data['id'];
+        $user->id = (int)$data['user_id'];
         $user->login = $data['login'];
         $user->email = $data['email'];
         $user->passwordHash = $data['password_hash'];
@@ -73,37 +73,20 @@ class Mapper
         $policies = array();
         foreach ( $data as $row )
         {
-            $policyId = $row['ezpolicy_id'];
+            $policyId = $row['ezrole_policy_policy_id'];
             if ( !isset( $policies[$policyId] ) &&
                  ( $policyId !== null ) )
             {
+                $limitations = json_decode( $row['ezrole_policy_limitations'], true );
                 $policies[$policyId] = new Policy(
                     array(
-                        'id' => $row['ezpolicy_id'],
-                        'roleId' => $row['ezrole_id'],
-                        'module' => $row['ezpolicy_module_name'],
-                        'function' => $row['ezpolicy_function_name'],
-                        'limitations' => '*' // limitations must be '*' if not a non empty array of limitations
+                        'id' => $row['ezrole_policy_policy_id'],
+                        'roleId' => $row['ezrole_role_id'],
+                        'module' => $limitations['module'],
+                        'function' => $limitations['function'],
+                        'limitations' => $limitations['limitations'],
                     )
                 );
-            }
-
-            if ( !$row['ezpolicy_limitation_identifier'] )
-            {
-                continue;
-            }
-            else if ( $policies[$policyId]->limitations === '*' )
-            {
-                $policies[$policyId]->limitations = array();
-            }
-
-            if ( !isset( $policies[$policyId]->limitations[$row['ezpolicy_limitation_identifier']] ) )
-            {
-                $policies[$policyId]->limitations[$row['ezpolicy_limitation_identifier']] = array( $row['ezpolicy_limitation_value_value'] );
-            }
-            else if ( !in_array( $row['ezpolicy_limitation_value_value'], $policies[$policyId]->limitations[$row['ezpolicy_limitation_identifier']] ) )
-            {
-                $policies[$policyId]->limitations[$row['ezpolicy_limitation_identifier']][] = $row['ezpolicy_limitation_value_value'];
             }
         }
 
@@ -125,7 +108,7 @@ class Mapper
         {
             if ( empty( $role->id ) )
             {
-                $role->id = $row['ezrole_id'];
+                $role->id = $row['ezrole_role_id'];
                 $role->identifier = $row['ezrole_identifier'];
                 $role->name = json_decode( $row['ezrole_name'], true );
                 $role->description = json_decode( $row['ezrole_description'], true );
@@ -154,7 +137,7 @@ class Mapper
         $roleData = array();
         foreach ( $data as $row )
         {
-            $roleData[$row['ezrole_id']][] = $row;
+            $roleData[$row['ezrole_role_id']][] = $row;
         }
 
         $roles = array();

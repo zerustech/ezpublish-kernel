@@ -58,8 +58,8 @@ class EzcDatabase extends Gateway
         $query
             ->insertInto( $this->dbHandler->quoteTable( 'ezrole' ) )
             ->set(
-                $this->dbHandler->quoteColumn( 'id' ),
-                $this->dbHandler->getAutoIncrementValue( 'ezrole', 'id' )
+                $this->dbHandler->quoteColumn( 'role_id' ),
+                $this->dbHandler->getAutoIncrementValue( 'ezrole', 'role_id' )
             )->set(
                 $this->dbHandler->quoteColumn( 'identifier' ),
                 $query->bindValue( $role->identifier )
@@ -73,7 +73,7 @@ class EzcDatabase extends Gateway
         $query->prepare()->execute();
 
         $role->id = $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezrole', 'id' )
+            $this->dbHandler->getSequenceName( 'ezrole', 'role_id' )
         );
     }
 
@@ -88,45 +88,30 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
-            $this->dbHandler->aliasedColumn( $query, 'id', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'role_id', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'name', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'description', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'content_id', 'ezrole_content_rel' ),
-            $this->dbHandler->aliasedColumn( $query, 'id', 'ezpolicy' ),
-            $this->dbHandler->aliasedColumn( $query, 'function_name', 'ezpolicy' ),
-            $this->dbHandler->aliasedColumn( $query, 'module_name', 'ezpolicy' ),
-            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezpolicy_limitation' ),
-            $this->dbHandler->aliasedColumn( $query, 'value', 'ezpolicy_limitation_value' )
+            $this->dbHandler->aliasedColumn( $query, 'policy_id', 'ezrole_policy' ),
+            $this->dbHandler->aliasedColumn( $query, 'limitations', 'ezrole_policy' )
         )->from(
             $this->dbHandler->quoteTable( 'ezrole' )
         )->leftJoin(
             $this->dbHandler->quoteTable( 'ezrole_content_rel' ),
             $query->expr->eq(
                 $this->dbHandler->quoteColumn( 'role_id', 'ezrole_content_rel' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezrole' )
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole' )
             )
         )->leftJoin(
-            $this->dbHandler->quoteTable( 'ezpolicy' ),
+            $this->dbHandler->quoteTable( 'ezrole_policy' ),
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'role_id', 'ezpolicy' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezrole' )
-            )
-        )->leftJoin(
-            $this->dbHandler->quoteTable( 'ezpolicy_limitation' ),
-            $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'policy_id', 'ezpolicy_limitation' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezpolicy' )
-            )
-        )->leftJoin(
-            $this->dbHandler->quoteTable( 'ezpolicy_limitation_value' ),
-            $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'limitation_id', 'ezpolicy_limitation_value' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezpolicy_limitation' )
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole_policy' ),
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole' )
             )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id', 'ezrole' ),
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole' ),
                 $query->bindValue( $roleId, null, \PDO::PARAM_INT )
             )
         );
@@ -158,41 +143,26 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
-            $this->dbHandler->aliasedColumn( $query, 'id', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'role_id', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'name', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'description', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'content_id', 'ezrole_content_rel' ),
-            $this->dbHandler->aliasedColumn( $query, 'id', 'ezpolicy' ),
-            $this->dbHandler->aliasedColumn( $query, 'function_name', 'ezpolicy' ),
-            $this->dbHandler->aliasedColumn( $query, 'module_name', 'ezpolicy' ),
-            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezpolicy_limitation' ),
-            $this->dbHandler->aliasedColumn( $query, 'value', 'ezpolicy_limitation_value' )
+            $this->dbHandler->aliasedColumn( $query, 'policy_id', 'ezrole_policy' ),
+            $this->dbHandler->aliasedColumn( $query, 'limitations', 'ezrole_policy' )
         )->from(
             $this->dbHandler->quoteTable( 'ezrole' )
         )->leftJoin(
             $this->dbHandler->quoteTable( 'ezrole_content_rel' ),
             $query->expr->eq(
                 $this->dbHandler->quoteColumn( 'role_id', 'ezrole_content_rel' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezrole' )
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole' )
             )
         )->leftJoin(
-            $this->dbHandler->quoteTable( 'ezpolicy' ),
+            $this->dbHandler->quoteTable( 'ezrole_policy' ),
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'role_id', 'ezpolicy' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezrole' )
-            )
-        )->leftJoin(
-            $this->dbHandler->quoteTable( 'ezpolicy_limitation' ),
-            $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'policy_id', 'ezpolicy_limitation' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezpolicy' )
-            )
-        )->leftJoin(
-            $this->dbHandler->quoteTable( 'ezpolicy_limitation_value' ),
-            $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'limitation_id', 'ezpolicy_limitation_value' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezpolicy_limitation' )
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole_policy' ),
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole' )
             )
         );
 
@@ -214,15 +184,12 @@ class EzcDatabase extends Gateway
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
             $this->dbHandler->aliasedColumn( $query, 'content_id', 'ezrole_content_rel' ),
-            $this->dbHandler->aliasedColumn( $query, 'id', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'role_id', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'name', 'ezrole' ),
             $this->dbHandler->aliasedColumn( $query, 'description', 'ezrole' ),
-            $this->dbHandler->aliasedColumn( $query, 'id', 'ezpolicy' ),
-            $this->dbHandler->aliasedColumn( $query, 'function_name', 'ezpolicy' ),
-            $this->dbHandler->aliasedColumn( $query, 'module_name', 'ezpolicy' ),
-            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezpolicy_limitation' ),
-            $this->dbHandler->aliasedColumn( $query, 'value', 'ezpolicy_limitation_value' )
+            $this->dbHandler->aliasedColumn( $query, 'policy_id', 'ezrole_policy' ),
+            $this->dbHandler->aliasedColumn( $query, 'limitations', 'ezrole_policy' )
         )->from(
             $query->alias(
                 $this->dbHandler->quoteTable( 'ezrole_content_rel' ),
@@ -231,32 +198,20 @@ class EzcDatabase extends Gateway
         )->leftJoin(
             $this->dbHandler->quoteTable( 'ezrole' ),
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'id', 'ezrole' ),
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole' ),
                 $this->dbHandler->quoteColumn( 'role_id', 'ezrole_content_rel_search' )
             )
         )->leftJoin(
             $this->dbHandler->quoteTable( 'ezrole_content_rel' ),
             $query->expr->eq(
                 $this->dbHandler->quoteColumn( 'role_id', 'ezrole_content_rel' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezrole' )
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole' )
             )
         )->leftJoin(
-            $this->dbHandler->quoteTable( 'ezpolicy' ),
+            $this->dbHandler->quoteTable( 'ezrole_policy' ),
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'role_id', 'ezpolicy' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezrole' )
-            )
-        )->leftJoin(
-            $this->dbHandler->quoteTable( 'ezpolicy_limitation' ),
-            $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'policy_id', 'ezpolicy_limitation' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezpolicy' )
-            )
-        )->leftJoin(
-            $this->dbHandler->quoteTable( 'ezpolicy_limitation_value' ),
-            $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'limitation_id', 'ezpolicy_limitation_value' ),
-                $this->dbHandler->quoteColumn( 'id', 'ezpolicy_limitation' )
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole_policy' ),
+                $this->dbHandler->quoteColumn( 'role_id', 'ezrole' )
             )
         )->where(
             $query->expr->in(
@@ -351,7 +306,7 @@ class EzcDatabase extends Gateway
                 $query->bindValue( json_encode( $role->description ) )
             )->where(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'role_id' ),
                     $query->bindValue( $role->id, null, \PDO::PARAM_INT )
                 )
             );
@@ -370,7 +325,7 @@ class EzcDatabase extends Gateway
             ->deleteFrom( $this->dbHandler->quoteTable( 'ezrole' ) )
             ->where(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id' ),
+                    $this->dbHandler->quoteColumn( 'role_id' ),
                     $query->bindValue( $roleId, null, \PDO::PARAM_INT )
                 )
             );
@@ -395,87 +350,65 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createInsertQuery();
         $query
-            ->insertInto( $this->dbHandler->quoteTable( 'ezpolicy' ) )
+            ->insertInto( $this->dbHandler->quoteTable( 'ezrole_policy' ) )
             ->set(
-                $this->dbHandler->quoteColumn( 'id' ),
-                $this->dbHandler->getAutoIncrementValue( 'ezpolicy', 'id' )
-            )->set(
-                $this->dbHandler->quoteColumn( 'function_name' ),
-                $query->bindValue( $policy->function )
-            )->set(
-                $this->dbHandler->quoteColumn( 'module_name' ),
-                $query->bindValue( $policy->module )
+                $this->dbHandler->quoteColumn( 'policy_id' ),
+                $this->dbHandler->getAutoIncrementValue( 'ezrole_policy', 'policy_id' )
             )->set(
                 $this->dbHandler->quoteColumn( 'role_id' ),
                 $query->bindValue( $roleId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'limitations' ),
+                $query->bindValue(
+                    json_encode( array(
+                        'function' => $policy->function,
+                        'module' => $policy->module,
+                        'limitations' => $policy->limitations ?: '*',
+                    ) ),
+                    null,
+                    \PDO::PARAM_STR
+                )
             );
         $query->prepare()->execute();
 
         $policy->roleId = $roleId;
         $policy->id = $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezpolicy', 'id' )
+            $this->dbHandler->getSequenceName( 'ezrole_policy', 'policy_id' )
         );
-
-        // Handle the only valid non-array value "*" by not inserting
-        // anything. Still has not been documented by eZ Systems. So we
-        // assume this is the right way to handle it.
-        if ( is_array( $policy->limitations ) )
-        {
-            $this->addPolicyLimitations( $policy->id, $policy->limitations );
-        }
 
         return $policy;
     }
 
     /**
-     * Adds limitations to an existing policy
+     * Updates a policy definition
      *
-     * @param int $policyId
-     * @param array $limitations
+     * @param Policy $policy
      *
      * @return void
      */
-    public function addPolicyLimitations( $policyId, array $limitations )
+    public function updatePolicy( Policy $policy )
     {
-        foreach ( $limitations as $identifier => $values )
-        {
-            $query = $this->dbHandler->createInsertQuery();
-            $query
-                ->insertInto( $this->dbHandler->quoteTable( 'ezpolicy_limitation' ) )
-                ->set(
-                    $this->dbHandler->quoteColumn( 'id' ),
-                    $this->dbHandler->getAutoIncrementValue( 'ezpolicy_limitation', 'id' )
-                )->set(
-                    $this->dbHandler->quoteColumn( 'identifier' ),
-                    $query->bindValue( $identifier )
-                )->set(
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezrole_policy' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'limitations' ),
+                $query->bindValue(
+                    json_encode( array(
+                        'function' => $policy->function,
+                        'module' => $policy->module,
+                        'limitations' => $policy->limitations ?: '*',
+                    ) ),
+                    null,
+                    \PDO::PARAM_STR
+                )
+            )->where(
+                $query->expr->eq(
                     $this->dbHandler->quoteColumn( 'policy_id' ),
-                    $query->bindValue( $policyId, null, \PDO::PARAM_INT )
-                );
-            $query->prepare()->execute();
-
-            $limitationId = $this->dbHandler->lastInsertId(
-                $this->dbHandler->getSequenceName( 'ezpolicy_limitation', 'id' )
+                    $query->bindValue( $policy->id, null, \PDO::PARAM_INT )
+                )
             );
-
-            foreach ( $values as $value )
-            {
-                $query = $this->dbHandler->createInsertQuery();
-                $query
-                    ->insertInto( $this->dbHandler->quoteTable( 'ezpolicy_limitation_value' ) )
-                    ->set(
-                        $this->dbHandler->quoteColumn( 'id' ),
-                        $this->dbHandler->getAutoIncrementValue( 'ezpolicy_limitation_value', 'id' )
-                    )->set(
-                        $this->dbHandler->quoteColumn( 'value' ),
-                        $query->bindValue( $value )
-                    )->set(
-                        $this->dbHandler->quoteColumn( 'limitation_id' ),
-                        $query->bindValue( $limitationId, null, \PDO::PARAM_INT )
-                    );
-                $query->prepare()->execute();
-            }
-        }
+        $query->prepare()->execute();
     }
 
     /**
@@ -489,34 +422,7 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createDeleteQuery();
         $query
-            ->deleteFrom( $this->dbHandler->quoteTable( 'ezpolicy' ) )
-            ->where(
-                $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'id' ),
-                    $query->bindValue( $policyId, null, \PDO::PARAM_INT )
-                )
-            );
-        $statement = $query->prepare();
-        $statement->execute();
-
-        if ( $statement->rowCount() < 1 )
-        {
-            throw new NotFound( 'policy', $policyId );
-        }
-    }
-
-    /**
-     * Remove all limitations for a policy
-     *
-     * @param mixed $policyId
-     *
-     * @return void
-     */
-    public function removePolicyLimitations( $policyId )
-    {
-        $query = $this->dbHandler->createDeleteQuery();
-        $query
-            ->deleteFrom( $this->dbHandler->quoteTable( 'ezpolicy_limitation' ) )
+            ->deleteFrom( $this->dbHandler->quoteTable( 'ezrole_policy' ) )
             ->where(
                 $query->expr->eq(
                     $this->dbHandler->quoteColumn( 'policy_id' ),
@@ -528,7 +434,7 @@ class EzcDatabase extends Gateway
 
         if ( $statement->rowCount() < 1 )
         {
-            throw new NotFound( 'limitations', $policyId );
+            throw new NotFound( 'policy', $policyId );
         }
     }
 }

@@ -261,8 +261,7 @@ class Handler implements BaseUserHandler
      */
     public function updatePolicy( Policy $policy )
     {
-        $this->roleGateway->removePolicyLimitations( $policy->id );
-        $this->roleGateway->addPolicyLimitations( $policy->id, $policy->limitations );
+        $this->roleGateway->updatePolicy( $policy );
     }
 
     /**

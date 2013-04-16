@@ -105,14 +105,13 @@ abstract class Gateway
     abstract public function addPolicy( $roleId, Policy $policy );
 
     /**
-     * Adds limitations to an existing policy
+     * Updates a policy definition
      *
-     * @param int $policyId
-     * @param array $limitations
+     * @param Policy $policy
      *
      * @return void
      */
-    abstract public function addPolicyLimitations( $policyId, array $limitations );
+    abstract public function updatePolicy( Policy $policy );
 
     /**
      * Removes a policy from a role
@@ -122,13 +121,4 @@ abstract class Gateway
      * @return void
      */
     abstract public function removePolicy( $policyId );
-
-    /**
-     * Removes a policy from a role
-     *
-     * @param mixed $policyId
-     *
-     * @return void
-     */
-    abstract public function removePolicyLimitations( $policyId );
 }
