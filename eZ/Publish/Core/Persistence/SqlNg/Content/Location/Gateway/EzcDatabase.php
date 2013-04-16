@@ -742,7 +742,56 @@ class EzcDatabase extends Gateway
      */
     public function listTrashed( $offset, $limit, array $sort = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query
+            ->select( '*' )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status' ),
+                    $query->bindValue( self::DELETED )
+                )
+            );
+
+        // @REFACTOR: This hould use an somehow extensible handler
+        // mechanism. switch case statements are impossible to
+        // extend in any sane way.
+        $sort = $sort ?: array();
+        foreach ( $sort as $condition )
+        {
+            $sortDirection = $condition->direction === Query::SORT_ASC ? \ezcQuerySelect::ASC : \ezcQuerySelect::DESC;
+            switch ( true )
+            {
+                case $condition instanceof SortClause\LocationDepth:
+                    $query->orderBy( 'depth', $sortDirection );
+                    break;
+
+                case $condition instanceof SortClause\LocationPathString:
+                    $query->orderBy( 'path_string', $sortDirection );
+                    break;
+
+                case $condition instanceof SortClause\LocationPriority:
+                    $query->orderBy( 'priority', $sortDirection );
+                    break;
+
+                default:
+                    // Only handle location related sort clauses. The others
+                    // require data aggregation which is not sensible here.
+                    // Since also criteria are yet ignored, because they are
+                    // simply not used yet in eZ Publish, we skip that for now.
+                    throw new RuntimeException( 'Unhandled sort clause: ' . get_class( $condition ) );
+            }
+        }
+
+        if ( $limit !== null )
+        {
+            $query->limit( $limit, $offset );
+        }
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**

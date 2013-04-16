@@ -116,6 +116,19 @@ class TrashHandlerTest extends TestCase
     /**
      * @depends testTrashSubtree
      */
+    public function testListTrashItems( $trashedObject )
+    {
+        $handler = $this->getTrashHandler();
+
+        $this->assertEquals(
+            array( $trashedObject ),
+            $handler->findTrashItems()
+        );
+    }
+
+    /**
+     * @depends testTrashSubtree
+     */
     public function testRecover( $trashedObject )
     {
         $this->markTestIncomplete("Trash handler still missing.");

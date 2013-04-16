@@ -156,11 +156,21 @@ class Handler implements BaseTrashHandler
      */
     public function findTrashItems( Criterion $criterion = null, $offset = 0, $limit = null, array $sort = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        // CBA: Ignore criterion for now.
+        $rows = $this->locationGateway->listTrashed( $offset, $limit, $sort );
+        $items = array();
+
+        foreach ( $rows as $row )
+        {
+            $items[] = $this->locationMapper->createLocationFromRow( $row, null, new Trashed() );
+        }
+
+        return $items;
     }
 
     /**
      * Empties the trash
+     *
      * Everything contained in the trash must be removed
      *
      * @return void
