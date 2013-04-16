@@ -42,14 +42,15 @@ class ExceptionConversion extends Gateway
      * method in the location handler.
      *
      * @param mixed $nodeId
+     * @param int $status
      *
      * @return array
      */
-    public function getBasicNodeData( $nodeId )
+    public function getBasicNodeData( $nodeId, $status = self::PUBLISHED )
     {
         try
         {
-            return $this->innerGateway->getBasicNodeData( $nodeId );
+            return $this->innerGateway->getBasicNodeData( $nodeId, $status );
         }
         catch ( \ezcDbException $e )
         {
@@ -326,31 +327,6 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Updates path identification string for given $locationId.
-     *
-     * @param mixed $locationId
-     * @param mixed $parentLocationId
-     * @param string $text
-     *
-     * @return void
-     */
-    public function updatePathIdentificationString( $locationId, $parentLocationId, $text )
-    {
-        try
-        {
-            return $this->innerGateway->updatePathIdentificationString( $locationId, $parentLocationId, $text );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
      * Deletes ezcontentobject_tree row for given $locationId (node_id)
      *
      * @param mixed $locationId
@@ -372,19 +348,19 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Sends a single location identified by given $locationId to the trash.
+     * Sends a subtree identified by given $pathString to the trash.
      *
      * The associated content object is left untouched.
      *
-     * @param mixed $locationId
+     * @param string $pathString
      *
      * @return boolean
      */
-    public function trashLocation( $locationId )
+    public function trashSubtree( $pathString )
     {
         try
         {
-            return $this->innerGateway->trashLocation( $locationId );
+            return $this->innerGateway->trashSubtree( $pathString );
         }
         catch ( \ezcDbException $e )
         {
@@ -414,29 +390,6 @@ class ExceptionConversion extends Gateway
         try
         {
             return $this->innerGateway->untrashLocation( $locationId, $newParentId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Loads trash data specified by location ID
-     *
-     * @param mixed $locationId
-     *
-     * @return array
-     */
-    public function loadTrashByLocation( $locationId )
-    {
-        try
-        {
-            return $this->innerGateway->loadTrashByLocation( $locationId );
         }
         catch ( \ezcDbException $e )
         {

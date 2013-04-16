@@ -17,6 +17,8 @@ use eZ\Publish\Core\Persistence\SqlNg\Content\Location\Handler as LocationHandle
 use eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway as LocationGateway;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Location\Mapper as LocationMapper;
 
+use eZ\Publish\Core\Base\Exceptions\NotFoundException;
+
 /**
  * The Location Handler interface defines operations on Location elements in the storage engine.
  */
@@ -67,7 +69,10 @@ class Handler implements BaseTrashHandler
         ContentHandler $contentHandler
     )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->locationHandler = $locationHandler;
+        $this->locationGateway = $locationGateway;
+        $this->locationMapper = $locationMapper;
+        $this->contentHandler = $contentHandler;
     }
 
     /**
@@ -82,7 +87,11 @@ class Handler implements BaseTrashHandler
      */
     public function loadTrashItem( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->locationMapper->createLocationFromRow(
+            $this->locationGateway->getBasicNodeData( $id, LocationGateway::DELETED ),
+            '',
+            new Trashed()
+        );
     }
 
     /**
@@ -100,7 +109,16 @@ class Handler implements BaseTrashHandler
      */
     public function trashSubtree( $locationId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        try {
+            $nodeData = $this->locationGateway->getBasicNodeData( $locationId );
+            $this->locationGateway->trashSubtree( $nodeData['path_string'] );
+        }
+        catch ( NotFoundException $e )
+        {
+            return null;
+        }
+
+        return $this->loadTrashItem( $locationId );
     }
 
     /**

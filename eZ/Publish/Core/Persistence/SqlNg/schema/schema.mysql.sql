@@ -249,6 +249,7 @@ CREATE TABLE IF NOT EXISTS `ezcontent_location` (
     `sort_order` INT DEFAULT '1',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`location_id`,`status`),
+    KEY (`path_string`,`status`),
     UNIQUE KEY `ezcontent_location_remote_id` (`remote_id`),
     FOREIGN KEY (`main_id`) REFERENCES `ezcontent_location` (`location_id`) ON DELETE RESTRICT,
     FOREIGN KEY (`parent_id`) REFERENCES `ezcontent_location` (`location_id`) ON DELETE RESTRICT,

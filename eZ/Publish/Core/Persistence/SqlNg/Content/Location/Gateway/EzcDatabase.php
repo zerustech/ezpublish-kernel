@@ -51,19 +51,26 @@ class EzcDatabase extends Gateway
      * method in the location dbHandler.
      *
      * @param mixed $nodeId
+     * @param int $status
      *
      * @return array
      */
-    public function getBasicNodeData( $nodeId )
+    public function getBasicNodeData( $nodeId, $status = self::PUBLISHED )
     {
         $query = $this->dbHandler->createSelectQuery();
         $query
             ->select( '*' )
             ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
             ->where(
-                $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'location_id' ),
-                    $query->bindValue( $nodeId )
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'location_id' ),
+                        $query->bindValue( $nodeId )
+                    ),
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'status' ),
+                        $query->bindValue( $status )
+                    )
                 )
             );
         $statement = $query->prepare();
@@ -655,20 +662,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Updates path identification string for given $locationId.
-     *
-     * @param mixed $locationId
-     * @param mixed $parentLocationId
-     * @param string $text
-     *
-     * @return void
-     */
-    public function updatePathIdentificationString( $locationId, $parentLocationId, $text )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Deletes ezcontent_location row for given $locationId (id)
      *
      * @param mixed $locationId
@@ -679,17 +672,33 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Sends a single location identified by given $locationId to the trash.
+     * Sends a subtree identified by given $pathString to the trash.
      *
      * The associated content object is left untouched.
      *
-     * @param mixed $locationId
+     * @param string $pathString
      *
      * @return boolean
      */
-    public function trashLocation( $locationId )
+    public function trashSubtree( $pathString )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'status' ),
+                $query->bindValue( self::DELETED )
+            )
+            ->where(
+                $query->expr->like(
+                    $this->dbHandler->quoteColumn( 'path_string' ),
+                    $query->bindValue( $pathString . '%' )
+                )
+            );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return ( $statement->rowCount() > 0 );
     }
 
     /**
@@ -706,18 +715,6 @@ class EzcDatabase extends Gateway
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
     public function untrashLocation( $locationId, $newParentId = null )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Loads trash data specified by location ID
-     *
-     * @param mixed $locationId
-     *
-     * @return array
-     */
-    public function loadTrashByLocation( $locationId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }

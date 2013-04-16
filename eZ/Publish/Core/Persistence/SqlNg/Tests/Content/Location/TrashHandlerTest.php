@@ -30,24 +30,38 @@ class TrashHandlerTest extends TestCase
 
     public function testTrashSubtree()
     {
-        $this->markTestIncomplete("Trash handler still missing.");
+        $location = $this->getLocation();
+
         $handler = $this->getTrashHandler();
 
-        $trashedObject = $handler->trashSubtree( 42 );
+        $trashedObject = $handler->trashSubtree( $location->id );
 
         $this->assertInstanceOf( 'eZ\\Publish\\SPI\\Persistence\\Content\\Location\\Trashed', $trashedObject );
-        $this->assertSame( 42, $trashedObject->id );
+        $this->assertSame( $location->id, $trashedObject->id );
 
         return $trashedObject;
     }
 
-    public function testTrashSubtreeReturnsNullIfLocationWasDeleted()
+    /**
+     * @depends testTrashSubtree
+     */
+    public function testTrashSubtreeReturnsNullIfLocationWasDeleted( $trashedObject )
     {
-        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
-        $returnValue = $handler->trashSubtree( 42 );
+        $returnValue = $handler->trashSubtree( $trashedObject->id );
         $this->assertNull( $returnValue );
+    }
+
+    /**
+     * @depends testTrashSubtree
+     * @expectedException eZ\Publish\Core\Base\Exceptions\NotFoundException
+     */
+    public function testLoadTrashedLocation( $trashedObject )
+    {
+        $handler = $this->getPersistenceHandler()->locationHandler();
+
+        $handler->load( $trashedObject->id );
     }
 
     /**

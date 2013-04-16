@@ -31,10 +31,11 @@ abstract class Gateway
      * method in the location handler.
      *
      * @param mixed $nodeId
+     * @param int $status
      *
      * @return array
      */
-    abstract public function getBasicNodeData( $nodeId );
+    abstract public function getBasicNodeData( $nodeId, $status = self::PUBLISHED );
 
     /**
      * Returns an array with basic node data for the node with $remoteId
@@ -147,17 +148,6 @@ abstract class Gateway
     abstract public function update( UpdateStruct $location, $locationId );
 
     /**
-     * Updates path identification string for given $locationId.
-     *
-     * @param mixed $locationId
-     * @param mixed $parentLocationId
-     * @param string $text
-     *
-     * @return void
-     */
-    abstract public function updatePathIdentificationString( $locationId, $parentLocationId, $text );
-
-    /**
      * Deletes ezcontentobject_tree row for given $locationId (node_id)
      *
      * @param mixed $locationId
@@ -165,15 +155,15 @@ abstract class Gateway
     abstract public function removeLocation( $locationId );
 
     /**
-     * Sends a single location identified by given $locationId to the trash.
+     * Sends a subtree identified by given $pathString to the trash.
      *
      * The associated content object is left untouched.
      *
-     * @param mixed $locationId
+     * @param string $pathString
      *
      * @return boolean
      */
-    abstract public function trashLocation( $locationId );
+    abstract public function trashSubtree( $pathString );
 
     /**
      * Returns a trashed location to normal state.
@@ -189,15 +179,6 @@ abstract class Gateway
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
     abstract public function untrashLocation( $locationId, $newParentId = null );
-
-    /**
-     * Loads trash data specified by location ID
-     *
-     * @param mixed $locationId
-     *
-     * @return array
-     */
-    abstract public function loadTrashByLocation( $locationId );
 
     /**
      * Removes every entries in the trash.

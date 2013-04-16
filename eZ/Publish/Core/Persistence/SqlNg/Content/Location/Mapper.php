@@ -29,7 +29,7 @@ class Mapper
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
-    public function createLocationFromRow( array $data, $prefix = '', Location $location = null )
+    public function createLocationFromRow( array $data, $prefix = '', Persistence\Content\Location $location = null )
     {
         $location = $location ?: new Persistence\Content\Location();
 
