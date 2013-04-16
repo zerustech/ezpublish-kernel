@@ -98,9 +98,15 @@ class EzcDatabase extends Gateway
             ->select( '*' )
             ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
             ->where(
-                $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'remote_id' ),
-                    $query->bindValue( $remoteId )
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'remote_id' ),
+                        $query->bindValue( $remoteId )
+                    ),
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'status' ),
+                        $query->bindValue( self::PUBLISHED )
+                    )
                 )
             );
         $statement = $query->prepare();
@@ -130,9 +136,15 @@ class EzcDatabase extends Gateway
             ->select( '*' )
             ->from( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
             ->where(
-                $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'content_id' ),
-                    $query->bindValue( $contentId )
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'content_id' ),
+                        $query->bindValue( $contentId )
+                    ),
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'status' ),
+                        $query->bindValue( self::PUBLISHED )
+                    )
                 )
             );
 
