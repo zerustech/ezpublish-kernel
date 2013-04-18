@@ -19,6 +19,11 @@ use eZ\Publish\Core\Persistence\SqlNg\Content\StorageRegistry;
 class SqlNg extends Legacy
 {
     /**
+     * @var integer
+     */
+    protected $adminUserId = 3;
+
+    /**
      * Creates a new setup factory
      *
      * @return void
@@ -58,10 +63,21 @@ class SqlNg extends Legacy
         );
 
         $repository->setCurrentUser(
-            $repository->getUserService()->loadUser( 3 )
+            $repository->getUserService()->loadUser( $this->adminUserId )
         );
         return $repository;
     }
+
+    /**
+     * Returns a repository specific ID manager.
+     *
+     * @return \eZ\Publish\API\Repository\Tests\IdManager
+     */
+    public function getIdManager()
+    {
+        return new \eZ\Publish\API\Repository\Tests\IdManager\SqlNg();
+    }
+
 
     /**
      * Loads the data from the fixture file

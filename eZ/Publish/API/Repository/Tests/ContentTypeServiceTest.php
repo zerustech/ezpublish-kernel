@@ -232,8 +232,8 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
                 'identifier' => 'Users',
                 'creationDate' => $this->createDateTime( 1031216941 ),
                 'modificationDate' => $this->createDateTime( 1033922113 ),
-                'creatorId' => $this->generateId( 'user', 14 ),
-                'modifierId' => $this->generateId( 'user', 14 ),
+                'creatorId' => $this->getSetupFactory()->getAdminUserId(),
+                'modifierId' => $this->getSetupFactory()->getAdminUserId(),
             ),
             $group
         );
@@ -1126,7 +1126,7 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
         $repository = $this->getRepository();
         $contentTypeService = $repository->getContentTypeService();
 
-        $modifierId = $this->generateId( 'user', 14 );
+        $modifierId = $this->getSetupFactory()->getAdminUserId();
         /* BEGIN: Use Case */
         $contentTypeDraft = $this->createContentTypeDraft();
 
@@ -1724,8 +1724,8 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
                 'identifier' => 'user_group',
                 'creationDate' => $this->createDateTime( 1024392098 ),
                 'modificationDate' => $this->createDateTime( 1048494743 ),
-                'creatorId' => $this->generateId( 'user', 14 ),
-                'modifierId' => $this->generateId( 'user', 14 ),
+                'creatorId' => $this->getSetupFactory()->getAdminUserId(),
+                'modifierId' => $this->getSetupFactory()->getAdminUserId(),
                 'remoteId' => '25b4268cdcd01921b808a0d854b877ef',
                 'names' => array(
                     'eng-US' => 'User group',

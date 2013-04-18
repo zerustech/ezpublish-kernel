@@ -32,6 +32,13 @@ abstract class SetupFactory
     abstract public function getIdManager();
 
     /**
+     * Returns the internal identifier of the admin user.
+     *
+     * @return mixed
+     */
+    abstract public function getAdminUserId();
+
+    /**
      * Returns a config value for $configKey.
      *
      * @param string $configKey

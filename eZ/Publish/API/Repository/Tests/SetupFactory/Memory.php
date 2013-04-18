@@ -20,6 +20,11 @@ use eZ\Publish\API\Repository\Tests\Stubs\RepositoryStub;
 class Memory extends SetupFactory
 {
     /**
+     * @var integer
+     */
+    protected $adminUserId = 14;
+
+    /**
      * Returns a configured repository for testing.
      *
      * @param boolean $initializeFromScratch if the back end should be initialized
@@ -38,7 +43,7 @@ class Memory extends SetupFactory
                 array(
                     'content' => new \eZ\Publish\API\Repository\Tests\Stubs\Values\Content\ContentStub(
                         array(
-                            'id' => 14
+                            'id' => $this->adminUserId
                         )
                     )
                 )
@@ -56,6 +61,16 @@ class Memory extends SetupFactory
     public function getIdManager()
     {
         return new IdManager\Php;
+    }
+
+    /**
+     * Returns the internal identifier of the anonymous user.
+     *
+     * @return mixed
+     */
+    public function getAdminUserId()
+    {
+        return $this->adminUserId;
     }
 
     /**

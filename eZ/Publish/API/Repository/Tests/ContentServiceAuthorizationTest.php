@@ -776,7 +776,7 @@ class ContentServiceAuthorizationTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $administratorUserId = $this->generateId( 'user', 14 );
+        $administratorUserId = $this->getSetupFactory()->getAdminUserId();
         /* BEGIN: Use Case */
         // $administratorUserId is  the ID of the "Administrator" user in a eZ
         // Publish demo installation.

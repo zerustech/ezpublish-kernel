@@ -71,6 +71,11 @@ class Legacy extends SetupFactory
     protected static $initialData;
 
     /**
+     * @var integer
+     */
+    protected $adminUserId = 14;
+
+    /**
      * Creates a new setup factory
      *
      * @return void
@@ -102,7 +107,7 @@ class Legacy extends SetupFactory
         $this->clearInternalCaches();
         $repository = $this->getServiceContainer()->get( 'inner_repository' );
         $repository->setCurrentUser(
-            $repository->getUserService()->loadUser( 14 )
+            $repository->getUserService()->loadUser( $this->adminUserId )
         );
         return $repository;
     }
@@ -129,6 +134,16 @@ class Legacy extends SetupFactory
     public function getIdManager()
     {
         return new IdManager\Php;
+    }
+
+    /**
+     * Returns the internal identifier of the anonymous user.
+     *
+     * @return mixed
+     */
+    public function getAdminUserId()
+    {
+        return $this->adminUserId;
     }
 
     /**
@@ -406,6 +421,9 @@ class Legacy extends SetupFactory
 
             $serviceSettings['persistence_handler']['alias'] = 'persistence_handler_legacy';
             $serviceSettings['io_handler']['alias'] = 'io_handler_legacy';
+
+            // TODO: This must be set by the SqlNg SetupFactory
+            $serviceSettings['inner_repository']['arguments']['service_settings']['user']['anonymousUserID'] = 2;
 
             // Needed for URLAliasService tests
             $serviceSettings['inner_repository']['arguments']['service_settings']['language']['languages'][] = 'eng-US';

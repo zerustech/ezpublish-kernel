@@ -31,7 +31,7 @@ class ContentTypeServiceAuthorizationTest extends BaseContentTypeServiceTest
     {
         $repository = $this->getRepository();
 
-        $creatorId = $this->generateId( 'user', 14 );
+        $creatorId = $this->getSetupFactory()->getAdminUserId();
         /* BEGIN: Use Case */
         $userService = $repository->getUserService();
         $contentTypeService = $repository->getContentTypeService();

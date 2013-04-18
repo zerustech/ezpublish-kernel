@@ -243,9 +243,11 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
     {
         $repository = $this->getRepository();
 
+        $editorsGroupId = $this->generateId( 'group', 13 );
+
         /* BEGIN: Inline */
         // ID of the "Editors" user group in an eZ Publish demo installation
-        $editorsGroupId = 13;
+        // $editorsGroupId = 13;
 
         $userService = $repository->getUserService();
 

@@ -315,7 +315,7 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
         $createStruct->mainLanguageCode = $this->getOverride( 'mainLanguageCode', $typeCreateOverride, 'eng-GB' );
         $createStruct->remoteId     = $this->getTypeName();
         $createStruct->names        = $this->getOverride( 'names', $typeCreateOverride, array( 'eng-GB' => 'Test' ) );
-        $createStruct->creatorId    = 14;
+        $createStruct->creatorId    = $this->getSetupFactory()->getAdminUserId();
         $createStruct->creationDate = $this->createDateTime();
 
         $nameFieldCreate = $contentTypeService->newFieldDefinitionCreateStruct(
