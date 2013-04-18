@@ -340,14 +340,14 @@ class EzcDatabase extends Gateway
                 $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_location' )
             )
         )->rightJoin(
-            $this->dbHandler->quoteTable( 'ezcontent_type' ),
+            $this->dbHandler->quoteTable( 'ezcontenttype' ),
             $query->expr->lAnd(
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'type_id', 'ezcontent_type' ),
+                    $this->dbHandler->quoteColumn( 'type_id', 'ezcontenttype' ),
                     $this->dbHandler->quoteColumn( 'type_id', 'ezcontent' )
                 ),
                 $query->expr->eq(
-                    $this->dbHandler->quoteColumn( 'identifier', 'ezcontent_type' ),
+                    $this->dbHandler->quoteColumn( 'identifier', 'ezcontenttype' ),
                     $query->bindValue( 'user_group', null, \PDO::PARAM_STR )
                 )
             )

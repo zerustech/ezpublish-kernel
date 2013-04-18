@@ -781,7 +781,8 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
         {
             $this->assertInstanceOf(
                 $expectedException,
-                $e
+                $e,
+                (string) $e
             );
         }
     }
@@ -813,7 +814,8 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
         {
             $this->assertInstanceOf(
                 $expectedException,
-                $e
+                $e,
+                (string) $e
             );
         }
     }

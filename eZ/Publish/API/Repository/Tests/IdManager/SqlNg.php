@@ -19,8 +19,8 @@ class SqlNg extends IdManager
 {
     private $mapping = array(
         'group' => array(
-            4 => 1,
-            13 => 7,
+            4 => 1, // Users
+            13 => 7, // Editors
         )
     );
 

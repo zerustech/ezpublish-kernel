@@ -366,7 +366,7 @@ class UserIntegrationTest extends BaseIntegrationTest
         $userCreate->setField( 'last_name', 'User' );
 
         // ID of the "Editors" user group in an eZ Publish demo installation
-        $group = $userService->loadUserGroup( 13 );
+        $group = $userService->loadUserGroup( $this->generateId( 'group', 13 ) );
 
         // Create a new user instance.
         $user = $userService->createUser( $userCreate, array( $group ) );
