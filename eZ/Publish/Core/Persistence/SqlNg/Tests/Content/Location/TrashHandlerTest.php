@@ -131,10 +131,9 @@ class TrashHandlerTest extends TestCase
      */
     public function testRecover( $trashedObject )
     {
-        $this->markTestIncomplete("Trash handler still missing.");
         $handler = $this->getTrashHandler();
 
-        $locationId = $handler->recover( $trashedObject->id, 2 );
+        $locationId = $handler->recover( $trashedObject->id, null );
 
         $this->assertNotNull( $locationId );
     }

@@ -728,7 +728,42 @@ class EzcDatabase extends Gateway
      */
     public function untrashLocation( $locationId, $newParentId = null )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $locationData = $this->getBasicNodeData( $locationId, self::DELETED );
+
+        $parentData = $locationData;
+        if ( $locationData['parent_id'] != $locationId )
+        {
+            try {
+                // Check if published parent exists
+                $parentData = $this->getBasicNodeData( $locationData['parent_id'] );
+            } catch ( NotFound $e ) {
+                // Try new parent, throws exception, if it not exists, or is
+                // not published.
+                $parentData = $this->getBasicNodeData( $newParentId );
+            }
+        }
+
+        $query = $this->dbHandler->createUpdateQuery();
+        $query
+            ->update( $this->dbHandler->quoteTable( 'ezcontent_location' ) )
+            ->set(
+                $this->dbHandler->quoteColumn( 'status' ),
+                $query->bindValue( self::PUBLISHED )
+            )
+            ->where(
+                $query->expr->like(
+                    $this->dbHandler->quoteColumn( 'location_id' ),
+                    $query->bindValue( $locationId )
+                )
+            );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $parentData['location_id'] != $locationData['parent_id'] ) {
+            $this->moveSubtreeNodes( $locationData, $parentData );
+        }
+
+        return $locationData['location_id'];
     }
 
     /**

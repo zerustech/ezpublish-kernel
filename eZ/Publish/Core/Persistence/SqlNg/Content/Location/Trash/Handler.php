@@ -139,7 +139,7 @@ class Handler implements BaseTrashHandler
      */
     public function recover( $trashedId, $newParentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->locationGateway->untrashLocation( $trashedId, $newParentId );
     }
 
     /**
