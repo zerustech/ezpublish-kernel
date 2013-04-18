@@ -318,8 +318,10 @@ class Handler implements BaseContentHandler
 
         $content->fields = $this->fieldHandler->extractFields( $content->fields );
 
-        // @TODO: Reactivate
-        // $this->fieldHandler->loadExternalFieldData( $content );
+        foreach ( $content->fields as $field )
+        {
+            $storage = $this->storageHandler->getFieldData( $content->versionInfo, $field );
+        }
 
         return $content;
     }
