@@ -596,7 +596,7 @@ class Handler implements HandlerInterface
         }
         catch ( \ezcDbTransactionException $e )
         {
-            throw new RuntimeException( $e->getMessage() );
+            throw new \RuntimeException( $e->getMessage() );
         }
     }
 
@@ -615,7 +615,7 @@ class Handler implements HandlerInterface
         }
         catch ( \ezcDbTransactionException $e )
         {
-            throw new RuntimeException( $e->getMessage() );
+            throw new \RuntimeException( $e->getMessage() );
         }
     }
 }
