@@ -143,6 +143,11 @@ class Handler implements BaseUserHandler
     {
         $this->roleGateway->createRole( $role );
 
+        foreach ( $role->groupIds as $group )
+        {
+            $this->assignRole( $group, $role->id );
+        }
+
         foreach ( $role->policies as $policy )
         {
             $this->addPolicy( $role->id, $policy );
