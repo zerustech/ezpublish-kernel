@@ -163,8 +163,6 @@ class Mapper
     {
         $roles = $this->mapRoles( $roleData, true );
 
-        // @TODO: This code should no be needed any more after refactoring the
-        // DB structure. verify.
         $roleAssignmentData = array();
         foreach ( $data as $row )
         {

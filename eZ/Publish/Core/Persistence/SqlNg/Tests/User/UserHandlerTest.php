@@ -536,6 +536,27 @@ class UserHandlerTest extends TestCase
     /**
      * @depends testAddRoleToUser
      */
+    public function testLoadRoleAssignmentsInherited( array $data )
+    {
+        list( $content, $role ) = $data;
+        $role->groupIds[] = $content->versionInfo->contentInfo->id;
+
+        $handler = $this->getUserHandler();
+
+        $this->assertEquals(
+            array(
+                new Persistence\User\RoleAssignment( array(
+                    'contentId' => $content->versionInfo->contentInfo->id,
+                    'role' => $role,
+                ) ),
+            ),
+            $handler->loadRoleAssignmentsByGroupId( $content->versionInfo->contentInfo->id, true )
+        );
+    }
+
+    /**
+     * @depends testAddRoleToUser
+     */
     public function testRemoveUserRoleAssociation( array $data )
     {
         list( $content, $role ) = $data;

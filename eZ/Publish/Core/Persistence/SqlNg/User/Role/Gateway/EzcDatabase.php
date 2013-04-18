@@ -248,15 +248,14 @@ class EzcDatabase extends Gateway
 
         if ( $inherited )
         {
-            // @TODO: Implement
-            // $groupIds = $this->fetchUserGroups( $groupId );
-            // $groupIds[] = $groupId;
-            // $query->where(
-            //     $query->expr->in(
-            //         $this->dbHandler->quoteColumn( 'content_id' ),
-            //         $groupIds
-            //     )
-            // );
+            $groupIds = $this->fetchUserGroups( $groupId );
+            $groupIds[] = $groupId;
+            $query->where(
+                $query->expr->in(
+                    $this->dbHandler->quoteColumn( 'content_id' ),
+                    $groupIds
+                )
+            );
         }
         else
         {
@@ -284,6 +283,85 @@ class EzcDatabase extends Gateway
     public function loadPoliciesByUserId( $userId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
+    }
+
+    /**
+     * Fetch all group IDs the user belongs to
+     *
+     * @param int $userId
+     *
+     * @return array
+     */
+    protected function fetchUserGroups( $userId )
+    {
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'path_string', 'ezcontent_location' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_location' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_location' ),
+                $query->bindValue( $userId )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        $paths = $statement->fetchAll( \PDO::FETCH_COLUMN );
+        $locationIds = array_unique(
+            array_reduce(
+                array_map(
+                    function ( $pathString )
+                    {
+                        return array_filter( explode( '/', $pathString ) );
+                    },
+                    $paths
+                ),
+                'array_merge_recursive',
+                array()
+            )
+        );
+
+        if ( empty( $locationIds ) )
+            return array();
+
+        // Limit nodes to groups only
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_location' )
+        )->rightJoin(
+            $this->dbHandler->quoteTable( 'ezcontent' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' ),
+                $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_location' )
+            )
+        )->rightJoin(
+            $this->dbHandler->quoteTable( 'ezcontent_type' ),
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'type_id', 'ezcontent_type' ),
+                    $this->dbHandler->quoteColumn( 'type_id', 'ezcontent' )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'identifier', 'ezcontent_type' ),
+                    $query->bindValue( 'user_group', null, \PDO::PARAM_STR )
+                )
+            )
+        )->where(
+            $query->expr->in(
+                $this->dbHandler->quoteColumn( 'location_id', 'ezcontent_location' ),
+                $locationIds
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_COLUMN );
     }
 
     /**
