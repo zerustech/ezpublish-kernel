@@ -17,7 +17,6 @@ return array (
       'remote_id' => 'f5c88a2209584891056f987fd965b0ba',
       'section_id' => '2',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     1 =>
     array (
@@ -33,7 +32,6 @@ return array (
       'remote_id' => '1bb4fe25487f05527efa8bfd394cecc7',
       'section_id' => '2',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     2 =>
     array (
@@ -49,7 +47,6 @@ return array (
       'remote_id' => 'faaeb9be3bd98ed09f606fc16d144eca',
       'section_id' => '2',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     3 =>
     array (
@@ -65,7 +62,6 @@ return array (
       'remote_id' => '8a9c9c761004866fb458d89910f52bee',
       'section_id' => '1',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     4 =>
     array (
@@ -81,7 +77,6 @@ return array (
       'remote_id' => '5f7f0bdb3381d6a461d8c29ff53d908f',
       'section_id' => '2',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     5 =>
     array (
@@ -97,7 +92,6 @@ return array (
       'remote_id' => '9b47a45624b023b1a76c73b74d704acf',
       'section_id' => '2',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     6 =>
     array (
@@ -113,7 +107,6 @@ return array (
       'remote_id' => '3c160cca19fb135f83bd02d911f04db2',
       'section_id' => '2',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     7 =>
     array (
@@ -129,7 +122,6 @@ return array (
       'remote_id' => '15b256dbea2ae72418ff5facc999e8f9',
       'section_id' => '2',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     8 =>
     array (
@@ -145,7 +137,6 @@ return array (
       'remote_id' => '14e4411b264a6194a33847843919451a',
       'section_id' => '2',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     9 =>
     array (
@@ -161,7 +152,6 @@ return array (
       'remote_id' => 'f8cc7a4cf8a964a1a0ea6666f5da7d0d',
       'section_id' => '1',
       'status' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
   ),
   'ezcontent_language' =>
@@ -172,7 +162,6 @@ return array (
       'language_code' => 'eng-GB',
       'name' => 'English (Great-Britain)',
       'is_enabled' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     1 =>
     array (
@@ -180,7 +169,6 @@ return array (
       'language_code' => 'eng-US',
       'name' => 'English (American)',
       'is_enabled' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     2 =>
     array (
@@ -188,7 +176,6 @@ return array (
       'language_code' => 'ger-DE',
       'name' => 'German',
       'is_enabled' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
   ),
   'ezcontent_location' =>
@@ -209,7 +196,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '1',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     1 =>
     array (
@@ -227,7 +213,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '1',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     2 =>
     array (
@@ -245,7 +230,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '1',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     3 =>
     array (
@@ -263,7 +247,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '1',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     4 =>
     array (
@@ -281,7 +264,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '8',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     5 =>
     array (
@@ -299,7 +281,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '1',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:11',
     ),
     6 =>
     array (
@@ -317,7 +298,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '1',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     7 =>
     array (
@@ -335,7 +315,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '1',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     8 =>
     array (
@@ -353,7 +332,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '9',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     9 =>
     array (
@@ -371,7 +349,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '1',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     10 =>
     array (
@@ -389,7 +366,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '8',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     11 =>
     array (
@@ -407,7 +383,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '1',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
     12 =>
     array (
@@ -425,7 +400,6 @@ return array (
       'is_invisible' => '0',
       'sort_field' => '9',
       'sort_order' => '1',
-      'changed' => '2013-04-18 09:34:12',
     ),
   ),
   'ezcontent_version' =>
@@ -435,130 +409,120 @@ return array (
       'version_id' => '1',
       'content_id' => '1',
       'version_no' => '1',
-      'modified' => '1366270451',
+      'modified' => '1366288478',
       'creator_id' => '3',
-      'created' => '1366270451',
+      'created' => '1366288478',
       'initial_language_id' => '1',
       'status' => '1',
-      'fields' => '[{"field":{"id":1891059233,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Main group","externalData":null,"sortKey":""},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"name"},{"field":{"id":504025003,"fieldDefinitionId":4,"type":"ezstring","value":{"data":"Users","externalData":null,"sortKey":""},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"description"}]',
-      'changed' => '2013-04-18 09:34:11',
+      'fields' => '[{"field":{"id":64376204,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Main group","externalData":null,"sortKey":""},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"name"},{"field":{"id":547892132,"fieldDefinitionId":4,"type":"ezstring","value":{"data":"Users","externalData":null,"sortKey":""},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"description"}]',
     ),
     1 =>
     array (
       'version_id' => '2',
       'content_id' => '2',
       'version_no' => '1',
-      'modified' => '1366270451',
+      'modified' => '1343140540',
       'creator_id' => '3',
-      'created' => '1366270451',
-      'initial_language_id' => '1',
+      'created' => '1366288478',
+      'initial_language_id' => '2',
       'status' => '1',
-      'fields' => '[]',
-      'changed' => '2013-04-18 09:34:12',
+      'fields' => '[{"field":{"id":28,"fieldDefinitionId":96,"type":"ezstring","value":{"data":"Administrator","externalData":null,"sortKey":"administrator"},"languageCode":"eng-US","versionNo":4},"fieldDefinitionIdentifier":"first_name"},{"field":{"id":29,"fieldDefinitionId":97,"type":"ezstring","value":{"data":"User","externalData":null,"sortKey":"user"},"languageCode":"eng-US","versionNo":4},"fieldDefinitionIdentifier":"last_name"},{"field":{"id":30,"fieldDefinitionId":98,"type":"ezuser","value":{"data":null,"externalData":{"hasStoredLogin":true,"contentId":14,"login":"admin","email":"spam@ez.no","passwordHash":"c78e3b0f3d9244ed8c6d1c29464bdff9","passwordHashType":"2","enabled":true,"maxLogin":10},"sortKey":null},"languageCode":"eng-US","versionNo":4},"fieldDefinitionIdentifier":"user_account"}]',
     ),
     2 =>
     array (
       'version_id' => '3',
       'content_id' => '3',
       'version_no' => '1',
-      'modified' => '1366270451',
+      'modified' => '1072180405',
       'creator_id' => '3',
-      'created' => '1366270451',
-      'initial_language_id' => '1',
+      'created' => '1366288478',
+      'initial_language_id' => '2',
       'status' => '1',
-      'fields' => '[]',
-      'changed' => '2013-04-18 09:34:12',
+      'fields' => '[{"field":{"id":19,"fieldDefinitionId":96,"type":"ezstring","value":{"data":"Anonymous","externalData":null,"sortKey":"anonymous"},"languageCode":"eng-US","versionNo":2},"fieldDefinitionIdentifier":"first_name"},{"field":{"id":20,"fieldDefinitionId":97,"type":"ezstring","value":{"data":"User","externalData":null,"sortKey":"user"},"languageCode":"eng-US","versionNo":2},"fieldDefinitionIdentifier":"last_name"},{"field":{"id":21,"fieldDefinitionId":98,"type":"ezuser","value":{"data":null,"externalData":{"hasStoredLogin":true,"contentId":10,"login":"anonymous","email":"nospam@ez.no","passwordHash":"4e6f6184135228ccd45f8233d72a0363","passwordHashType":"2","enabled":true,"maxLogin":1000},"sortKey":null},"languageCode":"eng-US","versionNo":2},"fieldDefinitionIdentifier":"user_account"}]',
     ),
     3 =>
     array (
       'version_id' => '4',
       'content_id' => '4',
       'version_no' => '1',
-      'modified' => '1366270451',
+      'modified' => '1366288478',
       'creator_id' => '3',
-      'created' => '1366270451',
+      'created' => '1366288478',
       'initial_language_id' => '1',
       'status' => '1',
-      'fields' => '[{"field":{"id":1602192513,"fieldDefinitionId":1,"type":"ezstring","value":{"data":"Home","externalData":null,"sortKey":"home"},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"name"},{"field":{"id":1009405089,"fieldDefinitionId":2,"type":"ezpage","value":{"data":{},"externalData":null,"sortKey":null},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"page"}]',
-      'changed' => '2013-04-18 09:34:11',
+      'fields' => '[{"field":{"id":713336040,"fieldDefinitionId":1,"type":"ezstring","value":{"data":"Home","externalData":null,"sortKey":"home"},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"name"},{"field":{"id":1563844159,"fieldDefinitionId":2,"type":"ezpage","value":{"data":{},"externalData":null,"sortKey":null},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"page"}]',
     ),
     4 =>
     array (
       'version_id' => '5',
       'content_id' => '5',
       'version_no' => '1',
-      'modified' => '1366270451',
+      'modified' => '1366288479',
       'creator_id' => '3',
       'created' => '1343140542',
       'initial_language_id' => '2',
       'status' => '1',
-      'fields' => '[{"field":{"id":2092994925,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Members","externalData":null,"sortKey":"members"},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"}]',
-      'changed' => '2013-04-18 09:34:11',
+      'fields' => '[{"field":{"id":1415023373,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Members","externalData":null,"sortKey":"members"},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"}]',
     ),
     5 =>
     array (
       'version_id' => '6',
       'content_id' => '6',
       'version_no' => '1',
-      'modified' => '1366270451',
+      'modified' => '1366288479',
       'creator_id' => '3',
       'created' => '1033920775',
       'initial_language_id' => '2',
       'status' => '1',
-      'fields' => '[{"field":{"id":560823365,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Administrator users","externalData":null,"sortKey":""},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"}]',
-      'changed' => '2013-04-18 09:34:12',
+      'fields' => '[{"field":{"id":2101899706,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Administrator users","externalData":null,"sortKey":""},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"}]',
     ),
     6 =>
     array (
       'version_id' => '7',
       'content_id' => '7',
       'version_no' => '1',
-      'modified' => '1366270452',
+      'modified' => '1366288479',
       'creator_id' => '3',
       'created' => '1033920794',
       'initial_language_id' => '2',
       'status' => '1',
-      'fields' => '[{"field":{"id":2028566746,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Editors","externalData":null,"sortKey":""},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"}]',
-      'changed' => '2013-04-18 09:34:12',
+      'fields' => '[{"field":{"id":474160091,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Editors","externalData":null,"sortKey":""},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"}]',
     ),
     7 =>
     array (
       'version_id' => '8',
       'content_id' => '8',
       'version_no' => '1',
-      'modified' => '1366270452',
+      'modified' => '1366288479',
       'creator_id' => '3',
       'created' => '1072180330',
       'initial_language_id' => '2',
       'status' => '1',
-      'fields' => '[{"field":{"id":1224994674,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Anonymous Users","externalData":null,"sortKey":"anonymous users"},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"},{"field":{"id":1122731070,"fieldDefinitionId":4,"type":"ezstring","value":{"data":"User group for the anonymous user","externalData":null,"sortKey":"user group for the anonymous user"},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"description"}]',
-      'changed' => '2013-04-18 09:34:12',
+      'fields' => '[{"field":{"id":1005204484,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Anonymous Users","externalData":null,"sortKey":"anonymous users"},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"},{"field":{"id":2108685505,"fieldDefinitionId":4,"type":"ezstring","value":{"data":"User group for the anonymous user","externalData":null,"sortKey":"user group for the anonymous user"},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"description"}]',
     ),
     8 =>
     array (
       'version_id' => '9',
       'content_id' => '9',
       'version_no' => '1',
-      'modified' => '1366270452',
+      'modified' => '1366288479',
       'creator_id' => '3',
       'created' => '1343140541',
       'initial_language_id' => '2',
       'status' => '1',
-      'fields' => '[{"field":{"id":1697164776,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Partners","externalData":null,"sortKey":"partners"},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"}]',
-      'changed' => '2013-04-18 09:34:12',
+      'fields' => '[{"field":{"id":19846676,"fieldDefinitionId":3,"type":"ezstring","value":{"data":"Partners","externalData":null,"sortKey":"partners"},"languageCode":"eng-US","versionNo":1},"fieldDefinitionIdentifier":"name"}]',
     ),
     9 =>
     array (
       'version_id' => '10',
       'content_id' => '10',
       'version_no' => '1',
-      'modified' => '1366270452',
+      'modified' => '1366288479',
       'creator_id' => '3',
       'created' => '1332927282',
       'initial_language_id' => '1',
       'status' => '1',
-      'fields' => '[{"field":{"id":319614031,"fieldDefinitionId":"47","type":"ezstring","value":{"data":"Contact Us","externalData":null,"sortKey":"contact us"},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"name"},{"field":{"id":2087078746,"fieldDefinitionId":"48","type":"ezxmltext","value":{"data":{},"externalData":null,"sortKey":null},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"description"}]',
-      'changed' => '2013-04-18 09:34:12',
+      'fields' => '[{"field":{"id":1208814901,"fieldDefinitionId":"47","type":"ezstring","value":{"data":"Contact Us","externalData":null,"sortKey":"contact us"},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"name"},{"field":{"id":1035230802,"fieldDefinitionId":"48","type":"ezxmltext","value":{"data":{},"externalData":null,"sortKey":null},"languageCode":"eng-GB","versionNo":1},"fieldDefinitionIdentifier":"description"}]',
     ),
   ),
   'ezcontenttype' =>
@@ -572,7 +536,7 @@ return array (
       'always_available' => '0',
       'contentobject_name' => '<name>',
       'is_container' => '1',
-      'created' => '1366270451',
+      'created' => '1366288478',
       'creator_id' => '3',
       'modified' => '1343140535',
       'modifier_id' => '3',
@@ -582,7 +546,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     1 =>
     array (
@@ -593,7 +556,7 @@ return array (
       'always_available' => '1',
       'contentobject_name' => '<name>',
       'is_container' => '1',
-      'created' => '1366270451',
+      'created' => '1366288478',
       'creator_id' => '3',
       'modified' => '1048494743',
       'modifier_id' => '3',
@@ -603,7 +566,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     2 =>
     array (
@@ -614,7 +576,7 @@ return array (
       'always_available' => '1',
       'contentobject_name' => '<first_name> <last_name>',
       'is_container' => '0',
-      'created' => '1366270451',
+      'created' => '1366288478',
       'creator_id' => '3',
       'modified' => '1082018364',
       'modifier_id' => '3',
@@ -624,7 +586,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     3 =>
     array (
@@ -645,7 +606,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     4 =>
     array (
@@ -666,7 +626,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     5 =>
     array (
@@ -687,7 +646,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     6 =>
     array (
@@ -708,7 +666,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     7 =>
     array (
@@ -729,7 +686,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     8 =>
     array (
@@ -750,7 +706,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     9 =>
     array (
@@ -771,7 +726,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     10 =>
     array (
@@ -792,7 +746,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     11 =>
     array (
@@ -813,7 +766,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     12 =>
     array (
@@ -834,7 +786,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     13 =>
     array (
@@ -855,7 +806,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     14 =>
     array (
@@ -876,7 +826,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     15 =>
     array (
@@ -897,7 +846,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     16 =>
     array (
@@ -918,7 +866,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     17 =>
     array (
@@ -939,7 +886,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     18 =>
     array (
@@ -960,7 +906,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     19 =>
     array (
@@ -981,7 +926,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     20 =>
     array (
@@ -1002,7 +946,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     21 =>
     array (
@@ -1023,7 +966,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     22 =>
     array (
@@ -1044,7 +986,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     23 =>
     array (
@@ -1065,7 +1006,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     24 =>
     array (
@@ -1086,7 +1026,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     25 =>
     array (
@@ -1107,7 +1046,6 @@ return array (
       'sort_field' => '1',
       'sort_order' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
   ),
   'ezcontenttype_field' =>
@@ -1129,7 +1067,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     1 =>
     array (
@@ -1148,7 +1085,6 @@ return array (
       'name_list' => '{"eng-GB":"Layout"}',
       'constraints' => '{"validators":null,"fieldSettings":{"defaultLayout":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     2 =>
     array (
@@ -1167,7 +1103,6 @@ return array (
       'name_list' => '{"eng-US":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":255,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     3 =>
     array (
@@ -1186,7 +1121,6 @@ return array (
       'name_list' => '{"eng-US":"Description"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":255,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     4 =>
     array (
@@ -1205,7 +1139,6 @@ return array (
       'name_list' => '{"eng-US":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":255,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":"Folder","externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     5 =>
     array (
@@ -1224,7 +1157,6 @@ return array (
       'name_list' => '{"eng-US":"Summary"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":5,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     6 =>
     array (
@@ -1243,7 +1175,6 @@ return array (
       'name_list' => '{"eng-US":"Short name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":100,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     7 =>
     array (
@@ -1262,7 +1193,6 @@ return array (
       'name_list' => '{"eng-US":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":20,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     8 =>
     array (
@@ -1281,7 +1211,6 @@ return array (
       'name_list' => '{"eng-US":"Display sub items"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":true,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     9 =>
     array (
@@ -1300,7 +1229,6 @@ return array (
       'name_list' => '{"eng-US":"Call For Action"}',
       'constraints' => '{"validators":null,"fieldSettings":{"defaultLayout":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     10 =>
     array (
@@ -1319,7 +1247,6 @@ return array (
       'name_list' => '{"eng-US":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     11 =>
     array (
@@ -1338,7 +1265,6 @@ return array (
       'name_list' => '{"eng-US":"Subject"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":100,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     12 =>
     array (
@@ -1357,7 +1283,6 @@ return array (
       'name_list' => '{"eng-US":"Author"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     13 =>
     array (
@@ -1376,7 +1301,6 @@ return array (
       'name_list' => '{"eng-US":"Message"}',
       'constraints' => '{"validators":null,"fieldSettings":{"textRows":20}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     14 =>
     array (
@@ -1395,7 +1319,6 @@ return array (
       'name_list' => '{"eng-GB":"Title"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":255,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":"New article","externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     15 =>
     array (
@@ -1414,7 +1337,6 @@ return array (
       'name_list' => '{"eng-GB":"Short title"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":255,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     16 =>
     array (
@@ -1433,7 +1355,6 @@ return array (
       'name_list' => '{"eng-GB":"Author"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":[],"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     17 =>
     array (
@@ -1452,7 +1373,6 @@ return array (
       'name_list' => '{"eng-GB":"Summary"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     18 =>
     array (
@@ -1471,7 +1391,6 @@ return array (
       'name_list' => '{"eng-GB":"Body"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":20,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     19 =>
     array (
@@ -1490,7 +1409,6 @@ return array (
       'name_list' => '{"eng-GB":"Image"}',
       'constraints' => '{"validators":{"FileSizeValidator":{"maxFileSize":false}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     20 =>
     array (
@@ -1509,7 +1427,6 @@ return array (
       'name_list' => '{"eng-GB":"Caption (Image)"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     21 =>
     array (
@@ -1528,7 +1445,6 @@ return array (
       'name_list' => '{"eng-GB":"Publish date"}',
       'constraints' => '{"validators":null,"fieldSettings":{"defaultType":0,"useSeconds":false,"dateInterval":null}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     22 =>
     array (
@@ -1547,7 +1463,6 @@ return array (
       'name_list' => '{"eng-GB":"Star Rating"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     23 =>
     array (
@@ -1566,7 +1481,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     24 =>
     array (
@@ -1585,7 +1499,6 @@ return array (
       'name_list' => '{"eng-GB":"Location"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     25 =>
     array (
@@ -1604,7 +1517,6 @@ return array (
       'name_list' => '{"eng-GB":"Comments"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     26 =>
     array (
@@ -1623,7 +1535,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     27 =>
     array (
@@ -1642,7 +1553,6 @@ return array (
       'name_list' => '{"eng-GB":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":5,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     28 =>
     array (
@@ -1661,7 +1571,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     29 =>
     array (
@@ -1680,7 +1589,6 @@ return array (
       'name_list' => '{"eng-GB":"Title"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     30 =>
     array (
@@ -1699,7 +1607,6 @@ return array (
       'name_list' => '{"eng-GB":"Body"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":25,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     31 =>
     array (
@@ -1717,8 +1624,7 @@ return array (
       'description_list' => '{"eng-GB":""}',
       'name_list' => '{"eng-GB":"Publication date"}',
       'constraints' => '{"validators":null,"fieldSettings":{"defaultType":1,"useSeconds":false,"dateInterval":null}}',
-      'default_value' => '{"data":{"rfc850":null,"timestamp":1366270451},"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
+      'default_value' => '{"data":{"rfc850":null,"timestamp":1366288479},"externalData":null,"sortKey":null}',
     ),
     32 =>
     array (
@@ -1737,7 +1643,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     33 =>
     array (
@@ -1756,7 +1661,6 @@ return array (
       'name_list' => '{"eng-GB":"Comments"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     34 =>
     array (
@@ -1775,7 +1679,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     35 =>
     array (
@@ -1794,7 +1697,6 @@ return array (
       'name_list' => '{"eng-GB":"Product number"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     36 =>
     array (
@@ -1813,7 +1715,6 @@ return array (
       'name_list' => '{"eng-GB":"Short description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":5,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     37 =>
     array (
@@ -1832,7 +1733,6 @@ return array (
       'name_list' => '{"eng-GB":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     38 =>
     array (
@@ -1851,7 +1751,6 @@ return array (
       'name_list' => '{"eng-GB":"Price"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     39 =>
     array (
@@ -1870,7 +1769,6 @@ return array (
       'name_list' => '{"eng-GB":"Image"}',
       'constraints' => '{"validators":{"FileSizeValidator":{"maxFileSize":false}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     40 =>
     array (
@@ -1889,7 +1787,6 @@ return array (
       'name_list' => '{"eng-GB":"Caption (Image)"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":5,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     41 =>
     array (
@@ -1908,7 +1805,6 @@ return array (
       'name_list' => '{"eng-GB":"Additional options"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     42 =>
     array (
@@ -1927,7 +1823,6 @@ return array (
       'name_list' => '{"eng-GB":"Star Rating"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     43 =>
     array (
@@ -1946,7 +1841,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     44 =>
     array (
@@ -1965,7 +1859,6 @@ return array (
       'name_list' => '{"eng-GB":"Comments"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     45 =>
     array (
@@ -1984,7 +1877,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     46 =>
     array (
@@ -2003,7 +1895,6 @@ return array (
       'name_list' => '{"eng-GB":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     47 =>
     array (
@@ -2022,7 +1913,6 @@ return array (
       'name_list' => '{"eng-GB":"Sender name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     48 =>
     array (
@@ -2041,7 +1931,6 @@ return array (
       'name_list' => '{"eng-GB":"Subject"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     49 =>
     array (
@@ -2060,7 +1949,6 @@ return array (
       'name_list' => '{"eng-GB":"Message"}',
       'constraints' => '{"validators":null,"fieldSettings":{"textRows":10}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     50 =>
     array (
@@ -2079,7 +1967,6 @@ return array (
       'name_list' => '{"eng-GB":"Email"}',
       'constraints' => '{"validators":{"EmailAddressValidator":[]},"fieldSettings":null}',
       'default_value' => '{"data":"","externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     51 =>
     array (
@@ -2098,7 +1985,6 @@ return array (
       'name_list' => '{"eng-GB":"Recipient"}',
       'constraints' => '{"validators":{"EmailAddressValidator":[]},"fieldSettings":null}',
       'default_value' => '{"data":"","externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     52 =>
     array (
@@ -2117,7 +2003,6 @@ return array (
       'name_list' => '{"eng-GB":"Title"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     53 =>
     array (
@@ -2136,7 +2021,6 @@ return array (
       'name_list' => '{"eng-GB":"Body"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":20,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     54 =>
     array (
@@ -2155,7 +2039,6 @@ return array (
       'name_list' => '{"eng-GB":"Star Rating"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     55 =>
     array (
@@ -2174,7 +2057,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     56 =>
     array (
@@ -2193,7 +2075,6 @@ return array (
       'name_list' => '{"eng-GB":"Comments"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     57 =>
     array (
@@ -2212,7 +2093,6 @@ return array (
       'name_list' => '{"eng-GB":"Display sub items"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":false,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     58 =>
     array (
@@ -2231,7 +2111,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     59 =>
     array (
@@ -2250,7 +2129,6 @@ return array (
       'name_list' => '{"eng-GB":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     60 =>
     array (
@@ -2269,7 +2147,6 @@ return array (
       'name_list' => '{"eng-GB":"Question"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     61 =>
     array (
@@ -2288,7 +2165,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":255,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     62 =>
     array (
@@ -2307,7 +2183,6 @@ return array (
       'name_list' => '{"eng-GB":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":20,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     63 =>
     array (
@@ -2326,7 +2201,6 @@ return array (
       'name_list' => '{"eng-GB":"Location"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":{"text":null},"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     64 =>
     array (
@@ -2345,7 +2219,6 @@ return array (
       'name_list' => '{"eng-GB":"Open in new window"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":true,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     65 =>
     array (
@@ -2364,7 +2237,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     66 =>
     array (
@@ -2383,7 +2255,6 @@ return array (
       'name_list' => '{"eng-GB":"Short description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     67 =>
     array (
@@ -2402,7 +2273,6 @@ return array (
       'name_list' => '{"eng-GB":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     68 =>
     array (
@@ -2421,7 +2291,6 @@ return array (
       'name_list' => '{"eng-GB":"Image"}',
       'constraints' => '{"validators":null,"fieldSettings":{"selectionMethod":0,"selectionRoot":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     69 =>
     array (
@@ -2440,7 +2309,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     70 =>
     array (
@@ -2459,7 +2327,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     71 =>
     array (
@@ -2478,7 +2345,6 @@ return array (
       'name_list' => '{"eng-GB":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     72 =>
     array (
@@ -2497,7 +2363,6 @@ return array (
       'name_list' => '{"eng-GB":"Subject"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     73 =>
     array (
@@ -2516,7 +2381,6 @@ return array (
       'name_list' => '{"eng-GB":"Message"}',
       'constraints' => '{"validators":null,"fieldSettings":{"textRows":10}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     74 =>
     array (
@@ -2535,7 +2399,6 @@ return array (
       'name_list' => '{"eng-GB":"Sticky"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":false,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     75 =>
     array (
@@ -2554,7 +2417,6 @@ return array (
       'name_list' => '{"eng-GB":"Notify me about updates"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     76 =>
     array (
@@ -2573,7 +2435,6 @@ return array (
       'name_list' => '{"eng-GB":"Subject"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     77 =>
     array (
@@ -2592,7 +2453,6 @@ return array (
       'name_list' => '{"eng-GB":"Message"}',
       'constraints' => '{"validators":null,"fieldSettings":{"textRows":10}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     78 =>
     array (
@@ -2611,7 +2471,6 @@ return array (
       'name_list' => '{"eng-GB":"Full title"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":55,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     79 =>
     array (
@@ -2630,7 +2489,6 @@ return array (
       'name_list' => '{"eng-GB":"Short title"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":19,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     80 =>
     array (
@@ -2649,7 +2507,6 @@ return array (
       'name_list' => '{"eng-GB":"Text"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     81 =>
     array (
@@ -2668,7 +2525,6 @@ return array (
       'name_list' => '{"eng-GB":"Category"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     82 =>
     array (
@@ -2686,8 +2542,7 @@ return array (
       'description_list' => '{"eng-GB":""}',
       'name_list' => '{"eng-GB":"From Time"}',
       'constraints' => '{"validators":null,"fieldSettings":{"defaultType":1,"useSeconds":false,"dateInterval":null}}',
-      'default_value' => '{"data":{"rfc850":null,"timestamp":1366270451},"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
+      'default_value' => '{"data":{"rfc850":null,"timestamp":1366288479},"externalData":null,"sortKey":null}',
     ),
     83 =>
     array (
@@ -2706,7 +2561,6 @@ return array (
       'name_list' => '{"eng-GB":"To Time"}',
       'constraints' => '{"validators":null,"fieldSettings":{"defaultType":0,"useSeconds":false,"dateInterval":null}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     84 =>
     array (
@@ -2725,7 +2579,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     85 =>
     array (
@@ -2744,7 +2597,6 @@ return array (
       'name_list' => '{"eng-GB":"Title"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":65,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     86 =>
     array (
@@ -2763,7 +2615,6 @@ return array (
       'name_list' => '{"eng-GB":"View"}',
       'constraints' => '{"validators":null,"fieldSettings":{"isMultiple":false,"options":["Calendar","Program"]}}',
       'default_value' => '{"data":[],"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     87 =>
     array (
@@ -2782,7 +2633,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     88 =>
     array (
@@ -2801,7 +2651,6 @@ return array (
       'name_list' => '{"eng-GB":"URL"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     89 =>
     array (
@@ -2820,7 +2669,6 @@ return array (
       'name_list' => '{"eng-GB":"Image"}',
       'constraints' => '{"validators":{"FileSizeValidator":{"maxFileSize":false}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     90 =>
     array (
@@ -2839,7 +2687,6 @@ return array (
       'name_list' => '{"eng-GB":"Image map"}',
       'constraints' => '{"validators":null,"fieldSettings":{"textRows":10}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     91 =>
     array (
@@ -2858,7 +2705,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     92 =>
     array (
@@ -2877,7 +2723,6 @@ return array (
       'name_list' => '{"eng-GB":"Title"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     93 =>
     array (
@@ -2896,7 +2741,6 @@ return array (
       'name_list' => '{"eng-GB":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     94 =>
     array (
@@ -2915,7 +2759,6 @@ return array (
       'name_list' => '{"eng-US":"First name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":255,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     95 =>
     array (
@@ -2934,7 +2777,6 @@ return array (
       'name_list' => '{"eng-US":"Last name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":255,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     96 =>
     array (
@@ -2953,7 +2795,6 @@ return array (
       'name_list' => '{"eng-US":"User account"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     97 =>
     array (
@@ -2972,7 +2813,6 @@ return array (
       'name_list' => '{"eng-US":"Signature"}',
       'constraints' => '{"validators":null,"fieldSettings":{"textRows":10}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     98 =>
     array (
@@ -2991,7 +2831,6 @@ return array (
       'name_list' => '{"eng-US":"Image"}',
       'constraints' => '{"validators":{"FileSizeValidator":{"maxFileSize":1048576}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     99 =>
     array (
@@ -3010,7 +2849,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":"New file","externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     100 =>
     array (
@@ -3029,7 +2867,6 @@ return array (
       'name_list' => '{"eng-GB":"Description"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     101 =>
     array (
@@ -3048,7 +2885,6 @@ return array (
       'name_list' => '{"eng-GB":"File"}',
       'constraints' => '{"validators":{"FileSizeValidator":{"maxFileSize":false}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     102 =>
     array (
@@ -3067,7 +2903,6 @@ return array (
       'name_list' => '{"eng-GB":"Star Rating"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     103 =>
     array (
@@ -3086,7 +2921,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     104 =>
     array (
@@ -3105,7 +2939,6 @@ return array (
       'name_list' => '{"eng-GB":"Comments"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     105 =>
     array (
@@ -3124,7 +2957,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":150,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     106 =>
     array (
@@ -3143,7 +2975,6 @@ return array (
       'name_list' => '{"eng-GB":"Caption"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     107 =>
     array (
@@ -3162,7 +2993,6 @@ return array (
       'name_list' => '{"eng-GB":"Image"}',
       'constraints' => '{"validators":{"FileSizeValidator":{"maxFileSize":2097152}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     108 =>
     array (
@@ -3181,7 +3011,6 @@ return array (
       'name_list' => '{"eng-GB":"Star Rating"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     109 =>
     array (
@@ -3200,7 +3029,6 @@ return array (
       'name_list' => '{"eng-GB":"Tags"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     110 =>
     array (
@@ -3219,7 +3047,6 @@ return array (
       'name_list' => '{"eng-GB":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     111 =>
     array (
@@ -3238,7 +3065,6 @@ return array (
       'name_list' => '{"eng-GB":"Caption"}',
       'constraints' => '{"validators":null,"fieldSettings":{"numRows":10,"tagPreset":""}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     112 =>
     array (
@@ -3257,7 +3083,6 @@ return array (
       'name_list' => '{"eng-GB":"File"}',
       'constraints' => '{"validators":{"FileSizeValidator":{"maxFileSize":false}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     113 =>
     array (
@@ -3276,7 +3101,6 @@ return array (
       'name_list' => '{"eng-GB":"Star Rating"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     114 =>
     array (
@@ -3295,7 +3119,6 @@ return array (
       'name_list' => '{"eng-GB":"Comments"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     115 =>
     array (
@@ -3314,7 +3137,6 @@ return array (
       'name_list' => '{"eng-US":"Name"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     116 =>
     array (
@@ -3333,7 +3155,6 @@ return array (
       'name_list' => '{"eng-US":"Index Page"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     117 =>
     array (
@@ -3352,7 +3173,6 @@ return array (
       'name_list' => '{"eng-US":"Default Page"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     118 =>
     array (
@@ -3371,7 +3191,6 @@ return array (
       'name_list' => '{"eng-US":"Debug Output"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     119 =>
     array (
@@ -3390,7 +3209,6 @@ return array (
       'name_list' => '{"eng-US":"Debug By IP"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     120 =>
     array (
@@ -3409,7 +3227,6 @@ return array (
       'name_list' => '{"eng-US":"Debug IP List"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     121 =>
     array (
@@ -3428,7 +3245,6 @@ return array (
       'name_list' => '{"eng-US":"Debug Redirection"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     122 =>
     array (
@@ -3447,7 +3263,6 @@ return array (
       'name_list' => '{"eng-US":"View Caching"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     123 =>
     array (
@@ -3466,7 +3281,6 @@ return array (
       'name_list' => '{"eng-US":"Template Cache"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     124 =>
     array (
@@ -3485,7 +3299,6 @@ return array (
       'name_list' => '{"eng-US":"Template Compile"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     125 =>
     array (
@@ -3504,7 +3317,6 @@ return array (
       'name_list' => '{"eng-US":"Image Small Size"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     126 =>
     array (
@@ -3523,7 +3335,6 @@ return array (
       'name_list' => '{"eng-US":"Image Medium Size"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     127 =>
     array (
@@ -3542,7 +3353,6 @@ return array (
       'name_list' => '{"eng-US":"Image Large Size"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     128 =>
     array (
@@ -3561,7 +3371,6 @@ return array (
       'name_list' => '{"eng-US":"Title"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     129 =>
     array (
@@ -3580,7 +3389,6 @@ return array (
       'name_list' => '{"eng-US":"Meta data"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     130 =>
     array (
@@ -3599,7 +3407,6 @@ return array (
       'name_list' => '{"eng-US":"Image"}',
       'constraints' => '{"validators":{"FileSizeValidator":{"maxFileSize":false}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     131 =>
     array (
@@ -3618,7 +3425,6 @@ return array (
       'name_list' => '{"eng-US":"Sitestyle"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     132 =>
     array (
@@ -3637,7 +3443,6 @@ return array (
       'name_list' => '{"eng-US":"Email"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     133 =>
     array (
@@ -3656,7 +3461,6 @@ return array (
       'name_list' => '{"eng-US":"Site URL"}',
       'constraints' => '{"validators":{"IntegerValueValidator":{"minIntegerValue":false,"maxIntegerValue":false}},"fieldSettings":null}',
       'default_value' => '{"data":0,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     134 =>
     array (
@@ -3675,7 +3479,6 @@ return array (
       'name_list' => '{"eng-US":"Site map URL"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":{"text":null},"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     135 =>
     array (
@@ -3694,7 +3497,6 @@ return array (
       'name_list' => '{"eng-US":"Tag Cloud URL"}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":{"text":null},"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     136 =>
     array (
@@ -3713,7 +3515,6 @@ return array (
       'name_list' => '{"eng-US":"Login (label)"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     137 =>
     array (
@@ -3732,7 +3533,6 @@ return array (
       'name_list' => '{"eng-US":"Logout (label)"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     138 =>
     array (
@@ -3751,7 +3551,6 @@ return array (
       'name_list' => '{"eng-US":"My profile (label)"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     139 =>
     array (
@@ -3770,7 +3569,6 @@ return array (
       'name_list' => '{"eng-US":"Register new user (label)"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     140 =>
     array (
@@ -3789,7 +3587,6 @@ return array (
       'name_list' => '{"eng-US":"RSS feed"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     141 =>
     array (
@@ -3808,7 +3605,6 @@ return array (
       'name_list' => '{"eng-US":"Shopping basket (label)"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     142 =>
     array (
@@ -3827,7 +3623,6 @@ return array (
       'name_list' => '{"eng-US":"Site settings (label)"}',
       'constraints' => '{"validators":{"StringLengthValidator":{"maxStringLength":0,"minStringLength":0}},"fieldSettings":null}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     143 =>
     array (
@@ -3846,7 +3641,6 @@ return array (
       'name_list' => '{"eng-US":"Footer text"}',
       'constraints' => '{"validators":null,"fieldSettings":{"textRows":10}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     144 =>
     array (
@@ -3865,7 +3659,6 @@ return array (
       'name_list' => '{"eng-US":"Hide \\"Powered by\\""}',
       'constraints' => '{"validators":null,"fieldSettings":null}',
       'default_value' => '{"data":false,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
     145 =>
     array (
@@ -3884,7 +3677,6 @@ return array (
       'name_list' => '{"eng-US":"Footer Javascript"}',
       'constraints' => '{"validators":null,"fieldSettings":{"textRows":10}}',
       'default_value' => '{"data":null,"externalData":null,"sortKey":null}',
-      'changed' => '2013-04-18 09:34:11',
     ),
   ),
   'ezcontenttype_group' =>
@@ -3893,25 +3685,23 @@ return array (
     array (
       'group_id' => '1',
       'identifier' => 'Content',
-      'created' => '1366270451',
+      'created' => '1366288478',
       'creator_id' => '3',
       'modified' => '1033922106',
       'modifier_id' => '3',
       'name_list' => '[]',
       'description_list' => '[]',
-      'changed' => '2013-04-18 09:34:11',
     ),
     1 =>
     array (
       'group_id' => '2',
       'identifier' => 'Users',
-      'created' => '1366270451',
+      'created' => '1366288478',
       'creator_id' => '3',
       'modified' => '1033922113',
       'modifier_id' => '3',
       'name_list' => '[]',
       'description_list' => '[]',
-      'changed' => '2013-04-18 09:34:11',
     ),
     2 =>
     array (
@@ -3923,7 +3713,6 @@ return array (
       'modifier_id' => '3',
       'name_list' => '[]',
       'description_list' => '[]',
-      'changed' => '2013-04-18 09:34:11',
     ),
     3 =>
     array (
@@ -3935,7 +3724,6 @@ return array (
       'modifier_id' => '3',
       'name_list' => '[]',
       'description_list' => '[]',
-      'changed' => '2013-04-18 09:34:11',
     ),
   ),
   'ezcontenttype_group_rel' =>
@@ -3945,182 +3733,156 @@ return array (
       'type_id' => '1',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     1 =>
     array (
       'type_id' => '2',
       'group_id' => '2',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     2 =>
     array (
       'type_id' => '3',
       'group_id' => '2',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     3 =>
     array (
       'type_id' => '4',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     4 =>
     array (
       'type_id' => '5',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     5 =>
     array (
       'type_id' => '6',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     6 =>
     array (
       'type_id' => '7',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     7 =>
     array (
       'type_id' => '8',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     8 =>
     array (
       'type_id' => '9',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     9 =>
     array (
       'type_id' => '10',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     10 =>
     array (
       'type_id' => '11',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     11 =>
     array (
       'type_id' => '12',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     12 =>
     array (
       'type_id' => '13',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     13 =>
     array (
       'type_id' => '14',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     14 =>
     array (
       'type_id' => '15',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     15 =>
     array (
       'type_id' => '16',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     16 =>
     array (
       'type_id' => '17',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     17 =>
     array (
       'type_id' => '18',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     18 =>
     array (
       'type_id' => '19',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     19 =>
     array (
       'type_id' => '20',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     20 =>
     array (
       'type_id' => '21',
       'group_id' => '1',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     21 =>
     array (
       'type_id' => '22',
       'group_id' => '3',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     22 =>
     array (
       'type_id' => '23',
       'group_id' => '3',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     23 =>
     array (
       'type_id' => '24',
       'group_id' => '3',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     24 =>
     array (
       'type_id' => '25',
       'group_id' => '4',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
     25 =>
     array (
       'type_id' => '26',
       'group_id' => '4',
       'status' => '0',
-      'changed' => '2013-04-18 09:34:11',
     ),
   ),
   'ezrole' =>
@@ -4131,7 +3893,6 @@ return array (
       'identifier' => 'Anonymous',
       'name' => 'null',
       'description' => '[]',
-      'changed' => '2013-04-18 09:34:12',
     ),
     1 =>
     array (
@@ -4139,7 +3900,6 @@ return array (
       'identifier' => 'Administrator',
       'name' => 'null',
       'description' => '[]',
-      'changed' => '2013-04-18 09:34:12',
     ),
     2 =>
     array (
@@ -4147,7 +3907,6 @@ return array (
       'identifier' => 'Editor',
       'name' => 'null',
       'description' => '[]',
-      'changed' => '2013-04-18 09:34:12',
     ),
     3 =>
     array (
@@ -4155,7 +3914,6 @@ return array (
       'identifier' => 'Partner',
       'name' => 'null',
       'description' => '[]',
-      'changed' => '2013-04-18 09:34:12',
     ),
     4 =>
     array (
@@ -4163,7 +3921,6 @@ return array (
       'identifier' => 'Member',
       'name' => 'null',
       'description' => '[]',
-      'changed' => '2013-04-18 09:34:12',
     ),
   ),
   'ezrole_policy' =>
@@ -4483,7 +4240,6 @@ return array (
       'identifier' => 'standard',
       'language_code' => NULL,
       'name' => 'Standard',
-      'changed' => '2013-04-18 09:34:11',
     ),
     1 =>
     array (
@@ -4491,7 +4247,6 @@ return array (
       'identifier' => 'users',
       'language_code' => NULL,
       'name' => 'Users',
-      'changed' => '2013-04-18 09:34:11',
     ),
     2 =>
     array (
@@ -4499,7 +4254,6 @@ return array (
       'identifier' => 'media',
       'language_code' => NULL,
       'name' => 'Media',
-      'changed' => '2013-04-18 09:34:11',
     ),
     3 =>
     array (
@@ -4507,7 +4261,6 @@ return array (
       'identifier' => 'setup',
       'language_code' => NULL,
       'name' => 'Setup',
-      'changed' => '2013-04-18 09:34:11',
     ),
     4 =>
     array (
@@ -4515,7 +4268,6 @@ return array (
       'identifier' => 'design',
       'language_code' => NULL,
       'name' => 'Design',
-      'changed' => '2013-04-18 09:34:11',
     ),
     5 =>
     array (
@@ -4523,7 +4275,6 @@ return array (
       'identifier' => '',
       'language_code' => NULL,
       'name' => 'Restricted',
-      'changed' => '2013-04-18 09:34:11',
     ),
   ),
   'ezuser' =>
@@ -4544,7 +4295,6 @@ return array (
       'max_login' => '1000',
       'hash_key' => NULL,
       'time_hash_key' => NULL,
-      'changed' => '2013-04-18 09:34:12',
     ),
     1 =>
     array (
@@ -4562,7 +4312,7 @@ return array (
       'max_login' => '10',
       'hash_key' => NULL,
       'time_hash_key' => NULL,
-      'changed' => '2013-04-18 09:34:12',
     ),
   ),
 );
+
