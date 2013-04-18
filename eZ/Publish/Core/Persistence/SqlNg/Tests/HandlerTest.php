@@ -55,37 +55,6 @@ class HandlerTest extends TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Handler::getStorageRegistry
-     *
-     * @return void
-     */
-    public function testGetStorageRegistry()
-    {
-        $handler = $this->getPersistenceHandler();
-        $registry = $handler->getStorageRegistry();
-
-        $this->assertInstanceOf(
-            'eZ\\Publish\\Core\\Persistence\\SqlNg\\Content\\StorageRegistry',
-            $registry
-        );
-    }
-
-    /**
-     * @covers eZ\Publish\Core\Persistence\SqlNg\Handler::getStorageRegistry
-     *
-     * @return void
-     */
-    public function testGetStorageRegistryTwice()
-    {
-        $handler = $this->getPersistenceHandler();
-
-        $this->assertSame(
-            $handler->getStorageRegistry(),
-            $handler->getStorageRegistry()
-        );
-    }
-
-    /**
      * @covers eZ\Publish\Core\Persistence\SqlNg\Handler::searchHandler
      *
      * @return void
