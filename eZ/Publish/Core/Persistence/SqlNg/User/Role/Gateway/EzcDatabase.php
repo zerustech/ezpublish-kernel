@@ -248,14 +248,15 @@ class EzcDatabase extends Gateway
 
         if ( $inherited )
         {
-            $groupIds = $this->fetchUserGroups( $groupId );
-            $groupIds[] = $groupId;
-            $query->where(
-                $query->expr->in(
-                    $this->dbHandler->quoteColumn( 'content_id' ),
-                    $groupIds
-                )
-            );
+            // @TODO: Implement
+            // $groupIds = $this->fetchUserGroups( $groupId );
+            // $groupIds[] = $groupId;
+            // $query->where(
+            //     $query->expr->in(
+            //         $this->dbHandler->quoteColumn( 'content_id' ),
+            //         $groupIds
+            //     )
+            // );
         }
         else
         {
