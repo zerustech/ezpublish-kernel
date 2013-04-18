@@ -206,6 +206,13 @@ class Handler implements HandlerInterface
     protected $dbHandler;
 
     /**
+     * Field handler
+     *
+     * @var \eZ\Publish\Core\Persistence\Legacy\Content\FieldHandler
+     */
+    protected $fieldHandler;
+
+    /**
      * Storage registry
      *
      * @var \eZ\Publish\Core\Persistence\Legacy\Content\StorageRegistry
@@ -256,7 +263,7 @@ class Handler implements HandlerInterface
                 $this->getLocationGateway(),
                 $this->getContentMapper(),
                 $this->getFieldIdGenerator(),
-                $this->fieldHandler()
+                $this->getFieldHandler()
             );
         }
         return $this->contentHandler;
@@ -373,16 +380,6 @@ class Handler implements HandlerInterface
             );
         }
         return $this->contentTypeGateway;
-    }
-
-    /**
-     * Returns the storage registry
-     *
-     * @return Content\StorageRegistry
-     */
-    public function getStorageRegistry()
-    {
-        return $this->storageRegistry;
     }
 
     /**
@@ -557,7 +554,7 @@ class Handler implements HandlerInterface
      * @return eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
      * @access private
      */
-    public function fieldHandler()
+    public function getFieldHandler()
     {
         if ( !isset( $this->fieldHandler ) )
         {

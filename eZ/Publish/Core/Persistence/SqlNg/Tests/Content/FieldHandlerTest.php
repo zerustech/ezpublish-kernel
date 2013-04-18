@@ -28,7 +28,7 @@ class StorageFieldHandlerTest extends TestCase
      */
     protected function getFieldHandler()
     {
-        return $this->getPersistenceHandler()->fieldHandler();
+        return $this->getPersistenceHandler()->getFieldHandler();
     }
 
     public function testCtor()
