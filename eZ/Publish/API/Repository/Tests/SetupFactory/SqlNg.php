@@ -51,6 +51,10 @@ class SqlNg extends Legacy
             $this->getDatabaseHandler()->query( 'SET foreign_key_checks = 1;' );
         }
 
+        $legacyStorageRegistry = $this->getServiceContainer()->get('legacy_storage_registry');
+        $storageMapProperty = new \ReflectionProperty( $legacyStorageRegistry, 'storageMap' );
+        $storageMapProperty->setAccessible( true );
+
         $repository = $this->getServiceContainer()->get( 'inner_repository' );
         $persistenceHandlerProperty = new \ReflectionProperty( $repository, 'persistenceHandler' );
         $persistenceHandlerProperty->setAccessible( true );
@@ -58,7 +62,9 @@ class SqlNg extends Legacy
             $repository,
             new Handler(
                 $this->getDatabaseHandler(),
-                new StorageRegistry( array() )
+                new StorageRegistry(
+                    $storageMapProperty->getValue($legacyStorageRegistry)
+                )
             )
         );
 
