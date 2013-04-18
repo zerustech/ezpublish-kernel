@@ -79,8 +79,8 @@ class RepositoryInitializer
         $userGroup = $this->createRootUserGroup( $importUser, $userGroupType, $usersSection, $rootLocation, $language );
         $userRoot = $userGroup->versionInfo->contentInfo->mainLocationId;
 
-        $this->createUser( $importUser, $userType, $usersSection, $userRoot, $language, '1bb4fe25487f05527efa8bfd394cecc7', 'anonymous', '4e6f6184135228ccd45f8233d72a0363' );
-        $adminUser = $this->createUser( $importUser, $userType, $usersSection, $userRoot, $language, 'faaeb9be3bd98ed09f606fc16d144eca', 'admin', 'c78e3b0f3d9244ed8c6d1c29464bdff9' );
+        $this->createUser( $importUser, $userType, $usersSection, $userRoot, $language, 'faaeb9be3bd98ed09f606fc16d144eca', 'anonymous', '4e6f6184135228ccd45f8233d72a0363' );
+        $adminUser = $this->createUser( $importUser, $userType, $usersSection, $userRoot, $language, '1bb4fe25487f05527efa8bfd394cecc7', 'admin', 'c78e3b0f3d9244ed8c6d1c29464bdff9' );
 
         $home = $this->createHome( $adminUser, $landingPageType, $standardSection, $rootLocation, $language );
 
