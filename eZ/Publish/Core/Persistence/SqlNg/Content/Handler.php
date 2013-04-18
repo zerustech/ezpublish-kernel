@@ -60,6 +60,13 @@ class Handler implements BaseContentHandler
     protected $fieldHandler;
 
     /**
+     * Storage registry
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\StorageHandler
+     */
+    protected $storageHandler;
+
+    /**
      * Creates a new content handler.
      *
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Gateway $contentGateway
@@ -73,7 +80,8 @@ class Handler implements BaseContentHandler
         LocationGateway $locationGateway,
         Mapper $mapper,
         FieldIdGenerator $fieldIdGenerator,
-        FieldHandler $fieldHandler
+        FieldHandler $fieldHandler,
+        StorageHandler $storageHandler
     )
     {
         $this->contentGateway = $contentGateway;
@@ -81,6 +89,7 @@ class Handler implements BaseContentHandler
         $this->mapper = $mapper;
         $this->fieldIdGenerator = $fieldIdGenerator;
         $this->fieldHandler = $fieldHandler;
+        $this->storageHandler = $storageHandler;
     }
 
     /**

@@ -51,7 +51,7 @@ class StorageRegistry
      */
     public function register( $typeName, $storage )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->storageMap[$typeName] = $storage;
     }
 
     /**
@@ -65,6 +65,20 @@ class StorageRegistry
      */
     public function getStorage( $typeName )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        if ( !isset( $this->storageMap[$typeName] ) )
+        {
+            $this->storageMap[$typeName] = new NullStorage;
+        }
+        else if ( !$this->storageMap[$typeName] instanceof FieldStorage )
+        {
+            if ( !is_callable( $this->storageMap[$typeName] ) )
+            {
+                throw new \RuntimeException( "FieldStorage '$typeName' is neither callable or instance" );
+            }
+
+            $factory = $this->storageMap[$typeName];
+            $this->storageMap[$typeName] = call_user_func( $factory );
+        }
+        return $this->storageMap[$typeName];
     }
 }
