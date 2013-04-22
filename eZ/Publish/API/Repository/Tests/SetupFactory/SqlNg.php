@@ -120,6 +120,7 @@ class SqlNg extends Legacy
     protected function prepareServiceSettings(array $serviceSettings)
     {
         $serviceSettings['inner_repository']['arguments']['service_settings']['user']['anonymousUserID'] = 2;
+        $serviceSettings['inner_repository']['arguments']['service_settings']['user']['userClassID'] = 3;
 
         return parent::prepareServiceSettings($serviceSettings);
     }

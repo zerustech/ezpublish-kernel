@@ -429,6 +429,8 @@ class Legacy extends SetupFactory
             $serviceSettings['persistence_handler_legacy']['arguments']['config']['dsn'] = self::$dsn;
             $serviceSettings['legacy_db_handler']['arguments']['dsn'] = self::$dsn;
 
+            $serviceSettings = $this->prepareServiceSettings($serviceSettings);
+
             self::$serviceContainer = new ServiceContainer(
                 $serviceSettings,
                 $this->getDependencyConfiguration()
