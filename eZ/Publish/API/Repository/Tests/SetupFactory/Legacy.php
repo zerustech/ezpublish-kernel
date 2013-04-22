@@ -422,9 +422,6 @@ class Legacy extends SetupFactory
             $serviceSettings['persistence_handler']['alias'] = 'persistence_handler_legacy';
             $serviceSettings['io_handler']['alias'] = 'io_handler_legacy';
 
-            // TODO: This must be set by the SqlNg SetupFactory
-            $serviceSettings['inner_repository']['arguments']['service_settings']['user']['anonymousUserID'] = 2;
-
             // Needed for URLAliasService tests
             $serviceSettings['inner_repository']['arguments']['service_settings']['language']['languages'][] = 'eng-US';
             $serviceSettings['inner_repository']['arguments']['service_settings']['language']['languages'][] = 'eng-GB';
@@ -439,5 +436,14 @@ class Legacy extends SetupFactory
         }
 
         return self::$serviceContainer;
+    }
+
+    /**
+     * @param array $serviceSettings
+     * @return array
+     */
+    protected function prepareServiceSettings(array $serviceSettings)
+    {
+        return $serviceSettings;
     }
 }

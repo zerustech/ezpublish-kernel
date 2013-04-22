@@ -112,4 +112,15 @@ class SqlNg extends Legacy
             )
         );
     }
+
+    /**
+     * @param array $serviceSettings
+     * @return array
+     */
+    protected function prepareServiceSettings(array $serviceSettings)
+    {
+        $serviceSettings['inner_repository']['arguments']['service_settings']['user']['anonymousUserID'] = 2;
+
+        return parent::prepareServiceSettings($serviceSettings);
+    }
 }
