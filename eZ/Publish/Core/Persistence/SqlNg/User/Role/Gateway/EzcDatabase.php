@@ -131,7 +131,40 @@ class EzcDatabase extends Gateway
      */
     public function loadRoleByIdentifier( $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->aliasedColumn( $query, 'role_id', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'name', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'description', 'ezrole' ),
+            $this->dbHandler->aliasedColumn( $query, 'content_id', 'ezrole_content_rel' ),
+            $this->dbHandler->aliasedColumn( $query, 'policy_id', 'ezrole_policy' ),
+            $this->dbHandler->aliasedColumn( $query, 'limitations', 'ezrole_policy' )
+        )->from(
+                $this->dbHandler->quoteTable( 'ezrole' )
+            )->leftJoin(
+                $this->dbHandler->quoteTable( 'ezrole_content_rel' ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'role_id', 'ezrole_content_rel' ),
+                    $this->dbHandler->quoteColumn( 'role_id', 'ezrole' )
+                )
+            )->leftJoin(
+                $this->dbHandler->quoteTable( 'ezrole_policy' ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'role_id', 'ezrole_policy' ),
+                    $this->dbHandler->quoteColumn( 'role_id', 'ezrole' )
+                )
+            )->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'identifier', 'ezrole' ),
+                    $query->bindValue( $identifier, null, \PDO::PARAM_STR )
+                )
+            );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
