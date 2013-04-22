@@ -121,6 +121,7 @@ class SqlNg extends Legacy
     {
         $serviceSettings['inner_repository']['arguments']['service_settings']['user']['anonymousUserID'] = 2;
         $serviceSettings['inner_repository']['arguments']['service_settings']['user']['userClassID'] = 3;
+        $serviceSettings['inner_repository']['arguments']['service_settings']['user']['userGroupClassID'] = 2;
 
         return parent::prepareServiceSettings($serviceSettings);
     }
