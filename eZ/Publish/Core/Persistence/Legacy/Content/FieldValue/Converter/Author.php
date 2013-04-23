@@ -91,6 +91,9 @@ class Author implements Converter
     /**
      * Generates XML string from $authorValue to be stored in storage engine
      *
+     * @TODO: This belongs into the field value, since this conversion is
+     * required for ALL storage engines.
+     *
      * @param array $authorValue
      *
      * @return string The generated XML string
@@ -120,6 +123,9 @@ class Author implements Converter
 
     /**
      * Restores an author Value object from $xmlString
+     *
+     * @TODO: This belongs into the field value, since this conversion is
+     * required for ALL storage engines.
      *
      * @param string $xmlString XML String stored in storage engine
      *
