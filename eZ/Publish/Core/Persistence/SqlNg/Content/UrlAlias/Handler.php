@@ -16,7 +16,7 @@ use eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway as LocationGatewa
 use eZ\Publish\SPI\Persistence\Content\UrlAlias;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use eZ\Publish\Core\Base\Exceptions\ForbiddenException;
-use RuntimeException;
+use PHPUnit_Framework_IncompleteTestError;
 
 /**
  * The UrlAlias Handler provides nice urls management.
@@ -84,7 +84,6 @@ class Handler implements UrlAliasHandlerInterface
         array $configuration = array() */
     )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**
@@ -113,7 +112,7 @@ class Handler implements UrlAliasHandlerInterface
         $isLanguageMain = false
     )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -132,7 +131,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function createCustomUrlAlias( $locationId, $path, $forwarding = false, $languageCode = null, $alwaysAvailable = false )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -155,7 +154,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function createGlobalUrlAlias( $resource, $path, $forwarding = false, $languageCode = null, $alwaysAvailable = false )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -168,7 +167,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function listURLAliasesForLocation( $locationId, $custom = false )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -182,7 +181,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function listGlobalURLAliases( $languageCode = null, $offset = 0, $limit = -1 )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -196,14 +195,14 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function removeURLAliases( array $urlAliases )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
      * Looks up a url alias for the given url
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
-     * @throws \RuntimeException
+     * @throws \PHPUnit_Framework_IncompleteTestError
      * @throws \eZ\Publish\Core\Base\Exceptions\NotFoundException
      *
      * @param string $url
@@ -212,7 +211,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function lookup( $url )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -226,7 +225,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function loadUrlAlias( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -242,7 +241,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function locationMoved( $locationId, $oldParentId, $newParentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -258,7 +257,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function locationCopied( $locationId, $newLocationId, $newParentId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -268,6 +267,6 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function locationDeleted( $locationId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 }

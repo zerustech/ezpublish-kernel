@@ -42,7 +42,6 @@ class Handler implements BaseUrlWildcardHandler
      */
     public function __construct( Gateway $gateway, Mapper $mapper )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**
@@ -56,7 +55,7 @@ class Handler implements BaseUrlWildcardHandler
      */
     public function create( $sourceUrl, $destinationUrl, $forward = false )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -68,7 +67,7 @@ class Handler implements BaseUrlWildcardHandler
      */
     public function remove( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -82,7 +81,7 @@ class Handler implements BaseUrlWildcardHandler
      */
     public function load( $id )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -95,6 +94,6 @@ class Handler implements BaseUrlWildcardHandler
      */
     public function loadAll( $offset = 0, $limit = -1 )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 }

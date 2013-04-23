@@ -40,7 +40,6 @@ class Handler implements BaseObjectStateHandler
      */
     public function __construct( Gateway $objectStateGateway, Mapper $objectStateMapper )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**
@@ -52,7 +51,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function createGroup( InputStruct $input )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -66,7 +65,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadGroup( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -80,7 +79,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadGroupByIdentifier( $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -93,7 +92,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadAllGroups( $offset = 0, $limit = -1 )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -105,7 +104,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadObjectStates( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -118,7 +117,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function updateGroup( $groupId, InputStruct $input )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -128,7 +127,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function deleteGroup( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -144,7 +143,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function create( $groupId, InputStruct $input )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -158,7 +157,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function load( $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -173,7 +172,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadByIdentifier( $identifier, $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -186,7 +185,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function update( $stateId, InputStruct $input )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -197,7 +196,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function setPriority( $stateId, $priority )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -210,7 +209,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function delete( $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -224,7 +223,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function setContentState( $contentId, $groupId, $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -241,7 +240,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function getContentState( $contentId, $stateGroupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -253,6 +252,6 @@ class Handler implements BaseObjectStateHandler
      */
     public function getContentCount( $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 }
