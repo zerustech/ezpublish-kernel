@@ -2102,7 +2102,6 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
         // Names and descriptions tested in corresponding language test
         $this->assertEquals(
             array(
-                'id' => $originalType->id,
                 'names' => $originalType->names,
                 'descriptions' => $originalType->descriptions,
                 'identifier' => $originalType->identifier,
@@ -2120,7 +2119,6 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
                 'fieldDefinitions' => $originalType->fieldDefinitions,
             ),
             array(
-                'id' => $typeDraft->id,
                 'names' => $typeDraft->names,
                 'descriptions' => $typeDraft->descriptions,
                 'identifier' => $typeDraft->identifier,
