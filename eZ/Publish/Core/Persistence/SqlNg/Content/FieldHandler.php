@@ -155,6 +155,7 @@ class FieldHandler
                 if ( !isset( $fieldsMap[$identifier][$languageCode] ) )
                 {
                     $fieldsMap[$identifier][$languageCode] = clone $fieldsMap[$identifier][$defaultLanguageCode];
+                    $fieldsMap[$identifier][$languageCode]->field->languageCode = $languageCode;
                 }
             }
         }
