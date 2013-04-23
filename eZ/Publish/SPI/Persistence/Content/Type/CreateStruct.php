@@ -156,17 +156,4 @@ class CreateStruct extends ValueObject
      * @var boolean
      */
     public $defaultAlwaysAvailable = false;
-
-    /**
-     * Performs a deep cloning.
-     *
-     * @return void
-     */
-    public function __clone()
-    {
-        foreach ( $this->fieldDefinitions as $id => $fieldDef )
-        {
-            $this->fieldDefinitions[$id] = clone $fieldDef;
-        }
-    }
 }

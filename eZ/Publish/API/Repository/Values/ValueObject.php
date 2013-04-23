@@ -219,4 +219,45 @@ abstract class ValueObject
     {
         return $this->__isset( $property );
     }
+
+    /**
+     * Deep clone struct values
+     *
+     * Not doing this, basically results in useless cloning behaviour, since
+     * aggregated structs will still reference the same object. This results in
+     * very subtle bugs.
+     *
+     * @return void
+     */
+    final public function __clone()
+    {
+        foreach ( get_object_vars( $this ) as $property => $propertyValue )
+        {
+            $this->$property = $this->recursiveClone( $propertyValue );
+        }
+    }
+
+    /**
+     * Recusrively clone objects and arrays
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    private function recursiveClone( $value )
+    {
+        if ( is_object( $value ) )
+        {
+            return clone $value;
+        }
+
+        if ( is_array( $value ) )
+        {
+            foreach ( $value as $key => $child )
+            {
+                $value[$key] = $this->recursiveClone( $child );
+            }
+        }
+
+        return $value;
+    }
 }
