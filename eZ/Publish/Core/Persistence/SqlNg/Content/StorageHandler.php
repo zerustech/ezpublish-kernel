@@ -53,7 +53,7 @@ class StorageHandler
      */
     public function storeFieldData( VersionInfo $versionInfo, Field $field )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->storageRegistry->getStorage( $field->type )->storeFieldData( $versionInfo, $field, $this->context );
     }
 
     /**

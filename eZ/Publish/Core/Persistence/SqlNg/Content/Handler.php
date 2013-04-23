@@ -273,8 +273,10 @@ class Handler implements BaseContentHandler
             $fields
         );
 
-        // @TODO: Reactivate
-        // $this->fieldHandler->createExistingFieldsInNewVersion( $content );
+        foreach ( $content->fields as $field )
+        {
+            $this->storageHandler->storeFieldData( $content->versionInfo, $field );
+        }
 
         return $content;
     }
@@ -320,7 +322,7 @@ class Handler implements BaseContentHandler
 
         foreach ( $content->fields as $field )
         {
-            $storage = $this->storageHandler->getFieldData( $content->versionInfo, $field );
+            $this->storageHandler->getFieldData( $content->versionInfo, $field );
         }
 
         return $content;
@@ -545,6 +547,11 @@ class Handler implements BaseContentHandler
         );
         $content = $this->internalCreate( $createStruct, $currentVersionNo );
 
+        foreach ( $content->fields as $field )
+        {
+            $this->storageHandler->storeFieldData( $content->versionInfo, $field );
+        }
+
         foreach ( $this->listVersions( $contentId ) as $versionInfo )
         {
             if ( $versionInfo->versionNo === $currentVersionNo )
@@ -562,8 +569,10 @@ class Handler implements BaseContentHandler
                 $versionContent->fields
             );
 
-            // @TODO: Reactivate
-            // $this->fieldHandler->createNewFields( $versionContent );
+            foreach ( $versionContent->fields as $field )
+            {
+                $this->storageHandler->storeFieldData( $versionContent->versionInfo, $field );
+            }
         }
 
         return $content;
