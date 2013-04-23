@@ -539,7 +539,6 @@ class UserHandlerTest extends TestCase
     public function testLoadRoleAssignmentsInherited( array $data )
     {
         list( $content, $role ) = $data;
-        $role->groupIds[] = $content->versionInfo->contentInfo->id;
 
         $handler = $this->getUserHandler();
 
