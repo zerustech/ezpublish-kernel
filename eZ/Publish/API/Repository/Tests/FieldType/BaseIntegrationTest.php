@@ -574,7 +574,11 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
         $repository     = $this->getRepository();
         $contentService = $repository->getContentService();
 
-        return $contentService->publishVersion( $draft->getVersionInfo() );
+        try {
+            return $contentService->publishVersion( $draft->getVersionInfo() );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
+        }
     }
 
     /**
@@ -603,7 +607,12 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
 
         $repository     = $this->getRepository();
         $contentService = $repository->getContentService();
-        return $contentService->loadContent( $content->contentInfo->id );
+
+        try {
+            return $contentService->loadContent( $content->contentInfo->id );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
+        }
     }
 
     /**
@@ -703,7 +712,11 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
         $parentLocationId = $this->generateId( 'location', 2 );
         $locationCreate   = $locationService->newLocationCreateStruct( $parentLocationId );
 
-        $copied = $contentService->copyContent( $content->contentInfo, $locationCreate );
+        try {
+            $copied = $contentService->copyContent( $content->contentInfo, $locationCreate );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
+        }
 
         $this->assertNotSame(
             $content->contentInfo->id,
