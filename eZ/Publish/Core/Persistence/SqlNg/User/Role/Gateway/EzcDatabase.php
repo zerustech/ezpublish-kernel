@@ -315,7 +315,10 @@ class EzcDatabase extends Gateway
      */
     public function loadPoliciesByUserId( $userId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $groupIds = $this->fetchUserGroups( $userId );
+        $groupIds[] = $userId;
+
+        return $this->loadRolesForContentObjects( $groupIds );
     }
 
     /**

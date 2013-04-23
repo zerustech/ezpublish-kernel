@@ -338,6 +338,45 @@ class UserHandlerTest extends TestCase
         $handler->deleteRole( $role->id );
     }
 
+    /**
+     * @depends testLoadRoleWithPoliciesAndGroups
+     */
+    public function testLoadPoliciesByUserId()
+    {
+        $handler = $this->getUserHandler();
+
+        $role = new Persistence\User\Role();
+        $role->identifier = 'PoliciesGroupTest';
+
+        $role = $handler->createRole( $role );
+
+        $policy = new Persistence\User\Policy();
+        $policy->module = 'foo';
+        $policy->function = 'bar';
+
+        $handler->addPolicy( $role->id, $policy );
+
+        $content = $this->getContent();
+        $handler->assignRole( $content->versionInfo->contentInfo->id, $role->id );
+
+        $handler = $this->getUserHandler();
+
+        $this->assertEquals(
+            array(
+                new Persistence\User\Policy( array(
+                    'id' => '3',
+                    'roleId' => '5',
+                    'module' => 'foo',
+                    'function' => 'bar',
+                    'limitations' => '*',
+                ) )
+            ),
+            $handler->loadPoliciesByUserId( $content->versionInfo->contentInfo->id )
+        );
+
+        $handler->deleteRole( $role->id );
+    }
+
     public function testLoadRoleWithPoliciyLimitations()
     {
         $handler = $this->getUserHandler();
