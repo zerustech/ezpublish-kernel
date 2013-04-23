@@ -122,7 +122,7 @@ class ContentServiceTest extends BaseContentServiceTest
         $this->assertEquals(
             array(
                 $content->id,
-                28,// id of content type "forum"
+                $this->generateId( 'type', 28 ),// id of content type "forum"
                 true,
                 1,
                 'abcdef0123456789abcdef0123456789',

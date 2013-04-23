@@ -29,6 +29,9 @@ class SqlNg extends IdManager
         'location' => array(
             5 => 2, // Users
             56 => 11, // design/plain_site -> contact us
+        ),
+        'type' => array(
+            28 => 15, // Forum
         )
     );
 
