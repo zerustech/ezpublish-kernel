@@ -30,7 +30,12 @@ class SqlNg extends IdManager
             5 => 2, // Users
             56 => 11, // design/plain_site -> contact us
         ),
+        'typegroup' => array(
+            2 => 2, // Users
+        ),
         'type' => array(
+            3 => 2, // User Group
+            4 => 3, // User
             28 => 15, // Forum
         )
     );
