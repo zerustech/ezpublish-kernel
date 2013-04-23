@@ -228,16 +228,4 @@ abstract class Gateway
      * @return void
      */
     abstract public function delete( $typeId, $status );
-
-    /**
-     * Publishes the Type with $typeId from $sourceVersion to $targetVersion,
-     * including its fields
-     *
-     * @param int $typeId
-     * @param int $sourceStatus
-     * @param int $targetStatus
-     *
-     * @return void
-     */
-    abstract public function publishTypeAndFields( $typeId, $sourceStatus, $targetStatus );
 }

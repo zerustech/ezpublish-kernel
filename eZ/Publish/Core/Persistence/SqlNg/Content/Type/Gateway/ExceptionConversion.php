@@ -661,30 +661,4 @@ class ExceptionConversion extends Gateway
             throw new \RuntimeException( 'Database error', 0, $e );
         }
     }
-
-    /**
-     * Publishes the Type with $typeId from $sourceVersion to $targetVersion,
-     * including its fields
-     *
-     * @param int $typeId
-     * @param int $sourceStatus
-     * @param int $targetStatus
-     *
-     * @return void
-     */
-    public function publishTypeAndFields( $typeId, $sourceStatus, $targetStatus )
-    {
-        try
-        {
-            return $this->innerGateway->publishTypeAndFields( $typeId, $sourceStatus, $targetStatus );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
 }
