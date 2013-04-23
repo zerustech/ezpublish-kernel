@@ -211,18 +211,6 @@ class Handler implements BaseUserHandler
     }
 
     /**
-     * Loads roles assigned to a user/group (not including inherited roles)
-     *
-     * @param mixed $groupId
-     *
-     * @return \eZ\Publish\SPI\Persistence\User\Role[]
-     */
-    public function loadRolesByGroupId( $groupId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Update role
      *
      * @param \eZ\Publish\SPI\Persistence\User\RoleUpdateStruct $role
