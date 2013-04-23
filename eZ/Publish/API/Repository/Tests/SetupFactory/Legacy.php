@@ -76,6 +76,13 @@ class Legacy extends SetupFactory
     protected $adminUserId = 14;
 
     /**
+     * Type of persistence layer, used
+     *
+     * @var string
+     */
+    protected $persistence = 'legacy';
+
+    /**
      * Creates a new setup factory
      *
      * @return void
@@ -407,8 +414,6 @@ class Legacy extends SetupFactory
     /**
      * Returns the service container used for initialization of the repository
      *
-     * @todo Getting service container statically, too, would be nice
-     *
      * @return \eZ\Publish\Core\Base\ServiceContainer
      */
     protected function getServiceContainer()
@@ -419,8 +424,8 @@ class Legacy extends SetupFactory
 
             $serviceSettings = $configManager->getConfiguration( 'service' )->getAll();
 
-            $serviceSettings['persistence_handler']['alias'] = 'persistence_handler_legacy';
-            $serviceSettings['io_handler']['alias'] = 'io_handler_legacy';
+            $serviceSettings['persistence_handler']['alias'] = 'persistence_handler_' . $this->persistence;
+            $serviceSettings['io_handler']['alias'] = 'io_handler_' . $this->persistence;
 
             // Needed for URLAliasService tests
             $serviceSettings['inner_repository']['arguments']['service_settings']['language']['languages'][] = 'eng-US';

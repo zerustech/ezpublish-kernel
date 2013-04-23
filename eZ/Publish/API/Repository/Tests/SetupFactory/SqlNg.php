@@ -24,6 +24,13 @@ class SqlNg extends Legacy
     protected $adminUserId = 3;
 
     /**
+     * Type of persistence layer, used
+     *
+     * @var string
+     */
+    protected $persistence = 'sqlng';
+
+    /**
      * Creates a new setup factory
      *
      * @return void
@@ -52,13 +59,6 @@ class SqlNg extends Legacy
         }
 
         $repository = $this->getServiceContainer()->get( 'inner_repository' );
-        $persistenceHandlerProperty = new \ReflectionProperty( $repository, 'persistenceHandler' );
-        $persistenceHandlerProperty->setAccessible( true );
-        $persistenceHandlerProperty->setValue(
-            $repository,
-            $this->getServiceContainer()->get('persistence_handler_sqlng')
-        );
-
         $repository->setCurrentUser(
             $repository->getUserService()->loadUser( $this->adminUserId )
         );
