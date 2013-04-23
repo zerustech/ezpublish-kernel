@@ -508,6 +508,7 @@ class UserHandlerTest extends TestCase
 
         $content = $this->getContent();
         $handler->assignRole( $content->versionInfo->contentInfo->id, $role->id );
+        $role->groupIds[] = $content->versionInfo->contentInfo->id;
 
         return array( $content, $role );
     }
@@ -518,8 +519,6 @@ class UserHandlerTest extends TestCase
     public function testLoadRoleAssignments( array $data )
     {
         list( $content, $role ) = $data;
-        $role->groupIds[] = $content->versionInfo->contentInfo->id;
-
         $handler = $this->getUserHandler();
 
         $this->assertEquals(
