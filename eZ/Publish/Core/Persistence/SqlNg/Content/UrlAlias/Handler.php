@@ -112,7 +112,7 @@ class Handler implements UrlAliasHandlerInterface
         $isLanguageMain = false
     )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        // throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -241,7 +241,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function locationMoved( $locationId, $oldParentId, $newParentId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        // throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
@@ -257,7 +257,7 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function locationCopied( $locationId, $newLocationId, $newParentId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        // throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
     }
 
     /**
