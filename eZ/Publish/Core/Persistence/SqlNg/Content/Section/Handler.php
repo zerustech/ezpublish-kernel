@@ -174,7 +174,7 @@ class Handler implements BaseSectionHandler
      */
     public function assignmentsCount( $sectionId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $this->sectionGateway->countContentObjectsInSection( $sectionId );
     }
 
     /**

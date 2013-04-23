@@ -187,6 +187,19 @@ class SectionHandlerTest extends TestCase
 
     /**
      * @depends testAssign
+     */
+    public function testAssignCount( $section )
+    {
+        $handler = $this->getSectionHandler();
+
+        $this->assertEquals(
+            1,
+            $handler->assignmentsCount( $section->id )
+        );
+    }
+
+    /**
+     * @depends testAssign
      * @expectedException eZ\Publish\Core\Base\Exceptions\BadStateException
      */
     public function testDeleteBadState( $section )
