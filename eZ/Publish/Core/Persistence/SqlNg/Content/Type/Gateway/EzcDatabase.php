@@ -795,6 +795,24 @@ class EzcDatabase extends Gateway
         $statement = $query->prepare();
         $statement->execute();
 
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontenttype_group_rel' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'status' ),
+            $query->bindValue( Type::STATUS_DEFINED, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'type_id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
         if ( !$sourceId )
         {
             return;
