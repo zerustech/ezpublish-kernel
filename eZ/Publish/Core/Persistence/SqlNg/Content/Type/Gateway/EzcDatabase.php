@@ -977,21 +977,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Publishes the Type with $typeId from $sourceVersion to $targetVersion,
-     * including its fields
-     *
-     * @param int $typeId
-     * @param int $sourceVersion
-     * @param int $targetVersion
-     *
-     * @return void
-     */
-    public function publishTypeAndFields( $typeId, $sourceVersion, $targetVersion )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Creates the basic query to load Group data.
      *
      * @return ezcQuerySelect

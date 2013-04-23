@@ -37,14 +37,14 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Inserts a new section with $name and $identifier
+     * Inserts a new section with $name and $sectionIdentifier
      *
      * @param string $name
-     * @param string $identifier
+     * @param string $sectionIdentifier
      *
      * @return int The ID of the new section
      */
-    public function insertSection( $name, $identifier )
+    public function insertSection( $name, $sectionIdentifier )
     {
         $query = $this->dbHandler->createInsertQuery();
         $query->insertInto(
@@ -57,7 +57,7 @@ class EzcDatabase extends Gateway
             $query->bindValue( $name )
         )->set(
             $this->dbHandler->quoteColumn( 'identifier' ),
-            $query->bindValue( $identifier )
+            $query->bindValue( $sectionIdentifier )
         );
 
         $query->prepare()->execute();
@@ -68,15 +68,15 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Updates section with $id to have $name and $identifier
+     * Updates section with $sectionId to have $name and $sectionIdentifier
      *
-     * @param int $id
+     * @param int $sectionId
      * @param string $name
-     * @param string $identifier
+     * @param string $sectionIdentifier
      *
      * @return void
      */
-    public function updateSection( $id, $name, $identifier )
+    public function updateSection( $sectionId, $name, $sectionIdentifier )
     {
         $query = $this->dbHandler->createUpdateQuery();
         $query->update(
@@ -86,11 +86,11 @@ class EzcDatabase extends Gateway
             $query->bindValue( $name )
         )->set(
             $this->dbHandler->quoteColumn( 'identifier' ),
-            $query->bindValue( $identifier )
+            $query->bindValue( $sectionIdentifier )
         )->where(
             $query->expr->eq(
                 $this->dbHandler->quoteColumn( 'section_id' ),
-                $query->bindValue( $id, null, \PDO::PARAM_INT )
+                $query->bindValue( $sectionId, null, \PDO::PARAM_INT )
             )
         );
 
@@ -99,18 +99,18 @@ class EzcDatabase extends Gateway
 
         if ( $statement->rowCount() < 1 )
         {
-            throw new NotFound( 'section', $id );
+            throw new NotFound( 'section', $sectionId );
         }
     }
 
     /**
-     * Loads data for section with $id
+     * Loads data for section with $sectionId
      *
-     * @param int $id
+     * @param int $sectionId
      *
      * @return string[][]
      */
-    public function loadSectionData( $id )
+    public function loadSectionData( $sectionId )
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
@@ -122,7 +122,7 @@ class EzcDatabase extends Gateway
         )->where(
             $query->expr->eq(
                 $this->dbHandler->quoteColumn( 'section_id' ),
-                $query->bindValue( $id, null, \PDO::PARAM_INT )
+                $query->bindValue( $sectionId, null, \PDO::PARAM_INT )
             )
         );
 
@@ -155,13 +155,13 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Loads data for section with $identifier
+     * Loads data for section with $sectionIdentifier
      *
-     * @param int $identifier
+     * @param int $sectionIdentifier
      *
      * @return string[][]
      */
-    public function loadSectionDataByIdentifier( $identifier )
+    public function loadSectionDataByIdentifier( $sectionIdentifier )
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
@@ -173,7 +173,7 @@ class EzcDatabase extends Gateway
         )->where(
             $query->expr->eq(
                 $this->dbHandler->quoteColumn( 'identifier' ),
-                $query->bindValue( $identifier, null, \PDO::PARAM_STR )
+                $query->bindValue( $sectionIdentifier, null, \PDO::PARAM_STR )
             )
         );
 
@@ -184,13 +184,45 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Deletes the Section with $id
+     * Counts the number of content objects assigned to section with $sectionId
      *
-     * @param int $id
+     * @param int $sectionId
+     *
+     * @return int
+     */
+    public function countContentObjectsInSection( $sectionId )
+    {
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $query->alias(
+                $query->expr->count(
+                    $this->dbHandler->quoteColumn( 'content_id' )
+                ),
+                'content_count'
+            )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'section_id' ),
+                $query->bindValue( $sectionId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return (int)$statement->fetchColumn();
+    }
+
+    /**
+     * Deletes the Section with $sectionId
+     *
+     * @param int $sectionId
      *
      * @return void
      */
-    public function deleteSection( $id )
+    public function deleteSection( $sectionId )
     {
         $query = $this->dbHandler->createDeleteQuery();
         $query->deleteFrom(
@@ -198,7 +230,7 @@ class EzcDatabase extends Gateway
         )->where(
             $query->expr->eq(
                 $this->dbHandler->quoteColumn( 'section_id' ),
-                $query->bindValue( $id, null, \PDO::PARAM_INT )
+                $query->bindValue( $sectionId, null, \PDO::PARAM_INT )
             )
         );
 
@@ -207,7 +239,7 @@ class EzcDatabase extends Gateway
 
         if ( $statement->rowCount() < 1 )
         {
-            throw new NotFound( 'section', $id );
+            throw new NotFound( 'section', $sectionId );
         }
     }
 

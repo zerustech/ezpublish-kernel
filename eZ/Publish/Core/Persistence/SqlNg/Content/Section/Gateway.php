@@ -15,34 +15,34 @@ namespace eZ\Publish\Core\Persistence\SqlNg\Content\Section;
 abstract class Gateway
 {
     /**
-     * Inserts a new section with $name and $identifier
+     * Inserts a new section with $name and $sectionIdentifier
      *
      * @param string $name
-     * @param string $identifier
+     * @param string $sectionIdentifier
      *
      * @return int The ID of the new section
      */
-    abstract public function insertSection( $name, $identifier );
+    abstract public function insertSection( $name, $sectionIdentifier );
 
     /**
-     * Updates section with $id to have $name and $identifier
+     * Updates section with $sectionId to have $name and $sectionIdentifier
      *
-     * @param int $id
+     * @param int $sectionId
      * @param string $name
-     * @param string $identifier
+     * @param string $sectionIdentifier
      *
      * @return void
      */
-    abstract public function updateSection( $id, $name, $identifier );
+    abstract public function updateSection( $sectionId, $name, $sectionIdentifier );
 
     /**
-     * Loads data for section with $id
+     * Loads data for section with $sectionId
      *
-     * @param int $id
+     * @param int $sectionId
      *
      * @return string[][]
      */
-    abstract public function loadSectionData( $id );
+    abstract public function loadSectionData( $sectionId );
 
     /**
      * Loads data for all sections
@@ -52,22 +52,31 @@ abstract class Gateway
     abstract public function loadAllSectionData();
 
     /**
-     * Loads data for section with $identifier
+     * Loads data for section with $sectionIdentifier
      *
-     * @param string $identifier
+     * @param string $sectionIdentifier
      *
      * @return string[][]
      */
-    abstract public function loadSectionDataByIdentifier( $identifier );
+    abstract public function loadSectionDataByIdentifier( $sectionIdentifier );
 
     /**
-     * Deletes the Section with $id
+     * Counts the number of content objects assigned to section with $sectionId
      *
-     * @param int $id
+     * @param int $sectionId
+     *
+     * @return int
+     */
+    abstract public function countContentObjectsInSection( $sectionId );
+
+    /**
+     * Deletes the Section with $sectionId
+     *
+     * @param int $sectionId
      *
      * @return void
      */
-    abstract public function deleteSection( $id );
+    abstract public function deleteSection( $sectionId );
 
     /**
      * Inserts the assignment of $contentId to $sectionId

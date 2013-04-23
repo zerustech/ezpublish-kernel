@@ -328,17 +328,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Updates "always available" flag for content identified by $contentId, in respect to $alwaysAvailable.
-     *
-     * @param int $contentId
-     * @param boolean $newAlwaysAvailable New "always available" value
-     */
-    public function updateAlwaysAvailableFlag( $contentId, $newAlwaysAvailable )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Sets the status of the version identified by $contentId and $version to $status.
      *
      * The $status can be one of STATUS_DRAFT, STATUS_PUBLISHED, STATUS_ARCHIVED
@@ -408,70 +397,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Inserts a new field.
-     *
-     * Only used when a new field is created (i.e. a new object or a field in a
-     * new language!). After that, field IDs need to stay the same, only the
-     * version number changes.
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content $content
-     * @param \eZ\Publish\SPI\Persistence\Content\Field $field
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldValue $value
-     *
-     * @return int ID
-     */
-    public function insertNewField( Content $content, Field $field, StorageFieldValue $value )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Inserts an existing field.
-     *
-     * Used to insert a field with an exsting ID but a new version number.
-     *
-     * @param Content $content
-     * @param Field $field
-     * @param StorageFieldValue $value
-     *
-     * @return void
-     */
-    public function insertExistingField( Content $content, Field $field, StorageFieldValue $value )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Updates an existing field
-     *
-     * @param Field $field
-     * @param StorageFieldValue $value
-     *
-     * @return void
-     */
-    public function updateField( Field $field, StorageFieldValue $value )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Updates an existing, non-translatable field
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\Field $field
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldValue $value
-     * @param int $contentId
-     *
-     * @return void
-     */
-    public function updateNonTranslatableField(
-        Field $field,
-        StorageFieldValue $value,
-        $contentId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Loads data for a content object
      *
      * Returns an array with the relevant data.
@@ -501,19 +426,6 @@ class EzcDatabase extends Gateway
         $statement->execute();
 
         return $statement->fetchAll( \PDO::FETCH_ASSOC );
-    }
-
-    /**
-     * Loads data for the latest published version of the content identified by
-     * $contentId
-     *
-     * @param mixed $contentId
-     *
-     * @return array
-     */
-    public function loadLatestPublishedData( $contentId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**
@@ -713,61 +625,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Returns all field IDs of $contentId grouped by their type.
-     * If $versionNo is set only field IDs for that version are returned.
-     *
-     * @param int $contentId
-     * @param int|null $versionNo
-     *
-     * @return int[][]
-     */
-    public function getFieldIdsByType( $contentId, $versionNo = null )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Deletes relations to and from $contentId.
-     * If $versionNo is set only relations for that version are deleted.
-     *
-     * @param int $contentId
-     * @param int|null $versionNo
-     *
-     * @return void
-     */
-    public function deleteRelations( $contentId, $versionNo = null )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Deletes the field with the given $fieldId
-     *
-     * @param int $fieldId
-     * @param int $version
-     *
-     * @return void
-     */
-    public function deleteField( $fieldId, $version )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Deletes all fields of $contentId in all versions.
-     * If $versionNo is set only fields for that version are deleted.
-     *
-     * @param int $contentId
-     * @param int|null $versionNo
-     *
-     * @return void
-     */
-    public function deleteFields( $contentId, $versionNo = null )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Deletes all versions of $contentId.
      * If $versionNo is set only that version is deleted.
      *
@@ -800,35 +657,6 @@ class EzcDatabase extends Gateway
         {
             throw new NotFound( 'content-version', "$contentId/$versionNo" );
         }
-    }
-
-    /**
-     * Deletes all names of $contentId.
-     * If $versionNo is set only names for that version are deleted.
-     *
-     * @param int $contentId
-     * @param int|null $versionNo
-     *
-     * @return void
-     */
-    public function deleteNames( $contentId, $versionNo = null )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Sets the name for Content $contentId in version $version to $name in $language
-     *
-     * @param int $contentId
-     * @param int $version
-     * @param string $name
-     * @param string $language
-     *
-     * @return void
-     */
-    public function setName( $contentId, $version, $name, $language )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**

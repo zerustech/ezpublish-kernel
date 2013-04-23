@@ -145,18 +145,6 @@ class Mapper
     }
 
     /**
-     * Converts value of $field to storage value
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\Field $field
-     *
-     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldValue
-     */
-    public function convertToStorageValue( Field $field )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Extracts Content objects (and nested) from database result $rows
      *
      * Expects database rows to be indexed by keys of the format
@@ -310,16 +298,6 @@ class Mapper
         }
 
         return array_values( $versionInfoList );
-    }
-
-    /**
-     * @param int $languageMask
-     *
-     * @return array
-     */
-    public function extractLanguageIdsFromMask( $languageMask )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**

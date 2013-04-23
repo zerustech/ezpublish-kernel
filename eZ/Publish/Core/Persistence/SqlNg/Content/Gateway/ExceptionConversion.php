@@ -42,27 +42,6 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Get context definition for external storage layers
-     *
-     * @return array
-     */
-    public function getContext()
-    {
-        try
-        {
-            return $this->innerGateway->getContext();
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
      * Inserts a new content object.
      *
      * @param \eZ\Publish\SPI\Persistence\Content\CreateStruct $struct
@@ -185,28 +164,6 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Updates "always available" flag for content identified by $contentId, in respect to $alwaysAvailable.
-     *
-     * @param int $contentId
-     * @param boolean $newAlwaysAvailable New "always available" value
-     */
-    public function updateAlwaysAvailableFlag( $contentId, $newAlwaysAvailable )
-    {
-        try
-        {
-            return $this->innerGateway->updateAlwaysAvailableFlag( $contentId, $newAlwaysAvailable );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
      * Sets the state of object identified by $contentId and $version to $state.
      *
      * The $status can be one of STATUS_DRAFT, STATUS_PUBLISHED, STATUS_ARCHIVED
@@ -222,116 +179,6 @@ class ExceptionConversion extends Gateway
         try
         {
             return $this->innerGateway->setStatus( $contentId, $version, $status );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Inserts a new field.
-     *
-     * Only used when a new field is created (i.e. a new object or a field in a
-     * new language!). After that, field IDs need to stay the same, only the
-     * version number changes.
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content $content
-     * @param \eZ\Publish\SPI\Persistence\Content\Field $field
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldValue $value
-     *
-     * @return int ID
-     */
-    public function insertNewField( Content $content, Field $field, StorageFieldValue $value )
-    {
-        try
-        {
-            return $this->innerGateway->insertNewField( $content, $field, $value );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Inserts an existing field.
-     *
-     * Used to insert a field with an exsting ID but a new version number.
-     *
-     * @param Content $content
-     * @param Field $field
-     * @param StorageFieldValue $value
-     *
-     * @return void
-     */
-    public function insertExistingField( Content $content, Field $field, StorageFieldValue $value )
-    {
-        try
-        {
-            return $this->innerGateway->insertExistingField( $content, $field, $value );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw $e;
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw $e;
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Updates an existing field
-     *
-     * @param Field $field
-     * @param StorageFieldValue $value
-     *
-     * @return void
-     */
-    public function updateField( Field $field, StorageFieldValue $value )
-    {
-        try
-        {
-            return $this->innerGateway->updateField( $field, $value );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Updates an existing, non-translatable field
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\Field $field
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\StorageFieldValue $value
-     * @param int $contentId
-     *
-     * @return void
-     */
-    public function updateNonTranslatableField(
-        Field $field,
-        StorageFieldValue $value,
-        $contentId )
-    {
-        try
-        {
-            return $this->innerGateway->updateNonTranslatableField( $field, $value, $contentId );
         }
         catch ( \ezcDbException $e )
         {
@@ -520,105 +367,6 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Returns all field IDs of $contentId grouped by their type.
-     * If $versionNo is set only field IDs for that version are returned.
-     *
-     * @param int $contentId
-     * @param int|null $versionNo
-     *
-     * @return int[][]
-     */
-    public function getFieldIdsByType( $contentId, $versionNo = null )
-    {
-        try
-        {
-            return $this->innerGateway->getFieldIdsByType( $contentId, $versionNo );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Deletes relations to and from $contentId.
-     * If $versionNo is set only relations for that version are deleted.
-     *
-     * @param int $contentId
-     * @param int|null $versionNo
-     *
-     * @return void
-     */
-    public function deleteRelations( $contentId, $versionNo = null )
-    {
-        try
-        {
-            return $this->innerGateway->deleteRelations( $contentId, $versionNo );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Deletes the field with the given $fieldId
-     *
-     * @param int $fieldId
-     * @param int $version
-     *
-     * @return void
-     */
-    public function deleteField( $fieldId, $version )
-    {
-        try
-        {
-            return $this->innerGateway->deleteField( $fieldId, $version );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Deletes all fields of $contentId in all versions.
-     * If $versionNo is set only fields for that version are deleted.
-     *
-     * @param int $contentId
-     * @param int|null $versionNo
-     *
-     * @return void
-     */
-    public function deleteFields( $contentId, $versionNo = null )
-    {
-        try
-        {
-            return $this->innerGateway->deleteFields( $contentId, $versionNo );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
      * Deletes all versions of $contentId.
      * If $versionNo is set only that version is deleted.
      *
@@ -644,57 +392,6 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Deletes all names of $contentId.
-     * If $versionNo is set only names for that version are deleted.
-     *
-     * @param int $contentId
-     * @param int|null $versionNo
-     *
-     * @return void
-     */
-    public function deleteNames( $contentId, $versionNo = null )
-    {
-        try
-        {
-            return $this->innerGateway->deleteNames( $contentId, $versionNo );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Sets the content object name
-     *
-     * @param int $contentId
-     * @param int $version
-     * @param string $name
-     * @param string $language
-     *
-     * @return void
-     */
-    public function setName( $contentId, $version, $name, $language )
-    {
-        try
-        {
-            return $this->innerGateway->setName( $contentId, $version, $name, $language );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
      * Deletes the actual content object referred to by $contentId
      *
      * @param int $contentId
@@ -706,30 +403,6 @@ class ExceptionConversion extends Gateway
         try
         {
             return $this->innerGateway->deleteContent( $contentId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Loads data for the latest published version of the content identified by
-     * $contentId
-     *
-     * @param mixed $contentId
-     *
-     * @return array
-     */
-    public function loadLatestPublishedData( $contentId )
-    {
-        try
-        {
-            return $this->innerGateway->loadLatestPublishedData( $contentId );
         }
         catch ( \ezcDbException $e )
         {
@@ -767,20 +440,41 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Loads data of related to/from $contentId
+     * Loads data that related to $toContentId
      *
-     * @param int $contentId
-     * @param boolean $reverse Reverse relation, default false
-     * @param int $contentVersionNo
+     * @param int $toContentId
      * @param int $relationType
      *
      * @return mixed[][] Content data, array structured like {@see \eZ\Publish\Core\Persistence\SqlNg\Content\Gateway::load()}
      */
-    public function loadReverseRelations( $contentId, $relationType = null )
+    public function loadReverseRelations( $toContentId, $relationType = null )
     {
         try
         {
-            return $this->innerGateway->loadReverseRelations( $contentId, $relationType );
+            return $this->innerGateway->loadReverseRelations( $toContentId, $relationType );
+        }
+        catch ( \ezcDbException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+        catch ( \PDOException $e )
+        {
+            throw new \RuntimeException( 'Database error', 0, $e );
+        }
+    }
+
+    /**
+     * Inserts a new relation database record
+     *
+     * @param \eZ\Publish\SPI\Persistence\Content\Relation\CreateStruct $createStruct
+     *
+     * @return int ID the inserted ID
+     */
+    public function insertRelation( RelationCreateStruct $createStruct )
+    {
+        try
+        {
+            return $this->innerGateway->insertRelation( $createStruct );
         }
         catch ( \ezcDbException $e )
         {
@@ -804,29 +498,6 @@ class ExceptionConversion extends Gateway
         try
         {
             return $this->innerGateway->deleteRelation( $relationId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Inserts a new relation database record
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\Relation\CreateStruct $createStruct
-     *
-     * @return int ID the inserted ID
-     */
-    public function insertRelation( RelationCreateStruct $struct )
-    {
-        try
-        {
-            return $this->innerGateway->insertRelation( $struct );
         }
         catch ( \ezcDbException $e )
         {
