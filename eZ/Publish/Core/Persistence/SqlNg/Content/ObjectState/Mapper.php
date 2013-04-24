@@ -20,23 +20,6 @@ use eZ\Publish\SPI\Persistence\Content\Language\Handler as LanguageHandler;
 class Mapper
 {
     /**
-     * Language handler
-     *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler
-     */
-    protected $languageHandler;
-
-    /**
-     * Creates a new mapper.
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\Language\Handler $languageHandler
-     */
-    public function __construct( LanguageHandler $languageHandler )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Creates ObjectState object from provided $data
      *
      * @param array $data

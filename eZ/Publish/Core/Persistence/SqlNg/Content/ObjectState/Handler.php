@@ -40,6 +40,8 @@ class Handler implements BaseObjectStateHandler
      */
     public function __construct( Gateway $objectStateGateway, Mapper $objectStateMapper )
     {
+        $this->objectStateGateway = $objectStateGateway;
+        $this->objectStateMapper = $objectStateMapper;
     }
 
     /**
