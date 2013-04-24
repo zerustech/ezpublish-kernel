@@ -879,21 +879,36 @@ class RoleServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
+        $group = $this->createUserGroupVersion1();
+
+        $roleService = $repository->getRoleService();
+
+        // Assign the "Member" role to the new user group
+        $roleService->assignRoleToUserGroup(
+            $roleService->loadRoleByIdentifier( 'Partner' ),
+            $group,
+            new SubtreeLimitation(
+                array(
+                    'limitationValues' => array( '/1/' )
+                )
+            )
+        );
+
         /* BEGIN: Use Case */
         $roleService = $repository->getRoleService();
 
         // Load the editor role
-        $role = $roleService->loadRoleByIdentifier( 'Editor' );
+        $role = $roleService->loadRoleByIdentifier( 'Partner' );
 
         // Load all assigned users and user groups
         $roleAssignments = $roleService->getRoleAssignments( $role );
 
         /* END: Use Case */
 
-        $this->assertEquals( 1, count( $roleAssignments ) );
+        $this->assertEquals( 2, count( $roleAssignments ) );
         $this->assertInstanceOf(
             '\\eZ\\Publish\\API\\Repository\\Values\\User\\UserGroupRoleAssignment',
-            reset( $roleAssignments )
+            end( $roleAssignments )
         );
 
         return $roleAssignments;
@@ -912,7 +927,7 @@ class RoleServiceTest extends BaseTest
     {
         $this->assertEquals(
             'Subtree',
-            reset( $roleAssignments )->limitation->getIdentifier()
+            end( $roleAssignments )->limitation->getIdentifier()
         );
     }
 

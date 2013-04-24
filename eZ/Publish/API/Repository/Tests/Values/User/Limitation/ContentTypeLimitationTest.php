@@ -36,7 +36,7 @@ class ContentTypeLimitationTest extends BaseLimitationTest
 
         $contentService = $repository->getContentService();
 
-        $contentTypeId = $this->generateId( 'contentType', 22 );
+        $contentTypeId = $this->generateId( 'type', 22 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
@@ -105,7 +105,7 @@ class ContentTypeLimitationTest extends BaseLimitationTest
 
         $contentService = $repository->getContentService();
 
-        $contentTypeId = $this->generateId( 'contentType', 33 );
+        $contentTypeId = $this->generateId( 'type', 33 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
@@ -162,7 +162,7 @@ class ContentTypeLimitationTest extends BaseLimitationTest
 
         $contentService = $repository->getContentService();
 
-        $contentTypeId = $this->generateId( 'contentType', 33 );
+        $contentTypeId = $this->generateId( 'type', 33 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
