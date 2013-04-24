@@ -175,20 +175,15 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::load
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testLoad()
+    public function testLoad( $state )
     {
         $handler = $this->getObjectStateHandler();
 
-        $result = $handler->load( 1 );
+        $loaded = $handler->load( $state->id );
 
-        $this->assertInstanceOf(
-            'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
-            $result
-        );
+        $this->assertEquals( $state, $loaded );
     }
 
     /**
