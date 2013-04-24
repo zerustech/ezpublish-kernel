@@ -365,8 +365,7 @@ class ObjectStateHandlerTest extends TestCase
     {
         $handler = $this->getObjectStateHandler();
 
-        $content = $this->getContent();
-        $loaded = $handler->getContentState( PHP_INT_MAX, PHP_INT_MAX );
+        $handler->getContentState( PHP_INT_MAX, PHP_INT_MAX );
     }
 
     /**
