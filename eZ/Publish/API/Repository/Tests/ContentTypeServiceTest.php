@@ -1747,8 +1747,6 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
                 'id' => $this->generateId( 'type', 3 ),
                 'status' => 0,
                 'identifier' => 'user_group',
-                'creationDate' => $this->createDateTime( 1024392098 ),
-                'modificationDate' => $this->createDateTime( 1048494743 ),
                 'creatorId' => $this->getSetupFactory()->getAdminUserId(),
                 'modifierId' => $this->getSetupFactory()->getAdminUserId(),
                 'remoteId' => '25b4268cdcd01921b808a0d854b877ef',
