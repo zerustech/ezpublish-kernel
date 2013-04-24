@@ -264,15 +264,30 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::setPriority
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testSetPriority()
+    public function testSetPriority( $state )
     {
         $handler = $this->getObjectStateHandler();
 
-        $handler->setPriority( 2, 0 );
+        $state = $handler->create(
+            $state->groupId,
+            new Persistence\Content\ObjectState\InputStruct( array(
+                'defaultLanguage' => $state->defaultLanguage,
+                'identifier' => 'test-state-2',
+                'name' => array(
+                    $state->defaultLanguage => 'Test State 2',
+                ),
+                'description' => array(
+                    $state->defaultLanguage => 'Test State 2',
+                ),
+            ) )
+        );
+
+        $handler->setPriority( $state->id, 42 );
+
+        $loaded = $handler->load( $state->id );
+        $this->assertEquals( 1, $loaded->priority );
     }
 
     /**
@@ -342,36 +357,6 @@ class ObjectStateHandlerTest extends TestCase
         $result = $handler->getContentCount( 1 );
 
         $this->assertEquals( 185, $result );
-    }
-
-    /**
-     * Returns an object state
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState
-     */
-    protected function getObjectStateFixture()
-    {
-        return new ObjectState();
-    }
-
-    /**
-     * Returns an object state group
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState\Group
-     */
-    protected function getObjectStateGroupFixture()
-    {
-        return new Group();
-    }
-
-    /**
-     * Returns the InputStruct
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct
-     */
-    protected function getInputStructFixture()
-    {
-        return new Persistence\Content\ObjectState\InputStruct();
     }
 
     /**

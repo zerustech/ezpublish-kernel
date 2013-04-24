@@ -250,7 +250,22 @@ class Handler implements BaseObjectStateHandler
      */
     public function setPriority( $stateId, $priority )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $objectState = $this->load( $stateId );
+        $groupStates = $this->loadObjectStates( $objectState->groupId );
+
+        $priorityList = array();
+        foreach ( $groupStates as $index => $groupState )
+        {
+            $priorityList[$groupState->id] = $index;
+        }
+
+        $priorityList[$objectState->id] = (int)$priority;
+        asort( $priorityList );
+
+        foreach ( array_keys( $priorityList ) as $objectStatePriority => $objectStateId )
+        {
+            $this->objectStateGateway->updateObjectStatePriority( $objectStateId, $objectStatePriority );
+        }
     }
 
     /**

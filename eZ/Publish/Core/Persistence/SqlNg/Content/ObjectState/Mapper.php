@@ -31,6 +31,7 @@ class Mapper
         $objectState->id = (int)$data['ezcontent_state_state_id'];
         $objectState->groupId = $data['ezcontent_state_state_group_id'];
         $objectState->identifier = $data['ezcontent_state_identifier'];
+        $objectState->priority = (int)$data['ezcontent_state_priority'];
         $objectState->defaultLanguage = $data['ezcontent_language_language_code'];
         $objectState->name = json_decode( $data['ezcontent_state_name'], true );
         $objectState->description = json_decode( $data['ezcontent_state_description'], true );

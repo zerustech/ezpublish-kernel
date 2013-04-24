@@ -458,7 +458,20 @@ class EzcDatabase extends Gateway
      */
     public function updateObjectStatePriority( $stateId, $priority )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent_state' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'priority' ),
+            $query->bindValue( $priority, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $query->prepare()->execute();
     }
 
     /**
@@ -503,6 +516,7 @@ class EzcDatabase extends Gateway
             $this->dbHandler->aliasedColumn( $query, 'state_group_id', 'ezcontent_state' ),
             $this->dbHandler->aliasedColumn( $query, 'language_code', 'ezcontent_language' ),
             $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezcontent_state' ),
+            $this->dbHandler->aliasedColumn( $query, 'priority', 'ezcontent_state' ),
             $this->dbHandler->aliasedColumn( $query, 'name', 'ezcontent_state' ),
             $this->dbHandler->aliasedColumn( $query, 'description', 'ezcontent_state' )
         )->from(
