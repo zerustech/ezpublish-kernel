@@ -43,6 +43,7 @@ class SqlNg extends IdManager
         'type' => array(
             3 => 2, // User Group
             4 => 3, // User
+            20 => 10, // Feedback Form
             22 => 11, // Wiki Page
             28 => 15, // Forum
             33 => 20, // Banner

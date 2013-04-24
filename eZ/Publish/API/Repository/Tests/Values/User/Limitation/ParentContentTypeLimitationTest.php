@@ -35,8 +35,8 @@ class ParentContentTypeLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $parentContentTypeId = $this->generateId( 'contentType', 20 );
-        $contentTypeId = $this->generateId( 'contentType', 22 );
+        $parentContentTypeId = $this->generateId( 'type', 20 );
+        $contentTypeId = $this->generateId( 'type', 22 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
@@ -83,8 +83,8 @@ class ParentContentTypeLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $parentContentTypeId = $this->generateId( 'contentType', 20 );
-        $contentTypeId = $this->generateId( 'contentType', 33 );
+        $parentContentTypeId = $this->generateId( 'type', 20 );
+        $contentTypeId = $this->generateId( 'type', 33 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
