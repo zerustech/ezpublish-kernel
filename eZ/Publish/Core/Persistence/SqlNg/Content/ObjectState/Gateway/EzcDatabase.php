@@ -9,11 +9,10 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway;
 
+use eZ\Publish\SPI\Persistence;
 use eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway;
-use eZ\Publish\Core\Persistence\SqlNg\Content\Language\MaskGenerator;
 use eZ\Publish\Core\Persistence\Legacy\EzcDbHandler;
-use eZ\Publish\SPI\Persistence\Content\ObjectState;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\Group;
+use eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler as LanguageHandler;
 
 /**
  * ObjectState ezcDatabase Gateway
@@ -28,14 +27,23 @@ class EzcDatabase extends Gateway
     protected $dbHandler;
 
     /**
+     * Language handler
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler
+     */
+    protected $languageHandler;
+
+    /**
      * Creates a new EzcDatabase ObjectState Gateway
      *
      * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $dbHandler
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\MaskGenerator $maskGenerator
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler $languageHandler
+     * @return void
      */
-    public function __construct( EzcDbHandler $dbHandler )
+    public function __construct( EzcDbHandler $dbHandler, LanguageHandler $languageHandler )
     {
         $this->dbHandler = $dbHandler;
+        $this->languageHandler = $languageHandler;
     }
 
     /**
@@ -47,7 +55,18 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateData( $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateFindQuery();
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id', 'ezcontent_state' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetch( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -60,7 +79,24 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateDataByIdentifier( $identifier, $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateFindQuery();
+        $query->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'identifier', 'ezcontent_state' ),
+                    $query->bindValue( $identifier, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state' ),
+                    $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetch( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -72,7 +108,18 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateListData( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateFindQuery();
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state' ),
+                $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -84,7 +131,18 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateGroupData( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateGroupFindQuery();
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state_group' ),
+                $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetch( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -96,7 +154,18 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateGroupDataByIdentifier( $identifier )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateGroupFindQuery();
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'identifier', 'ezcontent_state_group' ),
+                $query->bindValue( $identifier, null, \PDO::PARAM_STR )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetch( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -109,28 +178,103 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateGroupListData( $offset, $limit )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateGroupFindQuery();
+        $query->limit( $limit > 0 ? $limit : PHP_INT_MAX, $offset );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
      * Inserts a new object state into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
-     * @param int $groupId
+     * @param mixed $groupId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
+     * @return void
      */
-    public function insertObjectState( ObjectState $objectState, $groupId )
+    public function insertObjectState( $groupId, Persistence\Content\ObjectState\InputStruct $objectState )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontent_state' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'state_group_id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent_state', 'state_id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'state_group_id' ),
+            $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'default_language_id' ),
+            $query->bindValue(
+                $this->languageHandler->loadByLanguageCode(
+                    $objectState->defaultLanguage
+                )->id,
+                null,
+                \PDO::PARAM_INT
+            )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $objectState->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $objectState->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $objectState->description ) )
+        );
+
+        $query->prepare()->execute();
+
+        return (int)$this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontent_state', 'state_id' )
+        );
     }
 
     /**
      * Updates the stored object state with provided data
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
+     * @param int $stateId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
      */
-    public function updateObjectState( ObjectState $objectState )
+    public function updateObjectState( $stateId, Persistence\Content\ObjectState\InputStruct $objectState )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent_state' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'default_language_id' ),
+            $query->bindValue(
+                $this->languageHandler->loadByLanguageCode(
+                    $objectState->defaultLanguage
+                )->id,
+                null,
+                \PDO::PARAM_INT
+            )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $objectState->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $objectState->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $objectState->description ) )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'ObjectState', $stateId );
+        }
     }
 
     /**
@@ -140,28 +284,17 @@ class EzcDatabase extends Gateway
      */
     public function deleteObjectState( $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom(
+            $this->dbHandler->quoteTable( 'ezcontent_state' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )
+        );
 
-    /**
-     * Update object state links to $newStateId
-     *
-     * @param int $oldStateId
-     * @param int $newStateId
-     */
-    public function updateObjectStateLinks( $oldStateId, $newStateId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Deletes object state links identified by $stateId
-     *
-     * @param int $stateId
-     */
-    public function deleteObjectStateLinks( $stateId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query->prepare()->execute();
     }
 
     /**
@@ -169,19 +302,84 @@ class EzcDatabase extends Gateway
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
      */
-    public function insertObjectStateGroup( Group $objectStateGroup )
+    public function insertObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontent_state_group' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'state_group_id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent_state_group', 'state_group_id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'default_language_id' ),
+            $query->bindValue(
+                $this->languageHandler->loadByLanguageCode(
+                    $objectStateGroup->defaultLanguage
+                )->id,
+                null,
+                \PDO::PARAM_INT
+            )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $objectStateGroup->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $objectStateGroup->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $objectStateGroup->description ) )
+        );
+
+        $query->prepare()->execute();
+
+        return (int)$this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontent_state_group', 'state_group_id' )
+        );
     }
 
     /**
      * Updates the stored object state group with provided data
      *
+     * @param int $groupId
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
      */
-    public function updateObjectStateGroup( Group $objectStateGroup )
+    public function updateObjectStateGroup( $groupId, Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent_state_group' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'default_language_id' ),
+            $query->bindValue(
+                $this->languageHandler->loadByLanguageCode(
+                    $objectStateGroup->defaultLanguage
+                )->id,
+                null,
+                \PDO::PARAM_INT
+            )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $objectStateGroup->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $objectStateGroup->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $objectStateGroup->description ) )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_group_id' ),
+                $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'ObjectStateGroup', $groupId );
+        }
     }
 
     /**
@@ -191,7 +389,17 @@ class EzcDatabase extends Gateway
      */
     public function deleteObjectStateGroup( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom(
+            $this->dbHandler->quoteTable( 'ezcontent_state_group' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_group_id' ),
+                $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $query->prepare()->execute();
     }
 
     /**
@@ -203,7 +411,73 @@ class EzcDatabase extends Gateway
      */
     public function setContentState( $contentId, $groupId, $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        // First find out if $contentId is related to existing states in $groupId
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->aliasedColumn( $query, 'state_id', 'ezcontent_state_link' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_state_link' )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state_link' ),
+                    $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_state_link' ),
+                    $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        $rows = $statement->fetchAll( \PDO::FETCH_ASSOC );
+
+        if ( !empty( $rows ) )
+        {
+            // We already have a state assigned to $contentId, update to new one
+            $query = $this->dbHandler->createUpdateQuery();
+            $query->update(
+                $this->dbHandler->quoteTable( 'ezcontent_state_link' )
+            )->set(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )->where(
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state_link' ),
+                        $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+                    ),
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_state_link' ),
+                        $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                    )
+                )
+            );
+
+            $query->prepare()->execute();
+        }
+        else
+        {
+            // No state assigned to $contentId from specified group, create assignment
+            $query = $this->dbHandler->createInsertQuery();
+            $query->insertInto(
+                $this->dbHandler->quoteTable( 'ezcontent_state_link' )
+            )->set(
+                $this->dbHandler->quoteColumn( 'content_id' ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'state_group_id' ),
+                $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            );
+
+            $query->prepare()->execute();
+        }
     }
 
     /**
@@ -216,7 +490,30 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateDataForContent( $contentId, $stateGroupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateFindQuery();
+        $query->innerJoin(
+            $this->dbHandler->quoteTable( 'ezcontent_state_link' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id', 'ezcontent_state' ),
+                $this->dbHandler->quoteColumn( 'state_id', 'ezcontent_state_link' )
+            )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state_link' ),
+                    $query->bindValue( $stateGroupId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_state_link' ),
+                    $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetch( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -228,7 +525,24 @@ class EzcDatabase extends Gateway
      */
     public function getContentCount( $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $query->alias( $query->expr->count( '*' ), 'count' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_state_link' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        $count = $statement->fetchColumn();
+
+        return $count !== null ? (int)$count : 0;
     }
 
     /**
@@ -239,6 +553,77 @@ class EzcDatabase extends Gateway
      */
     public function updateObjectStatePriority( $stateId, $priority )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent_state' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'priority' ),
+            $query->bindValue( $priority, null, \PDO::PARAM_INT )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $query->prepare()->execute();
+    }
+
+    /**
+     * Creates a generalized query for fetching object state group(s)
+     *
+     * @return \ezcQuerySelect
+     */
+    protected function createObjectStateGroupFindQuery()
+    {
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            // Object state group
+            $this->dbHandler->aliasedColumn( $query, 'state_group_id', 'ezcontent_state_group' ),
+            $this->dbHandler->aliasedColumn( $query, 'language_code', 'ezcontent_language' ),
+            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezcontent_state_group' ),
+            $this->dbHandler->aliasedColumn( $query, 'name', 'ezcontent_state_group' ),
+            $this->dbHandler->aliasedColumn( $query, 'description', 'ezcontent_state_group' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_state_group' )
+        )->innerJoin(
+            $this->dbHandler->quoteTable( 'ezcontent_language' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'language_id', 'ezcontent_language' ),
+                $this->dbHandler->quoteColumn( 'default_language_id', 'ezcontent_state_group' )
+            )
+        );
+
+        return $query;
+    }
+
+    /**
+     * Creates a generalized query for fetching object state(s)
+     *
+     * @return \ezcQuerySelect
+     */
+    protected function createObjectStateFindQuery()
+    {
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            // Object state
+            $this->dbHandler->aliasedColumn( $query, 'state_id', 'ezcontent_state' ),
+            $this->dbHandler->aliasedColumn( $query, 'state_group_id', 'ezcontent_state' ),
+            $this->dbHandler->aliasedColumn( $query, 'language_code', 'ezcontent_language' ),
+            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezcontent_state' ),
+            $this->dbHandler->aliasedColumn( $query, 'priority', 'ezcontent_state' ),
+            $this->dbHandler->aliasedColumn( $query, 'name', 'ezcontent_state' ),
+            $this->dbHandler->aliasedColumn( $query, 'description', 'ezcontent_state' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_state' )
+        )->innerJoin(
+            $this->dbHandler->quoteTable( 'ezcontent_language' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'language_id', 'ezcontent_language' ),
+                $this->dbHandler->quoteColumn( 'default_language_id', 'ezcontent_state' )
+            )
+        );
+
+        return $query;
     }
 }

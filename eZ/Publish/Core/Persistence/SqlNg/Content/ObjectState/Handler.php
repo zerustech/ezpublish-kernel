@@ -53,7 +53,9 @@ class Handler implements BaseObjectStateHandler
      */
     public function createGroup( InputStruct $input )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        return $this->loadGroup(
+            $this->objectStateGateway->insertObjectStateGroup( $input )
+        );
     }
 
     /**
@@ -67,7 +69,14 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadGroup( $groupId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $data = $this->objectStateGateway->loadObjectStateGroupData( $groupId );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFoundException( "ObjectStateGroup", $groupId );
+        }
+
+        return $this->objectStateMapper->createObjectStateGroupFromData( $data );
     }
 
     /**
@@ -81,7 +90,14 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadGroupByIdentifier( $identifier )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $data = $this->objectStateGateway->loadObjectStateGroupDataByIdentifier( $identifier );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFoundException( "ObjectStateGroup", $identifier );
+        }
+
+        return $this->objectStateMapper->createObjectStateGroupFromData( $data );
     }
 
     /**
@@ -94,7 +110,15 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadAllGroups( $offset = 0, $limit = -1 )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $groups = array();
+        $data = $this->objectStateGateway->loadObjectStateGroupListData( $offset, $limit );
+
+        foreach ( $data as $row )
+        {
+            $groups[] = $this->objectStateMapper->createObjectStateGroupFromData( $row );
+        }
+
+        return $groups;
     }
 
     /**
@@ -106,7 +130,15 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadObjectStates( $groupId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $states = array();
+        $data = $this->objectStateGateway->loadObjectStateListData( $groupId );
+
+        foreach ( $data as $row )
+        {
+            $states[] = $this->objectStateMapper->createObjectStateFromData( $row );
+        }
+
+        return $states;
     }
 
     /**
@@ -119,7 +151,9 @@ class Handler implements BaseObjectStateHandler
      */
     public function updateGroup( $groupId, InputStruct $input )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $this->objectStateGateway->updateObjectStateGroup( $groupId, $input );
+
+        return $this->loadGroup( $groupId );
     }
 
     /**
@@ -129,7 +163,7 @@ class Handler implements BaseObjectStateHandler
      */
     public function deleteGroup( $groupId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $this->objectStateGateway->deleteObjectStateGroup( $groupId );
     }
 
     /**
@@ -145,7 +179,9 @@ class Handler implements BaseObjectStateHandler
      */
     public function create( $groupId, InputStruct $input )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        return $this->load(
+            $this->objectStateGateway->insertObjectState( $groupId, $input )
+        );
     }
 
     /**
@@ -159,7 +195,14 @@ class Handler implements BaseObjectStateHandler
      */
     public function load( $stateId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $data = $this->objectStateGateway->loadObjectStateData( $stateId );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFoundException( "ObjectState", $stateId );
+        }
+
+        return $this->objectStateMapper->createObjectStateFromData( $data );
     }
 
     /**
@@ -174,7 +217,14 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadByIdentifier( $identifier, $groupId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $data = $this->objectStateGateway->loadObjectStateDataByIdentifier( $identifier, $groupId );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFoundException( "ObjectState", array( 'identifier' => $identifier, 'groupId' => $groupId ) );
+        }
+
+        return $this->objectStateMapper->createObjectStateFromData( $data );
     }
 
     /**
@@ -187,7 +237,9 @@ class Handler implements BaseObjectStateHandler
      */
     public function update( $stateId, InputStruct $input )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $this->objectStateGateway->updateObjectState( $stateId, $input );
+
+        return $this->load( $stateId );
     }
 
     /**
@@ -198,7 +250,22 @@ class Handler implements BaseObjectStateHandler
      */
     public function setPriority( $stateId, $priority )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $objectState = $this->load( $stateId );
+        $groupStates = $this->loadObjectStates( $objectState->groupId );
+
+        $priorityList = array();
+        foreach ( $groupStates as $index => $groupState )
+        {
+            $priorityList[$groupState->id] = $index;
+        }
+
+        $priorityList[$objectState->id] = (int)$priority;
+        asort( $priorityList );
+
+        foreach ( array_keys( $priorityList ) as $objectStatePriority => $objectStateId )
+        {
+            $this->objectStateGateway->updateObjectStatePriority( $objectStateId, $objectStatePriority );
+        }
     }
 
     /**
@@ -211,7 +278,17 @@ class Handler implements BaseObjectStateHandler
      */
     public function delete( $stateId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $groupId = $this->load( $stateId )->groupId;
+
+        $this->objectStateGateway->deleteObjectState( $stateId );
+
+        if ( $remainingStates = $this->loadObjectStates( $groupId ) )
+        {
+            $this->setPriority(
+                $remainingStates[0]->id,
+                $remainingStates[0]->priority
+            );
+        }
     }
 
     /**
@@ -225,7 +302,8 @@ class Handler implements BaseObjectStateHandler
      */
     public function setContentState( $contentId, $groupId, $stateId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $this->objectStateGateway->setContentState( $contentId, $groupId, $stateId );
+        return true;
     }
 
     /**
@@ -242,7 +320,14 @@ class Handler implements BaseObjectStateHandler
      */
     public function getContentState( $contentId, $stateGroupId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $data = $this->objectStateGateway->loadObjectStateDataForContent( $contentId, $stateGroupId );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFoundException( "ObjectState", array( "groupId" => $stateGroupId ) );
+        }
+
+        return $this->objectStateMapper->createObjectStateFromData( $data );
     }
 
     /**
@@ -254,6 +339,6 @@ class Handler implements BaseObjectStateHandler
      */
     public function getContentCount( $stateId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        return $this->objectStateGateway->getContentCount( $stateId );
     }
 }

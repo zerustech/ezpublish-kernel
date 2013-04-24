@@ -10,8 +10,7 @@
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway;
 
 use eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway;
-use eZ\Publish\SPI\Persistence\Content\ObjectState;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\Group;
+use eZ\Publish\SPI\Persistence;
 
 /**
  * ObjectState Gateway
@@ -178,14 +177,15 @@ class ExceptionConversion extends Gateway
     /**
      * Inserts a new object state into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
-     * @param int $groupId
+     * @param mixed $groupId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
+     * @return void
      */
-    public function insertObjectState( ObjectState $objectState, $groupId )
+    public function insertObjectState( $groupId, Persistence\Content\ObjectState\InputStruct $objectState )
     {
         try
         {
-            return $this->innerGateway->insertObjectState( $objectState, $groupId );
+            return $this->innerGateway->insertObjectState( $groupId, $objectState );
         }
         catch ( \ezcDbException $e )
         {
@@ -200,13 +200,14 @@ class ExceptionConversion extends Gateway
     /**
      * Updates the stored object state with provided data
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
+     * @param int $stateId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
      */
-    public function updateObjectState( ObjectState $objectState )
+    public function updateObjectState( $stateId, Persistence\Content\ObjectState\InputStruct $objectState )
     {
         try
         {
-            return $this->innerGateway->updateObjectState( $objectState );
+            return $this->innerGateway->updateObjectState( $stateId, $objectState );
         }
         catch ( \ezcDbException $e )
         {
@@ -240,54 +241,11 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Update object state links from $oldStateId to $newStateId
-     *
-     * @param int $oldStateId
-     * @param int $newStateId
-     */
-    public function updateObjectStateLinks( $oldStateId, $newStateId )
-    {
-        try
-        {
-            return $this->innerGateway->updateObjectStateLinks( $oldStateId, $newStateId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Deletes object state links identified by $stateId
-     *
-     * @param int $stateId
-     */
-    public function deleteObjectStateLinks( $stateId )
-    {
-        try
-        {
-            return $this->innerGateway->deleteObjectStateLinks( $stateId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
      * Inserts a new object state group into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectStateGroup
      */
-    public function insertObjectStateGroup( Group $objectStateGroup )
+    public function insertObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
         try
         {
@@ -306,13 +264,14 @@ class ExceptionConversion extends Gateway
     /**
      * Updates the stored object state group with provided data
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
+     * @param int $groupId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectStateGroup
      */
-    public function updateObjectStateGroup( Group $objectStateGroup )
+    public function updateObjectStateGroup( $groupId, Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
         try
         {
-            return $this->innerGateway->updateObjectStateGroup( $objectStateGroup );
+            return $this->innerGateway->updateObjectStateGroup( $groupId, $objectStateGroup );
         }
         catch ( \ezcDbException $e )
         {

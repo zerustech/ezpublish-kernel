@@ -9,9 +9,7 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState;
 
-use eZ\Publish\SPI\Persistence\Content\ObjectState;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\Group;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct;
+use eZ\Publish\SPI\Persistence;
 use eZ\Publish\SPI\Persistence\Content\Language\Handler as LanguageHandler;
 
 /**
@@ -28,19 +26,24 @@ class Mapper
      */
     public function createObjectStateFromData( array $data )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
+        $objectState = new Persistence\Content\ObjectState();
 
-    /**
-     * Creates ObjectState array of objects from provided $data
-     *
-     * @param array $data
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState[]
-     */
-    public function createObjectStateListFromData( array $data )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $objectState->id = (int)$data['ezcontent_state_state_id'];
+        $objectState->groupId = $data['ezcontent_state_state_group_id'];
+        $objectState->identifier = $data['ezcontent_state_identifier'];
+        $objectState->priority = (int)$data['ezcontent_state_priority'];
+        $objectState->defaultLanguage = $data['ezcontent_language_language_code'];
+        $objectState->name = json_decode( $data['ezcontent_state_name'], true );
+        $objectState->description = json_decode( $data['ezcontent_state_description'], true );
+
+        $objectState->languageCodes = array_unique(
+            array_merge(
+                array_keys( $objectState->name ),
+                array_keys( $objectState->description )
+            )
+        );
+
+        return $objectState;
     }
 
     /**
@@ -52,42 +55,21 @@ class Mapper
      */
     public function createObjectStateGroupFromData( array $data )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
+        $objectStateGroup = new Persistence\Content\ObjectState\Group();
 
-    /**
-     * Creates ObjectStateGroup array of objects from provided $data
-     *
-     * @param array $data
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState\Group[]
-     */
-    public function createObjectStateGroupListFromData( array $data )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
+        $objectStateGroup->id = (int)$data['ezcontent_state_group_state_group_id'];
+        $objectStateGroup->identifier = $data['ezcontent_state_group_identifier'];
+        $objectStateGroup->defaultLanguage = $data['ezcontent_language_language_code'];
+        $objectStateGroup->name = json_decode( $data['ezcontent_state_group_name'], true );
+        $objectStateGroup->description = json_decode( $data['ezcontent_state_group_description'], true );
 
-    /**
-     * Creates an instance of ObjectStateGroup object from provided $input struct
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $input
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState\Group
-     */
-    public function createObjectStateGroupFromInputStruct( InputStruct $input )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
+        $objectStateGroup->languageCodes = array_unique(
+            array_merge(
+                array_keys( $objectStateGroup->name ),
+                array_keys( $objectStateGroup->description )
+            )
+        );
 
-    /**
-     * Creates an instance of ObjectState object from provided $input struct
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $input
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState
-     */
-    public function createObjectStateFromInputStruct( InputStruct $input )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
+        return $objectStateGroup;
     }
 }

@@ -9,8 +9,7 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState;
 
-use eZ\Publish\SPI\Persistence\Content\ObjectState;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\Group;
+use eZ\Publish\SPI\Persistence;
 
 /**
  * ObjectState Gateway
@@ -76,17 +75,19 @@ abstract class Gateway
     /**
      * Inserts a new object state into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
-     * @param int $groupId
+     * @param mixed $groupId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
+     * @return void
      */
-    abstract public function insertObjectState( ObjectState $objectState, $groupId );
+    abstract public function insertObjectState( $groupId, Persistence\Content\ObjectState\InputStruct $objectState );
 
     /**
      * Updates the stored object state with provided data
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
+     * @param int $stateId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
      */
-    abstract public function updateObjectState( ObjectState $objectState );
+    abstract public function updateObjectState( $stateId, Persistence\Content\ObjectState\InputStruct $objectState );
 
     /**
      * Deletes object state identified by $stateId
@@ -96,33 +97,19 @@ abstract class Gateway
     abstract public function deleteObjectState( $stateId );
 
     /**
-     * Update object state links from $oldStateId to $newStateId
-     *
-     * @param int $oldStateId
-     * @param int $newStateId
-     */
-    abstract public function updateObjectStateLinks( $oldStateId, $newStateId );
-
-    /**
-     * Deletes object state links identified by $stateId
-     *
-     * @param int $stateId
-     */
-    abstract public function deleteObjectStateLinks( $stateId );
-
-    /**
      * Inserts a new object state group into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectStateGroup
      */
-    abstract public function insertObjectStateGroup( Group $objectStateGroup );
+    abstract public function insertObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup );
 
     /**
      * Updates the stored object state group with provided data
      *
+     * @param int $groupId
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
      */
-    abstract public function updateObjectStateGroup( Group $objectStateGroup );
+    abstract public function updateObjectStateGroup( $groupId, Persistence\Content\ObjectState\InputStruct $objectStateGroup );
 
     /**
      * Deletes the object state group identified by $groupId

@@ -277,24 +277,14 @@ CREATE TABLE `ezcontent_state` (
     `state_group_id` INT NOT NULL DEFAULT 0,
     `identifier` VARCHAR(45) NOT NULL DEFAULT '',
     `priority` INT NOT NULL DEFAULT 0,
+    `name` LONGTEXT NOT NULL DEFAULT '',
+    `description` LONGTEXT NOT NULL,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`state_id`),
     UNIQUE KEY `ezcontent_state_identifier` (`state_group_id`, `identifier`),
     KEY `ezcontent_state_priority` (`priority`),
-    FOREIGN KEY (`state_group_id`) REFERENCES `ezcontent_state_group` (`state_group_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    FOREIGN KEY (`state_group_id`) REFERENCES `ezcontent_state_group` (`state_group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`default_language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS `ezcontent_state_language`;
-CREATE TABLE `ezcontent_state_language` (
-    `state_id` INT NOT NULL DEFAULT 0,
-    `language_id` INT NOT NULL DEFAULT 0,
-    `name` VARCHAR(45) NOT NULL DEFAULT '',
-    `description` longtext NOT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`state_id`, `language_id`),
-    FOREIGN KEY (`state_id`) REFERENCES `ezcontent_state` (`state_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `ezcontent_state_group`;
@@ -302,32 +292,24 @@ CREATE TABLE `ezcontent_state_group` (
     `state_group_id` INT NOT NULL AUTO_INCREMENT,
     `default_language_id` INT NOT NULL DEFAULT 0,
     `identifier` VARCHAR(45) NOT NULL DEFAULT '',
+    `name` LONGTEXT NOT NULL DEFAULT '',
+    `description` LONGTEXT NOT NULL,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`state_group_id`),
     UNIQUE KEY `ezcontent_state_group_identifier` (`identifier`),
     FOREIGN KEY (`default_language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS `ezcontent_state_group_language`;
-CREATE TABLE `ezcontent_state_group_language` (
-    `state_group_id` INT NOT NULL DEFAULT 0,
-    `language_id` INT NOT NULL DEFAULT 0,
-    `name` VARCHAR(45) NOT NULL DEFAULT '',
-    `description` longtext NOT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`state_group_id`, `language_id`),
-    FOREIGN KEY (`state_group_id`) REFERENCES `ezcontent_state_group` (`state_group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB;
-
 DROP TABLE IF EXISTS `ezcontent_state_link`;
 CREATE TABLE `ezcontent_state_link` (
     `content_id` INT NOT NULL DEFAULT '0',
+    `state_group_id` INT NOT NULL DEFAULT 0,
     `state_id` INT NOT NULL DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`content_id`, `state_id`),
+    PRIMARY KEY (`content_id`, `state_group_id`, `state_id`),
+    UNIQUE KEY (`content_id`, `state_group_id`),
     FOREIGN KEY (`content_id`) REFERENCES `ezcontent` (`content_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`state_id`) REFERENCES `ezcontent_state` (`state_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+    FOREIGN KEY (`state_id`) REFERENCES `ezcontent_state` (`state_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 SET FOREIGN_KEY_CHECKS = 1;
