@@ -145,40 +145,33 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::loadObjectStates
-     *
-     * @return void
+     * @depends testCreateGroup
      */
-    public function testLoadObjectStates()
+    public function testCreate( $stateGroup )
     {
         $handler = $this->getObjectStateHandler();
 
-        $result = $handler->loadObjectStates( 2 );
-
-        foreach ( $result as $resultItem )
-        {
-            $this->assertInstanceOf(
-                'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
-                $resultItem
-            );
-        }
-    }
-
-    /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::create
-     *
-     * @return void
-     */
-    public function testCreate()
-    {
-        $handler = $this->getObjectStateHandler();
-
-        $result = $handler->create( 2, $this->getInputStructFixture() );
+        $language = $this->getLanguage();
+        $state = $handler->create(
+            $stateGroup->id,
+            new Persistence\Content\ObjectState\InputStruct( array(
+                'defaultLanguage' => $language->languageCode,
+                'identifier' => 'test-state',
+                'name' => array(
+                    $language->languageCode => 'Test State',
+                ),
+                'description' => array(
+                    $language->languageCode => 'Test State',
+                ),
+            ) )
+        );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
-            $result
+            $state
         );
+
+        return $state;
     }
 
     /**
@@ -196,6 +189,26 @@ class ObjectStateHandlerTest extends TestCase
             'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
             $result
         );
+    }
+
+    /**
+     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::loadObjectStates
+     *
+     * @return void
+     */
+    public function testLoadObjectStates()
+    {
+        $handler = $this->getObjectStateHandler();
+
+        $result = $handler->loadObjectStates( 2 );
+
+        foreach ( $result as $resultItem )
+        {
+            $this->assertInstanceOf(
+                'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
+                $resultItem
+            );
+        }
     }
 
     /**

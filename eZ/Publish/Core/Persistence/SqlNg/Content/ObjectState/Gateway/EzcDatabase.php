@@ -151,20 +151,54 @@ class EzcDatabase extends Gateway
     /**
      * Inserts a new object state into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
-     * @param int $groupId
+     * @param mixed $groupId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
+     * @return void
      */
-    public function insertObjectState( Persistence\Content\ObjectState $objectState, $groupId )
+    public function insertObjectState( $groupId, Persistence\Content\ObjectState\InputStruct $objectState )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontent_state' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'state_group_id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent_state', 'state_id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'state_group_id' ),
+            $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'default_language_id' ),
+            $query->bindValue(
+                $this->languageHandler->loadByLanguageCode(
+                    $objectState->defaultLanguage
+                )->id,
+                null,
+                \PDO::PARAM_INT
+            )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $objectState->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $objectState->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $objectState->description ) )
+        );
+
+        $query->prepare()->execute();
+
+        return (int)$this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontent_state', 'state_id' )
+        );
     }
 
     /**
      * Updates the stored object state with provided data
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
      */
-    public function updateObjectState( Persistence\Content\ObjectState $objectState )
+    public function updateObjectState( Persistence\Content\ObjectState\InputStruct $objectState )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }

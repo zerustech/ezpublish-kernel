@@ -177,14 +177,15 @@ class ExceptionConversion extends Gateway
     /**
      * Inserts a new object state into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
-     * @param int $groupId
+     * @param mixed $groupId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
+     * @return void
      */
-    public function insertObjectState( Persistence\Content\ObjectState $objectState, $groupId )
+    public function insertObjectState( $groupId, Persistence\Content\ObjectState\InputStruct $objectState )
     {
         try
         {
-            return $this->innerGateway->insertObjectState( $objectState, $groupId );
+            return $this->innerGateway->insertObjectState( $groupId, $objectState );
         }
         catch ( \ezcDbException $e )
         {
@@ -199,9 +200,9 @@ class ExceptionConversion extends Gateway
     /**
      * Updates the stored object state with provided data
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
      */
-    public function updateObjectState( Persistence\Content\ObjectState $objectState )
+    public function updateObjectState( Persistence\Content\ObjectState\InputStruct $objectState )
     {
         try
         {

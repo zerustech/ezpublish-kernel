@@ -75,17 +75,18 @@ abstract class Gateway
     /**
      * Inserts a new object state into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
-     * @param int $groupId
+     * @param mixed $groupId
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
+     * @return void
      */
-    abstract public function insertObjectState( Persistence\Content\ObjectState $objectState, $groupId );
+    abstract public function insertObjectState( $groupId, Persistence\Content\ObjectState\InputStruct $objectState );
 
     /**
      * Updates the stored object state with provided data
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
      */
-    abstract public function updateObjectState( Persistence\Content\ObjectState $objectState );
+    abstract public function updateObjectState( Persistence\Content\ObjectState\InputStruct $objectState );
 
     /**
      * Deletes object state identified by $stateId

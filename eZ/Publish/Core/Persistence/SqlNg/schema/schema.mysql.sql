@@ -283,7 +283,7 @@ CREATE TABLE `ezcontent_state` (
     PRIMARY KEY (`state_id`),
     UNIQUE KEY `ezcontent_state_identifier` (`state_group_id`, `identifier`),
     KEY `ezcontent_state_priority` (`priority`),
-    FOREIGN KEY (`state_group_id`) REFERENCES `ezcontent_state_group` (`state_group_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    FOREIGN KEY (`state_group_id`) REFERENCES `ezcontent_state_group` (`state_group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`default_language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 

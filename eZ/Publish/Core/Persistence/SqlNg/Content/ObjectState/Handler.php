@@ -171,7 +171,9 @@ class Handler implements BaseObjectStateHandler
      */
     public function create( $groupId, InputStruct $input )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        return $this->load(
+            $this->objectStateGateway->insertObjectState( $groupId, $input )
+        );
     }
 
     /**
