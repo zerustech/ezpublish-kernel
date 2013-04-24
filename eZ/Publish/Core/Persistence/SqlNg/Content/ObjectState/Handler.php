@@ -278,7 +278,17 @@ class Handler implements BaseObjectStateHandler
      */
     public function delete( $stateId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $groupId = $this->load( $stateId )->groupId;
+
+        $this->objectStateGateway->deleteObjectState( $stateId );
+
+        if ( $remainingStates = $this->loadObjectStates( $groupId ) )
+        {
+            $this->setPriority(
+                $remainingStates[0]->id,
+                $remainingStates[0]->priority
+            );
+        }
     }
 
     /**

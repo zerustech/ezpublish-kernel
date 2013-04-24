@@ -284,7 +284,17 @@ class EzcDatabase extends Gateway
      */
     public function deleteObjectState( $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom(
+            $this->dbHandler->quoteTable( 'ezcontent_state' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $query->prepare()->execute();
     }
 
     /**

@@ -291,20 +291,19 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::delete
-     *
-     * @return void
+     * @depends testCreate
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
      */
-    public function testDelete()
+    public function testDelete( $state )
     {
         $handler = $this->getObjectStateHandler();
 
-        $handler->delete( 1 );
+        $handler->delete( $state->id );
+
+        $handler->load( $state->id );
     }
 
     /**
-     * @return void
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::delete
      * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
      */
     public function testDeleteThrowsNotFoundException()
