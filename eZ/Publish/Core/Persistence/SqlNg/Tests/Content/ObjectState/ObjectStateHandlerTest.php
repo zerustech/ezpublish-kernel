@@ -165,18 +165,6 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::deleteGroup
-     *
-     * @return void
-     */
-    public function testDeleteGroup()
-    {
-        $handler = $this->getObjectStateHandler();
-
-        $handler->deleteGroup( 2 );
-    }
-
-    /**
      * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::create
      *
      * @return void
@@ -377,5 +365,17 @@ class ObjectStateHandlerTest extends TestCase
     protected function getInputStructFixture()
     {
         return new Persistence\Content\ObjectState\InputStruct();
+    }
+
+    /**
+     * @depends testCreateGroup
+     */
+    public function testDeleteGroup( $stateGroup )
+    {
+        $handler = $this->getObjectStateHandler();
+
+        $handler->deleteGroup( $stateGroup->id );
+
+        $this->assertEquals(array(), $handler->loadAllGroups() );
     }
 }
