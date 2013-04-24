@@ -320,7 +320,14 @@ class Handler implements BaseObjectStateHandler
      */
     public function getContentState( $contentId, $stateGroupId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $data = $this->objectStateGateway->loadObjectStateDataForContent( $contentId, $stateGroupId );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFoundException( "ObjectState", array( "groupId" => $stateGroupId ) );
+        }
+
+        return $this->objectStateMapper->createObjectStateFromData( $data );
     }
 
     /**

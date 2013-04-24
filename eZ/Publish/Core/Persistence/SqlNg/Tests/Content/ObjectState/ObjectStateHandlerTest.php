@@ -338,23 +338,35 @@ class ObjectStateHandlerTest extends TestCase
         );
 
         $this->assertEquals( true, $result );
+
+        return $newState;
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::getContentState
-     *
-     * @return void
+     * @depends testChangeContentState
      */
-    public function testGetContentState()
+    public function testGetContentState( $state )
     {
         $handler = $this->getObjectStateHandler();
 
-        $result = $handler->getContentState( 42, 2 );
-
-        $this->assertInstanceOf(
-            'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
-            $result
+        $content = $this->getContent();
+        $loaded = $handler->getContentState(
+            $content->versionInfo->contentInfo->id,
+            $state->groupId
         );
+
+        $this->assertEquals( $state, $loaded );
+    }
+
+    /**
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    public function testGetContentStateNotFoundException()
+    {
+        $handler = $this->getObjectStateHandler();
+
+        $content = $this->getContent();
+        $loaded = $handler->getContentState( PHP_INT_MAX, PHP_INT_MAX );
     }
 
     /**
