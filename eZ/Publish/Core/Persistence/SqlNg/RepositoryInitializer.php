@@ -69,7 +69,6 @@ class RepositoryInitializer
         $rootLocationCreate = new Persistence\Content\Location\CreateStruct(
             array(
                 'remoteId' => '629709ba256fe317c3ddcee35453a96a',
-                'mainLocationId' => '1',
                 'sortField' => 1,
                 'sortOrder' => 1,
             )

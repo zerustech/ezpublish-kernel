@@ -41,7 +41,6 @@ class Mapper
         $location->contentId = $data[$prefix . 'content_id'];
         $location->parentId = $data[$prefix . 'parent_id'];
         $location->pathString = $data[$prefix . 'path_string'];
-        $location->mainLocationId = $data[$prefix . 'main_id'];
         $location->depth = $data[$prefix . 'depth'];
         $location->sortField = $data[$prefix . 'sort_field'];
         $location->sortOrder = $data[$prefix . 'sort_order'];
