@@ -92,7 +92,18 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateGroupData( $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateGroupFindQuery();
+        $query->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state_group' ),
+                $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetch( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -278,5 +289,33 @@ class EzcDatabase extends Gateway
     public function updateObjectStatePriority( $stateId, $priority )
     {
         throw new \RuntimeException( "@TODO: Implement" );
+    }
+
+    /**
+     * Creates a generalized query for fetching object state group(s)
+     *
+     * @return \ezcQuerySelect
+     */
+    protected function createObjectStateGroupFindQuery()
+    {
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            // Object state group
+            $this->dbHandler->aliasedColumn( $query, 'state_group_id', 'ezcontent_state_group' ),
+            $this->dbHandler->aliasedColumn( $query, 'language_code', 'ezcontent_language' ),
+            $this->dbHandler->aliasedColumn( $query, 'identifier', 'ezcontent_state_group' ),
+            $this->dbHandler->aliasedColumn( $query, 'name', 'ezcontent_state_group' ),
+            $this->dbHandler->aliasedColumn( $query, 'description', 'ezcontent_state_group' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_state_group' )
+        )->innerJoin(
+            $this->dbHandler->quoteTable( 'ezcontent_language' ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'language_id', 'ezcontent_language' ),
+                $this->dbHandler->quoteColumn( 'default_language_id', 'ezcontent_state_group' )
+            )
+        );
+
+        return $query;
     }
 }

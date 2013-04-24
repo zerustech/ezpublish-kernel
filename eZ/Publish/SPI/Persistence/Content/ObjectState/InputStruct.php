@@ -41,7 +41,7 @@ class InputStruct extends ValueObject
      *
      * @var string[]
      */
-    public $name;
+    public $name = array();
 
     /**
      * Human readable description of the object state
@@ -53,6 +53,6 @@ class InputStruct extends ValueObject
      *
      * @var string[]
      */
-    public $description;
+    public $description = array();
 
 }

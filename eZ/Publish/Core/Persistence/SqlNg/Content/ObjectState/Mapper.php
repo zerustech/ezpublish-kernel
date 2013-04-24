@@ -52,7 +52,22 @@ class Mapper
      */
     public function createObjectStateGroupFromData( array $data )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $objectStateGroup = new Group();
+
+        $objectStateGroup->id = (int)$data['ezcontent_state_group_state_group_id'];
+        $objectStateGroup->identifier = $data['ezcontent_state_group_identifier'];
+        $objectStateGroup->defaultLanguage = $data['ezcontent_language_language_code'];
+        $objectStateGroup->name = json_decode( $data['ezcontent_state_group_name'], true );
+        $objectStateGroup->description = json_decode( $data['ezcontent_state_group_description'], true );
+
+        $objectStateGroup->languageCodes = array_unique(
+            array_merge(
+                array_keys( $objectStateGroup->name ),
+                array_keys( $objectStateGroup->description )
+            )
+        );
+
+        return $objectStateGroup;
     }
 
     /**
