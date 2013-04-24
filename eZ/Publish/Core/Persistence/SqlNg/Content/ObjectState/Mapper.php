@@ -9,9 +9,7 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState;
 
-use eZ\Publish\SPI\Persistence\Content\ObjectState;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\Group;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct;
+use eZ\Publish\SPI\Persistence;
 use eZ\Publish\SPI\Persistence\Content\Language\Handler as LanguageHandler;
 
 /**
@@ -28,7 +26,23 @@ class Mapper
      */
     public function createObjectStateFromData( array $data )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $objectState = new Persistence\Content\ObjectState();
+
+        $objectState->id = (int)$data['ezcontent_state_state_id'];
+        $objectState->groupId = $data['ezcontent_state_state_group_id'];
+        $objectState->identifier = $data['ezcontent_state_identifier'];
+        $objectState->defaultLanguage = $data['ezcontent_language_language_code'];
+        $objectState->name = json_decode( $data['ezcontent_state_name'], true );
+        $objectState->description = json_decode( $data['ezcontent_state_description'], true );
+
+        $objectState->languageCodes = array_unique(
+            array_merge(
+                array_keys( $objectState->name ),
+                array_keys( $objectState->description )
+            )
+        );
+
+        return $objectState;
     }
 
     /**
@@ -52,7 +66,7 @@ class Mapper
      */
     public function createObjectStateGroupFromData( array $data )
     {
-        $objectStateGroup = new Group();
+        $objectStateGroup = new Persistence\Content\ObjectState\Group();
 
         $objectStateGroup->id = (int)$data['ezcontent_state_group_state_group_id'];
         $objectStateGroup->identifier = $data['ezcontent_state_group_identifier'];

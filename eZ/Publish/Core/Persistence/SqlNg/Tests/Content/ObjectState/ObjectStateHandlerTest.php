@@ -192,26 +192,6 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::loadObjectStates
-     *
-     * @return void
-     */
-    public function testLoadObjectStates()
-    {
-        $handler = $this->getObjectStateHandler();
-
-        $result = $handler->loadObjectStates( 2 );
-
-        foreach ( $result as $resultItem )
-        {
-            $this->assertInstanceOf(
-                'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
-                $resultItem
-            );
-        }
-    }
-
-    /**
      * @return void
      * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::load
      * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
@@ -238,6 +218,26 @@ class ObjectStateHandlerTest extends TestCase
             'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
             $result
         );
+    }
+
+    /**
+     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::loadObjectStates
+     *
+     * @return void
+     */
+    public function testLoadObjectStates()
+    {
+        $handler = $this->getObjectStateHandler();
+
+        $result = $handler->loadObjectStates( 2 );
+
+        foreach ( $result as $resultItem )
+        {
+            $this->assertInstanceOf(
+                'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
+                $resultItem
+            );
+        }
     }
 
     /**

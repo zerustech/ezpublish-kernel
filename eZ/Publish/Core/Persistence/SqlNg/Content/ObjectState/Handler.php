@@ -187,7 +187,14 @@ class Handler implements BaseObjectStateHandler
      */
     public function load( $stateId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $data = $this->objectStateGateway->loadObjectStateData( $stateId );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFoundException( "ObjectState", $stateId );
+        }
+
+        return $this->objectStateMapper->createObjectStateFromData( $data );
     }
 
     /**
