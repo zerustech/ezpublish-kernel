@@ -9,11 +9,10 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway;
 
+use eZ\Publish\SPI\Persistence;
 use eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway;
-use eZ\Publish\Core\Persistence\SqlNg\Content\Language\MaskGenerator;
 use eZ\Publish\Core\Persistence\Legacy\EzcDbHandler;
-use eZ\Publish\SPI\Persistence\Content\ObjectState;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\Group;
+use eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler as LanguageHandler;
 
 /**
  * ObjectState ezcDatabase Gateway
@@ -28,14 +27,23 @@ class EzcDatabase extends Gateway
     protected $dbHandler;
 
     /**
+     * Language handler
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler
+     */
+    protected $languageHandler;
+
+    /**
      * Creates a new EzcDatabase ObjectState Gateway
      *
      * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $dbHandler
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\MaskGenerator $maskGenerator
+     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler $languageHandler
+     * @return void
      */
-    public function __construct( EzcDbHandler $dbHandler )
+    public function __construct( EzcDbHandler $dbHandler, LanguageHandler $languageHandler )
     {
         $this->dbHandler = $dbHandler;
+        $this->languageHandler = $languageHandler;
     }
 
     /**
@@ -118,7 +126,7 @@ class EzcDatabase extends Gateway
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
      * @param int $groupId
      */
-    public function insertObjectState( ObjectState $objectState, $groupId )
+    public function insertObjectState( Persistence\Content\ObjectState $objectState, $groupId )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
@@ -128,7 +136,7 @@ class EzcDatabase extends Gateway
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
      */
-    public function updateObjectState( ObjectState $objectState )
+    public function updateObjectState( Persistence\Content\ObjectState $objectState )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
@@ -169,9 +177,39 @@ class EzcDatabase extends Gateway
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
      */
-    public function insertObjectStateGroup( Group $objectStateGroup )
+    public function insertObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( 'ezcontent_state_group' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'state_group_id' ),
+            $this->dbHandler->getAutoIncrementValue( 'ezcontent_state_group', 'state_group_id' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'default_language_id' ),
+            $query->bindValue(
+                $this->languageHandler->loadByLanguageCode(
+                    $objectStateGroup->defaultLanguage
+                )->id,
+                null,
+                \PDO::PARAM_INT
+            )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $objectStateGroup->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $objectStateGroup->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $objectStateGroup->description ) )
+        );
+
+        $query->prepare()->execute();
+
+        return (int)$this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( 'ezcontent_state_group', 'state_group_id' )
+        );
     }
 
     /**
@@ -179,7 +217,7 @@ class EzcDatabase extends Gateway
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
      */
-    public function updateObjectStateGroup( Group $objectStateGroup )
+    public function updateObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }

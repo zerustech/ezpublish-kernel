@@ -9,8 +9,7 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState;
 
-use eZ\Publish\SPI\Persistence\Content\ObjectState;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\Group;
+use eZ\Publish\SPI\Persistence;
 
 /**
  * ObjectState Gateway
@@ -79,14 +78,14 @@ abstract class Gateway
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
      * @param int $groupId
      */
-    abstract public function insertObjectState( ObjectState $objectState, $groupId );
+    abstract public function insertObjectState( Persistence\Content\ObjectState $objectState, $groupId );
 
     /**
      * Updates the stored object state with provided data
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
      */
-    abstract public function updateObjectState( ObjectState $objectState );
+    abstract public function updateObjectState( Persistence\Content\ObjectState $objectState );
 
     /**
      * Deletes object state identified by $stateId
@@ -113,16 +112,16 @@ abstract class Gateway
     /**
      * Inserts a new object state group into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectStateGroup
      */
-    abstract public function insertObjectStateGroup( Group $objectStateGroup );
+    abstract public function insertObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup );
 
     /**
      * Updates the stored object state group with provided data
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
      */
-    abstract public function updateObjectStateGroup( Group $objectStateGroup );
+    abstract public function updateObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup );
 
     /**
      * Deletes the object state group identified by $groupId

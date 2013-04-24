@@ -10,8 +10,7 @@
 namespace eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway;
 
 use eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway;
-use eZ\Publish\SPI\Persistence\Content\ObjectState;
-use eZ\Publish\SPI\Persistence\Content\ObjectState\Group;
+use eZ\Publish\SPI\Persistence;
 
 /**
  * ObjectState Gateway
@@ -181,7 +180,7 @@ class ExceptionConversion extends Gateway
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
      * @param int $groupId
      */
-    public function insertObjectState( ObjectState $objectState, $groupId )
+    public function insertObjectState( Persistence\Content\ObjectState $objectState, $groupId )
     {
         try
         {
@@ -202,7 +201,7 @@ class ExceptionConversion extends Gateway
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState $objectState
      */
-    public function updateObjectState( ObjectState $objectState )
+    public function updateObjectState( Persistence\Content\ObjectState $objectState )
     {
         try
         {
@@ -285,9 +284,9 @@ class ExceptionConversion extends Gateway
     /**
      * Inserts a new object state group into database
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectStateGroup
      */
-    public function insertObjectStateGroup( Group $objectStateGroup )
+    public function insertObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
         try
         {
@@ -306,9 +305,9 @@ class ExceptionConversion extends Gateway
     /**
      * Updates the stored object state group with provided data
      *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
+     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectStateGroup
      */
-    public function updateObjectStateGroup( Group $objectStateGroup )
+    public function updateObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
         try
         {
