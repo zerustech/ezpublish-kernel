@@ -432,7 +432,73 @@ class EzcDatabase extends Gateway
      */
     public function setContentState( $contentId, $groupId, $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        // First find out if $contentId is related to existing states in $groupId
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->aliasedColumn( $query, 'state_id', 'ezcontent_state_link' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_state_link' )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state_link' ),
+                    $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_state_link' ),
+                    $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        $rows = $statement->fetchAll( \PDO::FETCH_ASSOC );
+
+        if ( !empty( $rows ) )
+        {
+            // We already have a state assigned to $contentId, update to new one
+            $query = $this->dbHandler->createUpdateQuery();
+            $query->update(
+                $this->dbHandler->quoteTable( 'ezcontent_state_link' )
+            )->set(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )->where(
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state_link' ),
+                        $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+                    ),
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'content_id', 'ezcontent_state_link' ),
+                        $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+                    )
+                )
+            );
+
+            $query->prepare()->execute();
+        }
+        else
+        {
+            // No state assigned to $contentId from specified group, create assignment
+            $query = $this->dbHandler->createInsertQuery();
+            $query->insertInto(
+                $this->dbHandler->quoteTable( 'ezcontent_state_link' )
+            )->set(
+                $this->dbHandler->quoteColumn( 'content_id' ),
+                $query->bindValue( $contentId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'state_group_id' ),
+                $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            );
+
+            $query->prepare()->execute();
+        }
     }
 
     /**

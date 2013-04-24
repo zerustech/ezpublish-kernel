@@ -303,11 +303,13 @@ CREATE TABLE `ezcontent_state_group` (
 DROP TABLE IF EXISTS `ezcontent_state_link`;
 CREATE TABLE `ezcontent_state_link` (
     `content_id` INT NOT NULL DEFAULT '0',
+    `state_group_id` INT NOT NULL DEFAULT 0,
     `state_id` INT NOT NULL DEFAULT '0',
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`content_id`, `state_id`),
+    PRIMARY KEY (`content_id`, `state_group_id`, `state_id`),
+    UNIQUE KEY (`content_id`, `state_group_id`),
     FOREIGN KEY (`content_id`) REFERENCES `ezcontent` (`content_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`state_id`) REFERENCES `ezcontent_state` (`state_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+    FOREIGN KEY (`state_id`) REFERENCES `ezcontent_state` (`state_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 SET FOREIGN_KEY_CHECKS = 1;

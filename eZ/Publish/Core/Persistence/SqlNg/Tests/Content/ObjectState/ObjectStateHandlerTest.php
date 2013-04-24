@@ -292,37 +292,50 @@ class ObjectStateHandlerTest extends TestCase
 
     /**
      * @depends testCreate
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
      */
-    public function testDelete( $state )
+    public function testSetContentState( $state )
     {
         $handler = $this->getObjectStateHandler();
 
-        $handler->delete( $state->id );
+        $content = $this->getContent();
+        $result = $handler->setContentState(
+            $content->versionInfo->contentInfo->id,
+            $state->groupId,
+            $state->id
+        );
 
-        $handler->load( $state->id );
+        $this->assertEquals( true, $result );
+
+        return $state;
     }
 
     /**
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     * @depends testSetContentState
      */
-    public function testDeleteThrowsNotFoundException()
+    public function testChangeContentState( $state )
     {
         $handler = $this->getObjectStateHandler();
 
-        $handler->delete( PHP_INT_MAX );
-    }
+        $newState = $handler->create(
+            $state->groupId,
+            new Persistence\Content\ObjectState\InputStruct( array(
+                'defaultLanguage' => $state->defaultLanguage,
+                'identifier' => 'test-state-3',
+                'name' => array(
+                    $state->defaultLanguage => 'Test State 3',
+                ),
+                'description' => array(
+                    $state->defaultLanguage => 'Test State 3',
+                ),
+            ) )
+        );
 
-    /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::setContentState
-     *
-     * @return void
-     */
-    public function testSetContentState()
-    {
-        $handler = $this->getObjectStateHandler();
-
-        $result = $handler->setContentState( 42, 2, 2 );
+        $content = $this->getContent();
+        $result = $handler->setContentState(
+            $content->versionInfo->contentInfo->id,
+            $newState->groupId,
+            $newState->id
+        );
 
         $this->assertEquals( true, $result );
     }
@@ -356,6 +369,29 @@ class ObjectStateHandlerTest extends TestCase
         $result = $handler->getContentCount( 1 );
 
         $this->assertEquals( 185, $result );
+    }
+
+    /**
+     * @depends testCreate
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    public function testDelete( $state )
+    {
+        $handler = $this->getObjectStateHandler();
+
+        $handler->delete( $state->id );
+
+        $handler->load( $state->id );
+    }
+
+    /**
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    public function testDeleteThrowsNotFoundException()
+    {
+        $handler = $this->getObjectStateHandler();
+
+        $handler->delete( PHP_INT_MAX );
     }
 
     /**

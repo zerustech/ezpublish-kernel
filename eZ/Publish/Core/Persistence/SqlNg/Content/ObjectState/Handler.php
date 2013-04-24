@@ -302,7 +302,8 @@ class Handler implements BaseObjectStateHandler
      */
     public function setContentState( $contentId, $groupId, $stateId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $this->objectStateGateway->setContentState( $contentId, $groupId, $stateId );
+        return true;
     }
 
     /**
