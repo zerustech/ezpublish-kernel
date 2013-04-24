@@ -230,8 +230,6 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
             array(
                 'id' => $this->generateId( 'typegroup', 2 ),
                 'identifier' => 'Users',
-                'creationDate' => $this->createDateTime( 1031216941 ),
-                'modificationDate' => $this->createDateTime( 1033922113 ),
                 'creatorId' => $this->getSetupFactory()->getAdminUserId(),
                 'modifierId' => $this->getSetupFactory()->getAdminUserId(),
             ),
