@@ -69,7 +69,6 @@ class RepositoryInitializer
         $rootLocationCreate = new Persistence\Content\Location\CreateStruct(
             array(
                 'remoteId' => '629709ba256fe317c3ddcee35453a96a',
-                'mainLocationId' => '1',
                 'sortField' => 1,
                 'sortOrder' => 1,
             )
@@ -572,9 +571,7 @@ class RepositoryInitializer
                             'type' => 'ezpage',
                             'value' => new Persistence\Content\FieldValue(
                                 array(
-                                    'data' => new \eZ\Publish\Core\FieldType\Page\Parts\Page(
-                                        new \eZ\Publish\Core\FieldType\Page\Service()
-                                    ),
+                                    'data' => new \eZ\Publish\Core\FieldType\Page\Parts\Page(),
                                     'externalData' => NULL,
                                     'sortKey' => NULL,
                                 )

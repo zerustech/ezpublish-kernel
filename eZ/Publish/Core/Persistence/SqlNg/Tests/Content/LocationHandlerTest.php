@@ -37,7 +37,6 @@ class LocationHandlerTest extends TestCase
                 'remoteId' => 'test-location-root',
                 'contentId' => $content->versionInfo->contentInfo->id,
                 'contentVersion' => $content->versionInfo->versionNo,
-                'mainLocationId' => true,
                 'parentId' => null,
             ) )
         );
@@ -64,7 +63,6 @@ class LocationHandlerTest extends TestCase
                 'remoteId' => 'test-location-child',
                 'contentId' => $content->versionInfo->contentInfo->id,
                 'contentVersion' => $content->versionInfo->versionNo,
-                'mainLocationId' => $root->id,
                 'parentId' => $root->id,
             ) )
         );
@@ -297,19 +295,6 @@ class LocationHandlerTest extends TestCase
         );
 
         // No sensible assertions here…
-    }
-
-    /**
-     * @depends testCreateChildLocation
-     */
-    public function testChangeMainLocation( $location )
-    {
-        $handler = $this->getLocationHandler();
-
-        $handler->changeMainLocation( $location->contentId, $location->id );
-
-        $this->assertEquals( $location->id, $handler->load( $location->parentId )->mainLocationId );
-        $this->assertEquals( null, $handler->load( $location->id )->mainLocationId );
     }
 
     /**

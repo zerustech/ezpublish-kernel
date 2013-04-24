@@ -18,6 +18,7 @@ use eZ\Publish\API\Repository\Values\User\User;
 use eZ\Publish\API\Repository\Values\ContentType\ContentTypeUpdateStruct;
 use eZ\Publish\API\Repository\Values\ContentType\ContentTypeCreateStruct as APIContentTypeCreateStruct;
 use eZ\Publish\Core\REST\Client\Values\ContentType\ContentTypeCreateStruct;
+use eZ\Publish\Core\REST\Client\Values\ContentType\ContentType as RestContentType;
 use eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup;
 use eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroupUpdateStruct;
 use eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroupCreateStruct;
@@ -33,6 +34,7 @@ use eZ\Publish\Core\REST\Client\Values;
 use eZ\Publish\Core\REST\Client\Exceptions\InvalidArgumentValue;
 use eZ\Publish\Core\REST\Common\Exceptions\InvalidArgumentException;
 use eZ\Publish\Core\REST\Common\Exceptions\ForbiddenException;
+use eZ\Publish\Core\REST\Client\Exceptions\BadStateException;
 
 /**
  * @example Examples/contenttype.php
@@ -41,11 +43,6 @@ use eZ\Publish\Core\REST\Common\Exceptions\ForbiddenException;
  */
 class ContentTypeService implements APIContentTypeService, Sessionable
 {
-    /**
-     * @var \eZ\Publish\Core\REST\Client\ContentService
-     */
-    private $contentService;
-
     /**
      * @var \eZ\Publish\Core\REST\Client\HttpClient
      */
@@ -85,7 +82,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      *
      * Only for testing
      *
-     * @param mixed tringid
+     * @param mixed $id
      *
      * @private
      *
@@ -135,7 +132,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException If group can not be found
      *
-     * @param int $contentTypeGroupId
+     * @param mixed $contentTypeGroupId
      *
      * @return \eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup
      */
@@ -164,23 +161,24 @@ class ContentTypeService implements APIContentTypeService, Sessionable
     {
         $response = $this->client->request(
             'GET',
-            $this->urlHandler->generate( 'typegroups' ),
+            $this->urlHandler->generate( 'typegroupByIdentifier', array( "typegroup" => $contentTypeGroupIdentifier ) ),
             new Message(
                 array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeGroupList' ) )
             )
         );
-        $contentTypeGroups = $this->inputDispatcher->parse( $response );
 
-        foreach ( $contentTypeGroups as $contentTypeGroup )
+        if ( $response->statusCode == 307 )
         {
-            if ( $contentTypeGroup->identifier == $contentTypeGroupIdentifier )
-            {
-                return $contentTypeGroup;
-            }
+            $response = $this->client->request(
+                'GET',
+                $response->headers['Location'],
+                new Message(
+                    array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeGroup' ) )
+                )
+            );
         }
 
-        // TODO this really needs /content/typegroups?identifier=blah
-        throw new NotFoundException( "Could not find..." );
+        return $this->inputDispatcher->parse( $response );
     }
 
     /**
@@ -259,7 +257,14 @@ class ContentTypeService implements APIContentTypeService, Sessionable
 
         if ( !empty( $response->body ) )
         {
-            $this->inputDispatcher->parse( $response );
+            try
+            {
+                return $this->inputDispatcher->parse( $response );
+            }
+            catch ( ForbiddenException $e )
+            {
+                throw new InvalidArgumentException( $e->getMessage(), $e->getCode() );
+            }
         }
     }
 
@@ -278,7 +283,119 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function createContentType( APIContentTypeCreateStruct $contentTypeCreateStruct, array $contentTypeGroups )
     {
-        throw new \Exception( "@todo: Implement." );
+        $inputMessage = $this->outputVisitor->visit( $contentTypeCreateStruct );
+        $inputMessage->headers['Accept'] = $this->outputVisitor->getMediaType( 'ContentType' );
+
+        if ( empty( $contentTypeGroups ) )
+        {
+            throw new InvalidArgumentException(
+                "Argument '\$contentTypeGroups' is invalid: Argument must contain at least one ContentTypeGroup"
+            );
+        }
+
+        /** @var $firstGroup \eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup */
+        /** @var $contentTypeGroups \eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup[] */
+        $firstGroup = array_pop( $contentTypeGroups );
+        $response = $this->client->request(
+            'POST',
+            $this->urlHandler->generate(
+                "grouptypes",
+                $this->urlHandler->parse( "typegroup", $firstGroup->id )
+            ),
+            $inputMessage
+        );
+
+        try
+        {
+            $contentType = $this->inputDispatcher->parse( $response );
+        }
+        catch ( ForbiddenException $e )
+        {
+            throw new InvalidArgumentException( $e->getMessage(), $e->getCode() );
+        }
+
+        foreach ( $contentTypeGroups as $contentTypeGroup )
+        {
+            $this->assignContentTypeGroup( $contentType, $contentTypeGroup );
+        }
+
+        return $this->completeContentType( $contentType );
+    }
+
+    /**
+     *
+     *
+     * TODO: ContentTypeGroupList reference should really be already available in the ContentType returned from server, so this method can be removed
+     *
+     * @param \eZ\Publish\API\Repository\Values\ContentType\ContentType $contentType
+     *
+     * @return \eZ\Publish\API\Repository\Values\ContentType\ContentType
+     */
+    protected function completeContentType( ContentType $contentType )
+    {
+        // TODO: currently no way to fetch groups of a type draft
+        if ( $contentType instanceof ContentTypeDraft )
+        {
+            return $contentType;
+        }
+
+        $response = $this->client->request(
+            "GET",
+            $this->urlHandler->generate(
+                "groupsOfType",
+                $this->urlHandler->parse( "type", $contentType->id )
+            ),
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeGroupRefList' ) )
+            )
+        );
+
+        /** @var $referenceList \eZ\Publish\Core\REST\Client\Values\ContentTypeGroupRefList */
+        $referenceList = $this->inputDispatcher->parse( $response );
+
+        return new RestContentType(
+            $this,
+            array(
+                "id" => $contentType->id,
+                "remoteId" => $contentType->remoteId,
+                "identifier" => $contentType->identifier,
+                "creatorId" => $contentType->creatorId,
+                "modifierId" => $contentType->modifierId,
+                "creationDate" => $contentType->creationDate,
+                "modificationDate" => $contentType->modificationDate,
+                "defaultSortField" => $contentType->defaultSortField,
+                "defaultSortOrder" => $contentType->defaultSortOrder,
+                "defaultAlwaysAvailable" => $contentType->defaultAlwaysAvailable,
+                "names" => $contentType->names,
+                "descriptions" => $contentType->descriptions,
+                "isContainer" => $contentType->isContainer,
+                "mainLanguageCode" => $contentType->mainLanguageCode,
+                "nameSchema" => $contentType->nameSchema,
+                "urlAliasSchema" => $contentType->urlAliasSchema,
+                "status" => $contentType->status,
+
+                "fieldDefinitionListReference" => $contentType->fieldDefinitionListReference,
+                "contentTypeGroupListReference" => $referenceList->listReference,
+
+                // dynamic
+                //"fieldDefinitions" => $contentType->fieldDefinitions,
+                //"contentTypeGroups" => $contentType->contentTypeGroups,
+            )
+        );
+    }
+
+    /**
+     * Checks if the given response is an error
+     *
+     * @param Message $response
+     *
+     * @return boolean
+     */
+    protected function isErrorResponse( Message $response )
+    {
+        return (
+            strpos( $response->headers['Content-Type'], 'application/vnd.ez.api.ErrorMessage' ) === 0
+        );
     }
 
     /**
@@ -292,7 +409,14 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function loadContentTypeDraft( $contentTypeId )
     {
-        throw new \Exception( "@todo: Implement." );
+        $response = $this->client->request(
+            'GET',
+            $contentTypeId,
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentType' ) )
+            )
+        );
+        return $this->inputDispatcher->parse( $response );
     }
 
     /**
@@ -308,7 +432,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function updateContentTypeDraft( ContentTypeDraft $contentTypeDraft, ContentTypeUpdateStruct $contentTypeUpdateStruct )
     {
-        throw new \Exception( "@todo: Implement." );
+        throw new \RuntimeException( "@todo: Implement." );
     }
 
     /**
@@ -324,7 +448,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function addFieldDefinition( ContentTypeDraft $contentTypeDraft, FieldDefinitionCreateStruct $fieldDefinitionCreateStruct )
     {
-        throw new \Exception( "@todo: Implement." );
+        throw new \RuntimeException( "@todo: Implement." );
     }
 
     /**
@@ -338,7 +462,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function removeFieldDefinition( ContentTypeDraft $contentTypeDraft, FieldDefinition $fieldDefinition )
     {
-        throw new \Exception( "@todo: Implement." );
+        throw new \RuntimeException( "@todo: Implement." );
     }
 
     /**
@@ -354,7 +478,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function updateFieldDefinition( ContentTypeDraft $contentTypeDraft, FieldDefinition $fieldDefinition, FieldDefinitionUpdateStruct $fieldDefinitionUpdateStruct )
     {
-        throw new \Exception( "@todo: Implement." );
+        throw new \RuntimeException( "@todo: Implement." );
     }
 
     /**
@@ -369,7 +493,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function publishContentTypeDraft( ContentTypeDraft $contentTypeDraft )
     {
-        throw new \Exception( "@todo: Implement." );
+        throw new \RuntimeException( "@todo: Implement." );
     }
 
     /**
@@ -390,7 +514,8 @@ class ContentTypeService implements APIContentTypeService, Sessionable
                 array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentType' ) )
             )
         );
-        return $this->inputDispatcher->parse( $response );
+
+        return $this->completeContentType( $this->inputDispatcher->parse( $response ) );
     }
 
     /**
@@ -425,7 +550,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      *
      * @param mixed $fieldDefinitionListReference
      *
-     * @return FieldDefinitionList
+     * @return \eZ\Publish\Core\REST\Client\Values\FieldDefinitionList
      */
     public function loadFieldDefinitionList( $fieldDefinitionListReference )
     {
@@ -434,6 +559,28 @@ class ContentTypeService implements APIContentTypeService, Sessionable
             $fieldDefinitionListReference,
             new Message(
                 array( 'Accept' => $this->outputVisitor->getMediaType( 'FieldDefinitionList' ) )
+            )
+        );
+        return $this->inputDispatcher->parse( $response );
+    }
+
+    /**
+     * Loads the ContentTypeGroupList stored at $contentTypeGroupListReference
+     *
+     * ATTENTION: This is not an API method and only meant for internal use in
+     * the REST Client implementation.
+     *
+     * @param mixed $contentTypeGroupListReference
+     *
+     * @return \eZ\Publish\Core\REST\Client\Values\ContentTypeGroupRefList
+     */
+    public function loadContentTypeGroupList( $contentTypeGroupListReference )
+    {
+        $response = $this->client->request(
+            'GET',
+            $contentTypeGroupListReference,
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeGroupRefList' ) )
             )
         );
         return $this->inputDispatcher->parse( $response );
@@ -450,7 +597,15 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function loadContentTypeByIdentifier( $identifier )
     {
-        throw new \Exception( "@todo: Implement." );
+        $response = $this->client->request(
+            'GET',
+            $this->urlHandler->generate( "typeByIdentifier", array( "type" => $identifier ) ),
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeList' ) )
+            )
+        );
+        $contentTypes = $this->inputDispatcher->parse( $response );
+        return $this->completeContentType( reset( $contentTypes ) );
     }
 
     /**
@@ -464,7 +619,15 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function loadContentTypeByRemoteId( $remoteId )
     {
-        throw new \Exception( "@todo: Implement." );
+        $response = $this->client->request(
+            'GET',
+            $this->urlHandler->generate( "typeByRemoteId", array( "type" => $remoteId ) ),
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeList' ) )
+            )
+        );
+        $contentTypes = $this->inputDispatcher->parse( $response );
+        return reset( $contentTypes );
     }
 
     /**
@@ -476,7 +639,23 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function loadContentTypes( ContentTypeGroup $contentTypeGroup )
     {
-        throw new \Exception( "@todo: Implement." );
+        $response = $this->client->request(
+            'GET',
+            $this->urlHandler->generate(
+                "grouptypes",
+                $this->urlHandler->parse( "typegroup", $contentTypeGroup->id )
+            ),
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeList' ) )
+            )
+        );
+        $completedContentTypes = array();
+        $contentTypes = $this->inputDispatcher->parse( $response );
+        foreach ( $contentTypes as $contentType )
+        {
+            $completedContentTypes[] = $this->completeContentType( $contentType );
+        }
+        return $completedContentTypes;
     }
 
     /**
@@ -494,7 +673,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function createContentTypeDraft( ContentType $contentType )
     {
-        throw new \Exception( "@todo: Implement." );
+        throw new \RuntimeException( "@todo: Implement." );
     }
 
     /**
@@ -509,7 +688,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function deleteContentType( ContentType $contentType )
     {
-        throw new \Exception( "@todo: Implement." );
+        throw new \RuntimeException( "@todo: Implement." );
     }
 
     /**
@@ -527,7 +706,7 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function copyContentType( ContentType $contentType, User $user = null )
     {
-        throw new \Exception( "@todo: Implement." );
+        throw new \RuntimeException( "@todo: Implement." );
     }
 
     /**
@@ -541,7 +720,35 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function assignContentTypeGroup( ContentType $contentType, ContentTypeGroup $contentTypeGroup )
     {
-        throw new \Exception( "@todo: Implement." );
+        if ( $contentType instanceof ContentTypeDraft )
+        {
+            $urlValues = $this->urlHandler->parse( "typeDraft", $contentType->id );
+        }
+        else
+        {
+            $urlValues = $this->urlHandler->parse( "type", $contentType->id );
+        }
+        $urlValues["group"] = $contentTypeGroup->id;
+
+        $response = $this->client->request(
+            'POST',
+            $this->urlHandler->generate( 'typeGroupAssign', $urlValues ),
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeGroupRefList' ) )
+            )
+        );
+
+        if ( $this->isErrorResponse( $response ) )
+        {
+            try
+            {
+                $this->inputDispatcher->parse( $response );
+            }
+            catch ( ForbiddenException $e )
+            {
+                throw new InvalidArgumentException( $e->getMessage(), $e->getCode() );
+            }
+        }
     }
 
     /**
@@ -556,7 +763,40 @@ class ContentTypeService implements APIContentTypeService, Sessionable
      */
     public function unassignContentTypeGroup( ContentType $contentType, ContentTypeGroup $contentTypeGroup )
     {
-        throw new \Exception( "@todo: Implement." );
+        if ( $contentType instanceof ContentTypeDraft )
+        {
+            $urlValues = $this->urlHandler->parse( "typeDraft", $contentType->id );
+        }
+        else
+        {
+            $urlValues = $this->urlHandler->parse( "type", $contentType->id );
+        }
+        $groupUrlValues = $this->urlHandler->parse( "typegroup", $contentTypeGroup->id );
+        $urlValues["group"] = $groupUrlValues["typegroup"];
+
+        $response = $this->client->request(
+            'DELETE',
+            $this->urlHandler->generate( 'groupOfType', $urlValues ),
+            new Message(
+                array( 'Accept' => $this->outputVisitor->getMediaType( 'ContentTypeGroupRefList' ) )
+            )
+        );
+
+        if ( $this->isErrorResponse( $response ) )
+        {
+            try
+            {
+                $this->inputDispatcher->parse( $response );
+            }
+            catch ( ForbiddenException $e )
+            {
+                throw new InvalidArgumentException( $e->getMessage(), $e->getCode() );
+            }
+            catch ( NotFoundException $e )
+            {
+                throw new BadStateException( $e->getMessage(), $e->getCode() );
+            }
+        }
     }
 
     /**

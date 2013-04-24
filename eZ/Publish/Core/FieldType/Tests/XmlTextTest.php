@@ -15,12 +15,13 @@ use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use eZ\Publish\API\Repository\Values\Content\Relation;
 use Exception;
 use DOMDocument;
+use PHPUnit_Framework_TestCase;
 
 /**
  * @group fieldType
  * @group ezxmltext
  */
-class XmlTextTest extends FieldTypeTest
+class XmlTextTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Normally this should be enough:
@@ -134,8 +135,8 @@ class XmlTextTest extends FieldTypeTest
 
         $fieldValue = $ft->toPersistenceValue( $ft->acceptValue( $xmlData ) );
 
-        self::assertInstanceOf( 'DOMDocument', $fieldValue->data );
-        self::assertSame( $xmlDoc->saveXML(), $fieldValue->data->saveXML() );
+        self::assertInternalType( 'string', $fieldValue->data );
+        self::assertSame( $xmlDoc->saveXML(), $fieldValue->data );
     }
 
     public static function providerForTestAcceptValueValidFormat()

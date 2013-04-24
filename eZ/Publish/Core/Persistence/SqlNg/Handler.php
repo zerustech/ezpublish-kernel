@@ -466,6 +466,10 @@ class Handler implements HandlerInterface
         if ( !isset( $this->objectStateHandler ) )
         {
             $this->objectStateHandler = new Content\ObjectState\Handler(
+                new Content\ObjectState\Gateway\ExceptionConversion(
+                    new Content\ObjectState\Gateway\EzcDatabase( $this->dbHandler )
+                ),
+                new Content\ObjectState\Mapper()
             );
         }
         return $this->objectStateHandler;

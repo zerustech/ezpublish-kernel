@@ -9,18 +9,21 @@
 
 namespace eZ\Publish\Core\MVC\Symfony\View\Tests\ContentViewProvider\Configured;
 
-use eZ\Publish\Core\MVC\Symfony\View\Provider\Content\Configured;
+use eZ\Publish\Core\MVC\Symfony\View\Provider\Location\Configured as LocationViewProvider;
 use eZ\Publish\Core\MVC\Symfony\View\ContentViewProvider\Configured\Matcher;
-use eZ\Publish\API\Repository\Values\Content\Location;
 
 class ConfiguredTest extends BaseTest
 {
     /**
      * @expectedException \InvalidArgumentException
+     *
+     * @covers \eZ\Publish\Core\MVC\Symfony\View\Provider\Content\Configured::__construct
+     * @covers \eZ\Publish\Core\MVC\Symfony\View\Provider\Content\Configured::getView
      */
-    public function testGetViewWrongMatcher()
+    public function testGetViewLocationWrongMatcher()
     {
-        $lvp = $this->getPartiallyMockedLocationViewProvider(
+        $lvp = new LocationViewProvider(
+            $this->getRepositoryMock(),
             array(
                 'full' => array(
                     'failingMatchBlock' => array(
@@ -32,11 +35,6 @@ class ConfiguredTest extends BaseTest
                 )
             )
         );
-        $lvp
-            ->expects( $this->once() )
-            ->method( 'getMatcher' )
-            ->with( 'wrongMatcher' )
-            ->will( $this->returnValue( new \stdClass() ) );
 
         $lvp->getView(
             $this->getMock( 'eZ\\Publish\\API\\Repository\\Values\\Content\\Location' ),
@@ -57,7 +55,7 @@ class ConfiguredTest extends BaseTest
      */
     public function testGetViewLocation( array $matchers, array $matchingConfig, $match )
     {
-        $lvp = $this->getPartiallyMockedLocationViewProvider( $matchingConfig );
+        $lvp = $this->getPartiallyMockedViewProvider( $matchingConfig );
         $lvp
             ->expects(
                 $this->exactly( count( $matchers ) )
@@ -143,5 +141,34 @@ class ConfiguredTest extends BaseTest
         }
 
         return $arguments;
+    }
+
+    /**
+     * @covers eZ\Publish\Core\MVC\Symfony\View\Provider\Location\Configured::match
+     */
+    public function testMatch()
+    {
+        $matcherMock = $this->getMock( 'eZ\\Publish\\Core\\MVC\\Symfony\\View\\ContentViewProvider\\Configured\\Matcher' );
+        $locationMock = $this->getMock( 'eZ\\Publish\\API\\Repository\\Values\\Content\\Location' );
+        $matcherMock
+            ->expects( $this->once() )
+            ->method( 'matchLocation' )
+            ->with( $this->isInstanceOf( 'eZ\\Publish\\API\\Repository\\Values\\Content\\Location' ) );
+
+        $lvp = new LocationViewProvider( $this->getRepositoryMock(), array() );
+        $lvp->match( $matcherMock, $locationMock );
+    }
+
+    /**
+     * @covers eZ\Publish\Core\MVC\Symfony\View\Provider\Location\Configured::match
+     * @expectedException \InvalidArgumentException
+     */
+    public function testMatchWrongValueObject()
+    {
+        $matcherMock = $this->getMock( 'eZ\\Publish\\Core\\MVC\\Symfony\\View\\ContentViewProvider\\Configured\\Matcher' );
+        $locationMock = $this->getMock( 'eZ\\Publish\\API\\Repository\\Values\\Content\\ContentInfo' );
+
+        $lvp = new LocationViewProvider( $this->getRepositoryMock(), array() );
+        $lvp->match( $matcherMock, $locationMock );
     }
 }

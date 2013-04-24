@@ -41,7 +41,7 @@ use eZ\Publish\API\Repository\Exceptions\NotImplementedException;
  * content objects based on criteria, which could not be convertedd in to
  * database statements.
  */
-class Handler extends Persistence\Content\Search\Handler
+class Handler implements Persistence\Content\Search\Handler
 {
     /**
      * Content locator gateway.

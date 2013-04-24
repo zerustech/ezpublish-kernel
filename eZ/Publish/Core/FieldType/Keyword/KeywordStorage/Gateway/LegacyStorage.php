@@ -57,13 +57,13 @@ class LegacyStorage extends Gateway
      * Stores the keyword list from $field->value->externalData
      *
      * @param \eZ\Publish\SPI\Persistence\Content\Field
-     * @param mixed $contentTypeID
+     * @param mixed $contentTypeId
      */
-    public function storeFieldData( Field $field, $contentTypeID )
+    public function storeFieldData( Field $field, $contentTypeId )
     {
-        $existingKeywordMap = $this->getExistingKeywords( $field->value->externalData, $contentTypeID );
+        $existingKeywordMap = $this->getExistingKeywords( $field->value->externalData, $contentTypeId );
 
-        $this->deleteOldKeywordAssignements( $field );
+        $this->deleteOldKeywordAssignments( $field );
 
         $this->assignKeywords(
             $field->id,
@@ -72,9 +72,11 @@ class LegacyStorage extends Gateway
                     array_fill_keys( $field->value->externalData, true ),
                     $existingKeywordMap
                 ),
-                $contentTypeID
+                $contentTypeId
             ) + $existingKeywordMap
         );
+
+        $this->deleteOrphanedKeywords();
     }
 
     /**
@@ -96,9 +98,9 @@ class LegacyStorage extends Gateway
      *
      * @return mixed
      */
-    public function getContentTypeID( Field $field )
+    public function getContentTypeId( Field $field )
     {
-        return $this->loadContentTypeID( $field->fieldDefinitionId );
+        return $this->loadContentTypeId( $field->fieldDefinitionId );
     }
 
     /**
@@ -142,7 +144,7 @@ class LegacyStorage extends Gateway
      *
      * @return mixed
      */
-    protected function loadContentTypeID( $fieldDefinitionId )
+    protected function loadContentTypeId( $fieldDefinitionId )
     {
         $dbHandler = $this->getConnection();
 
@@ -181,11 +183,11 @@ class LegacyStorage extends Gateway
      * </code>
      *
      * @param string[] $keywordList
-     * @param mixed $contentTypeID
+     * @param mixed $contentTypeId
      *
      * @return mixed[]
      */
-    protected function getExistingKeywords( $keywordList, $contentTypeID )
+    protected function getExistingKeywords( $keywordList, $contentTypeId )
     {
         $dbHandler = $this->getConnection();
 
@@ -199,7 +201,7 @@ class LegacyStorage extends Gateway
                         "keyword",
                         $keywordList
                     ),
-                    $q->expr->eq( "class_id", $contentTypeID )
+                    $q->expr->eq( "class_id", $contentTypeId )
                 )
             );
         $statement = $q->prepare();
@@ -232,7 +234,7 @@ class LegacyStorage extends Gateway
      *
      * @return mixed[]
      */
-    protected function insertKeywords( array $keywordsToInsert, $contentTypeID )
+    protected function insertKeywords( array $keywordsToInsert, $contentTypeId )
     {
         $dbHandler = $this->getConnection();
 
@@ -246,7 +248,7 @@ class LegacyStorage extends Gateway
                 $dbHandler->quoteTable( "ezkeyword" )
             )->set(
                 $dbHandler->quoteColumn( "class_id" ),
-                $insertQuery->bindValue( $contentTypeID, null, \PDO::PARAM_INT )
+                $insertQuery->bindValue( $contentTypeId, null, \PDO::PARAM_INT )
             )->set(
                 $dbHandler->quoteColumn( "keyword" ),
                 $insertQuery->bindParam( $keyword )
@@ -267,7 +269,7 @@ class LegacyStorage extends Gateway
         return $keywordIdMap;
     }
 
-    protected function deleteOldKeywordAssignements( Field $field )
+    protected function deleteOldKeywordAssignments( Field $field )
     {
         $dbHandler = $this->getConnection();
 
@@ -325,5 +327,55 @@ class LegacyStorage extends Gateway
             $keywordId = $keywordMap[$keyword];
             $statement->execute();
         }
+    }
+
+    /**
+     * Deletes all orphaned keywords.
+     *
+     * @todo using two queries because zeta Database does not support joins in delete query.
+     * That could be avoided if the feature is implemented there.
+     *
+     * Keyword is orphaned if it is not linked to a content attribute through ezkeyword_attribute_link table.
+     *
+     * @return void
+     */
+    protected function deleteOrphanedKeywords()
+    {
+        $dbHandler = $this->getConnection();
+
+        /** @var $query \ezcQuerySelect */
+        $query = $dbHandler->createSelectQuery();
+        $query->select(
+            "ezkeyword.id"
+        )->from(
+            $dbHandler->quoteTable( "ezkeyword" )
+        )->leftJoin(
+            $dbHandler->quoteTable( "ezkeyword_attribute_link" ),
+            $query->expr->eq(
+                $dbHandler->quoteColumn( 'keyword_id', 'ezkeyword_attribute_link' ),
+                $dbHandler->quoteColumn( 'id', 'ezkeyword' )
+            )
+        )->where(
+            $query->expr->isNull( "ezkeyword_attribute_link.id" )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+        $ids = $statement->fetchAll( \PDO::FETCH_COLUMN );
+
+        if ( empty( $ids ) )
+        {
+            return;
+        }
+
+        /** @var $deleteQuery \ezcQueryDelete */
+        $deleteQuery = $dbHandler->createDeleteQuery();
+        $deleteQuery->deleteFrom(
+            $dbHandler->quoteTable( "ezkeyword" )
+        )->where(
+            $deleteQuery->expr->in( $dbHandler->quoteColumn( 'id' ), $ids )
+        );
+
+        $deleteQuery->prepare()->execute();
     }
 }

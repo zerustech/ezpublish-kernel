@@ -20,7 +20,6 @@ use Twig_Environment;
 use Twig_Function_Method;
 use Twig_Filter_Method;
 use Twig_Template;
-use SplObjectStorage;
 use InvalidArgumentException;
 use LogicException;
 
@@ -93,6 +92,11 @@ class ContentExtension extends Twig_Extension
      */
     protected $container;
 
+    /**
+     * @var \eZ\Publish\Core\MVC\ConfigResolverInterface
+     */
+    protected $configResolver;
+
     public function __construct( ContainerInterface $container, ConfigResolverInterface $resolver )
     {
         $comp = function ( $a, $b )
@@ -108,6 +112,7 @@ class ContentExtension extends Twig_Extension
 
         $this->blocks = array();
         $this->container = $container;
+        $this->configResolver = $resolver;
     }
 
     /**
@@ -185,20 +190,29 @@ class ContentExtension extends Twig_Extension
 
         /** @var $repository \eZ\Publish\API\Repository\Repository */
         $repository = $this->container->get( 'ezpublish.api.repository' );
+        /** @var $parameterProviderRegistry \eZ\Publish\Core\MVC\Symfony\FieldType\View\ParameterProviderRegistryInterface */
+        $parameterProviderRegistry = $this->container->get( 'ezpublish.fieldType.parameterProviderRegistry' );
 
         $versionInfo = $content->getVersionInfo();
         $contentInfo = $versionInfo->getContentInfo();
         $contentType = $repository->getContentTypeService()->loadContentType( $contentInfo->contentTypeId );
+        $fieldDefinition = $contentType->getFieldDefinition( $field->fieldDefIdentifier );
         // Adding Field, FieldSettings and ContentInfo objects to
         // parameters to be passed to the template
         $params += array(
             'field' => $field,
             'contentInfo' => $contentInfo,
             'versionInfo' => $versionInfo,
-            'fieldSettings' => $contentType
-                ->getFieldDefinition( $field->fieldDefIdentifier )
-                ->getFieldSettings()
+            'fieldSettings' => $fieldDefinition->getFieldSettings()
         );
+
+        // Adding field type specific parameters if any.
+        if ( $parameterProviderRegistry->hasParameterProvider( $fieldDefinition->fieldTypeIdentifier ) )
+        {
+            $params['parameters'] += $parameterProviderRegistry
+                ->getParameterProvider( $fieldDefinition->fieldTypeIdentifier )
+                ->getViewParameters();
+        }
 
         // make sure we can easily add class="<fieldtypeidentifier>-field" to the
         // generated HTML
@@ -250,13 +264,27 @@ class ContentExtension extends Twig_Extension
      */
     public function renderField( Content $content, $fieldIdentifier, array $params = array() )
     {
-        $lang = null;
-        if ( isset( $params['lang'] ) )
+        if ( !isset( $params['lang'] ) )
         {
-            $lang = $params['lang'];
+            $languages = $this->configResolver->getParameter( 'languages' );
+        }
+        else
+        {
+            $languages = array( $params['lang'] );
             unset( $params['lang'] );
         }
-        $field = $content->getField( $fieldIdentifier, $lang );
+        // Always add null as last entry so that we can use it pass it as languageCode $content->getField(),
+        // forcing to use the main language if all others fail.
+        $languages[] = null;
+
+        // Loop over prioritized languages to get the appropriate translated field.
+        foreach ( $languages as $lang )
+        {
+            $field = $content->getField( $fieldIdentifier, $lang );
+            if ( $field instanceof Field )
+                break;
+        }
+
         if ( !$field instanceof Field )
         {
             throw new InvalidArgumentException(

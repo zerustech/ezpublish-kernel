@@ -571,15 +571,10 @@ class EzcDatabase extends Gateway
         // of row is impossible
         if ( $createStruct->mainLocationId !== true )
         {
-            $location->mainLocationId = $createStruct->mainLocationId;
             $query->set(
                 $this->dbHandler->quoteColumn( 'main_id' ),
                 $query->bindValue( $createStruct->mainLocationId, null, \PDO::PARAM_INT )
             );
-        }
-        else
-        {
-            $location->mainLocationId = $location->id;
         }
 
         $query->prepare()->execute();

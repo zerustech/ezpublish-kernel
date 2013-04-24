@@ -180,7 +180,7 @@ class Mapper
                 {
                     $roleAssignmentData[$roleId][$contentId][$limitIdentifier] = new RoleAssignment(
                         array(
-                            'role' => $roles[$roleId],
+                            'roleId' => $roleId,
                             'contentId' => $contentId,
                             'limitationIdentifier' => $limitIdentifier,
                             'values' => array( $row['limit_value'] )
@@ -196,7 +196,7 @@ class Mapper
             {
                 $roleAssignmentData[$roleId][$contentId] = new RoleAssignment(
                     array(
-                        'role' => $roles[$roleId],
+                        'roleId' => $roleId,
                         'contentId' => $contentId
                     )
                 );

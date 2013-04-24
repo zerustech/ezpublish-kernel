@@ -28,21 +28,14 @@ class EzcDatabase extends Gateway
     protected $dbHandler;
 
     /**
-     * Language mask generator
-     *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\MaskGenerator
-     */
-    protected $maskGenerator;
-
-    /**
      * Creates a new EzcDatabase ObjectState Gateway
      *
      * @param \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler $dbHandler
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\MaskGenerator $maskGenerator
      */
-    public function __construct( EzcDbHandler $dbHandler, MaskGenerator $maskGenerator )
+    public function __construct( EzcDbHandler $dbHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
     }
 
     /**

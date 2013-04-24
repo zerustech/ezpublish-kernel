@@ -153,11 +153,9 @@ class Handler implements BaseContentHandler
                     null,
                 LocationGateway::CREATED
             );
-
-            $content->versionInfo->contentInfo->mainLocationId = $location->mainLocationId;
         }
 
-        return $content;
+        return $this->load( $content->versionInfo->contentInfo->id, $content->versionInfo->versionNo );
     }
 
     /**

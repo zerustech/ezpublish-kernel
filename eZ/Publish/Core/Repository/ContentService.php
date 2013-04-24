@@ -51,9 +51,6 @@ use eZ\Publish\SPI\Persistence\Content\Field as SPIField;
 use eZ\Publish\SPI\Persistence\Content\Location\CreateStruct as SPILocationCreateStruct;
 use eZ\Publish\SPI\Persistence\Content\Relation as SPIRelation;
 use eZ\Publish\SPI\Persistence\Content\Relation\CreateStruct as SPIRelationCreateStruct;
-use eZ\Publish\Core\FieldType\Value as BaseValue;
-use eZ\Publish\Core\FieldType\FieldType;
-use eZ\Publish\SPI\FieldType\FieldType as SPIFieldType;
 use DateTime;
 use Exception;
 
@@ -622,6 +619,18 @@ class ContentService implements ContentServiceInterface
             )
         );
 
+        $objectStateHandler = $this->persistenceHandler->objectStateHandler();
+        $defaultObjectStatesMap = array();
+        foreach ( $objectStateHandler->loadAllGroups() as $objectStateGroup )
+        {
+            foreach ( $objectStateHandler->loadObjectStates( $objectStateGroup->id ) as $objectState )
+            {
+                // Only register the first object state which is the default one.
+                $defaultObjectStatesMap[$objectStateGroup->id] = $objectState;
+                break;
+            }
+        }
+
         $this->repository->beginTransaction();
         try
         {
@@ -632,6 +641,16 @@ class ContentService implements ContentServiceInterface
                 $spiContent->versionInfo->versionNo,
                 $contentCreateStruct->contentType
             );
+
+            foreach ( $defaultObjectStatesMap as $objectStateGroupId => $objectState )
+            {
+                $objectStateHandler->setContentState(
+                    $spiContent->versionInfo->contentInfo->id,
+                    $objectStateGroupId,
+                    $objectState->id
+                );
+            }
+
             $this->repository->commit();
         }
         catch ( Exception $e )
@@ -1817,10 +1836,18 @@ class ContentService implements ContentServiceInterface
     protected function buildDomainFields( array $spiFields, ContentType $type = null )
     {
         $fields = array();
+        if ( $type !== null )
+        {
+            $fieldIdentifierMap = array();
+            foreach ( $type->getFieldDefinitions() as $fieldDefinitions )
+            {
+                $fieldIdentifierMap[$fieldDefinitions->id] = $fieldDefinitions->identifier;
+            }
+        }
 
         foreach ( $spiFields as $spiField )
         {
-            if ( $type === null )
+            if ( !isset( $fieldIdentifierMap ) )
             {
                 $identifier = $this->persistenceHandler->contentTypeHandler()->getFieldDefinition(
                     $spiField->fieldDefinitionId,
@@ -1829,14 +1856,7 @@ class ContentService implements ContentServiceInterface
             }
             else
             {
-                foreach ( $type->fieldDefinitions as $fieldDefinitions )
-                {
-                    if ( $fieldDefinitions->id === $spiField->fieldDefinitionId )
-                    {
-                        $identifier = $fieldDefinitions->identifier;
-                        break;
-                    }
-                }
+                $identifier = $fieldIdentifierMap[$spiField->fieldDefinitionId];
             }
 
             $fields[] = new Field(

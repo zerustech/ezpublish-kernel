@@ -55,6 +55,41 @@ class HandlerTest extends TestCase
     }
 
     /**
+     * @covers eZ\Publish\Core\Persistence\SqlNg\Handler::objectStateHandler
+     *
+     * @return void
+     */
+    public function testObjectStateHandler()
+    {
+        $handler = $this->getPersistenceHandler();
+        $objectStateHandler = $handler->objectStateHandler();
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState\\Handler',
+            $objectStateHandler
+        );
+        $this->assertInstanceOf(
+            'eZ\\Publish\\Core\\Persistence\\SqlNg\\Content\\ObjectState\\Handler',
+            $objectStateHandler
+        );
+    }
+
+    /**
+     * @covers eZ\Publish\Core\Persistence\SqlNg\Handler::contentHandler
+     *
+     * @return void
+     */
+    public function testObjectStateHandlerTwice()
+    {
+        $handler = $this->getPersistenceHandler();
+
+        $this->assertSame(
+            $handler->objectStateHandler(),
+            $handler->objectStateHandler()
+        );
+    }
+
+    /**
      * @covers eZ\Publish\Core\Persistence\SqlNg\Handler::searchHandler
      *
      * @return void

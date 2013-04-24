@@ -373,7 +373,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                     'remoteId' => 'test-location-root',
                     'contentId' => $content->versionInfo->contentInfo->id,
                     'contentVersion' => $content->versionInfo->versionNo,
-                    'mainLocationId' => true,
                     'parentId' => null,
                 ) )
             );
