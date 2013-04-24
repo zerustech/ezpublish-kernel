@@ -139,7 +139,13 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateGroupListData( $offset, $limit )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateGroupFindQuery();
+        $query->limit( $limit > 0 ? $limit : PHP_INT_MAX, $offset );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetchAll( \PDO::FETCH_ASSOC );
     }
 
     /**
