@@ -369,17 +369,15 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::getContentCount
-     *
-     * @return void
+     * @depends testChangeContentState
      */
-    public function testGetContentCount()
+    public function testGetContentCount( $state )
     {
         $handler = $this->getObjectStateHandler();
 
-        $result = $handler->getContentCount( 1 );
+        $result = $handler->getContentCount( $state->id );
 
-        $this->assertEquals( 185, $result );
+        $this->assertEquals( 1, $result );
     }
 
     /**

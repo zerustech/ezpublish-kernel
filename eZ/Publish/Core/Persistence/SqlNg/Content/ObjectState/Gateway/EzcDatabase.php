@@ -546,7 +546,24 @@ class EzcDatabase extends Gateway
      */
     public function getContentCount( $stateId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $query->alias( $query->expr->count( '*' ), 'count' )
+        )->from(
+            $this->dbHandler->quoteTable( 'ezcontent_state_link' )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        $count = $statement->fetchColumn();
+
+        return $count !== null ? (int)$count : 0;
     }
 
     /**

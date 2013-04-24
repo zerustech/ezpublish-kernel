@@ -339,6 +339,6 @@ class Handler implements BaseObjectStateHandler
      */
     public function getContentCount( $stateId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        return $this->objectStateGateway->getContentCount( $stateId );
     }
 }
