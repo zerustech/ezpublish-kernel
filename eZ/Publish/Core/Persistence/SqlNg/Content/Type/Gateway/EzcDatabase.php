@@ -235,7 +235,7 @@ class EzcDatabase extends Gateway
             );
         }
 
-        return $typeId;
+        return (int) $typeId;
     }
 
     /**
