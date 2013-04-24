@@ -564,7 +564,7 @@ class UserHandlerTest extends TestCase
             array(
                 new Persistence\User\RoleAssignment( array(
                     'contentId' => $content->versionInfo->contentInfo->id,
-                    'role' => $role,
+                    'roleId' => $role->id,
                 ) ),
             ),
             $handler->loadRoleAssignmentsByGroupId( $content->versionInfo->contentInfo->id )
@@ -584,7 +584,7 @@ class UserHandlerTest extends TestCase
             array(
                 new Persistence\User\RoleAssignment( array(
                     'contentId' => $content->versionInfo->contentInfo->id,
-                    'role' => $role,
+                    'roleId' => $role->id,
                 ) ),
             ),
             $handler->loadRoleAssignmentsByGroupId( $content->versionInfo->contentInfo->id, true )
@@ -646,7 +646,7 @@ class UserHandlerTest extends TestCase
             array(
                 new Persistence\User\RoleAssignment( array(
                     'contentId' => $content->versionInfo->contentInfo->id,
-                    'role' => $role,
+                    'roleId' => $role->id,
                     'limitationIdentifier' => 'Subtree',
                     'values' => array( '/1' ),
                 ) ),
