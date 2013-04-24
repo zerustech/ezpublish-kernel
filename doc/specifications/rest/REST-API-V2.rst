@@ -110,6 +110,8 @@ contruct an uri by using an id.
 Authentication
 ==============
 
+Note: Use of HTTPS for authenticated (REST) traffic is highly recommended!
+
 Basic Authentication
 --------------------
 
@@ -126,34 +128,55 @@ Session based Authentication
 ----------------------------
 
 This approach violates generally the principles of RESTful services. However,
-the sessions are only created to reauthenticate the user (and perform authorization,
+the sessions are only created to re-authenticate the user (and perform authorization,
 which has do be done anyway) and not to hold session state in the service.
 So we consider this method to support AJAX based applications.
 
-If activated the user has to login and the client has to send the session cookie in every request:
+See "/user/sessions/" section for details on performing login / logout.
 
-:Resource:    /user/sessions
-:Method:      POST
-:Description: Performs a login for the user and returns the session cookie
-:Request format: application/x-www-form-urlencoded
-:Parameters:
-        :login:  the login of the user
-        :password:  the password
-:Response: 200 Set-Cookie: SessionId : <sessionID>  A unique session id containing encryped information of client host and expiretime
-           <Uri of user>
-:Error codes:
-       :401: If the authorization failed
+Session cookie
+~~~~~~~~~~~~~~
+If activated the user has to login to use this and the client has to send the session cookie in every request, using a standard Cookie header. The name (sessionName) and value (sessionID) of the header is defined  in response when doing a POST /user/sessions.
 
+Example request header:
+    Cookie: <SessionName> : <sessionID>
 
-In order to logout the user calls:
+CSRF
+~~~~
+A CSRF token needs to be sent in every request using "unsafe" methods (as in: not GET or HEAD) when a session has been established. It should be sent with header X-CSRF-Token. The token (csrfToken) is defined in response when login via POST /user/sessions.
 
-:Resource: /user/sessions/<sessionID>
-:Method: DELETE
-:Description: The user session is removed i.e. the user is logged out.
-:Parameters:
-:Response: 204
-:Error Codes:
-    :404: If the session does not exist
+Example request headers:
+
+.. code:: http
+
+    DELETE /content/types/32 HTTP/1.1
+    X-CSRF-Token: <csrfToken>
+
+.. code:: http
+
+    DELETE /user/sessions/<sessionID>
+    X-CSRF-Token: <csrfToken>
+
+If an unsafe request is missing CSRF token, or it has wrong value, a response error must be given:
+    401 Unauthorized
+
+Rich client application security concerns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The whole point of CSRF protection is to avoid that users accidentally can do harmful operations by being tricked into executing a http(s) request against a web applications they are logged into, in case of browsers this will then be blocked by lack of CSRF token. However if you develop a rich client application (javascript, java, flash, silverlight, iOS, android, ..) that is:
+
+* Registering itself as a protocol handler
+
+  * In a way that exposes unsafe methods
+
+* Authenticates using either:
+
+  * Session based authentication
+  * "Client side session" by remembering user login/password
+
+Then you have to make sure to ask the user if he really want to perform an unsafe operation when this is asked by over such a protocol handler.
+
+Example: A rich javascript/web application is using navigator.registerProtocolHandler() to register "web+ez:" links to go against REST api, it uses some sort of session based authentication and it is in widespread use across the net, or/and it is used by everyone within a company. A person with minimal insight into this application and the company can easily send out the following link to all employees in that company using mail: <a href="web+ez:DELETE /content/locations/1/2">latest reports</a>
+
 
 SSL Client Authentication
 -------------------------
@@ -408,17 +431,17 @@ XML Example
       <remoteId>remoteId12345678</remoteId>
       <fields>
         <field>
-          <fieldDefinitionIdentifer>title</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>title</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>This is a title</fieldValue>
         </field>
         <field>
-          <fieldDefinitionIdentifer>summary</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>summary</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>This is a summary</fieldValue>
         </field>
         <field>
-          <fieldDefinitionIdentifer>authors</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>authors</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>
             <value>
@@ -467,18 +490,18 @@ XML Example
           <fields>
             <field>
               <id>1234</id>
-              <fieldDefinitionIdentifer>title</fieldDefinitionIdentifer>
+              <fieldDefinitionIdentifier>title</fieldDefinitionIdentifier>
               <languageCode>eng-UK</languageCode>
               <fieldValue>This is a title</fieldValue>
             </field>
             <field>
               <id>1235</id>
-              <fieldDefinitionIdentifer>summary</fieldDefinitionIdentifer>
+              <fieldDefinitionIdentifier>summary</fieldDefinitionIdentifier>
               <languageCode>eng-UK</languageCode>
               <fieldValue>This is a summary</fieldValue>
             </field>
             <field>
-              <fieldDefinitionIdentifer>authors</fieldDefinitionIdentifer>
+              <fieldDefinitionIdentifier>authors</fieldDefinitionIdentifier>
               <languageCode>eng-US</languageCode>
               <fieldValue>
                 <value>
@@ -520,7 +543,7 @@ JSON Example
     {
       "ContentCreate": {
         "ContentType": {
-          "_href": "/content/types/10",
+          "_href": "/content/types/10"
         },
         "mainLanguageCode": "eng-US",
         "LocationCreate": {
@@ -533,24 +556,24 @@ JSON Example
           "sortOrder": "ASC"
         }
         "Section": {
-          "_href": "/content/sections/4",
+          "_href": "/content/sections/4"
         },
         "alwaysAvailable": "true",
         "remoteId": "remoteId12345678",
         "fields": {
           "field": [
             {
-              "fieldDefinitionIdentifer": "title",
+              "fieldDefinitionIdentifier": "title",
               "languageCode": "eng-US",
               "fieldValue": "This is a title"
             },
             {
-              "fieldDefinitionIdentifer": "summary",
+              "fieldDefinitionIdentifier": "summary",
               "languageCode": "eng-US",
               "fieldValue": "This is a summary"
             },
             {
-              "fieldDefinitionIdentifer": "authors",
+              "fieldDefinitionIdentifier": "authors",
               "languageCode": "eng-US",
               "fieldValue": [
                     {
@@ -620,18 +643,18 @@ JSON Example
               "field": [
                 {
                   "id": "1234",
-                  "fieldDefinitionIdentifer": "title",
+                  "fieldDefinitionIdentifier": "title",
                   "languageCode": "eng-UK",
                   "fieldValue": "This is a title"
                 },
                 {
                   "id": "1235",
-                  "fieldDefinitionIdentifer": "summary",
+                  "fieldDefinitionIdentifier": "summary",
                   "languageCode": "eng-UK",
                   "fieldValue": "This is a summary"
                 },
                 {
-                  "fieldDefinitionIdentifer": "authors",
+                  "fieldDefinitionIdentifier": "authors",
                   "languageCode": "eng-US",
                   "fieldValue":
                   [
@@ -678,6 +701,22 @@ List/Search Content
 :Resource: /content/objects
 :Method: GET (not implemented)
 :Description: This resource will used in future for searching content by providing a query string as alternative to posting a view to /content/views.
+
+Load Content by remote id
+`````````````````````````
+:Resource: /content/objects
+:Method: GET
+:Description: loads the content for a given remote id
+:Parameters: :remoteId: the remote id of the content. If present the content with the given remote id is returned
+:Response:
+
+.. code:: http
+
+          HTTP/1.1 307 Temporary Redirect
+          Location: /content/objects/<id>
+
+:Error Codes:
+    :404: If the content with the given remote id does not exist
 
 Load Content
 ````````````
@@ -1084,18 +1123,18 @@ XML Example
       <Fields>
         <field>
           <id>1234</id>
-          <fieldDefinitionIdentifer>title</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>title</fieldDefinitionIdentifier>
           <languageCode>ger-DE</languageCode>
           <fieldValue>Titel</fieldValue>
         </field>
         <field>
           <id>1235</id>
-          <fieldDefinitionIdentifer>summary</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>summary</fieldDefinitionIdentifier>
           <languageCode>ger-DE</languageCode>
           <fieldValue>Dies ist eine Zusammenfassungy</fieldValue>
         </field>
         <field>
-          <fieldDefinitionIdentifer>authors</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>authors</fieldDefinitionIdentifier>
           <languageCode>ger-DE</languageCode>
           <fieldValue>
             <value>
@@ -1174,13 +1213,13 @@ XML Example
       <fields>
         <field>
           <id>1234</id>
-          <fieldDefinitionIdentifer>title</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>title</fieldDefinitionIdentifier>
           <languageCode>ger-DE</languageCode>
           <fieldValue>Neuer Titel</fieldValue>
         </field>
         <field>
           <id>1235</id>
-          <fieldDefinitionIdentifer>summary</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>summary</fieldDefinitionIdentifier>
           <languageCode>ger-DE</languageCode>
           <fieldValue>Dies ist eine neue Zusammenfassungy</fieldValue>
         </field>
@@ -1215,18 +1254,18 @@ XML Example
       <Fields>
         <field>
           <id>1234</id>
-          <fieldDefinitionIdentifer>title</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>title</fieldDefinitionIdentifier>
           <languageCode>ger-DE</languageCode>
           <fieldValue>Neuer Titel</fieldValue>
         </field>
         <field>
           <id>1235</id>
-          <fieldDefinitionIdentifer>summary</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>summary</fieldDefinitionIdentifier>
           <languageCode>ger-DE</languageCode>
           <fieldValue>Dies ist eine neuse Zusammenfassungy</fieldValue>
         </field>
         <field>
-          <fieldDefinitionIdentifer>authors</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>authors</fieldDefinitionIdentifier>
           <languageCode>ger-DE</languageCode>
           <fieldValue>
             <authors>
@@ -2068,14 +2107,14 @@ Perform a query on articles with a specific title.
                     <Fields>
                       <field>
                         <id>1234</id>
-                        <fieldDefinitionIdentifer>title</fieldDefinitionIdentifer>
+                        <fieldDefinitionIdentifier>title</fieldDefinitionIdentifier>
                         <languageCode>eng-UK</languageCode>
                         <fieldValue>Title</fieldValue>
                       </field>
                       <field>
                         <id>1235</id>
-                        <fieldDefinitionIdentifer>summary
-                        </fieldDefinitionIdentifer>
+                        <fieldDefinitionIdentifier>summary
+                        </fieldDefinitionIdentifier>
                         <languageCode>eng-UK</languageCode>
                         <fieldValue>This is a summary</fieldValue>
                       </field>
@@ -3268,6 +3307,24 @@ Get Content Type Group
     :401: If the user is not authorized to read this content type
     :404: If the content type group does not exist
 
+
+Get Content Type Group by id
+````````````````````````````
+:Resource: /content/typegroups
+:Method: GET
+:Description: loads the content type group for a given identifier
+:Parameters: :identifier: the identifier of the content type group. If present the content type group is with the given identifier is returned.
+:Response:
+
+.. code:: http
+
+          HTTP/1.1 307 Temporary Redirect
+          Location: /content/typegroups/<ID>
+
+:Error Codes:
+        :404: If the content type group with the given identifier does not exist
+
+
 Update Content Type Group
 `````````````````````````
 :Resource: /content/typegroups/<ID>
@@ -4082,6 +4139,8 @@ Resource                                      POST                  GET         
 /user/roles/<ID>                              .                     load role             update role           delete role
 /user/roles/<ID>/policies                     create policy         load policies         .                     delete all policies from role
 /user/roles/<ID>/policies/<ID>                .                     load policy           update policy         delete policy
+/user/sessions                                create session        .                     .                     .
+/user/sessions/<sessionID>                    .                     .                     .                     delete session
 ============================================= ===================== ===================== ===================== =======================
 
 
@@ -4231,13 +4290,13 @@ Creating a top level group
         <Fields>
           <field>
             <id>1234</id>
-            <fieldDefinitionIdentifer>name</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>name</fieldDefinitionIdentifier>
             <languageCode>eng-UK</languageCode>
             <fieldValue>Users</fieldValue>
           </field>
           <field>
             <id>1235</id>
-            <fieldDefinitionIdentifer>description</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>description</fieldDefinitionIdentifier>
             <languageCode>eng-UK</languageCode>
             <fieldValue>Main Group</fieldValue>
           </field>
@@ -4264,12 +4323,12 @@ Creating a top level group
       <remoteId>remoteId-qwert098</remoteId>
       <fields>
         <field>
-          <fieldDefinitionIdentifer>name</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>name</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>UserGroup</fieldValue>
         </field>
         <field>
-          <fieldDefinitionIdentifer>description</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>description</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>This is the description of the user group</fieldValue>
         </field>
@@ -4314,13 +4373,13 @@ Creating a top level group
         <Fields>
           <field>
             <id>1234</id>
-            <fieldDefinitionIdentifer>name</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>name</fieldDefinitionIdentifier>
             <languageCode>eng-UK</languageCode>
             <fieldValue>UserGroup</fieldValue>
           </field>
           <field>
             <id>1235</id>
-            <fieldDefinitionIdentifer>description</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>description</fieldDefinitionIdentifier>
             <languageCode>eng-UK</languageCode>
             <fieldValue>This is the description of the user group</fieldValue>
           </field>
@@ -4385,7 +4444,7 @@ XML Example
     <UserGroupUpdate>
       <fields>
         <field>
-          <fieldDefinitionIdentifer>description</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>description</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>This is another description</fieldValue>
         </field>
@@ -4429,13 +4488,13 @@ XML Example
         <Fields>
           <field>
             <id>1234</id>
-            <fieldDefinitionIdentifer>name</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>name</fieldDefinitionIdentifier>
             <languageCode>eng-UK</languageCode>
             <fieldValue>UserGroup</fieldValue>
           </field>
           <field>
             <id>1235</id>
-            <fieldDefinitionIdentifer>description</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>description</fieldDefinitionIdentifier>
             <languageCode>eng-UK</languageCode>
             <fieldValue>This is another description of the user group</fieldValue>
           </field>
@@ -4589,12 +4648,12 @@ XML Example
       <password>john-does-password</password>
       <fields>
         <field>
-          <fieldDefinitionIdentifer>first_name</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>first_name</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>John</fieldValue>
         </field>
         <field>
-          <fieldDefinitionIdentifer>last_name</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>last_name</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>Doe</fieldValue>
         </field>
@@ -4643,12 +4702,12 @@ XML Example
         </VersionInfo>
         <fields>
           <field>
-            <fieldDefinitionIdentifer>first_name</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>first_name</fieldDefinitionIdentifier>
             <languageCode>eng-US</languageCode>
             <fieldValue>John</fieldValue>
           </field>
           <field>
-            <fieldDefinitionIdentifer>last_name</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>last_name</fieldDefinitionIdentifier>
             <languageCode>eng-US</languageCode>
             <fieldValue>Doe</fieldValue>
           </field>
@@ -4762,7 +4821,7 @@ XML Example
       <email>john.doe@mooglemail.com</email>
       <fields>
         <field>
-          <fieldDefinitionIdentifer>signature</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>signature</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>
           John Doe
@@ -4815,18 +4874,18 @@ XML Example
         </VersionInfo>
         <fields>
           <field>
-            <fieldDefinitionIdentifer>first_name</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>first_name</fieldDefinitionIdentifier>
             <languageCode>eng-US</languageCode>
             <fieldValue>John</fieldValue>
           </field>
           <field>
-            <fieldDefinitionIdentifer>last_name</fieldDefinitionIdentifer>
+            <fieldDefinitionIdentifier>last_name</fieldDefinitionIdentifier>
             <languageCode>eng-US</languageCode>
             <fieldValue>Doe</fieldValue>
           </field>
         </fields>
         <field>
-          <fieldDefinitionIdentifer>signature</fieldDefinitionIdentifer>
+          <fieldDefinitionIdentifier>signature</fieldDefinitionIdentifier>
           <languageCode>eng-US</languageCode>
           <fieldValue>
           John Doe
@@ -5789,6 +5848,157 @@ List Policies for user
     :401: If the user has no permission to read roles
 
 
+User sessions (login/logout)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create session (login a User):
+``````````````````````````````
+
+:Resource:    /user/sessions
+:Method:      POST
+:Description: Performs a login for the user and returns the session and session cookie. The client will need to remember both session name/id and CSRF token as this is for security reasons not exposed via GET.
+:Headers:
+    :Accept:
+         :application/vnd.ez.api.Session+xml: (see Session_)
+         :application/vnd.ez.api.Session+json:  (see Session_)
+    :Content-Type:
+         :application/vnd.ez.api.SessionInput+xml: the SessionInput_ schema encoded in json
+         :application/vnd.ez.api.SessionInput+json: the SessionInput_ schema encoded in json
+:Response:
+
+
+.. code:: http
+
+          HTTP/1.1 201 Created
+          Location: /user/sessions/<sessionID>
+          Content-Type: <depending on accept header>
+          Content-Length: <length>
+          Set-Cookie: <sessionName> : <sessionID>  A unique session id
+.. parsed-literal::
+          Session_
+
+
+:Error codes:
+    :400: If the Input does not match the input schema definition, In this case the response contains an ErrorMessage_
+    :401: If the authorization failed
+    :303: If header contained a session cookie and same user was authorized, like 201 Created it will include a Location header
+    :409: If header contained a session cookie but different user was authorized
+
+
+XML Example
+'''''''''''
+
+.. code:: http
+
+    POST /user/sessions HTTP/1.1
+    Host: www.example.net
+    Accept: application/vnd.ez.api.Session+xml
+    Content-Type: application/vnd.ez.api.SessionInput+xml
+    Content-Length: xxx
+
+.. code:: xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <SessionInput>
+      <login>admin</login>
+      <password>secret</password>
+    </SessionInput>
+
+.. code:: http
+
+    HTTP/1.1 201 Created
+    Location: /user/sessions/go327ij2cirpo59pb6rrv2a4el2
+    Set-Cookie: eZSSID : go327ij2cirpo59pb6rrv2a4el2; Domain=.example.net; Path=/; Expires=Wed, 13-Jan-2021 22:23:01 GMT; HttpOnly
+    Content-Type: application/vnd.ez.api.Session+xml
+    Content-Length: xxx
+
+.. code:: xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Session href="/user/sessions/sessionID" media-type="application/vnd.ez.api.Session+xml">
+      <name>eZSSID</name>
+      <identifier>go327ij2cirpo59pb6rrv2a4el2</identifier>
+      <csrfToken>23lkneri34ijajedfw39orj3j93</csrfToken>
+      <User href="/user/users/14" media-type="vnd.ez.api.User+xml"/>
+    </Session>
+
+
+JSON Example
+''''''''''''
+
+.. code:: http
+
+    POST /user/sessions HTTP/1.1
+    Host: www.example.net
+    Accept: application/vnd.ez.api.Session+json
+    Content-Type: application/vnd.ez.api.SessionInput+xml
+    Content-Length: xxx
+
+.. code:: json
+
+    {
+      "SessionInput": {
+        "login": "admin",
+        "password": "secret"
+      }
+    }
+
+.. code:: http
+
+    HTTP/1.1 201 Created
+    Location: /user/sessions/go327ij2cirpo59pb6rrv2a4el2
+    Set-Cookie: eZSSID : go327ij2cirpo59pb6rrv2a4el2; Domain=.example.net; Path=/; Expires=Wed, 13-Jan-2021 22:23:01 GMT; HttpOnly
+    Content-Type: application/vnd.ez.api.Session+json
+    Content-Length: xxx
+
+.. code:: json
+
+    {
+      "Session": {
+        "name": "eZSSID",
+        "identifier": "go327ij2cirpo59pb6rrv2a4el2",
+        "csrfToken": "23lkneri34ijajedfw39orj3j93",
+        "User": {
+          "_href": "/user/users/14",
+          "_media-type": "application/vnd.ez.api.User+json"
+        }
+      }
+    }
+
+
+Delete session (logout a User):
+```````````````````````````````
+
+:Resource: /user/sessions/<sessionID>
+:Method: DELETE
+:Description: The user session is removed i.e. the user is logged out.
+:Headers:
+    :Cookie:
+        <sessionName> : <sessionID>
+    :X-CSRF-Token:
+        <csrfToken> The <csrfToken> needed on all unsafe http methods with session.
+:Response: 204
+:Error Codes:
+    :404: If the session does not exist
+
+
+Example
+'''''''
+
+.. code:: http
+
+    DELETE /user/sessions/go327ij2cirpo59pb6rrv2a4el2 HTTP/1.1
+    Host: www.example.net
+    Cookie: eZSSID : go327ij2cirpo59pb6rrv2a4el2
+    X-CSRF-Token: 23lkneri34ijajedfw39orj3j93
+
+.. code:: http
+
+    HTTP/1.1 204 No Content
+    Set-Cookie: eZSSID=deleted; Expires=Thu, 01-Jan-1970 00:00:01 GMT; Path=/; Domain=.example.net; HttpOnly
+
+
+
 .. _InputOutput:
 
 Input Output Specification
@@ -5854,7 +6064,7 @@ Common definition which are used from multiple schema definitions
           </xsd:documentation>
         </xsd:annotation>
         <xsd:all>
-          <xsd:element name="fieldDefinitionIdentifer" type="xsd:string" />
+          <xsd:element name="fieldDefinitionIdentifier" type="xsd:string" />
           <xsd:element name="languageCode" type="xsd:string" />
           <xsd:element name="fieldValue" type="fieldValueType" />
         </xsd:all>
@@ -6176,7 +6386,7 @@ Version
       <xsd:complexType name="fieldOutputValueType">
         <xsd:all>
           <xsd:element name="id" type="xsd:integer" />
-          <xsd:element name="fieldDefinitionIdentifer" type="xsd:string" />
+          <xsd:element name="fieldDefinitionIdentifier" type="xsd:string" />
           <xsd:element name="languageCode" type="xsd:string" />
           <xsd:element name="value" type="fieldValueType" />
         </xsd:all>
@@ -6189,7 +6399,7 @@ Version
               <xsd:element name="Fields" minOccurs="0">
                 <xsd:complexType>
                   <xsd:sequence>
-                    <xsd:element name="field" type="fieldValueType"
+                    <xsd:element name="field" type="fieldOutputValueType"
                       minOccurs="1" maxOccurs="unbounded" />
                   </xsd:sequence>
                 </xsd:complexType>
@@ -7333,6 +7543,58 @@ Section XML Schema
       <xsd:element name="SectionInput" type="vnd.ez.api.SectionInput"></xsd:element>
     </xsd:schema>
 
+
+
+
+.. _Session:
+
+Session XML Schema
+------------------
+
+.. code:: xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns="http://ez.no/API/Values" targetNamespace="http://ez.no/API/Values">
+      <xsd:include schemaLocation="CommonDefinitions.xsd" />
+      <xsd:complexType name="vnd.ez.api.Session">
+        <xsd:complexContent>
+          <xsd:extension base="ref">
+            <xsd:all>
+              <xsd:element name="name" type="xsd:int"/>
+              <xsd:element name="identifier" type="xsd:string"/>
+              <xsd:element name="csrfToken" type="xsd:string"/>
+              <xsd:element name="User" type="ref" />
+            </xsd:all>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="Session" type="vnd.ez.api.Session"></xsd:element>
+    </xsd:schema>
+
+
+.. _SessionInput:
+
+SessionInput XML Schema
+-----------------------
+
+.. code:: xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns="http://ez.no/API/Values" targetNamespace="http://ez.no/API/Values">
+      <xsd:complexType name="vnd.ez.api.SessionInput">
+        <xsd:complexContent>
+          <xsd:all>
+            <xsd:element name="login" type="xsd:string"/>
+            <xsd:element name="password" type="xsd:string" />
+          </xsd:all>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="SessionInput" type="vnd.ez.api.SessionInput"></xsd:element>
+    </xsd:schema>
+
+
 .. _ObjectStateGroup:
 
 ObjectStateGroup XML Schema
@@ -8145,8 +8407,8 @@ ContentTypeUpdate XML Schema
 
 .. _FieldDefinition:
 
-FieldDefinition JSON Schema
----------------------------
+FieldDefinition XML Schema
+--------------------------
 .. code:: xml
 
     <?xml version="1.0" encoding="UTF-8"?>
@@ -8216,10 +8478,24 @@ FieldDefinition JSON Schema
                     </xsd:documentation>
                 </xsd:annotation>
               </xsd:element>
-              <xsd:element name="defaultValue" type="xsd:string">
+              <xsd:element name="defaultValue" type="fieldValueType">
                 <xsd:annotation>
                   <xsd:documentation>
                     Default value of the field
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="fieldSettings" type="xsd:anyType">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Settings of the field
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="validatorConfiguration" type="xsd:anyType">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Validator configuration of the field
                   </xsd:documentation>
                 </xsd:annotation>
               </xsd:element>
@@ -8271,7 +8547,7 @@ FieldDefinitionCreate XML Schema
               <xsd:documentation>
                 Readable string identifier of a field
                 definition
-                  </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="fieldType" type="xsd:string">
@@ -8285,7 +8561,7 @@ FieldDefinitionCreate XML Schema
             <xsd:annotation>
               <xsd:documentation>
                 Field group name
-                    </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="position" type="xsd:int">
@@ -8293,21 +8569,21 @@ FieldDefinitionCreate XML Schema
               <xsd:documentation>
                 the position of the field definition in
                 the content typr
-                    </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="isTranslatable" type="xsd:boolean">
             <xsd:annotation>
               <xsd:documentation>
                 If the field type is translatable
-                  </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="isRequired" type="xsd:boolean">
             <xsd:annotation>
               <xsd:documentation>
                 Is the field required
-                  </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="isInfoCollector" type="xsd:boolean">
@@ -8315,14 +8591,28 @@ FieldDefinitionCreate XML Schema
               <xsd:documentation>
                 the flag if this attribute is used for
                 information collection
-                    </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-          <xsd:element name="defaultValue" type="xsd:string">
+          <xsd:element name="defaultValue" type="fieldValueType">
             <xsd:annotation>
               <xsd:documentation>
                 Default value of the field
-                  </xsd:documentation>
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="fieldSettings" type="xsd:anyType">
+            <xsd:annotation>
+              <xsd:documentation>
+                Settings of the field
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="validatorConfiguration" type="xsd:anyType">
+            <xsd:annotation>
+              <xsd:documentation>
+                Validator configuration of the field
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="isSearchable" type="xsd:boolean">
@@ -8330,7 +8620,7 @@ FieldDefinitionCreate XML Schema
               <xsd:documentation>
                 Indicates if th the content is
                 searchable by this attribute
-                    </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="names" type="multiLanguageValuesType" />
@@ -8359,14 +8649,14 @@ FieldDefinitionUpdate XML Schema
               <xsd:documentation>
                 If set the identifier of a field
                 definition is changed
-               </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="fieldGroup" type="xsd:string">
             <xsd:annotation>
               <xsd:documentation>
                 If set the field group is changed
-               </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="position" type="xsd:int">
@@ -8381,35 +8671,49 @@ FieldDefinitionUpdate XML Schema
             <xsd:annotation>
               <xsd:documentation>
                 If set the translatable flag is set to this value
-                  </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="isRequired" type="xsd:boolean">
             <xsd:annotation>
               <xsd:documentation>
                 If set the required flag is set to this value
-                  </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="isInfoCollector" type="xsd:boolean">
             <xsd:annotation>
               <xsd:documentation>
                 If set the info collection flag is set to this value
-                    </xsd:documentation>
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-          <xsd:element name="defaultValue" type="xsd:string">
+          <xsd:element name="defaultValue" type="fieldValueType">
             <xsd:annotation>
               <xsd:documentation>
                 If set the default value of the field is changed
-                  </xsd:documentation>
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="fieldSettings" type="xsd:anyType">
+            <xsd:annotation>
+              <xsd:documentation>
+                If set the settings of the field are changed
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="validatorConfiguration" type="xsd:anyType">
+            <xsd:annotation>
+              <xsd:documentation>
+                If set the validatorConfiguration of the field is changed
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="isSearchable" type="xsd:boolean">
             <xsd:annotation>
               <xsd:documentation>
-               If set the searchable flag is set to this value
-                     </xsd:documentation>
+                If set the searchable flag is set to this value
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="names" type="multiLanguageValuesType" />

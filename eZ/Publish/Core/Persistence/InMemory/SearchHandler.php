@@ -56,7 +56,7 @@ use Exception;
  * content objects based on criteria, which could not be converted in to
  * database statements.
  */
-class SearchHandler extends SearchHandlerInterface
+class SearchHandler implements SearchHandlerInterface
 {
     /**
      * @var Handler
@@ -150,15 +150,6 @@ class SearchHandler extends SearchHandlerInterface
                     )
                 );
 
-                $locations = $this->backend->find(
-                    'Content\\Location',
-                    array( 'contentId' => $item->versionInfo->contentInfo->id )
-                );
-                if ( !empty( $locations ) )
-                {
-                    $item->versionInfo->contentInfo->mainLocationId = $locations[0]->mainLocationId;
-                }
-
                 $resultList[] = $item;
             }
         }
@@ -238,12 +229,12 @@ class SearchHandler extends SearchHandlerInterface
     /**
      * Deletes a content object from the index
      *
-     * @param int $contentID
-     * @param int|null $versionID
+     * @param int $contentId
+     * @param int|null $versionId
      *
      * @return void
      */
-    public function deleteContent( $contentID, $versionID = null )
+    public function deleteContent( $contentId, $versionId = null )
     {
         throw new \Exception( "Not implemented yet." );
     }
