@@ -187,8 +187,6 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @return void
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::load
      * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
      */
     public function testLoadThrowsNotFoundException()
@@ -199,20 +197,25 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::loadByIdentifier
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testLoadByIdentifier()
+    public function testLoadByIdentifier( $state )
     {
         $handler = $this->getObjectStateHandler();
 
-        $result = $handler->loadByIdentifier( 'not_locked', 2 );
+        $loaded = $handler->loadByIdentifier( $state->identifier, $state->groupId );
 
-        $this->assertInstanceOf(
-            'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
-            $result
-        );
+        $this->assertEquals( $state, $loaded );
+    }
+
+    /**
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    public function testLoadByIdentifierThrowsNotFoundException()
+    {
+        $handler = $this->getObjectStateHandler();
+
+        $handler->loadByIdentifier( 'unknown', PHP_INT_MAX );
     }
 
     /**
@@ -233,18 +236,6 @@ class ObjectStateHandlerTest extends TestCase
                 $resultItem
             );
         }
-    }
-
-    /**
-     * @return void
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::loadByIdentifier
-     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
-     */
-    public function testLoadByIdentifierThrowsNotFoundException()
-    {
-        $handler = $this->getObjectStateHandler();
-
-        $handler->loadByIdentifier( 'unknown', 2 );
     }
 
     /**

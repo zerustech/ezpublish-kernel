@@ -209,7 +209,14 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadByIdentifier( $identifier, $groupId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $data = $this->objectStateGateway->loadObjectStateDataByIdentifier( $identifier, $groupId );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFoundException( "ObjectState", array( 'identifier' => $identifier, 'groupId' => $groupId ) );
+        }
+
+        return $this->objectStateMapper->createObjectStateFromData( $data );
     }
 
     /**

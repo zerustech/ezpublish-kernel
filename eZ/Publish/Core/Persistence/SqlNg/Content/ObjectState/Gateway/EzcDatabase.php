@@ -79,7 +79,24 @@ class EzcDatabase extends Gateway
      */
     public function loadObjectStateDataByIdentifier( $identifier, $groupId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->createObjectStateFindQuery();
+        $query->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'identifier', 'ezcontent_state' ),
+                    $query->bindValue( $identifier, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'state_group_id', 'ezcontent_state' ),
+                    $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+                )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return $statement->fetch( \PDO::FETCH_ASSOC );
     }
 
     /**
