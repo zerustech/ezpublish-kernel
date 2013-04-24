@@ -130,7 +130,15 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadObjectStates( $groupId )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $states = array();
+        $data = $this->objectStateGateway->loadObjectStateListData( $groupId );
+
+        foreach ( $data as $row )
+        {
+            $states[] = $this->objectStateMapper->createObjectStateFromData( $row );
+        }
+
+        return $states;
     }
 
     /**
