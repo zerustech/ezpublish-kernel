@@ -21,6 +21,12 @@ class SqlNg extends IdManager
         'object' => array(
             11 => 5, // Members
             41 => 10, // Media -> Contact Us
+            58 => 10, // Partner -> Contact Us
+        ),
+        'content' => array(
+            11 => 5, // Members
+            41 => 10, // Media -> Contact Us
+            58 => 10, // Partner -> Contact Us
         ),
         'group' => array(
             4 => 1, // Users
@@ -29,6 +35,7 @@ class SqlNg extends IdManager
         'location' => array(
             5 => 2, // Users
             56 => 11, // design/plain_site -> contact us
+            60 => 11, // ??? -> contact us
         ),
         'typegroup' => array(
             2 => 2, // Users
@@ -36,7 +43,10 @@ class SqlNg extends IdManager
         'type' => array(
             3 => 2, // User Group
             4 => 3, // User
+            20 => 10, // Feedback Form
+            22 => 11, // Wiki Page
             28 => 15, // Forum
+            33 => 20, // Banner
         )
     );
 

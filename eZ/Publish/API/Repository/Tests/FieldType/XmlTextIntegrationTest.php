@@ -93,7 +93,9 @@ EOT
                 array(
                     "type" => Relation::EMBED,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 58 )
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'object', 58 )
+                    )
                 )
             ),
             new Relation(
@@ -120,7 +122,9 @@ EOT
                 array(
                     "type" => Relation::LINK,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 58 )
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'object', 58 )
+                    )
                 )
             ),
             new Relation(

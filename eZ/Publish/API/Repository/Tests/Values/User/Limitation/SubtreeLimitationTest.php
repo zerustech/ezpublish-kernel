@@ -107,8 +107,8 @@ class SubtreeLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $userTypeId = $this->generateId( 'contentType', 4 );
-        $groupTypeId = $this->generateId( 'contentType', 3 );
+        $userTypeId = $this->generateId( 'type', 4 );
+        $groupTypeId = $this->generateId( 'type', 3 );
 
         $standardSectionId = $this->generateId( 'section', 1 );
         $userSectionId = $this->generateId( 'section', 2 );

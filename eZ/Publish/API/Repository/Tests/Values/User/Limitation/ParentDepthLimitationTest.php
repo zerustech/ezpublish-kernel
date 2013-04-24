@@ -35,7 +35,7 @@ class ParentDepthLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $contentTypeId = $this->generateId( 'contentType', 22 );
+        $contentTypeId = $this->generateId( 'type', 22 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
@@ -82,7 +82,7 @@ class ParentDepthLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $contentTypeId = $this->generateId( 'contentType', 22 );
+        $contentTypeId = $this->generateId( 'type', 22 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
