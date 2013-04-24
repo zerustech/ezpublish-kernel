@@ -84,9 +84,10 @@ abstract class Gateway
     /**
      * Updates the stored object state with provided data
      *
+     * @param int $stateId
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
      */
-    abstract public function updateObjectState( Persistence\Content\ObjectState\InputStruct $objectState );
+    abstract public function updateObjectState( $stateId, Persistence\Content\ObjectState\InputStruct $objectState );
 
     /**
      * Deletes object state identified by $stateId

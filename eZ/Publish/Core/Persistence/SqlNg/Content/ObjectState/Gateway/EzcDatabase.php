@@ -235,11 +235,46 @@ class EzcDatabase extends Gateway
     /**
      * Updates the stored object state with provided data
      *
+     * @param int $stateId
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectState
      */
-    public function updateObjectState( Persistence\Content\ObjectState\InputStruct $objectState )
+    public function updateObjectState( $stateId, Persistence\Content\ObjectState\InputStruct $objectState )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent_state' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'default_language_id' ),
+            $query->bindValue(
+                $this->languageHandler->loadByLanguageCode(
+                    $objectState->defaultLanguage
+                )->id,
+                null,
+                \PDO::PARAM_INT
+            )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $objectState->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $objectState->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $objectState->description ) )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_id' ),
+                $query->bindValue( $stateId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'ObjectState', $stateId );
+        }
     }
 
     /**
@@ -321,7 +356,6 @@ class EzcDatabase extends Gateway
      */
     public function updateObjectStateGroup( $groupId, Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
-        // First update the group
         $query = $this->dbHandler->createUpdateQuery();
         $query->update(
             $this->dbHandler->quoteTable( 'ezcontent_state_group' )

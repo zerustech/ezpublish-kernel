@@ -234,20 +234,33 @@ class ObjectStateHandlerTest extends TestCase
     }
 
     /**
-     * @covers \eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Handler::update
-     *
-     * @return void
+     * @depends testCreate
      */
-    public function testUpdate()
+    public function testUpdate( $state )
     {
         $handler = $this->getObjectStateHandler();
 
-        $result = $handler->update( 1, $this->getInputStructFixture() );
+        $language = $this->getLanguage();
+        $updated = $handler->update(
+            $state->id,
+            new Persistence\Content\ObjectState\InputStruct( array(
+                'defaultLanguage' => $language->languageCode,
+                'identifier' => 'test-updated',
+                'name' => array(
+                    $language->languageCode => 'Test Updated',
+                ),
+                'description' => array(
+                    $language->languageCode => 'Test Updated',
+                ),
+            ) )
+        );
 
         $this->assertInstanceOf(
             'eZ\\Publish\\SPI\\Persistence\\Content\\ObjectState',
-            $result
+            $updated
         );
+
+        return $updated;
     }
 
     /**

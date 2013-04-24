@@ -237,7 +237,9 @@ class Handler implements BaseObjectStateHandler
      */
     public function update( $stateId, InputStruct $input )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $this->objectStateGateway->updateObjectState( $stateId, $input );
+
+        return $this->load( $stateId );
     }
 
     /**
