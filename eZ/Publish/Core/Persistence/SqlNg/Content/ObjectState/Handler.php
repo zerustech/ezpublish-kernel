@@ -143,7 +143,9 @@ class Handler implements BaseObjectStateHandler
      */
     public function updateGroup( $groupId, InputStruct $input )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $this->objectStateGateway->updateObjectStateGroup( $groupId, $input );
+
+        return $this->loadGroup( $groupId );
     }
 
     /**

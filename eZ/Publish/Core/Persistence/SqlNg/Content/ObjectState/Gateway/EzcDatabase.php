@@ -243,11 +243,47 @@ class EzcDatabase extends Gateway
     /**
      * Updates the stored object state group with provided data
      *
+     * @param int $groupId
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
      */
-    public function updateObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup )
+    public function updateObjectStateGroup( $groupId, Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        // First update the group
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezcontent_state_group' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'default_language_id' ),
+            $query->bindValue(
+                $this->languageHandler->loadByLanguageCode(
+                    $objectStateGroup->defaultLanguage
+                )->id,
+                null,
+                \PDO::PARAM_INT
+            )
+        )->set(
+            $this->dbHandler->quoteColumn( 'identifier' ),
+            $query->bindValue( $objectStateGroup->identifier )
+        )->set(
+            $this->dbHandler->quoteColumn( 'name' ),
+            $query->bindValue( json_encode( $objectStateGroup->name ) )
+        )->set(
+            $this->dbHandler->quoteColumn( 'description' ),
+            $query->bindValue( json_encode( $objectStateGroup->description ) )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( 'state_group_id' ),
+                $query->bindValue( $groupId, null, \PDO::PARAM_INT )
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFound( 'ObjectStateGroup', $groupId );
+        }
     }
 
     /**

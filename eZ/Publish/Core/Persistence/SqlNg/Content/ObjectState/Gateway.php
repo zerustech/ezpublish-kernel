@@ -119,9 +119,10 @@ abstract class Gateway
     /**
      * Updates the stored object state group with provided data
      *
+     * @param int $groupId
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup
      */
-    abstract public function updateObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup );
+    abstract public function updateObjectStateGroup( $groupId, Persistence\Content\ObjectState\InputStruct $objectStateGroup );
 
     /**
      * Deletes the object state group identified by $groupId

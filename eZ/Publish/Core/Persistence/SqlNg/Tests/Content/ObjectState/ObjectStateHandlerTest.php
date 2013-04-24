@@ -121,9 +121,19 @@ class ObjectStateHandlerTest extends TestCase
     {
         $handler = $this->getObjectStateHandler();
 
+        $language = $this->getLanguage();
         $updated = $handler->updateGroup(
             $stateGroup->id,
-            $this->getInputStructFixture()
+            new Persistence\Content\ObjectState\InputStruct( array(
+                'defaultLanguage' => $language->languageCode,
+                'identifier' => 'test-group-updated',
+                'name' => array(
+                    $language->languageCode => 'Test Group Updated',
+                ),
+                'description' => array(
+                    $language->languageCode => 'Test Group Updated',
+                ),
+            ) )
         );
 
         $this->assertInstanceOf(

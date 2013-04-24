@@ -305,13 +305,14 @@ class ExceptionConversion extends Gateway
     /**
      * Updates the stored object state group with provided data
      *
+     * @param int $groupId
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectStateGroup
      */
-    public function updateObjectStateGroup( Persistence\Content\ObjectState\InputStruct $objectStateGroup )
+    public function updateObjectStateGroup( $groupId, Persistence\Content\ObjectState\InputStruct $objectStateGroup )
     {
         try
         {
-            return $this->innerGateway->updateObjectStateGroup( $objectStateGroup );
+            return $this->innerGateway->updateObjectStateGroup( $groupId, $objectStateGroup );
         }
         catch ( \ezcDbException $e )
         {
