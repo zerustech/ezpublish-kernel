@@ -47,18 +47,6 @@ class Mapper
     }
 
     /**
-     * Creates ObjectState array of objects from provided $data
-     *
-     * @param array $data
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState[]
-     */
-    public function createObjectStateListFromData( array $data )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Creates ObjectStateGroup object from provided $data
      *
      * @param array $data
@@ -83,41 +71,5 @@ class Mapper
         );
 
         return $objectStateGroup;
-    }
-
-    /**
-     * Creates ObjectStateGroup array of objects from provided $data
-     *
-     * @param array $data
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState\Group[]
-     */
-    public function createObjectStateGroupListFromData( array $data )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Creates an instance of ObjectStateGroup object from provided $input struct
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $input
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState\Group
-     */
-    public function createObjectStateGroupFromInputStruct( InputStruct $input )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Creates an instance of ObjectState object from provided $input struct
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $input
-     *
-     * @return \eZ\Publish\SPI\Persistence\Content\ObjectState
-     */
-    public function createObjectStateFromInputStruct( InputStruct $input )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
     }
 }

@@ -298,27 +298,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Update object state links to $newStateId
-     *
-     * @param int $oldStateId
-     * @param int $newStateId
-     */
-    public function updateObjectStateLinks( $oldStateId, $newStateId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
-     * Deletes object state links identified by $stateId
-     *
-     * @param int $stateId
-     */
-    public function deleteObjectStateLinks( $stateId )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Inserts a new object state group into database
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\Group $objectStateGroup

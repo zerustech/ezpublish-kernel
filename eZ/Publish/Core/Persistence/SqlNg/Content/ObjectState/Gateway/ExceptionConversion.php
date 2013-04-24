@@ -241,49 +241,6 @@ class ExceptionConversion extends Gateway
     }
 
     /**
-     * Update object state links from $oldStateId to $newStateId
-     *
-     * @param int $oldStateId
-     * @param int $newStateId
-     */
-    public function updateObjectStateLinks( $oldStateId, $newStateId )
-    {
-        try
-        {
-            return $this->innerGateway->updateObjectStateLinks( $oldStateId, $newStateId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
-     * Deletes object state links identified by $stateId
-     *
-     * @param int $stateId
-     */
-    public function deleteObjectStateLinks( $stateId )
-    {
-        try
-        {
-            return $this->innerGateway->deleteObjectStateLinks( $stateId );
-        }
-        catch ( \ezcDbException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-        catch ( \PDOException $e )
-        {
-            throw new \RuntimeException( 'Database error', 0, $e );
-        }
-    }
-
-    /**
      * Inserts a new object state group into database
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectStateGroup

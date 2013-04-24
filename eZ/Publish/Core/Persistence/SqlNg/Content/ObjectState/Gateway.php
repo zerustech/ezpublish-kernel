@@ -97,21 +97,6 @@ abstract class Gateway
     abstract public function deleteObjectState( $stateId );
 
     /**
-     * Update object state links from $oldStateId to $newStateId
-     *
-     * @param int $oldStateId
-     * @param int $newStateId
-     */
-    abstract public function updateObjectStateLinks( $oldStateId, $newStateId );
-
-    /**
-     * Deletes object state links identified by $stateId
-     *
-     * @param int $stateId
-     */
-    abstract public function deleteObjectStateLinks( $stateId );
-
-    /**
      * Inserts a new object state group into database
      *
      * @param \eZ\Publish\SPI\Persistence\Content\ObjectState\InputStruct $objectStateGroup
