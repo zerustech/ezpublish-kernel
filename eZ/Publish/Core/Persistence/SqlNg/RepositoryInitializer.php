@@ -571,9 +571,7 @@ class RepositoryInitializer
                             'type' => 'ezpage',
                             'value' => new Persistence\Content\FieldValue(
                                 array(
-                                    'data' => new \eZ\Publish\Core\FieldType\Page\Parts\Page(
-                                        new \eZ\Publish\Core\FieldType\Page\Service()
-                                    ),
+                                    'data' => new \eZ\Publish\Core\FieldType\Page\Parts\Page(),
                                     'externalData' => NULL,
                                     'sortKey' => NULL,
                                 )
