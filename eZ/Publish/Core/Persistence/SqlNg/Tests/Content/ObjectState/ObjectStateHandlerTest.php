@@ -89,6 +89,9 @@ class ObjectStateHandlerTest extends TestCase
         $this->assertEquals( $stateGroup, $loaded );
     }
 
+    /**
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
     public function testLoadGroupByIdentifierThrowsNotFoundException()
     {
         $handler = $this->getObjectStateHandler();

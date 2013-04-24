@@ -90,7 +90,14 @@ class Handler implements BaseObjectStateHandler
      */
     public function loadGroupByIdentifier( $identifier )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $data = $this->objectStateGateway->loadObjectStateGroupDataByIdentifier( $identifier );
+
+        if ( empty( $data ) )
+        {
+            throw new NotFoundException( "ObjectStateGroup", $identifier );
+        }
+
+        return $this->objectStateMapper->createObjectStateGroupFromData( $data );
     }
 
     /**
