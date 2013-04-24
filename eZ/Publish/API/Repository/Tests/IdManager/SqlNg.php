@@ -20,6 +20,7 @@ class SqlNg extends IdManager
     private $mapping = array(
         'object' => array(
             11 => 5, // Members
+            13 => 7, // Editors
             41 => 10, // Media -> Contact Us
             58 => 10, // Partner -> Contact Us
         ),
@@ -30,6 +31,7 @@ class SqlNg extends IdManager
         ),
         'group' => array(
             4 => 1, // Users
+            11 => 5, // Members
             13 => 7, // Editors
         ),
         'location' => array(

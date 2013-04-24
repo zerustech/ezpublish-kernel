@@ -40,7 +40,7 @@ class SubtreeLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $userGroupId = $this->generateId( 'content', 13 );
+        $userGroupId = $this->generateId( 'group', 13 );
         /* BEGIN: Use Case */
         $subtree = '/1/5/';
 
@@ -82,7 +82,7 @@ class SubtreeLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $userGroupId = $this->generateId( 'content', 13 );
+        $userGroupId = $this->generateId( 'group', 13 );
 
         /* BEGIN: Use Case */
         $subtree = '/1/5/14/';

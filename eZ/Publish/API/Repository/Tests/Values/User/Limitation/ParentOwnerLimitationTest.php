@@ -33,7 +33,7 @@ class ParentOwnerLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $parentContentId = $this->generateId( 'content', 58 );
+        $parentContentId = $this->generateId( 'object', 58 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
