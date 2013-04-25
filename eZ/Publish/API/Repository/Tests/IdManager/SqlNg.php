@@ -52,6 +52,9 @@ class SqlNg extends IdManager
             22 => 11, // Wiki Page
             28 => 15, // Forum
             33 => 20, // Banner
+        ),
+        'user' => array(
+            42 => 2, // Pseudo user -> anonymous
         )
     );
 
