@@ -373,12 +373,16 @@ class Handler implements BaseContentTypeHandler
      */
     public function createDraft( $modifierId, $contentTypeId )
     {
+        $contentType = $this->load( $contentTypeId, Type::STATUS_DEFINED );
+
         $createStruct = $this->mapper->createCreateStructFromType(
-            $this->load( $contentTypeId, Type::STATUS_DEFINED )
+            $contentType
         );
+
         $createStruct->status = Type::STATUS_DRAFT;
         $createStruct->modifierId = $modifierId;
         $createStruct->modified = time();
+        $createStruct->remoteId = $contentType->remoteId;
 
         return $this->internalCreate( $createStruct, $contentTypeId );
     }
