@@ -236,11 +236,11 @@ EOT
 <?xml version="1.0" encoding="utf-8"?>
 <section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
 <paragraph>Example</paragraph>
-<paragraph><link node_id="58">link1</link></paragraph>
-<paragraph><link object_id="54">link2</link></paragraph>
+<paragraph><link node_id="{$this->generateId( 'location', 58 )}">link1</link></paragraph>
+<paragraph><link object_id="{$this->generateId( 'object', 54 )}">link2</link></paragraph>
 <paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/">
-    <embed view="embed" size="medium" node_id="60" custom:offset="0" custom:limit="5"/>
-    <embed view="embed" size="medium" object_id="56" custom:offset="0" custom:limit="5"/>
+    <embed view="embed" size="medium" node_id="{$this->generateId( 'location', 60 )}" custom:offset="0" custom:limit="5"/>
+    <embed view="embed" size="medium" object_id="{$this->generateId( 'object', 56 )}" custom:offset="0" custom:limit="5"/>
 </paragraph>
 </section>
 EOT
