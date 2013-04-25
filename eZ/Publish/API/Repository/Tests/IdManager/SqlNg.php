@@ -29,6 +29,7 @@ class SqlNg extends IdManager
             41 => 10, // Media -> Contact Us
             54 => 10, // Demo Design -> Contact Us
             56 => 10, // Design -> Contact Us
+            57 => 4, // Home -> Home
             58 => 10, // Partner -> Contact Us
         ),
         'group' => array(
@@ -40,7 +41,7 @@ class SqlNg extends IdManager
             5 => 2, // Users
             56 => 11, // design/plain_site -> contact us
             58 => 11, // design -> contact us
-            60 => 11, // getting started -> contact us
+            60 => 4, // getting started -> home
         ),
         'typegroup' => array(
             2 => 2, // Users
