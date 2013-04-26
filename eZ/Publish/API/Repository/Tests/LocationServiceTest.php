@@ -390,7 +390,7 @@ class LocationServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $nonExistentLocationId = $this->generateId( 'location', 2342 );
+        $nonExistentLocationId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         $locationService = $repository->getLocationService();
 
