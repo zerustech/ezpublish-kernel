@@ -423,7 +423,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $mediaFolderId = $this->generateId( 'object', 41 );
+        $mediaFolderId = $this->generateId( 'content', 41 );
         /* BEGIN: Use Case */
         $contentService = $repository->getContentService();
 
@@ -449,7 +449,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $nonExistentContentId = $this->generateId( 'object', PHP_INT_MAX );
+        $nonExistentContentId = $this->generateId( 'content', PHP_INT_MAX );
         /* BEGIN: Use Case */
         $contentService = $repository->getContentService();
 
@@ -511,7 +511,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $mediaFolderId = $this->generateId( 'object', 41 );
+        $mediaFolderId = $this->generateId( 'content', 41 );
         /* BEGIN: Use Case */
         // $mediaFolderId contains the ID of the "Media" folder
 
@@ -541,7 +541,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $mediaFolderId = $this->generateId( 'object', 41 );
+        $mediaFolderId = $this->generateId( 'content', 41 );
         /* BEGIN: Use Case */
         // $mediaFolderId contains the ID of the "Media" folder
 
@@ -569,7 +569,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $nonExistentContentId = $this->generateId( 'object', PHP_INT_MAX );
+        $nonExistentContentId = $this->generateId( 'content', PHP_INT_MAX );
         /* BEGIN: Use Case */
         $contentService = $repository->getContentService();
 
@@ -589,7 +589,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $mediaFolderId = $this->generateId( 'object', 41 );
+        $mediaFolderId = $this->generateId( 'content', 41 );
         /* BEGIN: Use Case */
         // $mediaFolderId contains the ID of the "Media" folder
 
@@ -619,7 +619,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $mediaFolderId = $this->generateId( 'object', 41 );
+        $mediaFolderId = $this->generateId( 'content', 41 );
         /* BEGIN: Use Case */
         // $mediaFolderId contains the ID of the "Media" folder
 
@@ -654,7 +654,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $mediaFolderId = $this->generateId( 'object', 41 );
+        $mediaFolderId = $this->generateId( 'content', 41 );
         /* BEGIN: Use Case */
         // $mediaFolderId contains the ID of the "Media" folder
 
@@ -682,7 +682,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $nonExistentContentId = $this->generateId( 'object', PHP_INT_MAX );
+        $nonExistentContentId = $this->generateId( 'content', PHP_INT_MAX );
         /* BEGIN: Use Case */
         $contentService = $repository->getContentService();
 
@@ -3162,7 +3162,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 12 );
+        $contentId = $this->generateId( 'content', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Administrator users" user group
 
@@ -3220,7 +3220,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 12 );
+        $contentId = $this->generateId( 'content', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Administrator users" user group
 
@@ -3273,7 +3273,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 12 );
+        $contentId = $this->generateId( 'content', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Administrator users" user group
 
@@ -3387,7 +3387,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 12 );
+        $contentId = $this->generateId( 'content', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Administrator users" user group
 
@@ -3448,7 +3448,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 12 );
+        $contentId = $this->generateId( 'content', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Administrator users" user group
 
@@ -3508,7 +3508,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 12 );
+        $contentId = $this->generateId( 'content', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Administrator users" user group
 
@@ -3566,7 +3566,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 12 );
+        $contentId = $this->generateId( 'content', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Administrator users" user group
 
@@ -3625,7 +3625,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 12 );
+        $contentId = $this->generateId( 'content', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Administrator users" user group
 
@@ -3675,7 +3675,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 12 );
+        $contentId = $this->generateId( 'content', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Administrator users" user group
 
@@ -3724,7 +3724,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 11 );
+        $contentId = $this->generateId( 'content', 11 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Members" user group in an eZ Publish
         // demo installation
@@ -3773,7 +3773,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 11 );
+        $contentId = $this->generateId( 'content', 11 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Members" user group in an eZ Publish
         // demo installation
@@ -3830,7 +3830,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 11 );
+        $contentId = $this->generateId( 'content', 11 );
         $locationId = $this->generateId( 'location', 13 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Members" user group in an eZ Publish
@@ -3892,7 +3892,7 @@ class ContentServiceTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 11 );
+        $contentId = $this->generateId( 'content', 11 );
         $locationId = $this->generateId( 'location', 13 );
         /* BEGIN: Use Case */
         // $contentId is the ID of the "Members" user group in an eZ Publish
