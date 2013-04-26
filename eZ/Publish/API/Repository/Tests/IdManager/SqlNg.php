@@ -19,12 +19,19 @@ class SqlNg extends IdManager
 {
     private $mapping = array(
         'content' => array(
-            11 => 5, // Members
-            13 => 7, // Editors
+            4 => 1,
+            10 => 2,
+            11 => 5,
+            12 => 6,
+            13 => 7,
+            14 => 3,
             41 => 10, // Media -> Contact Us
+            42 => 8,
             54 => 10, // Demo Design -> Contact Us
             56 => 10, // Design -> Contact Us
-            58 => 10, // Partner -> Contact Us
+            57 => 4,
+            58 => 10,
+            59 => 9,
         ),
         'group' => array(
             4 => 1, // Users
@@ -32,14 +39,26 @@ class SqlNg extends IdManager
             13 => 7, // Editors
         ),
         'location' => array(
-            2 => 5, // Content
-            5 => 2, // Users
-            56 => 11, // design/plain_site -> contact us
-            58 => 11, // design -> contact us
-            60 => 11, // getting started -> contact us
+            1 => 1,
+            2 => 5,
+            5 => 2,
+            12 => 6,
+            13 => 7,
+            14 => 8,
+            15 => 12,
+            44 => 9,
+            45 => 13,
+            54 => 3,
+            58 => 11, // Design, probably should be created
+            56 => 11, // Design/PlainSite, should also be created
+            60 => 11,
+            61 => 10,
         ),
         'typegroup' => array(
-            2 => 2, // Users
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
         ),
         'type' => array(
             3 => 2, // User Group
@@ -50,10 +69,19 @@ class SqlNg extends IdManager
             33 => 20, // Banner
         ),
         'user' => array(
+            14 => 3, // Admin
+            10 => 2, // Anonymous
+
+            3 => 2, // Pseudo user -> anonymous
             42 => 2, // Pseudo user -> anonymous
         ),
         'section' => array(
             1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+            5 => 5,
+            6 => 6,
         ),
     );
 
