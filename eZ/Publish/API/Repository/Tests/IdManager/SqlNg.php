@@ -37,6 +37,7 @@ class SqlNg extends IdManager
             13 => 7, // Editors
         ),
         'location' => array(
+            2 => 5, // Content
             5 => 2, // Users
             56 => 11, // design/plain_site -> contact us
             58 => 11, // design -> contact us
