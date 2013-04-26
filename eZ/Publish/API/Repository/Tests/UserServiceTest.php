@@ -56,7 +56,7 @@ class UserServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $nonExistingGroupId = $this->generateId(  'group', PHP_INT_MAX );
+        $nonExistingGroupId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         $userService = $repository->getUserService();
 
@@ -1073,7 +1073,7 @@ class UserServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $nonExistingUserId = $this->generateId( 'user', PHP_INT_MAX );
+        $nonExistingUserId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         $userService = $repository->getUserService();
 

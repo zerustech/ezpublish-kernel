@@ -209,7 +209,7 @@ class RoleServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $nonExistingRoleId = $this->generateId( 'role', PHP_INT_MAX );
+        $nonExistingRoleId = PHP_INT_MAX;
         /* BEGIN: Use Case */
 
         $roleService = $repository->getRoleService();
@@ -1401,7 +1401,7 @@ class RoleServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $nonExistingUserId = $this->generateId( 'user', PHP_INT_MAX );
+        $nonExistingUserId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         $roleService = $repository->getRoleService();
 
