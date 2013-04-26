@@ -195,37 +195,16 @@ CREATE TABLE `ezcontent_version` (
 -- Formerlly ezcontentobject_link
 DROP TABLE IF EXISTS `ezcontent_relation`;
 CREATE TABLE IF NOT EXISTS `ezcontent_relation` (
-    `content_id` INT(10) NOT NULL DEFAULT '0',
-    `version_no` INT(10) NOT NULL DEFAULT '0',
-    `to_content_id` INT(10) NOT NULL DEFAULT '0',
-    `relation_type_id` INT(10) DEFAULT NULL,
+    `content_id` INT NOT NULL DEFAULT '0',
+    `version_no` INT NOT NULL DEFAULT '0',
+    `to_content_id` INT NOT NULL DEFAULT '0',
+    `content_type_field_id` INT DEFAULT NULL,
+    `relation_type` INT NOT NULL,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     KEY (`content_id`, `version_no`, `to_content_id`),
-    FOREIGN KEY (`relation_type_id`) REFERENCES `ezcontent_relation_types` (`relation_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`content_id`, `version_no`) REFERENCES `ezcontent_version` (`content_id`, `version_no`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`to_content_id`) REFERENCES `ezcontent` (`content_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS `ezcontent_relation_fields`;
-CREATE TABLE IF NOT EXISTS `ezcontent_relation_fields` (
-    `content_id` INT(10) NOT NULL DEFAULT '0',
-    `version_no` INT(10) NOT NULL DEFAULT '0',
-    `to_content_id` INT(10) NOT NULL DEFAULT '0',
-    `content_type_field_id` INT(10) NOT NULL DEFAULT '0',
-    `relation_type_id` INT(10) DEFAULT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`content_id`, `version_no`, `to_content_id`, `content_type_field_id`),
-    FOREIGN KEY (`relation_type_id`) REFERENCES `ezcontent_relation_types` (`relation_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`content_type_field_id`) REFERENCES `ezcontenttype_field` (`field_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (`content_id`, `version_no`, `to_content_id`) REFERENCES `ezcontent_relation` (`content_id`, `version_no`, `to_content_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
-DROP TABLE IF EXISTS `ezcontent_relation_types`;
-CREATE TABLE IF NOT EXISTS `ezcontent_relation_types` (
-    `relation_type_id` INT(10) NOT NULL AUTO_INCREMENT,
-    `name` INT(10) DEFAULT NULL,
-    `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`relation_type_id`)
+    FOREIGN KEY (`to_content_id`) REFERENCES `ezcontent` (`content_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 --

@@ -108,36 +108,10 @@ class QueryBuilder
             $this->dbHandler->aliasedColumn( $query, 'content_id', 'ezcontent_relation' ),
             $this->dbHandler->aliasedColumn( $query, 'version_no', 'ezcontent_relation' ),
             $this->dbHandler->aliasedColumn( $query, 'to_content_id', 'ezcontent_relation' ),
-            $this->dbHandler->aliasedColumn( $query, 'name', 'ezcontent_relation_types' ),
-            $this->dbHandler->aliasedColumn( $query, 'content_type_field_id', 'ezcontent_relation_fields' )
+            $this->dbHandler->aliasedColumn( $query, 'relation_type', 'ezcontent_relation' ),
+            $this->dbHandler->aliasedColumn( $query, 'content_type_field_id', 'ezcontent_relation' )
         )->from(
             $this->dbHandler->quoteTable( 'ezcontent_relation' )
-        )->leftJoin(
-            $this->dbHandler->quoteTable( "ezcontent_relation_types" ),
-            $query->expr->eq(
-                $this->dbHandler->quoteColumn( "relation_type_id", "ezcontent_relation_types" ),
-                $this->dbHandler->quoteColumn( "relation_type_id", "ezcontent_relation" )
-            )
-        )->leftJoin(
-            $this->dbHandler->quoteTable( "ezcontent_relation_fields" ),
-            $query->expr->lAnd(
-                $query->expr->eq(
-                    $this->dbHandler->quoteColumn( "content_id", "ezcontent_relation_fields" ),
-                    $this->dbHandler->quoteColumn( "content_id", "ezcontent_relation" )
-                ),
-                $query->expr->eq(
-                    $this->dbHandler->quoteColumn( "version_no", "ezcontent_relation_fields" ),
-                    $this->dbHandler->quoteColumn( "version_no", "ezcontent_relation" )
-                ),
-                $query->expr->eq(
-                    $this->dbHandler->quoteColumn( "to_content_id", "ezcontent_relation_fields" ),
-                    $this->dbHandler->quoteColumn( "to_content_id", "ezcontent_relation" )
-                ),
-                $query->expr->eq(
-                    $this->dbHandler->quoteColumn( "relation_type_id", "ezcontent_relation_fields" ),
-                    $this->dbHandler->quoteColumn( "relation_type_id", "ezcontent_relation" )
-                )
-            )
         );
 
         return $query;

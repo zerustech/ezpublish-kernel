@@ -342,7 +342,7 @@ class Mapper
             $id = $row['ezcontent_relation_content_id'] . '_' .
                 $row['ezcontent_relation_version_no'] . '_' .
                 $row['ezcontent_relation_version_no'] . '_' .
-                $row['ezcontent_relation_types_name'];
+                $row['ezcontent_relation_relation_type'];
             if ( !isset( $relations[$id] ) )
             {
                 $relations[$id] = $this->extractRelationFromRow( $row );
@@ -365,8 +365,8 @@ class Mapper
         $relation->sourceContentId = (int)$row['ezcontent_relation_content_id'];
         $relation->sourceContentVersionNo = (int)$row['ezcontent_relation_version_no'];
         $relation->destinationContentId = (int)$row['ezcontent_relation_to_content_id'];
-        $relation->sourceFieldDefinitionId = (int)$row['ezcontent_relation_fields_content_type_field_id'];
-        $relation->type = (int)$row['ezcontent_relation_types_name'];
+        $relation->sourceFieldDefinitionId = (int)$row['ezcontent_relation_content_type_field_id'];
+        $relation->type = (int)$row['ezcontent_relation_relation_type'];
 
         return $relation;
     }
