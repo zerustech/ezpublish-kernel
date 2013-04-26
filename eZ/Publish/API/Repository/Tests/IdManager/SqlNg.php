@@ -75,8 +75,10 @@ class SqlNg extends IdManager
         {
             return $this->mapping[$type][$rawId];
         }
-        // TODO Throw an exception?
-        return $rawId;
+
+        throw new \PHPUnit_Framework_IncompleteTestError(
+            "Missing mapping for $type ID $rawId"
+        );
     }
 
     /**
@@ -96,7 +98,9 @@ class SqlNg extends IdManager
         {
             return $rawId;
         }
-        // TODO Throw an exception?
-        return $id;
+
+        throw new \PHPUnit_Framework_IncompleteTestError(
+            "Missing mapping for $type ID $id"
+        );
     }
 }
