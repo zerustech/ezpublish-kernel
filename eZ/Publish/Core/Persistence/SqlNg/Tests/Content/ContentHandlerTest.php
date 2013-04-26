@@ -348,6 +348,36 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
+     * @depends testAddRelation
+     */
+    public function testLoadRelations( $relation )
+    {
+        $handler = $this->getContentHandler();
+
+        $loaded = $handler->loadRelations( $relation->sourceContentId );
+
+        $this->assertEquals(
+            array( $relation ),
+            $loaded
+        );
+    }
+
+    /**
+     * @depends testAddRelation
+     */
+    public function testLoadReverseRelations( $relation )
+    {
+        $handler = $this->getContentHandler();
+
+        $loaded = $handler->loadReverseRelations( $relation->destinationContentId );
+
+        $this->assertEquals(
+            array( $relation ),
+            $loaded
+        );
+    }
+
+    /**
      * @depends testPublishRoot
      */
     public function testAddFieldRelation( $content )
@@ -373,13 +403,17 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testAddRelation
+     * @depends testAddFieldRelation
      */
-    public function testLoadRelations( $relation )
+    public function testLoadFieldRelation( $relation )
     {
         $handler = $this->getContentHandler();
 
-        $loaded = $handler->loadRelations( $relation->sourceContentId );
+        $loaded = $handler->loadRelations(
+            $relation->sourceContentId,
+            $relation->sourceContentVersionNo,
+            $relation->type
+        );
 
         $this->assertEquals(
             array( $relation ),
@@ -388,13 +422,16 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
-     * @depends testAddRelation
+     * @depends testAddFieldRelation
      */
-    public function testLoadReverseRelations( $relation )
+    public function testLoadReverseFieldRelations( $relation )
     {
         $handler = $this->getContentHandler();
 
-        $loaded = $handler->loadReverseRelations( $relation->destinationContentId );
+        $loaded = $handler->loadReverseRelations(
+            $relation->destinationContentId,
+            $relation->type
+        );
 
         $this->assertEquals(
             array( $relation ),

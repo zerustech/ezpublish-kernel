@@ -741,7 +741,7 @@ class EzcDatabase extends Gateway
         {
             $query->where(
                 $query->expr->bitAnd(
-                    $this->dbHandler->quoteColumn( 'relation_type', 'ezcontent_relation' ),
+                    $this->dbHandler->quoteColumn( 'name', 'ezcontent_relation_types' ),
                     $query->bindValue( $relationType, null, \PDO::PARAM_INT )
                 )
             );
@@ -792,7 +792,7 @@ class EzcDatabase extends Gateway
         {
             $query->where(
                 $query->expr->bitAnd(
-                    $this->dbHandler->quoteColumn( 'relation_type', 'ezcontent_relation' ),
+                    $this->dbHandler->quoteColumn( 'name', 'ezcontent_relation_types' ),
                     $query->bindValue( $relationType, null, \PDO::PARAM_INT )
                 )
             );
