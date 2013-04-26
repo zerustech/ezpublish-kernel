@@ -200,7 +200,7 @@ CREATE TABLE IF NOT EXISTS `ezcontent_relation` (
     `to_content_id` INT(10) NOT NULL DEFAULT '0',
     `relation_type_id` INT(10) DEFAULT NULL,
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`content_id`,`version_no`,`to_content_id`),
+    KEY (`content_id`,`version_no`,`to_content_id`),
     FOREIGN KEY (`relation_type_id`) REFERENCES `ezcontent_relation_types` (`relation_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`content_id`, `version_no`) REFERENCES `ezcontent_version` (`content_id`, `version_no`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`to_content_id`) REFERENCES `ezcontent` (`content_id`) ON DELETE CASCADE ON UPDATE CASCADE
