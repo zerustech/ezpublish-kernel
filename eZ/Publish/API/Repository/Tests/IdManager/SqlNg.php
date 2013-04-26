@@ -18,14 +18,9 @@ use eZ\Publish\API\Repository\Tests\IdManager;
 class SqlNg extends IdManager
 {
     private $mapping = array(
-        'object' => array(
-            11 => 5, // Members
-            13 => 7, // Editors
-            41 => 10, // Media -> Contact Us
-            58 => 10, // Partner -> Contact Us
-        ),
         'content' => array(
             11 => 5, // Members
+            13 => 7, // Editors
             41 => 10, // Media -> Contact Us
             54 => 10, // Demo Design -> Contact Us
             56 => 10, // Design -> Contact Us
@@ -56,7 +51,10 @@ class SqlNg extends IdManager
         ),
         'user' => array(
             42 => 2, // Pseudo user -> anonymous
-        )
+        ),
+        'section' => array(
+            1 => 1,
+        ),
     );
 
     /**
