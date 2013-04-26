@@ -341,7 +341,7 @@ class Mapper
         {
             $id = $row['ezcontent_relation_content_id'] . '_' .
                 $row['ezcontent_relation_version_no'] . '_' .
-                $row['ezcontent_relation_version_no'] . '_' .
+                $row['ezcontent_relation_to_content_id'] . '_' .
                 $row['ezcontent_relation_relation_type'];
             if ( !isset( $relations[$id] ) )
             {
