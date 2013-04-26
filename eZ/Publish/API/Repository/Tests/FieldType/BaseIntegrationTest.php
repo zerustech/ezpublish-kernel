@@ -782,24 +782,8 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
      */
     public function testCreateContentFails( $failingValue, $expectedException )
     {
-        try
-        {
-            $this->createContent( $failingValue );
-
-            $this->fail( 'Expected exception not thrown.' );
-        }
-        catch ( \PHPUnit_Framework_AssertionFailedError $e )
-        {
-            throw $e;
-        }
-        catch ( \Exception $e )
-        {
-            $this->assertInstanceOf(
-                $expectedException,
-                $e,
-                (string) $e
-            );
-        }
+        $this->setExpectedException($expectedException);
+        $this->createContent( $failingValue );
     }
 
     /**
@@ -815,24 +799,8 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
      */
     public function testUpdateContentFails( $failingValue, $expectedException )
     {
-        try
-        {
-            $this->updateContent( $failingValue );
-
-            $this->fail( 'Expected exception not thrown.' );
-        }
-        catch ( \PHPUnit_Framework_AssertionFailedError $e )
-        {
-            throw $e;
-        }
-        catch ( \Exception $e )
-        {
-            $this->assertInstanceOf(
-                $expectedException,
-                $e,
-                (string) $e
-            );
-        }
+        $this->setExpectedException($expectedException);
+        $this->updateContent( $failingValue );
     }
 
     /**
