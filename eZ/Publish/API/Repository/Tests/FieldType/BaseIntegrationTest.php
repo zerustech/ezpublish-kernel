@@ -539,7 +539,11 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
         $createStruct->remoteId = 'abcdef0123456789abcdef0123456789';
         $createStruct->alwaysAvailable = true;
 
-        return $contentService->createContent( $createStruct );
+        try {
+            return $contentService->createContent( $createStruct );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
+        }
     }
 
     /**
@@ -647,7 +651,11 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
      */
     public function testUpdateField()
     {
-        return $this->updateContent( $this->getValidUpdateFieldData() );
+        try {
+            return $this->updateContent( $this->getValidUpdateFieldData() );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
+        }
     }
 
     /**
@@ -783,7 +791,12 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
     public function testCreateContentFails( $failingValue, $expectedException )
     {
         $this->setExpectedException($expectedException);
-        $this->createContent( $failingValue );
+
+        try {
+            $this->createContent( $failingValue );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
+        }
     }
 
     /**
@@ -800,7 +813,12 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
     public function testUpdateContentFails( $failingValue, $expectedException )
     {
         $this->setExpectedException($expectedException);
-        $this->updateContent( $failingValue );
+
+        try {
+            $this->updateContent( $failingValue );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
+        }
     }
 
     /**
