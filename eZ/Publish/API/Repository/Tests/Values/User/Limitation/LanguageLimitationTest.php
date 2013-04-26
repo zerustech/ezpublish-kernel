@@ -34,7 +34,7 @@ class LanguageLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 58 );
+        $contentId = $this->generateId( 'content', 58 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
@@ -108,7 +108,7 @@ class LanguageLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 58 );
+        $contentId = $this->generateId( 'content', 58 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 

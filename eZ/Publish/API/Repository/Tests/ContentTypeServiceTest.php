@@ -250,7 +250,7 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
         $repository = $this->getRepository();
 
         $contentTypeService = $repository->getContentTypeService();
-        $loadedGroup = $contentTypeService->loadContentTypeGroup( $this->generateId( 'typegroup', 2342 ) );
+        $loadedGroup = $contentTypeService->loadContentTypeGroup( PHP_INT_MAX );
     }
 
     /**
@@ -1128,11 +1128,11 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
     {
         $repository = $this->getRepository();
 
-        $nonExistingContentTypeId = $this->generateId( 'type', 2342 );
+        $nonExistingContentTypeId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         $contentTypeService = $repository->getContentTypeService();
 
-        // Throws exception, since 2342 does not exist
+        // Throws exception, since PHP_INT_MAX does not exist
         $contentTypeDraft = $contentTypeService->loadContentTypeDraft( $nonExistingContentTypeId );
         /* END: Use Case */
     }
@@ -1889,11 +1889,11 @@ class ContentTypeServiceTest extends BaseContentTypeServiceTest
     {
         $repository = $this->getRepository();
 
-        $nonExistentTypeId = $this->generateId( 'type', 2342 );
+        $nonExistentTypeId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         $contentTypeService = $repository->getContentTypeService();
 
-        // Throws exception, since type with ID 2342 does not exist
+        // Throws exception, since type with ID PHP_INT_MAX does not exist
         $contentTypeService->loadContentType( $nonExistentTypeId );
         /* END: Use Case */
     }

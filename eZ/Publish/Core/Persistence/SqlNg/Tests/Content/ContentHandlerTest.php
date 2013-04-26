@@ -378,6 +378,68 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
+     * @depends testPublishRoot
+     */
+    public function testAddFieldRelation( $content )
+    {
+        $handler = $this->getContentHandler();
+
+        $relation = $handler->addRelation(
+            new Persistence\Content\Relation\CreateStruct( array(
+                'destinationContentId' => 2, // Child
+                'sourceContentId' => $content->versionInfo->contentInfo->id,
+                'sourceContentVersionNo' => $content->versionInfo->versionNo,
+                'type' => Repository\Values\Content\Relation::FIELD,
+                'sourceFieldDefinitionId' => $content->fields[0]->fieldDefinitionId,
+            ) )
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\Relation',
+            $relation
+        );
+
+        return $relation;
+    }
+
+    /**
+     * @depends testAddFieldRelation
+     */
+    public function testLoadFieldRelation( $relation )
+    {
+        $handler = $this->getContentHandler();
+
+        $loaded = $handler->loadRelations(
+            $relation->sourceContentId,
+            $relation->sourceContentVersionNo,
+            $relation->type
+        );
+
+        $this->assertEquals(
+            array( $relation ),
+            $loaded
+        );
+    }
+
+    /**
+     * @depends testAddFieldRelation
+     */
+    public function testLoadReverseFieldRelations( $relation )
+    {
+        $handler = $this->getContentHandler();
+
+        $loaded = $handler->loadReverseRelations(
+            $relation->destinationContentId,
+            $relation->type
+        );
+
+        $this->assertEquals(
+            array( $relation ),
+            $loaded
+        );
+    }
+
+    /**
      * @depends testAddRelation
      */
     public function testRemoveRelation( $relation )

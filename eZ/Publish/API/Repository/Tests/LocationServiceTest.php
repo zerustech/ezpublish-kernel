@@ -88,7 +88,7 @@ class LocationServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 41 );
+        $contentId = $this->generateId( 'content', 41 );
         $parentLocationId = $this->generateId( 'location', 5 );
         /* BEGIN: Use Case */
         // $contentId is the ID of an existing content object
@@ -169,7 +169,7 @@ class LocationServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 11 );
+        $contentId = $this->generateId( 'content', 11 );
         $parentLocationId = $this->generateId( 'location', 5 );
         /* BEGIN: Use Case */
         // $contentId is the ID of an existing content object
@@ -203,7 +203,7 @@ class LocationServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 4 );
+        $contentId = $this->generateId( 'content', 4 );
         $parentLocationId = $this->generateId( 'location', 12 );
         /* BEGIN: Use Case */
         // $contentId is the ID of an existing content object
@@ -237,7 +237,7 @@ class LocationServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 41 );
+        $contentId = $this->generateId( 'content', 41 );
         $parentLocationId = $this->generateId( 'location', 5 );
         /* BEGIN: Use Case */
         // $contentId is the ID of an existing content object
@@ -270,7 +270,7 @@ class LocationServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 41 );
+        $contentId = $this->generateId( 'content', 41 );
         $parentLocationId = $this->generateId( 'location', 5 );
         /* BEGIN: Use Case */
         // $contentId is the ID of an existing content object
@@ -374,7 +374,7 @@ class LocationServiceTest extends BaseTest
             $location->contentInfo
         );
         $this->assertEquals(
-            $this->generateId( 'object', 4 ), $location->contentInfo->id
+            $this->generateId( 'content', 4 ), $location->contentInfo->id
         );
     }
 
@@ -390,7 +390,7 @@ class LocationServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $nonExistentLocationId = $this->generateId( 'location', 2342 );
+        $nonExistentLocationId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         $locationService = $repository->getLocationService();
 
@@ -458,7 +458,7 @@ class LocationServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 4 );
+        $contentId = $this->generateId( 'content', 4 );
         /* BEGIN: Use Case */
         // $contentId contains the ID of an existing content object
         $contentService = $repository->getContentService();
@@ -1290,7 +1290,7 @@ class LocationServiceTest extends BaseTest
         {
             try
             {
-                $contentService->loadContentInfo( $this->generateId( 'object', $childContentId ) );
+                $contentService->loadContentInfo( $this->generateId( 'content', $childContentId ) );
                 $this->fail( "Content $childContentId not deleted." );
             }
             catch ( Exceptions\NotFoundException $e )

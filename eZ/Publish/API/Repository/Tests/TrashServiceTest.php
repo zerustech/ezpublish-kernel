@@ -212,12 +212,12 @@ class TrashServiceTest extends BaseTrashServiceTest
     {
         $repository = $this->getRepository();
 
-        $nonExistingTrashId = $this->generateId( 'trash', 2342 );
+        $nonExistingTrashId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         $trashService = $repository->getTrashService();
 
         // This call will fail with a "NotFoundException", because no trash item
-        // with the ID 1342 should exist in an eZ Publish demo installation
+        // with the ID PHP_INT_MAX should exist in an eZ Publish demo installation
         $trashService->loadTrashItem( $nonExistingTrashId );
         /* END: Use Case */
     }

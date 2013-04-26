@@ -470,6 +470,11 @@ class ContentTypeHandlerTest extends TestCase
             $typeDraft
         );
 
+        $this->assertEquals(
+            $type->remoteId,
+            $typeDraft->remoteId
+        );
+
         return $typeDraft;
     }
 

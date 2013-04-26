@@ -33,7 +33,7 @@ class NewSectionLimitationTest extends BaseLimitationTest
         $repository = $this->getRepository();
 
         $sectionId = $this->generateId( 'section', 6 );
-        $contentId = $this->generateId( 'object', 58 );
+        $contentId = $this->generateId( 'content', 58 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
@@ -86,7 +86,7 @@ class NewSectionLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 58 );
+        $contentId = $this->generateId( 'content', 58 );
         $sectionId = $this->generateId( 'section', 6 );
         $otherSectionId = $this->generateId( 'section', 1 );
         /* BEGIN: Use Case */

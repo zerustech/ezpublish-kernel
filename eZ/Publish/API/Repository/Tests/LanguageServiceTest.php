@@ -182,7 +182,7 @@ class LanguageServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $nonExistentLanguageId = $this->generateId( 'language', 2342 );
+        $nonExistentLanguageId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         $languageService = $repository->getContentLanguageService();
 

@@ -49,7 +49,9 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
                     "sourceFieldDefinitionIdentifier" => "data",
                     "type" => Relation::FIELD,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 4 )
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'content', 41 )
+                    )
                 )
             ),
             new Relation(
@@ -57,7 +59,9 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
                     "sourceFieldDefinitionIdentifier" => "data",
                     "type" => Relation::FIELD,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 49 )
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'content', 11 )
+                    )
                 )
             ),
         );
@@ -79,7 +83,9 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
                     "sourceFieldDefinitionIdentifier" => "data",
                     "type" => Relation::FIELD,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 4 )
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'content', 41 )
+                    )
                 )
             ),
             new Relation(
@@ -88,7 +94,9 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
                     "sourceFieldDefinitionIdentifier" => "data",
                     "type" => Relation::FIELD,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 54 )
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'content', 13 )
+                    )
                 )
             ),
         );
@@ -182,7 +190,10 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
      */
     public function getValidCreationFieldData()
     {
-        return new RelationListValue( array( 4, 49 ) );
+        return new RelationListValue( array(
+            $this->generateId( 'content', 41 ),
+            $this->generateId( 'content', 11 )
+        ) );
     }
 
     /**
@@ -203,7 +214,10 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
         );
 
         $expectedData = array(
-            'destinationContentIds' => array( 4, 49 ),
+            'destinationContentIds' => array(
+                $this->generateId( 'content', 41 ),
+                $this->generateId( 'content', 11 )
+            ),
         );
         $this->assertPropertiesCorrect(
             $expectedData,
@@ -249,7 +263,10 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
      */
     public function getValidUpdateFieldData()
     {
-        return new RelationListValue( array( 4, 54 ) );
+        return new RelationListValue( array(
+            $this->generateId( 'content', 41 ),
+            $this->generateId( 'content', 13 ),
+        ) );
     }
 
     /**
@@ -267,7 +284,10 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
         );
 
         $expectedData = array(
-            'destinationContentIds' => array( 4, 54 ),
+            'destinationContentIds' => array(
+                $this->generateId( 'content', 41 ),
+                $this->generateId( 'content', 13 ),
+            ),
         );
         $this->assertPropertiesCorrect(
             $expectedData,
@@ -317,7 +337,10 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
         );
 
         $expectedData = array(
-            'destinationContentIds' => array( 4, 49 )
+            'destinationContentIds' => array(
+                $this->generateId( 'content', 41 ),
+                $this->generateId( 'content', 11 )
+            )
         );
 
         $this->assertPropertiesCorrect(
@@ -350,9 +373,15 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
     {
         return array(
             array(
-                new RelationListValue( array( 4, 49 ) ),
+                new RelationListValue( array(
+                    $this->generateId( 'content', 41 ),
+                    $this->generateId( 'content', 11 )
+                ) ),
                 array(
-                    'destinationContentIds' => array( 4, 49 ),
+                    'destinationContentIds' => array(
+                        $this->generateId( 'content', 41 ),
+                        $this->generateId( 'content', 11 )
+                    ),
                 )
             ),
         );
@@ -369,8 +398,14 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
     {
         return array(
             array(
-                array( 'destinationContentIds' => array( 4, 49 ) ),
-                new RelationListValue( array( 4, 49 ) )
+                array( 'destinationContentIds' => array(
+                    $this->generateId( 'content', 41 ),
+                    $this->generateId( 'content', 11 )
+                ) ),
+                new RelationListValue( array(
+                    $this->generateId( 'content', 41 ),
+                    $this->generateId( 'content', 11 )
+                ) )
             ),
         );
     }

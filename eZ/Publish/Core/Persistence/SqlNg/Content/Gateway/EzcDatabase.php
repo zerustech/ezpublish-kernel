@@ -805,54 +805,6 @@ class EzcDatabase extends Gateway
     }
 
     /**
-     * Get relation type ID
-     *
-     * Selects the relation type ID, or creates the relation type.
-     *
-     * @param mixed $relationType
-     * @return int
-     */
-    protected function getRelationTypeId( $relationType )
-    {
-        $query = $this->dbHandler->createSelectQuery();
-        $query->select(
-            $this->dbHandler->quoteColumn( 'relation_type_id' )
-        )->from(
-            $this->dbHandler->quoteTable( 'ezcontent_relation_types' )
-        )->where(
-            $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'name' ),
-                $query->bindValue( json_encode( $relationType ), null, \PDO::PARAM_STR )
-            )
-        );
-
-        $statement = $query->prepare();
-        $statement->execute();
-
-        if ( $rows = $statement->fetchAll( \PDO::FETCH_COLUMN ) )
-        {
-            return $rows[0]['relation_type_id'];
-        }
-
-        $query = $this->dbHandler->createInsertQuery();
-        $query->insertInto(
-            $this->dbHandler->quoteTable( 'ezcontent_relation_types' )
-        )->set(
-            $this->dbHandler->quoteColumn( 'relation_type_id' ),
-            $this->dbHandler->getAutoIncrementValue( 'ezcontent_relation_types', 'relation_type_id' )
-        )->set(
-            $this->dbHandler->quoteColumn( 'name' ),
-            $query->bindValue( json_encode( $relationType ), null, \PDO::PARAM_STR )
-        );
-
-        $query->prepare()->execute();
-
-        return $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezcontent_relation_types', 'relation_type_id' )
-        );
-    }
-
-    /**
      * Inserts a new relation database record
      *
      * @param \eZ\Publish\SPI\Persistence\Content\Relation\CreateStruct $createStruct
@@ -871,19 +823,17 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( 'version_no' ),
             $query->bindValue( $createStruct->sourceContentVersionNo, null, \PDO::PARAM_INT )
         )->set(
+            $this->dbHandler->quoteColumn( 'content_type_field_id' ),
+            $query->bindValue( $createStruct->sourceFieldDefinitionId, null, \PDO::PARAM_INT )
+        )->set(
             $this->dbHandler->quoteColumn( 'to_content_id' ),
             $query->bindValue( $createStruct->destinationContentId, null, \PDO::PARAM_INT )
         )->set(
-            $this->dbHandler->quoteColumn( 'relation_type_id' ),
-            $query->bindValue( $this->getRelationTypeId( $createStruct->type ), null, \PDO::PARAM_INT )
+            $this->dbHandler->quoteColumn( 'relation_type' ),
+            $query->bindValue( $createStruct->type, null, \PDO::PARAM_INT )
         );
 
         $query->prepare()->execute();
-
-        if ( $createStruct->sourceFieldDefinitionId )
-        {
-            throw new \RuntimeException( "@TODO: Implement." );
-        }
     }
 
     /**

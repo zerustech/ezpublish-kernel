@@ -368,7 +368,7 @@ class ObjectStateServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $nonExistentObjectStateGroupId = $this->generateId( 'objectstategroup', PHP_INT_MAX );
+        $nonExistentObjectStateGroupId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         // $nonExistentObjectStateGroupId contains an ID for an object state
         // that does not exist
@@ -933,7 +933,7 @@ class ObjectStateServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
-        $nonExistingObjectStateId = $this->generateId( 'objectstate', PHP_INT_MAX );
+        $nonExistingObjectStateId = PHP_INT_MAX;
         /* BEGIN: Use Case */
         // $nonExistingObjectStateId contains the ID of a non existing state
         $objectStateService = $repository->getObjectStateService();

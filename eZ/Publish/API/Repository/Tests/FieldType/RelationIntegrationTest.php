@@ -69,7 +69,7 @@ class RelationFieldTypeIntegrationTest extends RelationBaseIntegrationTest
                     "sourceFieldDefinitionIdentifier" => "data",
                     "type" => Relation::FIELD,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 49 )
+                    "destinationContentInfo" => $contentService->loadContentInfo( $this->generateId( 'content', 58 ) )
                 )
             ),
         );
@@ -222,7 +222,7 @@ class RelationFieldTypeIntegrationTest extends RelationBaseIntegrationTest
      */
     public function getValidUpdateFieldData()
     {
-        return new RelationValue( 49 );
+        return new RelationValue( $this->generateId( 'content', 58 ) );
     }
 
     /**
@@ -240,7 +240,7 @@ class RelationFieldTypeIntegrationTest extends RelationBaseIntegrationTest
         );
 
         $expectedData = array(
-            'destinationContentId' => 49,
+            'destinationContentId' => $this->generateId( 'content', 58 ),
         );
         $this->assertPropertiesCorrect(
             $expectedData,

@@ -99,7 +99,7 @@ class ContentServiceAuthorizationTest extends BaseContentServiceTest
     {
         $repository = $this->getRepository();
 
-        $contentId = $this->generateId( 'object', 10 );
+        $contentId = $this->generateId( 'content', 10 );
         /* BEGIN: Use Case */
         $contentService = $repository->getContentService();
 

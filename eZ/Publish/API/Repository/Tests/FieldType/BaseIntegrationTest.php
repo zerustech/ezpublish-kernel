@@ -539,7 +539,11 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
         $createStruct->remoteId = 'abcdef0123456789abcdef0123456789';
         $createStruct->alwaysAvailable = true;
 
-        return $contentService->createContent( $createStruct );
+        try {
+            return $contentService->createContent( $createStruct );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
+        }
     }
 
     /**
@@ -647,7 +651,11 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
      */
     public function testUpdateField()
     {
-        return $this->updateContent( $this->getValidUpdateFieldData() );
+        try {
+            return $this->updateContent( $this->getValidUpdateFieldData() );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
+        }
     }
 
     /**
@@ -782,23 +790,12 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
      */
     public function testCreateContentFails( $failingValue, $expectedException )
     {
-        try
-        {
-            $this->createContent( $failingValue );
+        $this->setExpectedException($expectedException);
 
-            $this->fail( 'Expected exception not thrown.' );
-        }
-        catch ( \PHPUnit_Framework_AssertionFailedError $e )
-        {
-            throw $e;
-        }
-        catch ( \Exception $e )
-        {
-            $this->assertInstanceOf(
-                $expectedException,
-                $e,
-                (string) $e
-            );
+        try {
+            $this->createContent( $failingValue );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
         }
     }
 
@@ -815,23 +812,12 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
      */
     public function testUpdateContentFails( $failingValue, $expectedException )
     {
-        try
-        {
-            $this->updateContent( $failingValue );
+        $this->setExpectedException($expectedException);
 
-            $this->fail( 'Expected exception not thrown.' );
-        }
-        catch ( \PHPUnit_Framework_AssertionFailedError $e )
-        {
-            throw $e;
-        }
-        catch ( \Exception $e )
-        {
-            $this->assertInstanceOf(
-                $expectedException,
-                $e,
-                (string) $e
-            );
+        try {
+            $this->updateContent( $failingValue );
+        } catch ( \OutOfBoundsException $e ) {
+            $this->markTestIncomplete( "Missing gateway for current storage." );
         }
     }
 
