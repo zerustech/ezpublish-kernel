@@ -831,7 +831,7 @@ class EzcDatabase extends Gateway
 
         if ( $rows = $statement->fetchAll( \PDO::FETCH_COLUMN ) )
         {
-            return $rows[0]['relation_type_id'];
+            return $rows[0];
         }
 
         $query = $this->dbHandler->createInsertQuery();
@@ -882,7 +882,27 @@ class EzcDatabase extends Gateway
 
         if ( $createStruct->sourceFieldDefinitionId )
         {
-            throw new \RuntimeException( "@TODO: Implement." );
+            $query = $this->dbHandler->createInsertQuery();
+            $query->insertInto(
+                $this->dbHandler->quoteTable( 'ezcontent_relation_fields' )
+            )->set(
+                $this->dbHandler->quoteColumn( 'content_id' ),
+                $query->bindValue( $createStruct->sourceContentId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'version_no' ),
+                $query->bindValue( $createStruct->sourceContentVersionNo, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'content_type_field_id' ),
+                $query->bindValue( $createStruct->sourceFieldDefinitionId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'to_content_id' ),
+                $query->bindValue( $createStruct->destinationContentId, null, \PDO::PARAM_INT )
+            )->set(
+                $this->dbHandler->quoteColumn( 'relation_type_id' ),
+                $query->bindValue( $this->getRelationTypeId( $createStruct->type ), null, \PDO::PARAM_INT )
+            );
+
+            $query->prepare()->execute();
         }
     }
 

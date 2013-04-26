@@ -348,6 +348,31 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
+     * @depends testPublishRoot
+     */
+    public function testAddFieldRelation( $content )
+    {
+        $handler = $this->getContentHandler();
+
+        $relation = $handler->addRelation(
+            new Persistence\Content\Relation\CreateStruct( array(
+                'destinationContentId' => 2, // Child
+                'sourceContentId' => $content->versionInfo->contentInfo->id,
+                'sourceContentVersionNo' => $content->versionInfo->versionNo,
+                'type' => Repository\Values\Content\Relation::FIELD,
+                'sourceFieldDefinitionId' => $content->fields[0]->fieldDefinitionId,
+            ) )
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\Relation',
+            $relation
+        );
+
+        return $relation;
+    }
+
+    /**
      * @depends testAddRelation
      */
     public function testLoadRelations( $relation )
