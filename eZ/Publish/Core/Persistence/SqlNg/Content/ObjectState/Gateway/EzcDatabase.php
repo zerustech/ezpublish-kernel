@@ -13,6 +13,7 @@ use eZ\Publish\SPI\Persistence;
 use eZ\Publish\Core\Persistence\SqlNg\Content\ObjectState\Gateway;
 use eZ\Publish\Core\Persistence\Legacy\EzcDbHandler;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler as LanguageHandler;
+use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 
 /**
  * ObjectState ezcDatabase Gateway
@@ -294,7 +295,13 @@ class EzcDatabase extends Gateway
             )
         );
 
-        $query->prepare()->execute();
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFoundException( 'ObjectState', $stateId );
+        }
     }
 
     /**
@@ -399,7 +406,13 @@ class EzcDatabase extends Gateway
             )
         );
 
-        $query->prepare()->execute();
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFoundException( 'ObjectStateGroup', $groupId );
+        }
     }
 
     /**
