@@ -414,4 +414,14 @@ class ObjectStateHandlerTest extends TestCase
 
         $this->assertEquals(array(), $handler->loadAllGroups() );
     }
+
+    /**
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    public function testDeleteGroupThrowsNotFoundException()
+    {
+        $handler = $this->getObjectStateHandler();
+
+        $handler->deleteGroup( PHP_INT_MAX );
+    }
 }
