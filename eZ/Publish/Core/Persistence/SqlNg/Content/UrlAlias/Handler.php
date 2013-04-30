@@ -264,6 +264,8 @@ class Handler implements UrlAliasHandlerInterface
      * Notifies the underlying engine that a location was deleted or moved to trash
      *
      * @param mixed $locationId
+     *
+     * @return void
      */
     public function locationDeleted( $locationId )
     {
