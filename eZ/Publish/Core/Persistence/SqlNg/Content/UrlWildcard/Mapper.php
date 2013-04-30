@@ -50,7 +50,7 @@ class Mapper
         $urlWildcard->id = (int)$row["wildcard_id"];
         $urlWildcard->destinationUrl = $row["destination"];
         $urlWildcard->sourceUrl = $row["source"];
-        $urlWildcard->forward = (bool)$row["type"];
+        $urlWildcard->forward = (bool)$row["forward"];
 
         return $urlWildcard;
     }

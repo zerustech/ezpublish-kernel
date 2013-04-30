@@ -65,7 +65,7 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( "source" ),
             $query->bindValue( $urlWildcard->sourceUrl, null, \PDO::PARAM_STR )
         )->set(
-            $this->dbHandler->quoteColumn( "type" ),
+            $this->dbHandler->quoteColumn( "forward" ),
             $query->bindValue( $urlWildcard->forward, null, \PDO::PARAM_INT )
         );
 
@@ -119,7 +119,7 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( "wildcard_id" ),
             $this->dbHandler->quoteColumn( "destination" ),
             $this->dbHandler->quoteColumn( "source" ),
-            $this->dbHandler->quoteColumn( "type" )
+            $this->dbHandler->quoteColumn( "forward" )
         )->from(
             $this->dbHandler->quoteTable( "ezurl_wildcard" )
         )->where(
@@ -152,7 +152,7 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( "wildcard_id" ),
             $this->dbHandler->quoteColumn( "destination" ),
             $this->dbHandler->quoteColumn( "source" ),
-            $this->dbHandler->quoteColumn( "type" )
+            $this->dbHandler->quoteColumn( "forward" )
         )->from(
             $this->dbHandler->quoteTable( "ezurl_wildcard" )
         )->limit( $limit, $offset );

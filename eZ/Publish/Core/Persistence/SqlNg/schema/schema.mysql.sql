@@ -298,12 +298,11 @@ CREATE TABLE `ezcontent_state_link` (
 
 DROP TABLE IF EXISTS `ezurl_wildcard`;
 CREATE TABLE `ezurl_wildcard` (
-  `wildcard_id` INT NOT NULL AUTO_INCREMENT,
-  `source` TEXT NOT NULL,
-  `destination` TEXT NOT NULL,
-  `type` INT NOT NULL,
-  PRIMARY KEY (`wildcard_id`)
+    `wildcard_id` INT NOT NULL AUTO_INCREMENT,
+    `source` TEXT NOT NULL,
+    `destination` TEXT NOT NULL,
+    `forward` INT NOT NULL,
+    PRIMARY KEY (`wildcard_id`)
 ) ENGINE=InnoDB;
-
 
 SET FOREIGN_KEY_CHECKS = 1;
