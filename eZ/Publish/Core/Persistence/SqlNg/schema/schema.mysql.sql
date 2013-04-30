@@ -92,7 +92,8 @@ CREATE TABLE IF NOT EXISTS `ezcontenttype` (
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`type_id`),
     UNIQUE KEY `ezcontenttype_remote_id` (`remote_id`, `status`),
-    FOREIGN KEY (`source_type_id`) REFERENCES `ezcontenttype` (`type_id`) ON DELETE CASCADE,
+    UNIQUE KEY `ezcontenttype_identifier` (`identifier`, `status`),
+    FOREIGN KEY (`source_type_id`) REFERENCES `ezcontenttype` (`type_id`) ON DELETE SET NULL,
     FOREIGN KEY (`initial_language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT,
     FOREIGN KEY (`creator_id`) REFERENCES `ezuser` (`user_id`) ON DELETE RESTRICT,
     FOREIGN KEY (`modifier_id`) REFERENCES `ezuser` (`user_id`) ON DELETE RESTRICT
