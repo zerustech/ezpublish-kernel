@@ -27,7 +27,13 @@ class Mapper
      */
     public function createUrlWildcard( $sourceUrl, $destinationUrl, $forward )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $urlWildcard = new UrlWildcard();
+
+        $urlWildcard->destinationUrl = $destinationUrl;
+        $urlWildcard->sourceUrl = $sourceUrl;
+        $urlWildcard->forward = $forward;
+
+        return $urlWildcard;
     }
 
     /**
@@ -39,7 +45,14 @@ class Mapper
      */
     public function extractUrlWildcardFromRow( array $row )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $urlWildcard = new UrlWildcard();
+
+        $urlWildcard->id = (int)$row["wildcard_id"];
+        $urlWildcard->destinationUrl = $row["destination"];
+        $urlWildcard->sourceUrl = $row["source"];
+        $urlWildcard->forward = (bool)$row["type"];
+
+        return $urlWildcard;
     }
 
     /**
@@ -51,6 +64,13 @@ class Mapper
      */
     public function extractUrlWildcardsFromRows( array $rows )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $urlWildcards = array();
+
+        foreach ( $rows as $row )
+        {
+            $urlWildcards[] = $this->extractUrlWildcardFromRow( $row );
+        }
+
+        return $urlWildcards;
     }
 }
