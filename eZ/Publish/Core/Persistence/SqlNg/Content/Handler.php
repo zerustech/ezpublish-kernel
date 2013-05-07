@@ -459,7 +459,8 @@ class Handler implements BaseContentHandler
         {
             foreach ( $contentLocations as $locationId )
             {
-                $this->locationHandler->removeSubtree( $locationId );
+                // @TODO: Re-Enable this again
+                // $this->locationHandler->removeSubtree( $locationId );
             }
         }
     }
