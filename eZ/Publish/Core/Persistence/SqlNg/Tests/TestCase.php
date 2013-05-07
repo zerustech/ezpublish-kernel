@@ -80,7 +80,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             );
 
             $this->applyStatements(
-                $this->getSchemaStatements()
+                $this->getStatements(
+                    __DIR__ . '/../schema/schema.' . self::$db . '.sql'
+                )
             );
         }
 
@@ -110,15 +112,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @return string[]
      */
-    protected function getSchemaStatements()
+    protected function getStatements( $file )
     {
 
         return array_filter(
             preg_split(
                 '(;\\s*$)m',
-                file_get_contents(
-                    __DIR__ . '/../schema/schema.' . self::$db . '.sql'
-                )
+                file_get_contents( $file )
             )
         );
     }
