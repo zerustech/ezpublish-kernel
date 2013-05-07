@@ -46,15 +46,10 @@ class UrlAliasHandlerTest extends TestCase
         $handler = $this->getUrlAliasHandler();
 
         $location = $this->getPersistenceHandler()->locationHandler()->load( 10 );
-        $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
-
 
         $urlAlias = $handler->createCustomUrlAlias(
             $location->id,
-            '/some/path',
-            false,
-            $content->mainLanguageCode,
-            false
+            '/some/path'
         );
 
         $this->assertInstanceOf(
@@ -75,6 +70,18 @@ class UrlAliasHandlerTest extends TestCase
         $loaded = $handler->loadUrlAlias( $urlAlias->id );
 
         $this->assertEquals( $urlAlias, $loaded );
+    }
+
+    /**
+     * @depends testCreateCustomUrlAlias
+     */
+    public function testListCustomUrlAlias( $urlAlias )
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $loaded = $handler->listURLAliasesForLocation( $urlAlias->locationId, true );
+
+        $this->assertEquals( array( $urlAlias ), $loaded );
     }
 
     /**
@@ -106,5 +113,72 @@ class UrlAliasHandlerTest extends TestCase
         $handler = $this->getUrlAliasHandler();
 
         $handler->removeUrlAliases( array( PHP_INT_MAX ) );
+    }
+
+    public function testCreateCustomUrlAliasWithForward()
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $location = $this->getPersistenceHandler()->locationHandler()->load( 10 );
+
+        $urlAlias = $handler->createCustomUrlAlias(
+            $location->id,
+            '/some/path/forwarded',
+            true
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\UrlAlias',
+            $urlAlias
+        );
+
+        return $urlAlias;
+    }
+
+    /**
+     * @depends testCreateCustomUrlAliasWithForward
+     */
+    public function testLoadCustomUrlAliasWithForward( $urlAlias )
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $loaded = $handler->loadUrlAlias( $urlAlias->id );
+
+        $this->assertEquals( $urlAlias, $loaded );
+    }
+
+    public function testCreateCustomUrlAliasAlwaysAvailable()
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $location = $this->getPersistenceHandler()->locationHandler()->load( 10 );
+        $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
+
+        $urlAlias = $handler->createCustomUrlAlias(
+            $location->id,
+            '/some/path/forwarded',
+            false,
+            $content->mainLanguageCode,
+            true
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\UrlAlias',
+            $urlAlias
+        );
+
+        return $urlAlias;
+    }
+
+    /**
+     * @depends testCreateCustomUrlAliasAlwaysAvailable
+     */
+    public function testLoadCustomUrlAliasAlwaysAvailable( $urlAlias )
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $loaded = $handler->loadUrlAlias( $urlAlias->id );
+
+        $this->assertEquals( $urlAlias, $loaded );
     }
 }
