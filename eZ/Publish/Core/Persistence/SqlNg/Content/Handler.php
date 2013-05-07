@@ -155,6 +155,11 @@ class Handler implements BaseContentHandler
             );
         }
 
+        foreach ( $content->fields as $field )
+        {
+            $this->storageHandler->storeFieldData( $content->versionInfo, $field );
+        }
+
         return $this->load( $content->versionInfo->contentInfo->id, $content->versionInfo->versionNo );
     }
 
@@ -544,11 +549,6 @@ class Handler implements BaseContentHandler
             $this->load( $contentId, $currentVersionNo )
         );
         $content = $this->internalCreate( $createStruct, $currentVersionNo );
-
-        foreach ( $content->fields as $field )
-        {
-            $this->storageHandler->storeFieldData( $content->versionInfo, $field );
-        }
 
         foreach ( $this->listVersions( $contentId ) as $versionInfo )
         {
