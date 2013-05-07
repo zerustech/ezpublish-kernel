@@ -146,7 +146,7 @@ class Handler implements BaseContentHandler
         {
             $locationCreateStruct->contentId = $content->versionInfo->contentInfo->id;
             $locationCreateStruct->contentVersion = $content->versionInfo->versionNo;
-            $location = $this->locationGateway->create(
+            $this->locationGateway->create(
                 $locationCreateStruct,
                 $locationCreateStruct->parentId ?
                     $this->locationGateway->getBasicNodeData( $locationCreateStruct->parentId ) :
