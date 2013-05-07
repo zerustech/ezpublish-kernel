@@ -305,4 +305,27 @@ CREATE TABLE `ezurl_wildcard` (
     PRIMARY KEY (`wildcard_id`)
 ) ENGINE=InnoDB;
 
+DROP TABLE IF EXISTS `ezurl_alias`;
+CREATE TABLE `ezurl_alias` (
+    `alias_id` INT NOT NULL AUTO_INCREMENT,
+    `location_id` INT NOT NULL,
+    `path` TEXT NOT NULL,
+    `language_id` INT NOT NULL,
+    -- `language_list varchar NOT NULL,
+    PRIMARY KEY (`alias_id`),
+    FOREIGN KEY (`language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `ezurl_alias_target`;
+CREATE TABLE `ezurl_alias_target` (
+    `path_hash` BINARY(32) NOT NULL,
+    `path` TEXT NOT NULL,
+    `target` TEXT NOT NULL,
+    `location_id` INT NOT NULL,
+    `type` INT NOT NULL,
+    `language_id` INT NOT NULL,
+    PRIMARY KEY (`path_hash`),
+    FOREIGN KEY (`language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
 SET FOREIGN_KEY_CHECKS = 1;
