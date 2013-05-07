@@ -49,7 +49,7 @@ class UrlAliasHandlerTest extends TestCase
 
         $urlAlias = $handler->createCustomUrlAlias(
             $location->id,
-            '/some/path'
+            '/custom'
         );
 
         $this->assertInstanceOf(
@@ -123,7 +123,7 @@ class UrlAliasHandlerTest extends TestCase
 
         $urlAlias = $handler->createCustomUrlAlias(
             $location->id,
-            '/some/path/forwarded',
+            '/custom/forwarded',
             true
         );
 
@@ -156,7 +156,7 @@ class UrlAliasHandlerTest extends TestCase
 
         $urlAlias = $handler->createCustomUrlAlias(
             $location->id,
-            '/some/path/forwarded',
+            '/custom/always-available',
             false,
             $content->mainLanguageCode,
             true
@@ -180,5 +180,145 @@ class UrlAliasHandlerTest extends TestCase
         $loaded = $handler->loadUrlAlias( $urlAlias->id );
 
         $this->assertEquals( $urlAlias, $loaded );
+    }
+
+    public function testCreateGlobalUrlAlias()
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $urlAlias = $handler->createGlobalUrlAlias(
+            'module:content/search?SearchText=eZ',
+            '/global'
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\UrlAlias',
+            $urlAlias
+        );
+
+        return $urlAlias;
+    }
+
+    /**
+     * @depends testCreateGlobalUrlAlias
+     */
+    public function testLoadGlobalUrlAlias( $urlAlias )
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $loaded = $handler->loadUrlAlias( $urlAlias->id );
+
+        $this->assertEquals( $urlAlias, $loaded );
+    }
+
+    /**
+     * @depends testCreateGlobalUrlAlias
+     */
+    public function testListGlobalUrlAlias( $urlAlias )
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $loaded = $handler->listGlobalUrlAliases();
+
+        $this->assertEquals( array( $urlAlias ), $loaded );
+    }
+
+    /**
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    public function testLoadGlobalUrlAliasThrowsNotFoundException()
+    {
+        $handler = $this->getUrlAliasHandler();
+        $handler->loadUrlAlias( PHP_INT_MAX );
+    }
+
+    public function testCreateGlobalUrlAliasWithForward()
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $urlAlias = $handler->createGlobalUrlAlias(
+            'module:content/search?SearchText=eZForward',
+            '/global/forward',
+            true
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\UrlAlias',
+            $urlAlias
+        );
+
+        return $urlAlias;
+    }
+
+    /**
+     * @depends testCreateGlobalUrlAliasWithForward
+     */
+    public function testLoadGlobalUrlAliasWithForward( $urlAlias )
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $loaded = $handler->loadUrlAlias( $urlAlias->id );
+
+        $this->assertEquals( $urlAlias, $loaded );
+    }
+
+    public function testCreateGlobalUrlAliasAlwaysAvailable()
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $location = $this->getPersistenceHandler()->locationHandler()->load( 10 );
+        $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
+
+        $urlAlias = $handler->createGlobalUrlAlias(
+            'module:content/search?SearchText=eZAlwaysAvailable',
+            '/global/always-available',
+            true,
+            $content->mainLanguageCode,
+            true
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\UrlAlias',
+            $urlAlias
+        );
+
+        return $urlAlias;
+    }
+
+    /**
+     * @depends testCreateGlobalUrlAliasAlwaysAvailable
+     */
+    public function testLoadGlobalUrlAliasAlwaysAvailable( $urlAlias )
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $loaded = $handler->loadUrlAlias( $urlAlias->id );
+
+        $this->assertEquals( $urlAlias, $loaded );
+    }
+
+    public function testLookup()
+    {
+        $this->markTestIncomplete( "@TODO: Write tests for this." );
+    }
+
+    public function testPublishUrlAliasForLocation()
+    {
+        $this->markTestIncomplete( "@TODO: Write tests for this." );
+    }
+
+    public function testLocationMoved()
+    {
+        $this->markTestIncomplete( "@TODO: Write tests for this." );
+    }
+
+    public function testLocationCopied()
+    {
+        $this->markTestIncomplete( "@TODO: Write tests for this." );
+    }
+
+    public function testLocationDeleted()
+    {
+        $this->markTestIncomplete( "@TODO: Write tests for this." );
     }
 }
