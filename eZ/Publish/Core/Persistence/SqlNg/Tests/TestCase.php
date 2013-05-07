@@ -84,9 +84,23 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                     __DIR__ . '/../schema/schema.' . self::$db . '.sql'
                 )
             );
+
+            $this->applyCustomStatements();
         }
 
         return self::$persistenceHandler;
+    }
+
+    /**
+     * Method called on database initialization before each test case
+     *
+     * Does nothing, but may be overwritten to do something.
+     *
+     * @return void
+     */
+    protected function applyCustomStatements()
+    {
+        // Intentionally do just nothing
     }
 
     /**
