@@ -40,11 +40,11 @@ class XmlTextIntegrationTest extends RelationBaseIntegrationTest
 <?xml version="1.0" encoding="utf-8"?>
 <section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
 <paragraph>Example</paragraph>
-<paragraph><link node_id="58">link1</link></paragraph>
-<paragraph><link object_id="54">link2</link></paragraph>
+<paragraph><link node_id="{$this->generateId( 'location', 12 )}">link1</link></paragraph>
+<paragraph><link object_id="{$this->generateId( 'content', 12 )}">link2</link></paragraph>
 <paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/">
-    <embed view="embed" size="medium" node_id="60" custom:offset="0" custom:limit="5"/>
-    <embed view="embed" size="medium" object_id="56" custom:offset="0" custom:limit="5"/>
+    <embed view="embed" size="medium" node_id="{$this->generateId( 'location', 14 )}" custom:offset="0" custom:limit="5"/>
+    <embed view="embed" size="medium" object_id="{$this->generateId( 'content', 14 )}" custom:offset="0" custom:limit="5"/>
 </paragraph>
 </section>
 EOT
@@ -56,9 +56,9 @@ EOT
 <?xml version="1.0" encoding="utf-8"?>
 <section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
 <paragraph>Example 2</paragraph>
-<paragraph><link node_id="60">link1</link></paragraph>
+<paragraph><link node_id="{$this->generateId( 'location', 14 )}">link1</link></paragraph>
 <paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/">
-    <embed view="embed" size="medium" object_id="56" custom:offset="0" custom:limit="5"/>
+    <embed view="embed" size="medium" object_id="{$this->generateId( 'content', 14 )}" custom:offset="0" custom:limit="5"/>
 </paragraph>
 </section>
 EOT
@@ -79,22 +79,17 @@ EOT
                 array(
                     "type" => Relation::LINK,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 56 )
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'content', 11 )
+                    )
                 )
             ),
             new Relation(
                 array(
                     "type" => Relation::LINK,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 54 )
-                )
-            ),
-            new Relation(
-                array(
-                    "type" => Relation::EMBED,
-                    "sourceContentInfo" => $content->contentInfo,
                     "destinationContentInfo" => $contentService->loadContentInfo(
-                        $this->generateId( 'content', 58 )
+                        $this->generateId( 'content', 12 )
                     )
                 )
             ),
@@ -102,7 +97,18 @@ EOT
                 array(
                     "type" => Relation::EMBED,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 56 )
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'content', 13 )
+                    )
+                )
+            ),
+            new Relation(
+                array(
+                    "type" => Relation::EMBED,
+                    "sourceContentInfo" => $content->contentInfo,
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'content', 14 )
+                    )
                 )
             )
         );
@@ -123,7 +129,7 @@ EOT
                     "type" => Relation::LINK,
                     "sourceContentInfo" => $content->contentInfo,
                     "destinationContentInfo" => $contentService->loadContentInfo(
-                        $this->generateId( 'content', 58 )
+                        $this->generateId( 'content', 13 )
                     )
                 )
             ),
@@ -131,7 +137,9 @@ EOT
                 array(
                     "type" => Relation::EMBED,
                     "sourceContentInfo" => $content->contentInfo,
-                    "destinationContentInfo" => $contentService->loadContentInfo( 56 )
+                    "destinationContentInfo" => $contentService->loadContentInfo(
+                        $this->generateId( 'content', 14 )
+                    )
                 )
             ),
         );
@@ -230,22 +238,7 @@ EOT
      */
     public function getValidCreationFieldData()
     {
-        $doc = new DOMDocument;
-        $doc->loadXML(
-<<<EOT
-<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-<paragraph>Example</paragraph>
-<paragraph><link node_id="{$this->generateId( 'location', 58 )}">link1</link></paragraph>
-<paragraph><link object_id="{$this->generateId( 'content', 54 )}">link2</link></paragraph>
-<paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/">
-    <embed view="embed" size="medium" node_id="{$this->generateId( 'location', 60 )}" custom:offset="0" custom:limit="5"/>
-    <embed view="embed" size="medium" object_id="{$this->generateId( 'content', 56 )}" custom:offset="0" custom:limit="5"/>
-</paragraph>
-</section>
-EOT
-        );
-        return new XmlTextValue( $doc );
+        return new XmlTextValue( $this->createdDOMValue );
     }
 
     /**
