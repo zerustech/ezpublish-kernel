@@ -40,19 +40,19 @@ class SqlNg extends IdManager
         ),
         'location' => array(
             1 => 1,
-            2 => 5,
-            5 => 2,
-            12 => 6,
-            13 => 7,
-            14 => 8,
-            15 => 12,
-            44 => 9,
-            45 => 13,
-            54 => 3,
-            58 => 11, // Design, probably should be created
-            56 => 11, // Design/PlainSite, should also be created
-            60 => 11,
-            61 => 10,
+            2 => 5,   // => content: 57
+            5 => 2,   // => content: 4
+            12 => 6,  // => content: 11
+            13 => 7,  // => content: 12
+            14 => 8,  // => content: 13
+            15 => 12, // => content: 14
+            44 => 9,  // => content: 42
+            45 => 13, // => content: 10
+            54 => 3,  // => content: 52
+            58 => 11, // => content: 56; Design, probably should be created
+            56 => 11, // => content: 54; Design/PlainSite, should also be created
+            60 => 11, // => content: 58
+            61 => 10, // => content: 59
         ),
         'typegroup' => array(
             1 => 1,
