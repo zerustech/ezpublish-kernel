@@ -25,47 +25,6 @@ use eZ\Publish\API\Repository\Values\Content\Content;
 class XmlTextIntegrationTest extends RelationBaseIntegrationTest
 {
     /**
-     * @var \DOMDocument
-     */
-    private $createdDOMValue;
-
-    private $updatedDOMValue;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->createdDOMValue = new DOMDocument;
-        $this->createdDOMValue->loadXML(
-<<<EOT
-<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-<paragraph>Example</paragraph>
-<paragraph><link node_id="{$this->generateId( 'location', 12 )}">link1</link></paragraph>
-<paragraph><link object_id="{$this->generateId( 'content', 12 )}">link2</link></paragraph>
-<paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/">
-    <embed view="embed" size="medium" node_id="{$this->generateId( 'location', 14 )}" custom:offset="0" custom:limit="5"/>
-    <embed view="embed" size="medium" object_id="{$this->generateId( 'content', 14 )}" custom:offset="0" custom:limit="5"/>
-</paragraph>
-</section>
-EOT
-        );
-
-        $this->updatedDOMValue = new DOMDocument;
-        $this->updatedDOMValue->loadXML(
-<<<EOT
-<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-<paragraph>Example 2</paragraph>
-<paragraph><link node_id="{$this->generateId( 'location', 14 )}">link1</link></paragraph>
-<paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/">
-    <embed view="embed" size="medium" object_id="{$this->generateId( 'content', 14 )}" custom:offset="0" custom:limit="5"/>
-</paragraph>
-</section>
-EOT
-        );
-    }
-
-    /**
      * @param \eZ\Publish\API\Repository\Values\Content\Content $content
      *
      * @return \eZ\Publish\Core\Repository\Values\Content\Relation[]
@@ -231,6 +190,27 @@ EOT
         );
     }
 
+    protected function getCreateXml()
+    {
+        $document = new DOMDocument;
+        $document->loadXML(
+<<<EOT
+<?xml version="1.0" encoding="utf-8"?>
+<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
+<paragraph>Example</paragraph>
+<paragraph><link node_id="{$this->generateId( 'location', 12 )}">link1</link></paragraph>
+<paragraph><link object_id="{$this->generateId( 'content', 12 )}">link2</link></paragraph>
+<paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/">
+    <embed view="embed" size="medium" node_id="{$this->generateId( 'location', 14 )}" custom:offset="0" custom:limit="5"/>
+    <embed view="embed" size="medium" object_id="{$this->generateId( 'content', 14 )}" custom:offset="0" custom:limit="5"/>
+</paragraph>
+</section>
+EOT
+        );
+
+        return $document;
+    }
+
     /**
      * Get initial field data for valid object creation
      *
@@ -238,7 +218,7 @@ EOT
      */
     public function getValidCreationFieldData()
     {
-        return new XmlTextValue( $this->createdDOMValue );
+        return new XmlTextValue( $this->getCreateXml() );
     }
 
     /**
@@ -260,7 +240,7 @@ EOT
 
         $this->assertPropertiesCorrect(
             array(
-                'xml' => $this->createdDOMValue
+                'xml' => $this->getCreateXml()
             ),
             $field->value
         );
@@ -297,6 +277,25 @@ EOT
         );
     }
 
+    protected function getUpdateXml()
+    {
+        $document = new DOMDocument;
+        $document->loadXML(
+<<<EOT
+<?xml version="1.0" encoding="utf-8"?>
+<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
+<paragraph>Example 2</paragraph>
+<paragraph><link node_id="{$this->generateId( 'location', 14 )}">link1</link></paragraph>
+<paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/">
+    <embed view="embed" size="medium" object_id="{$this->generateId( 'content', 14 )}" custom:offset="0" custom:limit="5"/>
+</paragraph>
+</section>
+EOT
+        );
+
+        return $document;
+    }
+
     /**
      * Get update field externals data
      *
@@ -304,7 +303,7 @@ EOT
      */
     public function getValidUpdateFieldData()
     {
-        return new XmlTextValue( $this->updatedDOMValue );
+        return new XmlTextValue( $this->getUpdateXml() );
     }
 
     /**
@@ -323,7 +322,7 @@ EOT
 
         $this->assertPropertiesCorrect(
             array(
-                'xml' => $this->updatedDOMValue
+                'xml' => $this->getUpdateXml()
             ),
             $field->value
         );
@@ -372,7 +371,7 @@ EOT
 
         $this->assertPropertiesCorrect(
             array(
-                'xml' => $this->createdDOMValue
+                'xml' => $this->getCreateXml()
             ),
             $field->value
         );
@@ -474,7 +473,7 @@ EOT
     public function providerForTestIsNotEmptyValue()
     {
         $doc = new DOMDocument;
-        $doc->loadXML( "<section> </section>" );
+        $doc->loadXML( "<section>foo</section>" );
         $doc2 = new DOMDocument;
         $doc2->loadXML( "<section><paragraph></paragraph></section>" );
         return array(
