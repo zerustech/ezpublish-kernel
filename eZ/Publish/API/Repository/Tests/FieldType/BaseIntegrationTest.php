@@ -371,7 +371,12 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
      */
     public function testIsEmptyValue( $value )
     {
-        $this->assertTrue( $this->getRepository()->getFieldTypeService()->buildFieldType( $this->getTypeName() )->isEmptyValue( $value ) );
+        $this->assertTrue(
+            $this->getRepository()->getFieldTypeService()->buildFieldType(
+                $this->getTypeName()
+            )->isEmptyValue( $value ),
+            "Empty value parsed as non-empty."
+        );
     }
 
     abstract public function providerForTestIsEmptyValue();
@@ -382,7 +387,12 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
      */
     public function testIsNotEmptyValue( $value )
     {
-        $this->assertFalse( $this->getRepository()->getFieldTypeService()->buildFieldType( $this->getTypeName() )->isEmptyValue( $value ) );
+        $this->assertFalse(
+            $this->getRepository()->getFieldTypeService()->buildFieldType(
+                $this->getTypeName()
+            )->isEmptyValue( $value ),
+            "Non-empty value parsed as empty."
+        );
     }
 
     abstract public function providerForTestIsNotEmptyValue();
@@ -392,7 +402,12 @@ abstract class BaseIntegrationTest extends Tests\BaseTest
      */
     public function testIsEmptyValueWithNull()
     {
-        $this->assertTrue( $this->getRepository()->getFieldTypeService()->buildFieldType( $this->getTypeName() )->isEmptyValue( null ) );
+        $this->assertTrue(
+            $this->getRepository()->getFieldTypeService()->buildFieldType(
+                $this->getTypeName()
+            )->isEmptyValue( null ),
+            "null value parsed as non-empty."
+        );
     }
 
     /**
