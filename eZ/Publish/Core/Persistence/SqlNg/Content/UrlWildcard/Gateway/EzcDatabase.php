@@ -12,6 +12,7 @@ namespace eZ\Publish\Core\Persistence\SqlNg\Content\UrlWildcard\Gateway;
 use eZ\Publish\Core\Persistence\SqlNg\Content\UrlWildcard\Gateway;
 use eZ\Publish\Core\Persistence\Legacy\EzcDbHandler;
 use eZ\Publish\SPI\Persistence\Content\UrlWildcard;
+use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 
 /**
  * UrlWildcard Gateway
@@ -38,7 +39,7 @@ class EzcDatabase extends Gateway
      */
     public function __construct ( EzcDbHandler $dbHandler )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $this->dbHandler = $dbHandler;
     }
 
     /**
@@ -50,31 +51,87 @@ class EzcDatabase extends Gateway
      */
     public function insertUrlWildcard( UrlWildcard $urlWildcard )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        /** @var $query \ezcQueryInsert */
+        $query = $this->dbHandler->createInsertQuery();
+        $query->insertInto(
+            $this->dbHandler->quoteTable( "ezurl_wildcard" )
+        )->set(
+            $this->dbHandler->quoteColumn( "wildcard_id" ),
+            $this->dbHandler->getAutoIncrementValue( "ezurl_wildcard", "wildcard_id" )
+        )->set(
+            $this->dbHandler->quoteColumn( "destination" ),
+            $query->bindValue( $urlWildcard->destinationUrl, null, \PDO::PARAM_STR )
+        )->set(
+            $this->dbHandler->quoteColumn( "source" ),
+            $query->bindValue( $urlWildcard->sourceUrl, null, \PDO::PARAM_STR )
+        )->set(
+            $this->dbHandler->quoteColumn( "forward" ),
+            $query->bindValue( $urlWildcard->forward, null, \PDO::PARAM_INT )
+        );
+
+        $query->prepare()->execute();
+
+        return $this->dbHandler->lastInsertId(
+            $this->dbHandler->getSequenceName( "ezurl_wildcard", "wildcard_id" )
+        );
     }
 
     /**
-     * Deletes the UrlWildcard with given $id
+     * Deletes the UrlWildcard with given $wildcardId
      *
-     * @param mixed $id
+     * @param mixed $wildcardId
      *
-     * @return void
+     * @return vowildcard_id
      */
-    public function deleteUrlWildcard( $id )
+    public function deleteUrlWildcard( $wildcardId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        /** @var $query \ezcQueryDelete */
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom(
+            $this->dbHandler->quoteTable( "ezurl_wildcard" )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( "wildcard_id" ),
+                $query->bindValue( $wildcardId, null, \PDO::PARAM_INT )
+            )
+        );
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < 1 )
+        {
+            throw new NotFoundException( 'UrlWildcard', $wildcardId );
+        }
     }
 
     /**
-     * Loads an array with data about UrlWildcard with $id
+     * Loads an array with data about UrlWildcard with $wildcardId
      *
-     * @param mixed $id
+     * @param mixed $wildcardId
      *
      * @return array
      */
-    public function loadUrlWildcardData( $id )
+    public function loadUrlWildcardData( $wildcardId )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        /** @var $query \ezcQuerySelect */
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( "wildcard_id" ),
+            $this->dbHandler->quoteColumn( "destination" ),
+            $this->dbHandler->quoteColumn( "source" ),
+            $this->dbHandler->quoteColumn( "forward" )
+        )->from(
+            $this->dbHandler->quoteTable( "ezurl_wildcard" )
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( "wildcard_id" ),
+                $query->bindValue( $wildcardId, null, \PDO::PARAM_INT )
+            )
+        );
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return $stmt->fetch( \PDO::FETCH_ASSOC );
     }
 
     /**
@@ -87,6 +144,22 @@ class EzcDatabase extends Gateway
      */
     public function loadUrlWildcardsData( $offset = 0, $limit = -1 )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $limit = $limit === -1 ? self::MAX_LIMIT : $limit;
+
+        /** @var $query \ezcQuerySelect */
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( "wildcard_id" ),
+            $this->dbHandler->quoteColumn( "destination" ),
+            $this->dbHandler->quoteColumn( "source" ),
+            $this->dbHandler->quoteColumn( "forward" )
+        )->from(
+            $this->dbHandler->quoteTable( "ezurl_wildcard" )
+        )->limit( $limit, $offset );
+
+        $stmt = $query->prepare();
+        $stmt->execute();
+
+        return $stmt->fetchAll( \PDO::FETCH_ASSOC );
     }
 }

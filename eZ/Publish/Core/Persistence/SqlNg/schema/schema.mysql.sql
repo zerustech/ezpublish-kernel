@@ -92,7 +92,8 @@ CREATE TABLE IF NOT EXISTS `ezcontenttype` (
     `changed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`type_id`),
     UNIQUE KEY `ezcontenttype_remote_id` (`remote_id`, `status`),
-    FOREIGN KEY (`source_type_id`) REFERENCES `ezcontenttype` (`type_id`) ON DELETE CASCADE,
+    UNIQUE KEY `ezcontenttype_identifier` (`identifier`, `status`),
+    FOREIGN KEY (`source_type_id`) REFERENCES `ezcontenttype` (`type_id`) ON DELETE SET NULL,
     FOREIGN KEY (`initial_language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT,
     FOREIGN KEY (`creator_id`) REFERENCES `ezuser` (`user_id`) ON DELETE RESTRICT,
     FOREIGN KEY (`modifier_id`) REFERENCES `ezuser` (`user_id`) ON DELETE RESTRICT
@@ -289,6 +290,42 @@ CREATE TABLE `ezcontent_state_link` (
     UNIQUE KEY (`content_id`, `state_group_id`),
     FOREIGN KEY (`content_id`) REFERENCES `ezcontent` (`content_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`state_id`) REFERENCES `ezcontent_state` (`state_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+--
+-- Url Aliases and wildcards
+--
+
+DROP TABLE IF EXISTS `ezurl_wildcard`;
+CREATE TABLE `ezurl_wildcard` (
+    `wildcard_id` INT NOT NULL AUTO_INCREMENT,
+    `source` TEXT NOT NULL,
+    `destination` TEXT NOT NULL,
+    `forward` INT NOT NULL,
+    PRIMARY KEY (`wildcard_id`)
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `ezurl_alias`;
+CREATE TABLE `ezurl_alias` (
+    `alias_id` INT NOT NULL AUTO_INCREMENT,
+    `location_id` INT NOT NULL,
+    `path` TEXT NOT NULL,
+    `language_id` INT NOT NULL,
+    -- `language_list varchar NOT NULL,
+    PRIMARY KEY (`alias_id`),
+    FOREIGN KEY (`language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `ezurl_alias_target`;
+CREATE TABLE `ezurl_alias_target` (
+    `path_hash` BINARY(32) NOT NULL,
+    `path` TEXT NOT NULL,
+    `target` TEXT NOT NULL,
+    `location_id` INT NOT NULL,
+    `type` INT NOT NULL,
+    `language_id` INT NOT NULL,
+    PRIMARY KEY (`path_hash`),
+    FOREIGN KEY (`language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
 SET FOREIGN_KEY_CHECKS = 1;

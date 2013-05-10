@@ -80,11 +80,27 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             );
 
             $this->applyStatements(
-                $this->getSchemaStatements()
+                $this->getStatements(
+                    __DIR__ . '/../schema/schema.' . self::$db . '.sql'
+                )
             );
+
+            $this->applyCustomStatements();
         }
 
         return self::$persistenceHandler;
+    }
+
+    /**
+     * Method called on database initialization before each test case
+     *
+     * Does nothing, but may be overwritten to do something.
+     *
+     * @return void
+     */
+    protected function applyCustomStatements()
+    {
+        // Intentionally do just nothing
     }
 
     /**
@@ -110,15 +126,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @return string[]
      */
-    protected function getSchemaStatements()
+    protected function getStatements( $file )
     {
 
         return array_filter(
             preg_split(
                 '(;\\s*$)m',
-                file_get_contents(
-                    __DIR__ . '/../schema/schema.' . self::$db . '.sql'
-                )
+                file_get_contents( $file )
             )
         );
     }
@@ -235,7 +249,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $contentTypeHandler = $this->getPersistenceHandler()->contentTypeHandler();
             self::$contentTypeGroup = $contentTypeHandler->createGroup(
                 new Persistence\Content\Type\Group\CreateStruct( $values = array(
-                    'identifier' => 'testgroup',
+                    'identifier' => 'global-testgroup',
                     'created' => time(),
                     'creatorId' => $this->getUser()->id,
                     'modified' => time(),
@@ -259,14 +273,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $contentTypeHandler = $this->getPersistenceHandler()->contentTypeHandler();
             $contentType = $contentTypeHandler->create(
                 new Persistence\Content\Type\CreateStruct( array(
-                    'identifier' => 'testtype',
+                    'identifier' => 'global-testtype',
                     'status' => 1,
                     'groupIds' => array( $this->getContentTypeGroup()->id ),
                     'created' => time(),
                     'creatorId' => $this->getUser()->id,
                     'modified' => time(),
                     'modifierId' => $this->getUser()->id,
-                    'remoteId' => 'testtype',
+                    'remoteId' => 'global-testtype',
                     'initialLanguageId' => $this->getLanguage()->id,
                     'fieldDefinitions' => array(
                         new Persistence\Content\Type\FieldDefinition( array(
@@ -324,7 +338,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 'sectionId' => self::getSection()->id,
                 'ownerId' => self::getUser()->id,
                 'alwaysAvailable' => true,
-                'remoteId' => 'testobject',
+                'remoteId' => 'global-testobject',
                 'initialLanguageId' => self::getLanguage()->id,
                 'modified' => 123456789,
                 'locations' => array(),
@@ -370,7 +384,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $content = $this->getContent();
             self::$location = $locationHandler->create(
                 new Persistence\Content\Location\CreateStruct( array(
-                    'remoteId' => 'test-location-root',
+                    'remoteId' => 'global-test-location-root',
                     'contentId' => $content->versionInfo->contentInfo->id,
                     'contentVersion' => $content->versionInfo->versionNo,
                     'parentId' => null,

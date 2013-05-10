@@ -146,13 +146,18 @@ class Handler implements BaseContentHandler
         {
             $locationCreateStruct->contentId = $content->versionInfo->contentInfo->id;
             $locationCreateStruct->contentVersion = $content->versionInfo->versionNo;
-            $location = $this->locationGateway->create(
+            $this->locationGateway->create(
                 $locationCreateStruct,
                 $locationCreateStruct->parentId ?
                     $this->locationGateway->getBasicNodeData( $locationCreateStruct->parentId ) :
                     null,
                 LocationGateway::CREATED
             );
+        }
+
+        foreach ( $content->fields as $field )
+        {
+            $this->storageHandler->storeFieldData( $content->versionInfo, $field );
         }
 
         return $this->load( $content->versionInfo->contentInfo->id, $content->versionInfo->versionNo );
@@ -454,7 +459,8 @@ class Handler implements BaseContentHandler
         {
             foreach ( $contentLocations as $locationId )
             {
-                $this->locationHandler->removeSubtree( $locationId );
+                // @TODO: Re-Enable this again
+                // $this->locationHandler->removeSubtree( $locationId );
             }
         }
     }
@@ -544,11 +550,6 @@ class Handler implements BaseContentHandler
             $this->load( $contentId, $currentVersionNo )
         );
         $content = $this->internalCreate( $createStruct, $currentVersionNo );
-
-        foreach ( $content->fields as $field )
-        {
-            $this->storageHandler->storeFieldData( $content->versionInfo, $field );
-        }
 
         foreach ( $this->listVersions( $contentId ) as $versionInfo )
         {

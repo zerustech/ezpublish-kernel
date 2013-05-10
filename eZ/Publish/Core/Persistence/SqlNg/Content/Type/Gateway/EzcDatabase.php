@@ -713,7 +713,7 @@ class EzcDatabase extends Gateway
      * @param string $typeId
      * @return mixed
      */
-    protected function getTypeSourceId( $typeId )
+    protected function getTypeSourceId( $typeId, $status )
     {
         $query = $this->dbHandler->createSelectQuery();
         $query->select(
@@ -722,16 +722,27 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteTable( 'ezcontenttype' )
         );
         $query->where(
-            $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'type_id' ),
-                $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'type_id' ),
+                    $query->bindValue( $typeId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( 'status' ),
+                    $query->bindValue( $status, null, \PDO::PARAM_INT )
+                )
             )
         );
-        $stmt = $query->prepare();
-        $stmt->execute();
+        $statement = $query->prepare();
+        $statement->execute();
 
-        $data = $stmt->fetchAll( \PDO::FETCH_ASSOC );
-        return $data[0]['source_type_id'] ?: null;
+        $rows = $statement->fetchAll( \PDO::FETCH_ASSOC );
+
+        if ( !count( $rows ) ) {
+            throw new NotFound( 'type', array( 'id' => $typeId, 'status' => $status ) );
+        }
+
+        return $rows[0]['source_type_id'] ?: null;
     }
 
     /**
@@ -744,7 +755,11 @@ class EzcDatabase extends Gateway
      */
     public function publish( $typeId )
     {
-        $sourceId = $this->getTypeSourceId( $typeId );
+        $sourceId = $this->getTypeSourceId( $typeId, Type::STATUS_DRAFT );
+        if ( $sourceId )
+        {
+            $this->delete( $sourceId, Type::STATUS_DEFINED );
+        }
 
         $query = $this->dbHandler->createUpdateQuery();
         $query->update(
@@ -764,18 +779,7 @@ class EzcDatabase extends Gateway
             )
         );
 
-        $statement = $query->prepare();
-        $statement->execute();
-
-        if ( $statement->rowCount() < 1 )
-        {
-            throw new NotFound( 'type', $typeId );
-        }
-
-        if ( $sourceId )
-        {
-            $this->delete( $sourceId, Type::STATUS_DEFINED );
-        }
+        $statement = $query->prepare()->execute();
 
         $query = $this->dbHandler->createUpdateQuery();
         $query->update(

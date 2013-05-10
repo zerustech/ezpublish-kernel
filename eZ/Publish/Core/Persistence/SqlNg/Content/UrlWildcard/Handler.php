@@ -42,6 +42,8 @@ class Handler implements BaseUrlWildcardHandler
      */
     public function __construct( Gateway $gateway, Mapper $mapper )
     {
+        $this->gateway = $gateway;
+        $this->mapper = $mapper;
     }
 
     /**
@@ -55,7 +57,15 @@ class Handler implements BaseUrlWildcardHandler
      */
     public function create( $sourceUrl, $destinationUrl, $forward = false )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $urlWildcard = $this->mapper->createUrlWildcard(
+            $sourceUrl,
+            $destinationUrl,
+            $forward
+        );
+
+        $urlWildcard->id = $this->gateway->insertUrlWildcard( $urlWildcard );
+
+        return $urlWildcard;
     }
 
     /**
@@ -64,10 +74,12 @@ class Handler implements BaseUrlWildcardHandler
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException if the url wild card was not found
      *
      * @param mixed $id
+     *
+     * @return void
      */
     public function remove( $id )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $this->gateway->deleteUrlWildcard( $id );
     }
 
     /**
@@ -81,7 +93,14 @@ class Handler implements BaseUrlWildcardHandler
      */
     public function load( $id )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $row = $this->gateway->loadUrlWildcardData( $id );
+
+        if ( empty( $row ) )
+        {
+            throw new NotFoundException( "UrlWildcard", $id );
+        }
+
+        return $this->mapper->extractUrlWildcardFromRow( $row );
     }
 
     /**
@@ -94,6 +113,8 @@ class Handler implements BaseUrlWildcardHandler
      */
     public function loadAll( $offset = 0, $limit = -1 )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        return $this->mapper->extractUrlWildcardsFromRows(
+            $this->gateway->loadUrlWildcardsData( $offset, $limit )
+        );
     }
 }

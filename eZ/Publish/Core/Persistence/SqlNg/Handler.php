@@ -558,6 +558,8 @@ class Handler implements HandlerInterface
         if ( !isset( $this->urlWildcardHandler ) )
         {
             $this->urlWildcardHandler = new Content\UrlWildcard\Handler(
+                new Content\UrlWildcard\Gateway\EzcDatabase( $this->dbHandler ),
+                new Content\UrlWildcard\Mapper()
             );
         }
 

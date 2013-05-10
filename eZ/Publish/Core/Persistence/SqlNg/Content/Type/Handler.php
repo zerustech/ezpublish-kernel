@@ -384,6 +384,11 @@ class Handler implements BaseContentTypeHandler
         $createStruct->modified = time();
         $createStruct->remoteId = $contentType->remoteId;
 
+        // We do NOT null the field definition IDs. They are referenced in
+        // external data sources and other places, thus those IDs MUST be kept.
+        // They have a unique constraint on (field_id, type_id), so it will
+        // work with the new associated type ID.
+
         return $this->internalCreate( $createStruct, $contentTypeId );
     }
 
