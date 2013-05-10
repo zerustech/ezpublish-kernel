@@ -9,6 +9,10 @@
 
 namespace eZ\Publish\Core\Persistence\SqlNg;
 
+use
+    eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\ContentId;
+use
+    eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\LocationPathString;
 use eZ\Publish\SPI\Persistence\Handler as HandlerInterface;
 
 use \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler;
@@ -414,6 +418,10 @@ class Handler implements HandlerInterface
                             )
                         ),
                         new Content\Search\Gateway\SortClauseConverter(
+                            array(
+                                new ContentId( $this->dbHandler ),
+                                new LocationPathString( $this->dbHandler ),
+                            )
                         ),
                         new Content\Gateway\EzcDatabase\QueryBuilder( $this->dbHandler ),
                         $this->contentLanguageHandler()

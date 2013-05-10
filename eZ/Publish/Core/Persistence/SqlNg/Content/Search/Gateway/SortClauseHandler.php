@@ -71,5 +71,29 @@ abstract class SortClauseHandler
     {
         throw new \RuntimeException( "@TODO: Implement" );
     }
+
+    /**
+     * Returns the quoted sort column name
+     *
+     * @param int $number
+     *
+     * @return string
+     */
+    protected function getSortColumnName( $number )
+    {
+        return $this->dbHandler->quoteIdentifier( 'sort_column_' . $number );
+    }
+
+    /**
+     * Returns the sort table name
+     *
+     * @param int $number
+     *
+     * @return string
+     */
+    protected function getSortTableName( $number )
+    {
+        return 'sort_table_' . $number;
+    }
 }
 

@@ -54,7 +54,23 @@ class SortClauseConverter
      */
     public function applySelect( ezcQuerySelect $query, array $sortClauses )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $sortColumn = array();
+        foreach ( $sortClauses as $nr => $sortClause )
+        {
+            foreach ( $this->handlers as $handler )
+            {
+                if ( $handler->accept( $sortClause ) )
+                {
+                    foreach ( (array)$handler->applySelect( $query, $sortClause, $nr ) as $column )
+                    {
+                        $this->sortColumns[$column] = $sortClause->direction;
+                    }
+                    continue 2;
+                }
+            }
+
+            throw new RuntimeException( 'No handler available for sort clause: ' . get_class( $sortClause ) );
+        }
     }
 
     /**
@@ -67,7 +83,19 @@ class SortClauseConverter
      */
     public function applyJoin( ezcQuerySelect $query, array $sortClauses )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        foreach ( $sortClauses as $nr => $sortClause )
+        {
+            foreach ( $this->handlers as $handler )
+            {
+                if ( $handler->accept( $sortClause ) )
+                {
+                    $handler->applyJoin( $query, $sortClause, $nr );
+                    continue 2;
+                }
+            }
+
+            throw new RuntimeException( 'No handler available for sort clause: ' . get_class( $sortClause ) );
+        }
     }
 
     /**
@@ -80,7 +108,22 @@ class SortClauseConverter
      */
     public function applyOrderBy( ezcQuerySelect $query, array $sortClauses )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        foreach ( $this->sortColumns as $column => $direction )
+        {
+            $query->orderBy(
+                $column,
+                $direction === Query::SORT_ASC ? ezcQuerySelect::ASC : ezcQuerySelect::DESC
+            );
+        }
+
+        echo PHP_EOL, '===', PHP_EOL, $query, PHP_EOL, '===', PHP_EOL;
+
+        // @todo Review needed
+        // The following line was added because without it, loading sub user groups through the Public API
+        // fails with the database error "Unknown column sort_column_0". The change does not break any
+        // integration tests or legacy persistence tests, but it can break something else, so review is needed
+        // Discussion: https://github.com/ezsystems/ezpublish-kernel/commit/8749d0977307858c3e2a7d82f3be90fa21973357#L1R102
+        $this->sortColumns = array();
     }
 }
 
