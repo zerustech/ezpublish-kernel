@@ -26,9 +26,6 @@ use PHPUnit_Framework_IncompleteTestError;
  */
 class Handler implements UrlAliasHandlerInterface
 {
-    protected $configuration = array(
-    );
-
     /**
      * UrlAlias Gateway
      *
@@ -75,15 +72,12 @@ class Handler implements UrlAliasHandlerInterface
      * @param array $configuration
      */
     public function __construct(
-    /*
         Gateway $gateway,
-        Mapper $mapper,
-        LocationGateway $locationGateway,
-        LanguageHandler $languageHandler,
-        TransformationProcessor $transformationProcessor,
-        array $configuration = array() */
+        Mapper $mapper
     )
     {
+        $this->gateway = $gateway;
+        $this->mapper = $mapper;
     }
 
     /**

@@ -544,6 +544,8 @@ class Handler implements HandlerInterface
         if ( !isset( $this->urlAliasHandler ) )
         {
             $this->urlAliasHandler = new Content\UrlAlias\Handler(
+                new Content\UrlAlias\Gateway\EzcDatabase( $this->dbHandler ),
+                new Content\UrlAlias\Mapper()
             );
         }
 

@@ -18,23 +18,6 @@ use eZ\Publish\Core\Persistence\SqlNg\Content\Language\MaskGenerator as Language
 class Mapper
 {
     /**
-     * Language mask generator
-     *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\MaskGenerator
-     */
-    protected $languageMaskGenerator;
-
-    /**
-     * Creates a new UrlWildcard Handler
-     *
-     * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Language\MaskGenerator $languageMaskGenerator
-     */
-    public function __construct( LanguageMaskGenerator $languageMaskGenerator )
-    {
-        throw new \RuntimeException( "@TODO: Implement" );
-    }
-
-    /**
      * Creates a UrlAlias object from database row data
      *
      * @param mixed[] $data
