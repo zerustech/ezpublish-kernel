@@ -261,7 +261,7 @@ class EzcDatabase extends Gateway
             $query->bindValue( $sectionId, null, \PDO::PARAM_INT )
         )->where(
             $query->expr->eq(
-                $this->dbHandler->quoteColumn( 'section_id' ),
+                $this->dbHandler->quoteColumn( 'content_id' ),
                 $query->bindValue( $contentId, null, \PDO::PARAM_INT )
             )
         );
