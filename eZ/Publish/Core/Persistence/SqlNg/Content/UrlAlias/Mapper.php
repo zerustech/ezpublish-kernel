@@ -24,9 +24,15 @@ class Mapper
      *
      * @return \eZ\Publish\SPI\Persistence\Content\UrlAlias
      */
-    public function extractUrlAliasFromData( $data )
+    public function extractUrlAliasFromData( array $rows )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $aliases = $this->extractUrlAliasListFromData( $rows );
+
+        if ( count( $aliases ) !==  1 ) {
+            throw new \RuntimeException( "Invalid number of aliases." );
+        }
+
+        return reset( $aliases );
     }
 
     /**
@@ -38,6 +44,41 @@ class Mapper
      */
     public function extractUrlAliasListFromData( array $rows )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
+        $aliases = array();
+
+        foreach ( $rows as $row )
+        {
+            if ( !isset( $aliases[$row['alias_id']] ) )
+            {
+                $aliases[$row['alias_id']] = $this->createUrlAliasFromRow( $row );
+            }
+
+            $aliases[$row['alias_id']]->languageCodes[] = $row['language_code'];
+        }
+
+        return array_values( $aliases );
+    }
+
+    /**
+     * Create UrlAlias from row
+     *
+     * @param array $row
+     * @return UrlAlias
+     */
+    protected function createUrlAliasFromRow( array $row )
+    {
+        $urlAlias = new UrlAlias();
+
+        $urlAlias->id = $row['alias_id'];
+        $urlAlias->type = (int) $row['type'];
+        $urlAlias->destination = $row['destination'];
+        $urlAlias->pathData = array(); // @TODO: WTF is this?
+        $urlAlias->languageCodes = array();
+        $urlAlias->alwaysAvailable = false;
+        $urlAlias->forward = (bool) $row["forward"];
+        $urlAlias->isHistory = (bool) $row["history"];
+        $urlAlias->isCustom = (bool) $row["custom"];
+
+        return $urlAlias;
     }
 }

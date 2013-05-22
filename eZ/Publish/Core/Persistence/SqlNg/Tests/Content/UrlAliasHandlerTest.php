@@ -45,7 +45,7 @@ class UrlAliasHandlerTest extends TestCase
     {
         $handler = $this->getUrlAliasHandler();
 
-        $location = $this->getPersistenceHandler()->locationHandler()->load( 10 );
+        $location = $this->getLocation();
 
         $urlAlias = $handler->createCustomUrlAlias(
             $location->id,
@@ -79,7 +79,7 @@ class UrlAliasHandlerTest extends TestCase
     {
         $handler = $this->getUrlAliasHandler();
 
-        $loaded = $handler->listURLAliasesForLocation( $urlAlias->locationId, true );
+        $loaded = $handler->listURLAliasesForLocation( $urlAlias->destination, true );
 
         $this->assertEquals( array( $urlAlias ), $loaded );
     }
@@ -119,7 +119,7 @@ class UrlAliasHandlerTest extends TestCase
     {
         $handler = $this->getUrlAliasHandler();
 
-        $location = $this->getPersistenceHandler()->locationHandler()->load( 10 );
+        $location = $this->getLocation();
 
         $urlAlias = $handler->createCustomUrlAlias(
             $location->id,
@@ -151,7 +151,7 @@ class UrlAliasHandlerTest extends TestCase
     {
         $handler = $this->getUrlAliasHandler();
 
-        $location = $this->getPersistenceHandler()->locationHandler()->load( 10 );
+        $location = $this->getLocation();
         $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
 
         $urlAlias = $handler->createCustomUrlAlias(
@@ -266,7 +266,7 @@ class UrlAliasHandlerTest extends TestCase
     {
         $handler = $this->getUrlAliasHandler();
 
-        $location = $this->getPersistenceHandler()->locationHandler()->load( 10 );
+        $location = $this->getLocation();
         $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
 
         $urlAlias = $handler->createGlobalUrlAlias(

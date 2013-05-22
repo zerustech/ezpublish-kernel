@@ -34,13 +34,6 @@ class Handler implements UrlAliasHandlerInterface
     protected $gateway;
 
     /**
-     * Gateway for handling location data
-     *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway
-     */
-    protected $locationGateway;
-
-    /**
      * UrlAlias Mapper
      *
      * @var \eZ\Publish\Core\Persistence\SqlNg\Content\UrlAlias\Mapper
@@ -50,16 +43,9 @@ class Handler implements UrlAliasHandlerInterface
     /**
      * Caching language handler
      *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\CachingHandler
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler
      */
     protected $languageHandler;
-
-    /**
-     * Transformation processor to normalize URL strings
-     *
-     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Search\TransformationProcessor
-     */
-    protected $transformationProcessor;
 
     /**
      * Creates a new UrlAlias Handler
@@ -72,10 +58,12 @@ class Handler implements UrlAliasHandlerInterface
      * @param array $configuration
      */
     public function __construct(
+        LanguageHandler $languageHandler,
         Gateway $gateway,
         Mapper $mapper
     )
     {
+        $this->languageHandler = $languageHandler;
         $this->gateway = $gateway;
         $this->mapper = $mapper;
     }
@@ -110,6 +98,37 @@ class Handler implements UrlAliasHandlerInterface
     }
 
     /**
+     * Get languages for url alias.
+     *
+     * The $languageCode might be null, currently we return all
+     * languzage IDs then.
+     *
+     * @param mixed $languageCode
+     * @return array
+     */
+    protected function getLanguages( $languageCode )
+    {
+        $languages = array();
+        if ( $languageCode )
+        {
+            $languages = array(
+                $this->languageHandler->loadByLanguageCode( $languageCode )->id,
+            );
+        }
+        else
+        {
+            $languages = array_map(
+                function ( $language ) {
+                    return $language->id;
+                },
+                $this->languageHandler->loadAll()
+            );
+        }
+
+        return $languages;
+    }
+
+    /**
      * Create a user chosen $alias pointing to $locationId in $languageCode.
      *
      * If $languageCode is null the $alias is created in the system's default
@@ -125,7 +144,26 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function createCustomUrlAlias( $locationId, $path, $forwarding = false, $languageCode = null, $alwaysAvailable = false )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $pathHash = $this->hashPath( $path );
+        $urlAliasId = $this->gateway->createUrlAlias(
+            UrlAlias::LOCATION,
+            $locationId,
+            $forwarding,
+            false,
+            true
+        );
+
+        foreach ( $this->getLanguages( $languageCode ) as $languageId )
+        {
+            $this->gateway->addTranslatedPath(
+                $urlAliasId,
+                $path,
+                $pathHash,
+                $languageId
+            );
+        }
+
+        return $this->loadUrlAlias( $urlAliasId );
     }
 
     /**
@@ -148,7 +186,26 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function createGlobalUrlAlias( $resource, $path, $forwarding = false, $languageCode = null, $alwaysAvailable = false )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $pathHash = $this->hashPath( $path );
+        $urlAliasId = $this->gateway->createUrlAlias(
+            UrlAlias::RESOURCE,
+            $resource,
+            $forwarding,
+            false,
+            true
+        );
+
+        foreach ( $this->getLanguages( $languageCode ) as $languageId )
+        {
+            $this->gateway->addTranslatedPath(
+                $urlAliasId,
+                $path,
+                $pathHash,
+                $languageId
+            );
+        }
+
+        return $this->loadUrlAlias( $urlAliasId );
     }
 
     /**
@@ -219,7 +276,9 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function loadUrlAlias( $id )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        return $this->mapper->extractUrlAliasFromData(
+            $this->gateway->load( $id )
+        );
     }
 
     /**
@@ -264,5 +323,18 @@ class Handler implements UrlAliasHandlerInterface
     public function locationDeleted( $locationId )
     {
         // throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+    }
+
+    /**
+     * Create a hash for the given path
+     *
+     * @REFACTOR: Should probably be moved into its own class
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function hashPath( $path )
+    {
+        return hash( "sha256", $path, true );
     }
 }

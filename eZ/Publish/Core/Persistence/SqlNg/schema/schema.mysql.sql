@@ -308,23 +308,23 @@ CREATE TABLE `ezurl_wildcard` (
 DROP TABLE IF EXISTS `ezurl_alias`;
 CREATE TABLE `ezurl_alias` (
     `alias_id` INT NOT NULL AUTO_INCREMENT,
-    `location_id` INT NOT NULL,
-    `path` TEXT NOT NULL,
-    `language_id` INT NOT NULL,
-    -- `language_list varchar NOT NULL,
-    PRIMARY KEY (`alias_id`),
-    FOREIGN KEY (`language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT
+    `type` INT NOT NULL,
+    `destination` TEXT DEFAULT NULL,
+    `forward` INT DEFAULT 0,
+    `history` INT DEFAULT 0,
+    `custom` INT DEFAULT 0,
+    PRIMARY KEY (`alias_id`)
 ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS `ezurl_alias_target`;
-CREATE TABLE `ezurl_alias_target` (
+DROP TABLE IF EXISTS `ezurl_alias_language`;
+CREATE TABLE `ezurl_alias_language` (
+    `alias_id` INT NOT NULL,
     `path_hash` BINARY(32) NOT NULL,
     `path` TEXT NOT NULL,
-    `target` TEXT NOT NULL,
-    `location_id` INT NOT NULL,
-    `type` INT NOT NULL,
-    `language_id` INT NOT NULL,
-    PRIMARY KEY (`path_hash`),
+    `language_id` INT DEFAULT NULL,
+    PRIMARY KEY (`path_hash`, `language_id`),
+    KEY (`alias_id`, `language_id`),
+    FOREIGN KEY (`alias_id`) REFERENCES `ezurl_alias` (`alias_id`) ON DELETE CASCADE,
     FOREIGN KEY (`language_id`) REFERENCES `ezcontent_language` (`language_id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
