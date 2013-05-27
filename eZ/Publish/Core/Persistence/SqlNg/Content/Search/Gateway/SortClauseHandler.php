@@ -69,7 +69,6 @@ abstract class SortClauseHandler
      */
     public function applyJoin( ezcQuerySelect $query, SortClause $sortClause, $number )
     {
-        throw new \RuntimeException( "@TODO: Implement" );
     }
 
     /**
