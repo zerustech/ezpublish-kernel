@@ -81,8 +81,6 @@ class LocationPathString extends SortClauseHandler
                     $this->dbHandler->quoteColumn( 'content_id', 'ezcontent' )
                 )
             );
-
-        echo PHP_EOL, '===', PHP_EOL, $query, PHP_EOL, '===', PHP_EOL;
     }
 }
 

@@ -116,8 +116,6 @@ class SortClauseConverter
             );
         }
 
-        echo PHP_EOL, '===', PHP_EOL, $query, PHP_EOL, '===', PHP_EOL;
-
         // @todo Review needed
         // The following line was added because without it, loading sub user groups through the Public API
         // fails with the database error "Unknown column sort_column_0". The change does not break any
