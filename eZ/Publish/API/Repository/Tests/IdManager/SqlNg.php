@@ -89,6 +89,9 @@ class SqlNg extends IdManager
             5 => 5,
             6 => 6,
         ),
+        'remoteId' => array(
+            'a6e35cbcb7cd6ae4b691f3eee30cd262' => 'f5c88a2209584891056f987fd965b0ba', // Media -> Users
+        ),
     );
 
     /**

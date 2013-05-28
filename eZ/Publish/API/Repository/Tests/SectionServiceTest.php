@@ -35,7 +35,7 @@ class SectionServiceTest extends BaseTest
         try
         {
             // RemoteId of the "Media" page of an eZ Publish demo installation
-            $mediaRemoteId = 'a6e35cbcb7cd6ae4b691f3eee30cd262';
+            $mediaRemoteId = $this->generateId( 'remoteId', 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
 
             // Load the ContentService
             $contentService = $this->getRepository()->getContentService();
@@ -654,12 +654,12 @@ class SectionServiceTest extends BaseTest
         $repository = $this->getRepository();
 
         $standardSectionId = $this->generateId( 'section', 1 );
+        $mediaRemoteId = $this->generateId( 'remoteId', 'a6e35cbcb7cd6ae4b691f3eee30cd262' );
+
         /* BEGIN: Use Case */
         // $standardSectionId contains the ID of the "Standard" section in a eZ
         // Publish demo installation.
-
-        // RemoteId of the "Media" page of an eZ Publish demo installation
-        $mediaRemoteId = 'a6e35cbcb7cd6ae4b691f3eee30cd262';
+        // $mediaRemoteId of the "Media" page of an eZ Publish demo installation
 
         $contentService = $repository->getContentService();
         $sectionService = $repository->getSectionService();
