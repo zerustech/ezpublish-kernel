@@ -679,7 +679,7 @@ class SearchServiceTest extends BaseTest
      *
      * @dataProvider getSortedSearches
      * @see \eZ\Publish\API\Repository\SearchService::findContent()
-     * @depends eZ\Publish\API\Repository\Tests\RepositoryTest::testGetSearchService
+     * @d epends eZ\Publish\API\Repository\Tests\RepositoryTest::testGetSearchService
      */
     public function testFindAndSortContent( Query $query, $fixture, $closure = null )
     {
