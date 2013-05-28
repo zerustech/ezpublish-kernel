@@ -15,6 +15,8 @@ use eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\D
 use eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\LocationDepth;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\LocationPathString;
 use
+    eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\LocationPriority;
+use
     eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\SectionIdentifier;
 use
     eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\SectionName;
@@ -429,6 +431,7 @@ class Handler implements HandlerInterface
                                 new DatePublished( $this->dbHandler ),
                                 new LocationDepth( $this->dbHandler ),
                                 new LocationPathString( $this->dbHandler ),
+                                new LocationPriority( $this->dbHandler ),
                                 new SectionIdentifier( $this->dbHandler ),
                                 new SectionName( $this->dbHandler ),
                             )

@@ -528,14 +528,14 @@ class SearchServiceTest extends BaseTest
                     //     11, 12, 13, 42, 59 have depth = 2
                     //     10, 14 have depth = 3
                     $map = array(
-                        4 => 0,
-                        11 => 1,
-                        12 => 2,
-                        13 => 3,
-                        42 => 4,
-                        59 => 5,
-                        10 => 6,
-                        14 => 7,
+                        1 => 3,
+                        2 => 3,
+                        3 => 3,
+                        5 => 3,
+                        6 => 3,
+                        7 => 3,
+                        8 => 3,
+                        9 => 3,
                     );
                     usort(
                         $data->searchHits,
@@ -679,7 +679,7 @@ class SearchServiceTest extends BaseTest
      *
      * @dataProvider getSortedSearches
      * @see \eZ\Publish\API\Repository\SearchService::findContent()
-     * @d epends eZ\Publish\API\Repository\Tests\RepositoryTest::testGetSearchService
+     * @depends eZ\Publish\API\Repository\Tests\RepositoryTest::testGetSearchService
      */
     public function testFindAndSortContent( Query $query, $fixture, $closure = null )
     {
