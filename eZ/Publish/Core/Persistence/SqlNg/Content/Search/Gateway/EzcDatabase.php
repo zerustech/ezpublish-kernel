@@ -205,6 +205,11 @@ class EzcDatabase extends Gateway
             'ezcontent_version.content_id'
         );
 
+        if ( count( $sort ) )
+        {
+            $this->sortClauseConverter->applyJoin( $query, $sort );
+        }
+
         $query->where(
             $this->getQueryCondition( $criterion, $query, $translations )
         );
