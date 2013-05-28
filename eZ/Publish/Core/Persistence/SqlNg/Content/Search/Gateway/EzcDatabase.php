@@ -148,8 +148,8 @@ class EzcDatabase extends Gateway
     {
         $query = $this->dbHandler->createSelectQuery();
 
-        $query
-            ->selectDistinct( 'COUNT( * )' )
+        $subQuery = $query->subSelect();
+        $subQuery->select( 'ezcontent.content_id' )
             ->from( $this->dbHandler->quoteTable( 'ezcontent' ) )
             ->innerJoin(
                 'ezcontent_version',
@@ -159,12 +159,17 @@ class EzcDatabase extends Gateway
 
         if ( count( $sort ) )
         {
-            $this->sortClauseConverter->applyJoin( $query, $sort );
+            $this->sortClauseConverter->applyJoin( $subQuery, $sort );
         }
 
-        $query->where(
-            $this->getQueryCondition( $criterion, $query, $translations )
-        );
+        $subQuery
+            ->where( $this->getQueryCondition( $criterion, $subQuery, $translations ) )
+            ->groupBy( 'ezcontent.content_id' );
+
+        $query
+            ->select( 'COUNT( * )' )
+            ->from( $this->dbHandler->quoteTable( 'ezcontent' ) )
+            ->where( $query->expr->in( 'ezcontent.content_id', $subQuery ) );
 
         $statement = $query->prepare();
         $statement->execute();
