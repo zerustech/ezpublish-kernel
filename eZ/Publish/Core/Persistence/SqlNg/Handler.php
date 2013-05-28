@@ -14,6 +14,8 @@ use eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\D
 use eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\DatePublished;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\LocationDepth;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\LocationPathString;
+use
+    eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway\SortClauseHandler\SectionIdentifier;
 use eZ\Publish\SPI\Persistence\Handler as HandlerInterface;
 
 use \eZ\Publish\Core\Persistence\Legacy\EzcDbHandler;
@@ -213,7 +215,7 @@ class Handler implements HandlerInterface
     /**
      * Field handler
      *
-     * @var \eZ\Publish\Core\Persistence\Legacy\Content\FieldHandler
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
      */
     protected $fieldHandler;
 
@@ -278,7 +280,7 @@ class Handler implements HandlerInterface
     /**
      * Returns a content gateway
      *
-     * @return \eZ\Publish\Core\Persistence\Legacy\Content\Gateway
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\Gateway
      */
     protected function getContentGateway()
     {
@@ -298,7 +300,7 @@ class Handler implements HandlerInterface
     /**
      * Returns a content mapper
      *
-     * @return \eZ\Publish\Core\Persistence\Legacy\Content\Mapper
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper
      */
     protected function getContentMapper()
     {
@@ -373,7 +375,7 @@ class Handler implements HandlerInterface
     /**
      * Returns the content type gateway
      *
-     * @return \eZ\Publish\Core\Persistence\Legacy\Content\Type\Gateway
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\Type\Gateway
      */
     protected function getContentTypeGateway()
     {
@@ -415,23 +417,25 @@ class Handler implements HandlerInterface
                                 // new Content\Search\Gateway\CriterionHandler\ContentTypeIdentifier( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\ContentTypeGroupId( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\LocationRemoteId( $this->dbHandler ),
-                                // new Content\Search\Gateway\CriterionHandler\SectionId( $this->dbHandler ),
+                                new Content\Search\Gateway\CriterionHandler\SectionId( $this->dbHandler ),
                             )
                         ),
                         new Content\Search\Gateway\SortClauseConverter(
                             array(
                                 new ContentId( $this->dbHandler ),
-                                new LocationDepth( $this->dbHandler ),
-                                new LocationPathString( $this->dbHandler ),
                                 new DateModified( $this->dbHandler ),
                                 new DatePublished( $this->dbHandler ),
+                                new LocationDepth( $this->dbHandler ),
+                                new LocationPathString( $this->dbHandler ),
+                                new SectionIdentifier( $this->dbHandler ),
                             )
                         ),
                         new Content\Gateway\EzcDatabase\QueryBuilder( $this->dbHandler ),
                         $this->contentLanguageHandler()
                     )
                 ),
-                $this->getContentMapper()
+                $this->getContentMapper(),
+                $this->getFieldHandler()
             );
         }
         return $this->searchHandler;
@@ -457,7 +461,7 @@ class Handler implements HandlerInterface
     /**
      * Returns a location gateway
      *
-     * @return \eZ\Publish\Core\Persistence\Legacy\Content\Location\Gateway\EzcDatabase
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway\EzcDatabase
      */
     protected function getLocationGateway()
     {
@@ -576,7 +580,7 @@ class Handler implements HandlerInterface
     /**
      * Attention: This method is not part of the Handler interface.
      *
-     * @return eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
+     * @return \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
      * @access private
      */
     public function getFieldHandler()

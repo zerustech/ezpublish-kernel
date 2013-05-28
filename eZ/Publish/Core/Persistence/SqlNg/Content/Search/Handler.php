@@ -11,11 +11,11 @@ namespace eZ\Publish\Core\Persistence\SqlNg\Content\Search;
 
 use eZ\Publish\SPI\Persistence;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Mapper as ContentMapper;
+use eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler;
 use eZ\Publish\API\Repository\Values\Content\Search\SearchResult;
 use eZ\Publish\API\Repository\Values\Content\Search\SearchHit;
 use eZ\Publish\API\Repository\Values\Content\Query\Criterion;
 use eZ\Publish\API\Repository\Values\Content\Query;
-use eZ\Publish\API\Repository\Values\Content\VersionInfo;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use eZ\Publish\API\Repository\Exceptions\NotImplementedException;
@@ -58,16 +58,22 @@ class Handler implements Persistence\Content\Search\Handler
     protected $contentMapper;
 
     /**
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler
+     */
+    protected $fieldHandler;
+
+    /**
      * Creates a new content handler.
      *
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Search\Gateway $gateway
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\Mapper $contentMapper
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\FieldHandler $fieldHandler
      */
-    public function __construct( Gateway $gateway, ContentMapper $contentMapper )
+    public function __construct( Gateway $gateway, ContentMapper $contentMapper, FieldHandler $fieldHandler )
     {
         $this->gateway = $gateway;
         $this->contentMapper = $contentMapper;
+        $this->fieldHandler = $fieldHandler;
     }
 
     /**
@@ -98,6 +104,8 @@ class Handler implements Persistence\Content\Search\Handler
 
         foreach ( $this->contentMapper->extractContentFromRows( $data['rows'] ) as $content )
         {
+            $content->fields = $this->fieldHandler->extractFields( $content->fields );
+
             // @TODO: Re-enable this:
             // $this->fieldHandler->loadExternalFieldData( $content );
             $searchHit = new SearchHit();

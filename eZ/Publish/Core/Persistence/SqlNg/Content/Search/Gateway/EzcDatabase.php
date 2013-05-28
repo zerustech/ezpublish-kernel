@@ -255,8 +255,8 @@ class EzcDatabase extends Gateway
             $rows,
             function ( $current, $next ) use ( $contentIdOrder )
             {
-                return $contentIdOrder[$current['ezcontent_id']] -
-                    $contentIdOrder[$next['ezcontent_id']];
+                return $contentIdOrder[$current['ezcontent_content_id']] -
+                    $contentIdOrder[$next['ezcontent_content_id']];
             }
         );
 
