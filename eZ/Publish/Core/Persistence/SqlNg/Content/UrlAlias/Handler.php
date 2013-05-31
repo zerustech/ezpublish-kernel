@@ -218,7 +218,9 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function listURLAliasesForLocation( $locationId, $custom = false )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        return $this->mapper->extractUrlAliasListFromData(
+            $this->gateway->loadForLocation( $locationId, $custom )
+        );
     }
 
     /**

@@ -310,10 +310,13 @@ CREATE TABLE `ezurl_alias` (
     `alias_id` INT NOT NULL AUTO_INCREMENT,
     `type` INT NOT NULL,
     `destination` TEXT DEFAULT NULL,
+    `location_id` INT DEFAULT NULL,
     `forward` INT DEFAULT 0,
     `history` INT DEFAULT 0,
     `custom` INT DEFAULT 0,
-    PRIMARY KEY (`alias_id`)
+    PRIMARY KEY (`alias_id`),
+    INDEX (`location_id`),
+    FOREIGN KEY (`location_id`) REFERENCES `ezcontent_location` (`location_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `ezurl_alias_language`;

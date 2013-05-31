@@ -79,6 +79,14 @@ class EzcDatabase extends Gateway
             $query->bindValue( $isCustom, null, \PDO::PARAM_INT )
         );
 
+        if ( $type === UrlAlias::LOCATION )
+        {
+            $query->set(
+                $this->dbHandler->quoteColumn( 'location_id' ),
+                $query->bindValue( $destination, null, \PDO::PARAM_INT )
+            );
+        }
+
         $query->prepare()->execute();
 
         return $this->dbHandler->lastInsertId(
@@ -158,6 +166,64 @@ class EzcDatabase extends Gateway
             $query->expr->eq(
                 $this->dbHandler->quoteColumn( "alias_id", "ezurl_alias" ),
                 $query->bindValue( $aliasId, null, \PDO::PARAM_INT )
+            )
+        );
+        $statement = $query->prepare();
+        $statement->execute();
+        $rows = $statement->fetchAll( \PDO::FETCH_ASSOC );
+
+        if ( !count( $rows ) )
+        {
+            throw new NotFound( "UrlAlias", $aliasId );
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Load URL Aliases for location
+     *
+     * @param int $locationId
+     * @param bool $custom
+     * @return array
+     */
+    public function loadForLocation( $locationId, $custom )
+    {
+        /** @var $query \ezcQuerySelect */
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $this->dbHandler->quoteColumn( 'alias_id', 'ezurl_alias' ),
+            $this->dbHandler->quoteColumn( 'type', 'ezurl_alias' ),
+            $this->dbHandler->quoteColumn( 'destination', 'ezurl_alias' ),
+            $this->dbHandler->quoteColumn( 'forward', 'ezurl_alias' ),
+            $this->dbHandler->quoteColumn( 'history', 'ezurl_alias' ),
+            $this->dbHandler->quoteColumn( 'custom', 'ezurl_alias' ),
+            $this->dbHandler->quoteColumn( 'path', 'ezurl_alias_language' ),
+            $this->dbHandler->quoteColumn( 'language_code', 'ezcontent_language' )
+        )->from(
+            $this->dbHandler->quoteTable( "ezurl_alias" )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( "ezurl_alias_language" ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( "alias_id", "ezurl_alias" ),
+                $this->dbHandler->quoteColumn( "alias_id", "ezurl_alias_language" )
+            )
+        )->leftJoin(
+            $this->dbHandler->quoteTable( "ezcontent_language" ),
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn( "language_id", "ezurl_alias_language" ),
+                $this->dbHandler->quoteColumn( "language_id", "ezcontent_language" )
+            )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "location_id", "ezurl_alias" ),
+                    $query->bindValue( $locationId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "custom", "ezurl_alias" ),
+                    $query->bindValue( $custom, null, \PDO::PARAM_BOOL )
+                )
             )
         );
         $statement = $query->prepare();
