@@ -237,4 +237,36 @@ class EzcDatabase extends Gateway
 
         return $rows;
     }
+
+    /**
+     * Remove vustom URL aliases
+     *
+     * @param int[] $aliasIds
+     * @return array
+     */
+    public function removeAliases( $aliasIds )
+    {
+        $query = $this->dbHandler->createDeleteQuery();
+        $query->deleteFrom( 'ezurl_alias' )
+            ->where(
+                $query->expr->lAnd(
+                    $query->expr->eq(
+                        $this->dbHandler->quoteColumn( 'custom' ),
+                        $query->bindValue( true, null, \PDO::PARAM_BOOL )
+                    ),
+                    $query->expr->in(
+                        $this->dbHandler->quoteColumn( 'alias_id' ),
+                        $aliasIds
+                    )
+                )
+            );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        if ( $statement->rowCount() < count( $aliasIds ) )
+        {
+            throw new NotFound( 'UrlAlias', implode( ", ", $aliasIds ) );
+        }
+    }
 }

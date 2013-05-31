@@ -248,7 +248,14 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function removeURLAliases( array $urlAliases )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        $this->gateway->removeAliases(
+            array_map(
+                function ( UrlAlias $urlAlias ) {
+                    return $urlAlias->id;
+                },
+                $urlAliases
+            )
+        );
     }
 
     /**
