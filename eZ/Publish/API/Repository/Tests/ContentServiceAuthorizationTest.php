@@ -187,6 +187,16 @@ class ContentServiceAuthorizationTest extends BaseContentServiceTest
         $repository = $this->getRepository();
 
         $anonymousUserId = $this->generateId( 'user', 10 );
+
+        // Ensure that a second version exists
+        $contentService = $repository->getContentService();
+
+        $contentService->publishVersion(
+            $contentService->createContentDraft(
+                $contentService->loadContentInfo( $anonymousUserId )
+            )->versionInfo
+        );
+
         /* BEGIN: Use Case */
         // $anonymousUserId is the ID of the "Anonymous User" in an eZ Publish
         // demo installation
@@ -248,6 +258,16 @@ class ContentServiceAuthorizationTest extends BaseContentServiceTest
         $repository = $this->getRepository();
 
         $anonymousUserId = $this->generateId( 'user', 10 );
+
+        // Ensure that a second version exists
+        $contentService = $repository->getContentService();
+
+        $contentService->publishVersion(
+            $contentService->createContentDraft(
+                $contentService->loadContentInfo( $anonymousUserId )
+            )->versionInfo
+        );
+        
         /* BEGIN: Use Case */
         // $anonymousUserId is the ID of the "Anonymous User" in an eZ Publish
         // demo installation
@@ -341,6 +361,16 @@ class ContentServiceAuthorizationTest extends BaseContentServiceTest
         $repository = $this->getRepository();
 
         $anonymousUserId = $this->generateId( 'user', 10 );
+
+        // Ensure that a second version exists
+        $contentService = $repository->getContentService();
+
+        $contentService->publishVersion(
+            $contentService->createContentDraft(
+                $contentService->loadContentInfo( $anonymousUserId )
+            )->versionInfo
+        );
+
         /* BEGIN: Use Case */
         // $anonymousUserId is the ID of the "Anonymous User" in an eZ Publish
         // demo installation
@@ -501,6 +531,16 @@ class ContentServiceAuthorizationTest extends BaseContentServiceTest
         $repository = $this->getRepository();
 
         $anonymousUserId = $this->generateId( 'user', 10 );
+
+        // Ensure that a second version exists
+        $contentService = $repository->getContentService();
+
+        $contentService->publishVersion(
+            $contentService->createContentDraft(
+                $contentService->loadContentInfo( $anonymousUserId )
+            )->versionInfo
+        );
+
         /* BEGIN: Use Case */
         // $anonymousUserId is the ID of the "Anonymous User" in an eZ Publish
         // demo installation
@@ -584,6 +624,17 @@ class ContentServiceAuthorizationTest extends BaseContentServiceTest
     public function testLoadContentByRemoteIdThrowsUnauthorizedExceptionWithThirdParameter()
     {
         $repository = $this->getRepository();
+
+        $anonymousUserId = $this->generateId( 'user', 10 );
+
+        // Ensure that a second version exists
+        $contentService = $repository->getContentService();
+
+        $contentService->publishVersion(
+            $contentService->createContentDraft(
+                $contentService->loadContentInfo( $anonymousUserId )
+            )->versionInfo
+        );
 
         /* BEGIN: Use Case */
         // Remote id of the "Anonymous" user in a eZ Publish demo installation
