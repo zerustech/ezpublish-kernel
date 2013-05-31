@@ -95,6 +95,7 @@ class UrlAliasHandlerTest extends TestCase
 
     /**
      * @depends testCreateCustomUrlAlias
+     * @expectedException \eZ\Publish\API\Repository\Exceptions\NotFoundException
      */
     public function testDeleteCustomUrlAlias( $urlAlias )
     {
@@ -102,7 +103,7 @@ class UrlAliasHandlerTest extends TestCase
 
         $handler->removeUrlAliases( array( $urlAlias ) );
 
-        $this->assertEquals(array(), $handler->loadAll() );
+        $this->assertEquals(array(), $handler->loadUrlAlias( $urlAlias->id ) );
     }
 
     /**
@@ -112,7 +113,9 @@ class UrlAliasHandlerTest extends TestCase
     {
         $handler = $this->getUrlAliasHandler();
 
-        $handler->removeUrlAliases( array( PHP_INT_MAX ) );
+        $handler->removeUrlAliases( array(
+            new Persistence\Content\UrlAlias( array( 'id' => PHP_INT_MAX ) )
+        ) );
     }
 
     public function testCreateCustomUrlAliasWithForward()
