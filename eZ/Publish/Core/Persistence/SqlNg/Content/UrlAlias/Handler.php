@@ -234,7 +234,9 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function listGlobalURLAliases( $languageCode = null, $offset = 0, $limit = -1 )
     {
-        throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        return $this->mapper->extractUrlAliasListFromData(
+            $this->gateway->loadGlobalUrlAliases( $languageCode, $offset, $limit === -1 ? null : $limit )
+        );
     }
 
     /**
