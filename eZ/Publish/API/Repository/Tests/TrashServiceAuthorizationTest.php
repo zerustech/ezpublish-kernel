@@ -59,24 +59,22 @@ class TrashServiceAuthorizationTest extends BaseTrashServiceTest
     {
         $repository = $this->getRepository();
 
+        $locationId = $this->generateId( 'location', 44 );
         /* BEGIN: Inline */
-        // remoteId of the "Media" page main location
-        $mediaRemoteId = '75c715a51699d2d309a924eca6a95145';
+        // locationId of the "Media" page main location
 
         $userService = $repository->getUserService();
         $trashService = $repository->getTrashService();
         $locationService = $repository->getLocationService();
 
         // Load "Media" page location
-        $mediaLocation = $locationService->loadLocationByRemoteId(
-            $mediaRemoteId
-        );
+        $location = $locationService->loadLocation( $locationId );
 
         // Set "Anonymous" as current user
         $repository->setCurrentUser( $userService->loadAnonymousUser() );
 
         // This call will fail with an "UnauthorizedException"
-        $trashService->trash( $mediaLocation );
+        $trashService->trash( $location );
         /* END: Inline */
     }
 

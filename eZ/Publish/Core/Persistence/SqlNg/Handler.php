@@ -420,8 +420,9 @@ class Handler implements HandlerInterface
                                 new Content\Search\Gateway\CriterionHandler\Visibility( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\ContentTypeIdentifier( $this->dbHandler ),
                                 // new Content\Search\Gateway\CriterionHandler\ContentTypeGroupId( $this->dbHandler ),
-                                // new Content\Search\Gateway\CriterionHandler\LocationRemoteId( $this->dbHandler ),
+                                new Content\Search\Gateway\CriterionHandler\LocationRemoteId( $this->dbHandler ),
                                 new Content\Search\Gateway\CriterionHandler\SectionId( $this->dbHandler ),
+                                new Content\Search\Gateway\CriterionHandler\DateMetadata( $this->dbHandler ),
                             )
                         ),
                         new Content\Search\Gateway\SortClauseConverter(

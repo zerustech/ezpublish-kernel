@@ -24,17 +24,15 @@ abstract class BaseTrashServiceTest extends BaseTest
     {
         $repository = $this->getRepository();
 
+        $locationId = $this->generateId( 'location', 44 );
         /* BEGIN: Inline */
-        // remoteId of the "Media" page main location
-        $mediaRemoteId = '75c715a51699d2d309a924eca6a95145';
+        // $locationId of the "Partners" location
 
         $trashService = $repository->getTrashService();
         $locationService = $repository->getLocationService();
 
-        // Load "Media" page location
-        $mediaLocation = $locationService->loadLocationByRemoteId(
-            $mediaRemoteId
-        );
+        // Load location
+        $mediaLocation = $locationService->loadLocation( $locationId );
 
         // Trash the "Community" page location
         $trashItem = $trashService->trash( $mediaLocation );

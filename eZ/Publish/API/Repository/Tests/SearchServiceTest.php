@@ -247,7 +247,10 @@ class SearchServiceTest extends BaseTest
                 new Query(
                     array(
                         'criterion' => new Criterion\LocationRemoteId(
-                            array( '3f6d92f8044aed134f32153517850f5a', 'f3e90596361e31d496d4026eb624c983' )
+                            array(
+                                $this->generateId( 'remoteId', '3f6d92f8044aed134f32153517850f5a' ),
+                                $this->generateId( 'remoteId', 'f3e90596361e31d496d4026eb624c983' ),
+                            )
                         ),
                         'sortClauses' => array( new SortClause\ContentId() )
                     )
@@ -516,7 +519,10 @@ class SearchServiceTest extends BaseTest
                         'criterion'   => new Criterion\SectionId( array( 2 ) ),
                         'offset'      => 0,
                         'limit'       => 10,
-                        'sortClauses' => array( new SortClause\LocationDepth( Query::SORT_ASC ) )
+                        'sortClauses' => array(
+                            new SortClause\LocationDepth( Query::SORT_ASC ),
+                            new SortClause\ContentId(),
+                        )
                     )
                 ),
                 $fixtureDir . 'SortLocationDepth.php',

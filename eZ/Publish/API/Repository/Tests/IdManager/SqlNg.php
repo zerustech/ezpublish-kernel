@@ -25,7 +25,7 @@ class SqlNg extends IdManager
             58 => 10, // Partner -> Contact Us
         ),
         'content' => array(
-            4 => 1,
+            4 => 1, // Users -> Users
             10 => 2,
             11 => 5,
             12 => 6,
@@ -91,7 +91,15 @@ class SqlNg extends IdManager
         ),
         'remoteId' => array(
             'a6e35cbcb7cd6ae4b691f3eee30cd262' => 'f5c88a2209584891056f987fd965b0ba', // Media -> Users
+            'f3e90596361e31d496d4026eb624c983' => 'f3e90596361e31d496d4026eb624c983', // Home -> Home
+            '3f6d92f8044aed134f32153517850f5a' => 'f5c88a2209584891056f987fd965b0ba', // Users -> Users
         ),
+        'content_remote_id' => array(
+            'f8cc7a4cf8a964a1a0ea6666f5da7d0d' => 'f8cc7a4cf8a964a1a0ea6666f5da7d0d', // Contact Us -> Contact Us
+        ),
+        'location_remote_id' => array(
+            '4fdf0072da953bb276c0c7e0141c5c9b' => '14e4411b264a6194a33847843919451a', // 44 -> 9
+        )
     );
 
     /**

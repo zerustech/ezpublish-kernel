@@ -34,6 +34,8 @@ class SectionLimitationTest extends BaseLimitationTest
     {
         $repository = $this->getRepository();
 
+        $contentId = $this->generateId( 'content', 4 );
+        $sectionId = $this->generateId( 'section', 2 );
         /* BEGIN: Use Case */
         $user = $this->createUserVersion1();
 
@@ -57,11 +59,13 @@ class SectionLimitationTest extends BaseLimitationTest
             throw new \ErrorException( 'No content:read policy found.' );
         }
 
-        // Only allow access to the media section
+        // Only allow access to the users section
         $policyUpdate = $roleService->newPolicyUpdateStruct();
         $policyUpdate->addLimitation(
             new SectionLimitation(
-                array( 'limitationValues' => array( 3 ) )
+                array(
+                    'limitationValues' => array( $sectionId )
+                )
             )
         );
 
@@ -72,13 +76,13 @@ class SectionLimitationTest extends BaseLimitationTest
 
         $contentService = $repository->getContentService();
 
-        // Load the images folder
-        $images = $contentService->loadContentByRemoteId( 'e7ff633c6b8e0fd3531e74c6e712bead' );
+        // Load the Users
+        $users = $contentService->loadContent( $contentId );
         /* END: Use Case */
 
         $this->assertEquals(
-            'Images',
-            $images->getFieldValue( 'name' )->text
+            'Users',
+            $users->getFieldValue( 'name' )->text
         );
     }
 

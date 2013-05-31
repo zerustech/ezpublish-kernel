@@ -53,11 +53,10 @@ class TrashServiceTest extends BaseTrashServiceTest
     {
         $repository = $this->getRepository();
 
-        $mediaRemoteId = '75c715a51699d2d309a924eca6a95145';
-
+        $locationId = $this->generateId( 'location', 44 );
         // Load the location that will be trashed
         $location = $repository->getLocationService()
-            ->loadLocationByRemoteId( $mediaRemoteId );
+            ->loadLocation( $locationId );
 
         $expected = array(
             'id' => $location->id,
@@ -89,17 +88,16 @@ class TrashServiceTest extends BaseTrashServiceTest
     {
         $repository = $this->getRepository();
 
-        $mediaRemoteId = '75c715a51699d2d309a924eca6a95145';
-
+        $locationId = $this->generateId( 'location', 44 );
         /* BEGIN: Use Case */
         $this->createTrashItem();
 
         // Load the location service
         $locationService = $repository->getLocationService();
 
-        // This call will fail with a "NotFoundException", because the media
+        // This call will fail with a "NotFoundException", because the
         // location was marked as trashed in the main storage
-        $locationService->loadLocationByRemoteId( $mediaRemoteId );
+        $locationService->loadLocation( $locationId );
         /* END: Use Case */
     }
 
@@ -156,7 +154,7 @@ class TrashServiceTest extends BaseTrashServiceTest
         $repository = $this->getRepository();
         $locationService = $repository->getLocationService();
 
-        $baseLocationId = $this->generateId( 'location', 1 );
+        $baseLocationId = $this->generateId( 'location', 5 );
 
         $location = $locationService->loadLocation( $baseLocationId );
 
@@ -235,8 +233,7 @@ class TrashServiceTest extends BaseTrashServiceTest
         $trashService = $repository->getTrashService();
         $locationService = $repository->getLocationService();
 
-        $mediaRemoteId = '75c715a51699d2d309a924eca6a95145';
-
+        $remoteId = '4fdf0072da953bb276c0c7e0141c5c9b';
         /* BEGIN: Use Case */
         $trashItem = $this->createTrashItem();
 
@@ -244,9 +241,7 @@ class TrashServiceTest extends BaseTrashServiceTest
         $location = $trashService->recover( $trashItem );
 
         // Load the recovered location
-        $locationReloaded = $locationService->loadLocationByRemoteId(
-            $mediaRemoteId
-        );
+        $locationReloaded = $locationService->loadLocationByRemoteId( $remoteId );
         /* END: Use Case */
 
         $this->assertInstanceOf(
@@ -276,7 +271,8 @@ class TrashServiceTest extends BaseTrashServiceTest
         $remoteIds = $this->createRemoteIdList();
 
         // Unset remote ID of actually restored location
-        unset( $remoteIds[array_search( '3f6d92f8044aed134f32153517850f5a', $remoteIds )] );
+        //unset( $remoteIds[array_search( '3f6d92f8044aed134f32153517850f5a', $remoteIds )] );
+        //unset( $remoteIds[array_search( '2cf8343bee7b482bab82b269d8fecd76', $remoteIds )] );
 
         $trashItem = $this->createTrashItem();
 
@@ -424,7 +420,7 @@ class TrashServiceTest extends BaseTrashServiceTest
         );
 
         // 4 trashed locations from the sub tree
-        $this->assertEquals( 4, $searchResult->count );
+        $this->assertEquals( 2, $searchResult->count );
     }
 
     /**
@@ -508,7 +504,7 @@ class TrashServiceTest extends BaseTrashServiceTest
             $searchResult->items
         );
 
-        $this->assertEquals( 4, $searchResult->count );
+        $this->assertEquals( 2, $searchResult->count );
         $this->assertTrue(
             array_search( $demoDesignLocationId, $foundIds ) !== false
         );
@@ -525,9 +521,9 @@ class TrashServiceTest extends BaseTrashServiceTest
     {
         $repository = $this->getRepository();
 
+        $locationId = $this->generateId( 'location', 44 );
         /* BEGIN: Inline */
-        // remoteId of the "Community" location in an eZ Publish demo installation
-        $mediaRemoteId = '75c715a51699d2d309a924eca6a95145';
+        // locationId of the "Community" location in an eZ Publish demo installation
 
         // Load the location service
         $locationService = $repository->getLocationService();
@@ -535,7 +531,7 @@ class TrashServiceTest extends BaseTrashServiceTest
         $remoteIds = array();
         foreach (
             $locationService->loadLocationChildren(
-                $locationService->loadLocationByRemoteId( $mediaRemoteId )
+                $locationService->loadLocation( $locationId )
             )->locations as $child
         )
         {

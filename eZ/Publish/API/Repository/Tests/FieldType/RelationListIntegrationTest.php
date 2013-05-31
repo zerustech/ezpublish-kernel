@@ -285,8 +285,8 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
 
         $expectedData = array(
             'destinationContentIds' => array(
-                $this->generateId( 'content', 41 ),
                 $this->generateId( 'content', 13 ),
+                $this->generateId( 'content', 41 ),
             ),
         );
         $this->assertPropertiesCorrect(
@@ -338,8 +338,8 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
 
         $expectedData = array(
             'destinationContentIds' => array(
+                $this->generateId( 'content', 11 ),
                 $this->generateId( 'content', 41 ),
-                $this->generateId( 'content', 11 )
             )
         );
 
