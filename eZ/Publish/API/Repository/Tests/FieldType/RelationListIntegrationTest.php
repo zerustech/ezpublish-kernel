@@ -289,6 +289,9 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
                 $this->generateId( 'content', 41 ),
             ),
         );
+
+        sort( $expectedData );
+
         $this->assertPropertiesCorrect(
             $expectedData,
             $field->value
@@ -342,6 +345,8 @@ class RelationListFieldTypeIntegrationTest extends RelationBaseIntegrationTest
                 $this->generateId( 'content', 41 ),
             )
         );
+
+        sort( $expectedData );
 
         $this->assertPropertiesCorrect(
             $expectedData,
