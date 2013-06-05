@@ -296,7 +296,7 @@ class UrlAliasHandlerTest extends TestCase
         $urlAlias = $handler->publishUrlAliasForLocation(
             $location->id,
             $location->parentId,
-            "Root Location",
+            "root",
             $content->mainLanguageCode,
             true
         );
@@ -315,6 +315,7 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', false ),
             array( 'forward', false ),
+            array( 'pathData', array( "root" ) ),
         );
     }
 
@@ -344,7 +345,7 @@ class UrlAliasHandlerTest extends TestCase
         $urlAlias = $handler->publishUrlAliasForLocation(
             $location->id,
             $location->parentId,
-            "New Root Location",
+            "new_root",
             $content->mainLanguageCode,
             true
         );
@@ -364,6 +365,7 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', true ),
             array( 'forward', true ),
+            array( 'pathData', array( "new_root" ) ),
         );
     }
 
@@ -372,6 +374,70 @@ class UrlAliasHandlerTest extends TestCase
      * @dataProvider updatdUrlAliasForSimpleRootLocationProperties
      */
     public function testUpdatedUrlAliasForSimpleRootLocationProperties( $property, $value, $urlAlias )
+    {
+        $this->assertSame(
+            $value,
+            $urlAlias->$property,
+            "UrlAlias property $property has the wrong value."
+        );
+    }
+
+    protected function createNewLocation( $parentId )
+    {
+        $locationHandler = $this->getPersistenceHandler()->locationHandler();
+        $content = $this->getContent();
+
+        return $locationHandler->create(
+            new Persistence\Content\Location\CreateStruct( array(
+                'remoteId' => md5( microtime() ),
+                'contentId' => $content->versionInfo->contentInfo->id,
+                'contentVersion' => $content->versionInfo->versionNo,
+                'parentId' => $parentId,
+            ) )
+        );
+    }
+
+    /**
+     * @depends testCreateUrlAliasForSimpleRootLocation
+     */
+    public function testCreateUrlAliasForSimpleChildLocation($urlAlias)
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $location = $this->createNewLocation( $urlAlias->destination );
+        $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
+
+        $urlAlias = $handler->publishUrlAliasForLocation(
+            $location->id,
+            $location->parentId,
+            "child",
+            $content->mainLanguageCode,
+            true
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\UrlAlias',
+            $urlAlias
+        );
+
+        return $urlAlias;
+    }
+
+    public function createUrlAliasForSimpleChildLocationProperties()
+    {
+        return array(
+            array( 'isCustom', false ),
+            array( 'isHistory', false ),
+            array( 'forward', false ),
+            array( 'pathData', array( "new_root", "child" ) ),
+        );
+    }
+
+    /**
+     * @depends testCreateUrlAliasForSimpleChildLocation
+     * @dataProvider createUrlAliasForSimpleChildLocationProperties
+     */
+    public function testCreateUrlAliasForSimpleChildLocationProperties( $property, $value, $urlAlias )
     {
         $this->assertSame(
             $value,
