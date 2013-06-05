@@ -18,20 +18,6 @@ use eZ\Publish\SPI\Persistence;
 class UrlAliasHandlerTest extends TestCase
 {
     /**
-     * Method called on database initialization before each test case
-     *
-     * @return void
-     */
-    protected function applyCustomStatements()
-    {
-        $this->applyStatements(
-            $this->getStatements(
-                __DIR__ . '/../_fixture/initial_data.' . self::$db . '.sql'
-            )
-        );
-    }
-
-    /**
      * Returns the handler to test
      *
      * @return \eZ\Publish\Core\Persistence\SqlNg\Content\UrlAlias\Handler
