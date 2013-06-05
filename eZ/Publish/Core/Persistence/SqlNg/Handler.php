@@ -560,6 +560,7 @@ class Handler implements HandlerInterface
         {
             $this->urlAliasHandler = new Content\UrlAlias\Handler(
                 $this->contentLanguageHandler(),
+                $this->locationHandler(),
                 new Content\UrlAlias\Gateway\EzcDatabase( $this->dbHandler ),
                 new Content\UrlAlias\Mapper()
             );

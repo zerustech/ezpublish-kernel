@@ -95,6 +95,43 @@ class EzcDatabase extends Gateway
     }
 
     /**
+     * update old aliases for location
+     *
+     * @param int $locationId
+     * @return void
+     */
+    public function updateOldAliasesForLocation( $locationId )
+    {
+        $query = $this->dbHandler->createUpdateQuery();
+        $query->update(
+            $this->dbHandler->quoteTable( 'ezurl_alias' )
+        )->set(
+            $this->dbHandler->quoteColumn( 'forward' ),
+            $query->bindValue( true, null, \PDO::PARAM_BOOL )
+        )->set(
+            $this->dbHandler->quoteColumn( 'history' ),
+            $query->bindValue( true, null, \PDO::PARAM_BOOL )
+        )->where(
+            $query->expr->lAnd(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "location_id", "ezurl_alias" ),
+                    $query->bindValue( $locationId, null, \PDO::PARAM_INT )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "history", "ezurl_alias" ),
+                    $query->bindValue( false, null, \PDO::PARAM_BOOL )
+                ),
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "custom", "ezurl_alias" ),
+                    $query->bindValue( false, null, \PDO::PARAM_BOOL )
+                )
+            )
+        );
+
+        $query->prepare()->execute();
+    }
+
+    /**
      * Add translated URL
      *
      * @param int $aliasId

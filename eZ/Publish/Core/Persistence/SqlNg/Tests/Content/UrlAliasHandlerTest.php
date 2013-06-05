@@ -286,12 +286,101 @@ class UrlAliasHandlerTest extends TestCase
         $this->assertEquals( $urlAlias, $loaded );
     }
 
-    public function testLookup()
+    public function testCreateUrlAliasForSimpleRootLocation()
     {
-        $this->markTestIncomplete( "@TODO: Write tests for this." );
+        $handler = $this->getUrlAliasHandler();
+
+        $location = $this->getLocation();
+        $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
+
+        $urlAlias = $handler->publishUrlAliasForLocation(
+            $location->id,
+            $location->parentId,
+            "Root Location",
+            $content->mainLanguageCode,
+            true
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\UrlAlias',
+            $urlAlias
+        );
+
+        return $urlAlias;
     }
 
-    public function testPublishUrlAliasForLocation()
+    public function newUrlAliasForSimpleRootLocationProperties()
+    {
+        return array(
+            array( 'isCustom', false ),
+            array( 'isHistory', false ),
+            array( 'forward', false ),
+        );
+    }
+
+    /**
+     * @depends testCreateUrlAliasForSimpleRootLocation
+     * @dataProvider newUrlAliasForSimpleRootLocationProperties
+     */
+    public function testNewUrlAliasForSimpleRootLocationProperties( $property, $value, $urlAlias )
+    {
+        $this->assertSame(
+            $value,
+            $urlAlias->$property,
+            "UrlAlias property $property has the wrong value."
+        );
+    }
+
+    /**
+     * @depends testCreateUrlAliasForSimpleRootLocation
+     */
+    public function testUpdateUrlAliasForSimpleRootLocation($oldUrlAlias)
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $location = $this->getLocation();
+        $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
+
+        $urlAlias = $handler->publishUrlAliasForLocation(
+            $location->id,
+            $location->parentId,
+            "New Root Location",
+            $content->mainLanguageCode,
+            true
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\UrlAlias',
+            $urlAlias
+        );
+
+        $oldUrlAlias = $handler->loadUrlAlias( $oldUrlAlias->id );
+        return $oldUrlAlias;
+    }
+
+    public function updatdUrlAliasForSimpleRootLocationProperties()
+    {
+        return array(
+            array( 'isCustom', false ),
+            array( 'isHistory', true ),
+            array( 'forward', true ),
+        );
+    }
+
+    /**
+     * @depends testUpdateUrlAliasForSimpleRootLocation
+     * @dataProvider updatdUrlAliasForSimpleRootLocationProperties
+     */
+    public function testUpdatedUrlAliasForSimpleRootLocationProperties( $property, $value, $urlAlias )
+    {
+        $this->assertSame(
+            $value,
+            $urlAlias->$property,
+            "UrlAlias property $property has the wrong value."
+        );
+    }
+
+    public function testLookup()
     {
         $this->markTestIncomplete( "@TODO: Write tests for this." );
     }

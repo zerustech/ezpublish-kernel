@@ -12,6 +12,7 @@ namespace eZ\Publish\Core\Persistence\SqlNg\Content\UrlAlias;
 use eZ\Publish\SPI\Persistence\Content\UrlAlias\Handler as UrlAliasHandlerInterface;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Language\Handler as LanguageHandler;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Search\TransformationProcessor;
+use eZ\Publish\Core\Persistence\SqlNg\Content\Location\Handler as LocationHandler;
 use eZ\Publish\Core\Persistence\SqlNg\Content\Location\Gateway as LocationGateway;
 use eZ\Publish\SPI\Persistence\Content\UrlAlias;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
@@ -48,6 +49,13 @@ class Handler implements UrlAliasHandlerInterface
     protected $languageHandler;
 
     /**
+     * Location Handler
+     *
+     * @var \eZ\Publish\Core\Persistence\SqlNg\Content\Location\Handler
+     */
+    protected $locationHandler;
+
+    /**
      * Creates a new UrlAlias Handler
      *
      * @param \eZ\Publish\Core\Persistence\SqlNg\Content\UrlAlias\Gateway $gateway
@@ -59,11 +67,13 @@ class Handler implements UrlAliasHandlerInterface
      */
     public function __construct(
         LanguageHandler $languageHandler,
+        LocationHandler $locationHandler,
         Gateway $gateway,
         Mapper $mapper
     )
     {
         $this->languageHandler = $languageHandler;
+        $this->locationHandler = $locationHandler;
         $this->gateway = $gateway;
         $this->mapper = $mapper;
     }
@@ -94,7 +104,28 @@ class Handler implements UrlAliasHandlerInterface
         $isLanguageMain = false
     )
     {
-        // throw new \PHPUnit_Framework_IncompleteTestError( "@TODO: Implement" );
+        // @TODO: The URLification of the name should probably happen in the
+        // Business layer. Why implement it in the Storage engine?
+        $name = $name;
+
+        $path = '';
+        if ($parentLocationId !== null) {
+            // @TODO: Fetch parent path
+        }
+
+        $path .= '/' . $name;
+
+        $this->gateway->updateOldAliasesForLocation( $locationId );
+
+        $urlAliasId = $this->gateway->createUrlAlias( UrlAlias::LOCATION, $locationId, false, false, false );
+
+        $pathHash = $this->hashPath( $path );
+        foreach ( $this->getLanguages( $languageCode ) as $languageId )
+        {
+            $this->gateway->addTranslatedPath( $urlAliasId, $path, $pathHash, $languageId );
+        }
+
+        return $this->loadUrlAlias( $urlAliasId );
     }
 
     /**
