@@ -315,6 +315,7 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', false ),
             array( 'forward', false ),
+            array( 'alwaysAvailable', true ),
             array( 'pathData', array( "root" ) ),
         );
     }
@@ -365,6 +366,7 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', true ),
             array( 'forward', true ),
+            array( 'alwaysAvailable', true ),
         );
     }
 
@@ -428,6 +430,7 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', false ),
             array( 'forward', false ),
+            array( 'alwaysAvailable', true ),
             array( 'pathData', array( "new_root", "child" ) ),
         );
     }

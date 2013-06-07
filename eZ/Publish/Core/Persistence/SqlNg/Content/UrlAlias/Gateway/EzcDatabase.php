@@ -330,6 +330,7 @@ class EzcDatabase extends Gateway
             $this->dbHandler->quoteColumn( 'history', 'ezurl_alias' ),
             $this->dbHandler->quoteColumn( 'custom', 'ezurl_alias' ),
             $this->dbHandler->quoteColumn( 'path', 'ezurl_alias_language' ),
+            $this->dbHandler->quoteColumn( 'always_available', 'ezurl_alias_language' ),
             $this->dbHandler->quoteColumn( 'language_code', 'ezcontent_language' )
         )->from(
             $this->dbHandler->quoteTable( "ezurl_alias" )

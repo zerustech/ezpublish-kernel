@@ -73,7 +73,7 @@ class Mapper
         $urlAlias->type = (int) $row['type'];
         $urlAlias->destination = $row['destination'];
         $urlAlias->languageCodes = array();
-        $urlAlias->alwaysAvailable = false;
+        $urlAlias->alwaysAvailable = (bool) $row['always_available'];
         $urlAlias->forward = (bool) $row["forward"];
         $urlAlias->isHistory = (bool) $row["history"];
         $urlAlias->isCustom = (bool) $row["custom"];
