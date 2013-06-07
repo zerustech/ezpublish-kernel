@@ -449,14 +449,13 @@ class UrlAliasHandlerTest extends TestCase
     }
 
     /**
-     * @depends testCreateUrlAliasForSimpleRootLocation
+     * @depends testCreateUrlAliasForSimpleChildLocation
      */
     public function testCreateUrlAliasForSimpleChildLocationInSecondLangauge($urlAlias)
     {
         $handler = $this->getUrlAliasHandler();
 
-        $location = $this->createNewLocation( $urlAlias->destination );
-        $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
+        $location = $this->getPersistenceHandler()->locationHandler()->load( $urlAlias->destination );
 
         $urlAlias = $handler->publishUrlAliasForLocation(
             $location->id,
