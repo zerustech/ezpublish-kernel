@@ -365,7 +365,6 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', true ),
             array( 'forward', true ),
-            array( 'pathData', array( "new_root" ) ),
         );
     }
 

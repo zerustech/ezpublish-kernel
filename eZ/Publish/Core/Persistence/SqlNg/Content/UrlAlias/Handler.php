@@ -109,8 +109,17 @@ class Handler implements UrlAliasHandlerInterface
         $name = $name;
 
         $path = '';
-        if ($parentLocationId !== null) {
-            // @TODO: Fetch parent path
+        if ( $parentLocationId &&
+             ( $parentLocationId != $locationId ) ) {
+            $parentAliasData = $this->gateway->loadForLocation( $parentLocationId, false, false );
+
+            if ( !$parentAliasData )
+            {
+                throw new NotFoundException( "Could not find alias for parent location: $parentLocationId" );
+            }
+
+            $parentAlias = reset( $parentAliasData );
+            $path = $parentAlias['path'];
         }
 
         $path .= '/' . $name;

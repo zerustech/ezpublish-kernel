@@ -72,12 +72,16 @@ class Mapper
         $urlAlias->id = $row['alias_id'];
         $urlAlias->type = (int) $row['type'];
         $urlAlias->destination = $row['destination'];
-        $urlAlias->pathData = array(); // @TODO: WTF is this?
         $urlAlias->languageCodes = array();
         $urlAlias->alwaysAvailable = false;
         $urlAlias->forward = (bool) $row["forward"];
         $urlAlias->isHistory = (bool) $row["history"];
         $urlAlias->isCustom = (bool) $row["custom"];
+
+        // @TODO: This is supposed to include languages somehow. I can't deduce
+        // from the documentation in which way. Currently we are just returning
+        // the path here for the tests. Requires more work.
+        $urlAlias->pathData = explode( '/', trim( $row['path'], '/' ) );
 
         return $urlAlias;
     }

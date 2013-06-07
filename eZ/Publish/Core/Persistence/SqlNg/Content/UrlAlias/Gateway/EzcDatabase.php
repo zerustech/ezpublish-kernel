@@ -200,7 +200,7 @@ class EzcDatabase extends Gateway
      * @param bool $custom
      * @return array
      */
-    public function loadForLocation( $locationId, $custom )
+    public function loadForLocation( $locationId, $custom, $history = null )
     {
         $query = $this->getLoadQuery();
         $query->where(
@@ -215,6 +215,17 @@ class EzcDatabase extends Gateway
                 )
             )
         );
+
+        if ( $history !== null )
+        {
+            $query->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "history", "ezurl_alias" ),
+                    $query->bindValue( $history, null, \PDO::PARAM_BOOL )
+                )
+            );
+        }
+
         $statement = $query->prepare();
         $statement->execute();
         return $statement->fetchAll( \PDO::FETCH_ASSOC );
