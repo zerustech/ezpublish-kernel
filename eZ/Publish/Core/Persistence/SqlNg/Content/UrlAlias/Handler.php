@@ -118,6 +118,9 @@ class Handler implements UrlAliasHandlerInterface
                 throw new NotFoundException( "Could not find alias for parent location: $parentLocationId" );
             }
 
+            // @TODO: We probably require some more intelligent alias selection
+            // here, keeping language constraints in mind, but it is not
+            // covered by tests yet.
             $parentAlias = reset( $parentAliasData );
             $path = $parentAlias['path'];
         }
