@@ -140,7 +140,7 @@ class EzcDatabase extends Gateway
      * @param int $languageId
      * @return void
      */
-    public function addTranslatedPath( $aliasId, $path, $pathHash, $languageId )
+    public function addTranslatedPath( $aliasId, $path, $pathHash, $languageId, $alwaysAvailable )
     {
         $query = $this->dbHandler->createInsertQuery();
         $query->insertInto(
@@ -157,13 +157,12 @@ class EzcDatabase extends Gateway
         )->set(
             $this->dbHandler->quoteColumn( 'language_id' ),
             $query->bindValue( $languageId, null, \PDO::PARAM_INT )
+        )->set(
+            $this->dbHandler->quoteColumn( 'always_available' ),
+            $query->bindValue( $alwaysAvailable, null, \PDO::PARAM_BOOL )
         );
 
         $query->prepare()->execute();
-
-        return $this->dbHandler->lastInsertId(
-            $this->dbHandler->getSequenceName( 'ezurl_alias', 'alias_id' )
-        );
     }
 
     /**
@@ -200,7 +199,7 @@ class EzcDatabase extends Gateway
      * @param bool $custom
      * @return array
      */
-    public function loadForLocation( $locationId, $custom, $history = null )
+    public function loadForLocation( $locationId, $custom, $history = null, $alwaysAvailable = null )
     {
         $query = $this->getLoadQuery();
         $query->where(
@@ -222,6 +221,16 @@ class EzcDatabase extends Gateway
                 $query->expr->eq(
                     $this->dbHandler->quoteColumn( "history", "ezurl_alias" ),
                     $query->bindValue( $history, null, \PDO::PARAM_BOOL )
+                )
+            );
+        }
+
+        if ( $alwaysAvailable !== null )
+        {
+            $query->where(
+                $query->expr->eq(
+                    $this->dbHandler->quoteColumn( "always_available", "ezurl_alias_language" ),
+                    $query->bindValue( $alwaysAvailable, null, \PDO::PARAM_BOOL )
                 )
             );
         }

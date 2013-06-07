@@ -325,6 +325,7 @@ CREATE TABLE `ezurl_alias_language` (
     `path_hash` BINARY(32) NOT NULL,
     `path` TEXT NOT NULL,
     `language_id` INT DEFAULT NULL,
+    `always_available` INT DEFAULT 0,
     PRIMARY KEY (`path_hash`, `language_id`),
     KEY (`alias_id`, `language_id`),
     FOREIGN KEY (`alias_id`) REFERENCES `ezurl_alias` (`alias_id`) ON DELETE CASCADE,

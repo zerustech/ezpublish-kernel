@@ -134,7 +134,7 @@ class Handler implements UrlAliasHandlerInterface
         $pathHash = $this->hashPath( $path );
         foreach ( $this->getLanguages( $languageCode ) as $languageId )
         {
-            $this->gateway->addTranslatedPath( $urlAliasId, $path, $pathHash, $languageId );
+            $this->gateway->addTranslatedPath( $urlAliasId, $path, $pathHash, $languageId, $alwaysAvailable );
         }
 
         return $this->loadUrlAlias( $urlAliasId );
@@ -202,7 +202,8 @@ class Handler implements UrlAliasHandlerInterface
                 $urlAliasId,
                 $path,
                 $pathHash,
-                $languageId
+                $languageId,
+                $alwaysAvailable
             );
         }
 
@@ -244,7 +245,8 @@ class Handler implements UrlAliasHandlerInterface
                 $urlAliasId,
                 $path,
                 $pathHash,
-                $languageId
+                $languageId,
+                $alwaysAvailable
             );
         }
 
