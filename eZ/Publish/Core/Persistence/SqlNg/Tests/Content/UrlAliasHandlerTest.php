@@ -45,7 +45,7 @@ class UrlAliasHandlerTest extends TestCase
             }
         }
 
-        self::$language = $this->languages['ger-DE'];
+        self::$language = $this->languages['eng-US'];
     }
 
     /**
@@ -346,6 +346,7 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', false ),
             array( 'forward', false ),
+            array( 'languageCodes', array( 'eng-US' ) ),
             array( 'alwaysAvailable', true ),
             array( 'pathData', array( "root" ) ),
         );
@@ -397,6 +398,7 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', true ),
             array( 'forward', true ),
+            array( 'languageCodes', array( 'eng-US' ) ),
             array( 'alwaysAvailable', true ),
         );
     }
@@ -461,6 +463,7 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', false ),
             array( 'forward', false ),
+            array( 'languageCodes', array( 'eng-US' ) ),
             array( 'alwaysAvailable', true ),
             array( 'pathData', array( "new_root", "child" ) ),
         );
@@ -510,6 +513,7 @@ class UrlAliasHandlerTest extends TestCase
             array( 'isCustom', false ),
             array( 'isHistory', false ),
             array( 'forward', false ),
+            array( 'languageCodes', array( 'ger-DE' ) ),
             array( 'alwaysAvailable', false ),
             array( 'pathData', array( "new_root", "child_2" ) ),
         );
