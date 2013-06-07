@@ -17,6 +17,37 @@ use eZ\Publish\SPI\Persistence;
  */
 class UrlAliasHandlerTest extends TestCase
 {
+    protected $languages = array();
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $languages = array(
+            'ger-DE' => 'German (Germany)',
+            'eng-US' => 'English (USA)',
+            'fra-FR' => 'French (France)',
+        );
+
+        $languageHandler = $this->getPersistenceHandler()->contentLanguageHandler();
+        foreach ( $languages as $languageCode => $name )
+        {
+            try {
+                $this->languages[$languageCode] = $languageHandler->loadByLanguageCode( $languageCode );
+            } catch ( \eZ\Publish\Core\Base\Exceptions\NotFoundException $e ) {
+                $this->languages[$languageCode] = $languageHandler->create(
+                    new Persistence\Content\Language\CreateStruct( array(
+                        'languageCode' => $languageCode,
+                        'name' => $name,
+                        'isEnabled' => true,
+                    ) )
+                );
+            }
+        }
+
+        self::$language = $this->languages['ger-DE'];
+    }
+
     /**
      * Returns the handler to test
      *
@@ -147,7 +178,7 @@ class UrlAliasHandlerTest extends TestCase
             $location->id,
             '/custom/always-available',
             false,
-            $content->mainLanguageCode,
+            $this->languages['eng-US']->languageCode,
             true
         );
 
@@ -262,7 +293,7 @@ class UrlAliasHandlerTest extends TestCase
             'module:content/search?SearchText=eZAlwaysAvailable',
             '/global/always-available',
             true,
-            $content->mainLanguageCode,
+            $this->languages['eng-US']->languageCode,
             true
         );
 
@@ -297,7 +328,7 @@ class UrlAliasHandlerTest extends TestCase
             $location->id,
             $location->parentId,
             "root",
-            $content->mainLanguageCode,
+            $this->languages['eng-US']->languageCode,
             true
         );
 
@@ -347,7 +378,7 @@ class UrlAliasHandlerTest extends TestCase
             $location->id,
             $location->parentId,
             "new_root",
-            $content->mainLanguageCode,
+            $this->languages['eng-US']->languageCode,
             true
         );
 
@@ -412,7 +443,7 @@ class UrlAliasHandlerTest extends TestCase
             $location->id,
             $location->parentId,
             "child",
-            $content->mainLanguageCode,
+            $this->languages['eng-US']->languageCode,
             true
         );
 
@@ -461,7 +492,7 @@ class UrlAliasHandlerTest extends TestCase
             $location->id,
             $location->parentId,
             "child_2",
-            $this->getSecondLanguage()->languageCode,
+            $this->languages['ger-DE']->languageCode,
             false
         );
 
