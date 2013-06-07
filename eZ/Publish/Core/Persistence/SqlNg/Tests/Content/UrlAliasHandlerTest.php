@@ -448,6 +448,56 @@ class UrlAliasHandlerTest extends TestCase
         );
     }
 
+    /**
+     * @depends testCreateUrlAliasForSimpleRootLocation
+     */
+    public function testCreateUrlAliasForSimpleChildLocationInSecondLangauge($urlAlias)
+    {
+        $handler = $this->getUrlAliasHandler();
+
+        $location = $this->createNewLocation( $urlAlias->destination );
+        $content  = $this->getPersistenceHandler()->contentHandler()->loadContentInfo( $location->contentId );
+
+        $urlAlias = $handler->publishUrlAliasForLocation(
+            $location->id,
+            $location->parentId,
+            "child_2",
+            $this->getSecondLanguage()->languageCode,
+            false
+        );
+
+        $this->assertInstanceOf(
+            'eZ\\Publish\\SPI\\Persistence\\Content\\UrlAlias',
+            $urlAlias
+        );
+
+        return $urlAlias;
+    }
+
+    public function createUrlAliasForSimpleChildLocationInSecondLangaugeProperties()
+    {
+        return array(
+            array( 'isCustom', false ),
+            array( 'isHistory', false ),
+            array( 'forward', false ),
+            array( 'alwaysAvailable', false ),
+            array( 'pathData', array( "new_root", "child_2" ) ),
+        );
+    }
+
+    /**
+     * @depends testCreateUrlAliasForSimpleChildLocationInSecondLangauge
+     * @dataProvider createUrlAliasForSimpleChildLocationInSecondLangaugeProperties
+     */
+    public function testCreateUrlAliasForSimpleChildLocationInSecondLangaugeProperties( $property, $value, $urlAlias )
+    {
+        $this->assertSame(
+            $value,
+            $urlAlias->$property,
+            "UrlAlias property $property has the wrong value."
+        );
+    }
+
     public function testLookup()
     {
         $this->markTestIncomplete( "@TODO: Write tests for this." );
