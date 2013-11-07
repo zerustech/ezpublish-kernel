@@ -10,11 +10,11 @@
  */
 namespace eZ\Publish\SPI\Persistence\User;
 
-use eZ\Publish\SPI\Persistence\ValueObject;
+use eZ\Publish\SPI\Persistence\MultiLanguageValueBase;
 
 /**
  */
-class Role extends ValueObject
+class Role extends MultiLanguageValueBase
 {
     /**
      * ID of the user rule.
@@ -22,33 +22,6 @@ class Role extends ValueObject
      * @var mixed
      */
     public $id;
-
-    /**
-     * Identifier of the role.
-     *
-     * Legacy note: Maps to name in 4.x.
-     *
-     * @var string
-     */
-    public $identifier;
-
-    /**
-     * Name of the role.
-     *
-     * @since 5.0
-     *
-     * @var string[]
-     */
-    public $name;
-
-    /**
-     * Name of the role.
-     *
-     * @since 5.0
-     *
-     * @var string[]
-     */
-    public $description = array();
 
     /**
      * Policies associated with the role.
