@@ -61,12 +61,12 @@ parameters:
 
     # RichText XSLT converters
     ezpublish.fieldType.ezrichtext.converter.xslt_converter.class: eZ\Publish\Core\Persistence\Legacy\Content\FieldValue\Converter\RichText\XsltConverter
-    ezpublish.fieldType.ezrichtext.converter.ezxmlToDocbook.resources: %kernel.root_dir%/../vendor/ezsystems/ezpublish-kernel/eZ/Publish/Core/Persistence/Legacy/Content/FieldValue/Converter/RichText/Resources/stylesheets/ezxml_docbook.xsl
-    ezpublish.fieldType.ezrichtext.converter.docbookToEzxml.resources: %kernel.root_dir%/../vendor/ezsystems/ezpublish-kernel/eZ/Publish/Core/Persistence/Legacy/Content/FieldValue/Converter/RichText/Resources/stylesheets/docbook_ezxml.xsl
+    ezpublish.fieldType.ezrichtext.converter.ezxmlToDocbook.resources: %ez_kernel.root_dir%/../vendor/ezsystems/ezpublish-kernel/eZ/Publish/Core/Persistence/Legacy/Content/FieldValue/Converter/RichText/Resources/stylesheets/ezxml_docbook.xsl
+    ezpublish.fieldType.ezrichtext.converter.docbookToEzxml.resources: %ez_kernel.root_dir%/../vendor/ezsystems/ezpublish-kernel/eZ/Publish/Core/Persistence/Legacy/Content/FieldValue/Converter/RichText/Resources/stylesheets/docbook_ezxml.xsl
 
     # XmlText XSD validator
     ezpublish.fieldType.ezrichtext.validator.ezxml.class: eZ\Publish\Core\Persistence\Legacy\Content\FieldValue\Converter\RichText\XsdValidator
-    ezpublish.fieldType.ezrichtext.validator.ezxml.resources: %kernel.root_dir%/../vendor/ezsystems/ezpublish-kernel/eZ/Publish/Core/Persistence/Legacy/Content/FieldValue/Converter/RichText/Resources/schemas/ezxml.xsd
+    ezpublish.fieldType.ezrichtext.validator.ezxml.resources: %ez_kernel.root_dir%/../vendor/ezsystems/ezpublish-kernel/eZ/Publish/Core/Persistence/Legacy/Content/FieldValue/Converter/RichText/Resources/schemas/ezxml.xsd
 
     # Value converters
     ezpublish.fieldType.ezauthor.converter.class: eZ\Publish\Core\Persistence\Legacy\Content\FieldValue\Converter\Author
@@ -224,7 +224,7 @@ services:
 
     ezpublish.api.storage_engine.transformation_parser:
         class: %ezpublish.api.storage_engine.transformation_parser.class%
-        arguments: [%kernel.root_dir%]
+        arguments: [%ez_kernel.root_dir%]
 
     ezpublish.api.storage_engine.pcre_compiler:
         class: %ezpublish.api.storage_engine.pcre_compiler.class%
@@ -244,7 +244,7 @@ services:
 
             # Using preprocessed files:
             - @ezpublish.api.storage_engine.pcre_compiler
-            - %kernel.root_dir%
+            - %ez_kernel.root_dir%
             - %ezpublish.api.storage_engine.preprocessed_transformation_rules.resources%
 
     # Field type converters for legacy
