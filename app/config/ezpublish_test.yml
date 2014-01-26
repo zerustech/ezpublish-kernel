@@ -1,0 +1,12 @@
+imports:
+    - resource: ezpublish.yml
+
+ezpublish:
+    siteaccess:
+        default_siteaccess: test
+        list:
+            - test
+        groups:
+            test_group:
+                - test
+        match:
