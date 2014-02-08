@@ -19,11 +19,11 @@ Any setting that isn't mapped by the semantical configuration can be overridden 
 A developer needs a custom fieldtype.
 Since there is no backoffice yet, a couple legacy elements are still required (datatype class, edit/view templates, settings.
 Using a Bundle, the developer can have both the new stack and legacy code in the same structure, and make sure both evolve at the same rythm:
-- `Acme/Bundle/AcmeBundle/Resources/ezpublish-legacy` contains the legacy datatype elements
+- `Acme/Bundle/AcmeBundle/ezpublish_legacy` (default) contains the legacy datatype elements
 - `Acme/Bundle/AcmeBundle/eZ/FieldType` contains the new stack implementation
 
 ## Summary
-Make it possible to place legacy code in a Symfony 2 bundle. Could be done by exposing Resources/ezpublish-legacy as a legacy extension folder.
+Make it possible to ship legacy extensions in a Symfony 2 bundle.
 
 ### Benefits
 - development can be made without actually going inside the ezpublish_legacy folder
@@ -33,32 +33,16 @@ Make it possible to place legacy code in a Symfony 2 bundle. Could be done by ex
 - the legacy (backoffice) counterpart of new stack extensions can be bundled together with the new stack code, and automatically installed using composer
 
 ## Technical approach
-- a composer script symlinks (works on windows with PHP > 5.3 as well) the folder to `ezpublish_legacy/extensions`, using the lowercased name of the bundle as the symlink name:
-  `extension/ezsystemsdemobundle -> ../../vendor/ezsystems/demobundle/EzSystems/DemoBundle/Resources/ezpublish-legacy`
-- the extension is injected into `site.ini/ExtensionSettings/ActiveExtensions`:
+- a symfony script, executed on post-update by composer, symlinks (works on windows with PHP > 5.3 as well) the legacy folder to
+  `ezpublish_legacy/extensions`, using the lowercased name of the bundle as the symlink name (configurable):
+  `extension/ezdemo -> ../../vendor/ezsystems/demobundle/EzSystems/DemoBundle/ezpublish-legacy`
+- the extension is injected into `site.ini/ExtensionSettings/ActiveExtensions` when the container is compiled.
 
-## Possible extra features
-
-### Semi-automatic null FieldType mapping
-
-> Benefit: makes it easier to soft migrate legacy datatype extensions to the new stack
-
-A common use-case in projects would be to map an existing, custom legacy datatype to the [Null FieldType][1].
-
-Any datatype extension can easily be copied to a bundle. In order not to error out on the new stack, the most basic operation is to map the datatype to the Null FieldType, by means of services definitions.
-
-Write a compiler pass that looks for datatypes in the Resources/ezpublish-legacy folder. For each datatype found, if no matching fieldtype is registered, we declare a new service that maps the datatype to the Null FieldType (*NEED DETAILLED USE-CASE*).
-
-### Autoload generation on install
-
-> Benefit: removes a legacy specific manual step that is easily forgotten when installing a custom extension
-
-Provide a composer script, that can be used in legacy bundles, that updates the extension
-and kernel override (if there are such overrides) on install/update.
-
-> Possible issues: it could, if there are several updates, run the autoload scripts more than once.
+## Implementation
+- The bundle's Extension must implement the `EzPublishLegacyExtension` interface
+- The symfony script scans all registered bundles, and if the bundle's extension implements `EzPublishLegacyExtension`,
+  it symlinks the folders contained in the `ezpublish_legacy` bundle's folder to `ezpublish_legacy/extensions`.
 
 ## Open questions
 - What settings can *not* be overridden this way ?
 
-  [1]: https://confluence.ez.no/display/EZP/The+Null+FieldType
