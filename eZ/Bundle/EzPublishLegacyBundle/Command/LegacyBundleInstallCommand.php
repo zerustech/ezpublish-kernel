@@ -9,6 +9,7 @@
 
 namespace eZ\Bundle\EzPublishLegacyBundle\Command;
 
+use eZ\Bundle\EzPublishLegacyBundle\LegacyBundleExtensionInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,6 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use ezcPhpGenerator;
 use ezcPhpGeneratorParameter;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class LegacyBundleInstallCommand extends ContainerAwareCommand
 {
@@ -37,21 +39,62 @@ EOT
 
     protected function execute( InputInterface $input, OutputInterface $output )
     {
-        /**
-         * @var \Symfony\Component\Filesystem\Filesystem
-         */
-        $filesystem = $this->getContainer()->get( 'filesystem' );
-        $legacyRootDir = rtrim( $this->getContainer()->getParameter( 'ezpublish_legacy.root_dir' ), '/' );
-
         $kernel = $this->getContainer()->get( 'kernel' );
         foreach ( $kernel->getBundles() as $bundle )
         {
-            if ( !$bundle->getContainerExtension() instanceof LegacyExtensionBundle )
+            if ( !$bundle->getContainerExtension() instanceof LegacyBundleExtensionInterface )
             {
                 continue;
             }
 
-            $legacyExtensionName = $bundle->getLegacyExtensionName();
+            foreach ( $this->loadLegacyBundleExtensions( $bundle ) as $extensionDir )
+            {
+                $output->writeln( $extensionDir );
+                $this->linkLegacyExtension(
+                    $extensionDir,
+                    $input->getOption( 'symlink' ),
+                    $input->getOption( 'relative' )
+                );
+            }
+        }
+    }
+
+    protected function loadLegacyBundleExtensions( Bundle $bundle )
+    {
+        $return = array();
+        foreach ( glob( $bundle->getPath() . "/ezpublish_legacy/*", GLOB_ONLYDIR ) as $directory )
+        {
+            $return[] = $directory;
+        }
+        return $return;
+    }
+
+    /**
+     * Links the legacy extension at $path into ezpublish_legacy/extensions
+     * @param string $path Absolute path to a legacy extension folder
+     */
+    protected function linkLegacyExtension( $extensionPath, $symlink = true, $relative = false )
+    {
+        $legacyRootDir = rtrim( $this->getContainer()->getParameter( 'ezpublish_legacy.root_dir' ), '/' );
+        $filesystem = $this->getContainer()->get( 'filesystem' );
+
+        $targetPath = "$legacyRootDir/extension/" . basename( $extensionPath );
+        $filesystem->remove( $targetPath );
+        echo "Target path: $targetPath\n";
+        if ( $symlink )
+        {
+            if ( $relative )
+            {
+                $originDir = $filesystem->makePathRelative( $extensionPath, realpath( $targetPath ) );
+            }
+
+            $filesystem->symlink( $originDir, $targetPath );
+        }
+        else
+        {
+            $filesystem->mkdir( $targetPath, 0777 );
+            // We use a custom iterator to ignore VCS files
+            $filesystem->mirror( $extensionPath, $targetPath, Finder::create()->in( $extensionPath ) );
         }
     }
 }
