@@ -36,6 +36,16 @@ class LegacyExtensionsLocatorTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testLocateNoLegacy()
+    {
+        $locator = new LegacyExtensionsLocator( $this->vfsRoot );
+
+        self::assertEquals(
+            array(),
+            $locator->locate( vfsStream::url( 'No/Such/Bundle/' ) )
+        );
+    }
+
     protected function initVfs()
     {
         $structure = array(

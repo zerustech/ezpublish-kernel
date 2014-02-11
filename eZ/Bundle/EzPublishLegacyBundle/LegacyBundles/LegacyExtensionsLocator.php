@@ -15,16 +15,17 @@ class LegacyExtensionsLocator implements LegacyExtensionsLocatorInterface
     public function locate( $bundlePath )
     {
         $bundlePath = rtrim( $bundlePath, '/\\' );
+        $legacyPath = "$bundlePath/ezpublish_legacy/";
 
         $return = array();
 
-        if ( !is_dir( $bundlePath ) )
+        if ( !is_dir( $legacyPath ) )
         {
             return $return;
         }
 
         /** @var $item DirectoryIterator */
-        foreach ( new DirectoryIterator( "$bundlePath/ezpublish_legacy/" ) as $item )
+        foreach ( new DirectoryIterator( $legacyPath ) as $item )
         {
             if ( !$item->isDir() )
             {
