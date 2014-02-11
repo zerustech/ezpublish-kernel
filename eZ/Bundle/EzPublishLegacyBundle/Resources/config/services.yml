@@ -56,6 +56,8 @@ parameters:
     ezpublish_legacy.request_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\RequestListener
     ezpublish_legacy.config_scope_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\ConfigScopeListener
 
+    ezpublish_legacy.legacy_bundles.extension_locator.class: eZ\Bundle\EzPublishLegacyBundle\LegacyBundles\LegacyExtensionsLocator
+
 services:
     ezpublish_legacy.kernel:
         alias: ezpublish_legacy.kernel.lazy
@@ -262,3 +264,6 @@ services:
             - [setContainer, [@service_container]]
         tags:
             - { name: kernel.event_subscriber }
+
+    ezpublish_legacy.legacy_bundles.extension_locator:
+        class: %ezpublish_legacy.legacy_bundles.extension_locator.class%
