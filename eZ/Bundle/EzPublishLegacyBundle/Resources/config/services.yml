@@ -13,6 +13,7 @@ parameters:
     ezpublish_legacy.treemenu.controller.class: eZ\Bundle\EzPublishLegacyBundle\Controller\LegacyTreeMenuController
     ezpublish_legacy.treemenu.controller.options: {}
     ezpublish_legacy.setup.controller.class: eZ\Bundle\EzPublishLegacyBundle\Controller\LegacySetupController
+    ezpublish_legacy.preview.controller.class: eZ\Bundle\EzPublishLegacyBundle\Controller\PreviewController
 
     ezpublish_legacy.kernel_handler.cli.class: eZ\Publish\Core\MVC\Legacy\Kernel\CLIHandler
     ezpublish_legacy.kernel_handler.cli.options: {}
@@ -32,6 +33,8 @@ parameters:
         imagemagick_executable_path: %ezpublish.image.imagemagick.executable_path%
         imagemagick_executable: %ezpublish.image.imagemagick.executable%
         imagemagick_filters: %ezpublish.image.imagemagick.filters%
+    ezpublish_legacy.legacy_bundles_mapper.class: eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\LegacyBundles
+
     ezpublish_legacy.content_exception_handler.class: eZ\Publish\Core\MVC\Legacy\EventListener\APIContentExceptionListener
     ezpublish_legacy.config.resolver.class: eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConfigResolver
     ezpublish_legacy.config.default_scope: site
@@ -54,6 +57,8 @@ parameters:
     ezpublish_legacy.siteaccess_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\SiteAccessListener
     ezpublish_legacy.request_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\RequestListener
     ezpublish_legacy.config_scope_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\ConfigScopeListener
+
+    ezpublish_legacy.legacy_bundles.extension_locator.class: eZ\Bundle\EzPublishLegacyBundle\LegacyBundles\LegacyExtensionsLocator
 
 services:
     ezpublish_legacy.kernel:
@@ -128,6 +133,15 @@ services:
             - @ezpublish_legacy.configuration_mapper
             - @ezpublish_legacy.security_mapper
 
+    ezpublish_legacy.preview.controller:
+        class: %ezpublish_legacy.preview.controller.class%
+        parent: ezpublish.controller.content.preview.core
+        calls:
+            - [setConfigResolver, [@ezpublish.config.resolver]]
+
+    ezpublish.controller.content.preview:
+        alias: ezpublish_legacy.preview.controller
+
     ezpublish_legacy.router:
         class: %ezpublish_legacy.router.class%
         arguments: [@ezpublish_legacy.url_generator, @?request_context, @?logger]
@@ -165,6 +179,16 @@ services:
             - @ezpublish_legacy.persistence_cache_purger
             - @ezpublish.urlalias_generator
             - %ezpublish_legacy.configuration_mapper.options%
+        calls:
+            - [setContainer, [@service_container]]
+        tags:
+            - { name: kernel.event_subscriber }
+
+    ezpublish_legacy.legacy_bundles_mapper:
+        class: %ezpublish_legacy.legacy_bundles_mapper.class%
+        arguments:
+            - @ezpublish.config.resolver.core
+            - { extensions: %ezpublish_legacy.legacy_bundles_extensions% }
         calls:
             - [setContainer, [@service_container]]
         tags:
@@ -252,3 +276,6 @@ services:
             - [setContainer, [@service_container]]
         tags:
             - { name: kernel.event_subscriber }
+
+    ezpublish_legacy.legacy_bundles.extension_locator:
+        class: %ezpublish_legacy.legacy_bundles.extension_locator.class%
