@@ -1,9 +1,7 @@
 # eZ Publish legacy extension support in bundles
 
 > Audience: integrators, extension developers
-> Author: Bertrand Dunogier <bertrand.dunogier@ez.no>
-> Created: 22/01/2014
-> JIRA story: https://jira.ez.no/browse/EZP-22210
+> Feature story: https://jira.ez.no/browse/EZP-22210
 > Topics: BC, Extensibility
 
 ## Use-cases
