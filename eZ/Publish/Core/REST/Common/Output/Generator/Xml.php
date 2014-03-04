@@ -43,6 +43,8 @@ class Xml extends Generator
     public function __construct( Xml\FieldTypeHashGenerator $hashGenerator )
     {
         $this->hashGenerator = $hashGenerator;
+        // "BC" with v <= 5.2
+        $this->formatOutput = true;
     }
 
     /**
