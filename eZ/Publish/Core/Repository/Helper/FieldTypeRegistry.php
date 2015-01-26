@@ -42,10 +42,7 @@ class FieldTypeRegistry
         // First make sure all items are correct type (call closures)
         foreach ( $this->fieldTypes as $identifier => $value )
         {
-            if ( !$value instanceof SPIFieldType )
-            {
-                return $this->getFieldType( $identifier );
-            }
+            $this->initializeFieldType( $identifier );
         }
         return $this->fieldTypes;
     }
@@ -66,18 +63,36 @@ class FieldTypeRegistry
             throw new FieldTypeNotFoundException( $identifier );
         }
 
-        if ( $this->fieldTypes[$identifier] instanceof SPIFieldType )
+        $this->initializeFieldType( $identifier );
+
+        return $this->fieldTypes[$identifier];
+    }
+
+    /**
+     * Initializes the FieldType Closure if needed and checks for the correct type
+     *
+     * @throws \RuntimeException If FieldType is not an instance of SPI FieldType interface,
+     *                           or a closure returning the same
+     *
+     * @param string $identifier
+     */
+    protected function initializeFieldType( $identifier )
+    {
+        // First check for Closure and set the return value if found
+        if ( is_callable( $this->fieldTypes[$identifier] ) )
         {
-            return $this->fieldTypes[$identifier];
-        }
-        else if ( !is_callable( $this->fieldTypes[$identifier] ) )
-        {
-            throw new RuntimeException( "\$fieldTypes[$identifier] must be instance of SPI\\FieldType\\FieldType or callable" );
+            /** @var $closure \Closure */
+            $closure = $this->fieldTypes[$identifier];
+            $this->fieldTypes[$identifier] = $closure();
         }
 
-        /** @var $closure \Closure */
-        $closure = $this->fieldTypes[$identifier];
-        return $this->fieldTypes[$identifier] = $closure();
+        // Check for implementation of correct interface
+        if ( !$this->fieldTypes[$identifier] instanceof SPIFieldType )
+        {
+            throw new RuntimeException(
+                "\$fieldTypes[$identifier] must be instance of SPI\\FieldType\\FieldType or callable"
+            );
+        }
     }
 
     /**
