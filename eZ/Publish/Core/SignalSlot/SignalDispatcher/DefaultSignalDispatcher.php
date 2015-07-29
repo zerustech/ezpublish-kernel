@@ -13,6 +13,7 @@ namespace eZ\Publish\Core\SignalSlot\SignalDispatcher;
 
 use eZ\Publish\Core\SignalSlot\SignalDispatcher;
 use eZ\Publish\Core\SignalSlot\Slot;
+use eZ\Publish\Core\SignalSlot\CollectorSlot;
 use eZ\Publish\Core\SignalSlot\Signal;
 
 /**
@@ -59,22 +60,44 @@ class DefaultSignalDispatcher extends SignalDispatcher
     }
 
     /**
+     * @inherit
+     * @see SignalDispatcher::collect()
+     */
+    public function collect(Signal $signal)
+    {
+        $collected = array();
+        $signalName = get_class($signal);
+        if (!isset($this->signalSlotMap[$signalName])) {
+            $this->signalSlotMap[$signalName] = array();
+        }
+
+        foreach (($this->signalSlotMap['*'] + $this->signalSlotMap[$signalName]) as $slot) {
+            if ($slot instanceof CollectorSlot) {
+                $collected[] = $slot->collect($signal);
+            }
+        }
+
+        return $collected;
+    }
+
+    /**
      * Emits the given $signal.
      *
      * All assigned slots will eventually receive the $signal
      *
      * @param Signal $signal
+     * @param mixed[] $collected
      */
-    public function emit(Signal $signal)
+    public function emit(Signal $signal, array $collected = array())
     {
         $signalName = get_class($signal);
         if (!isset($this->signalSlotMap[$signalName])) {
             $this->signalSlotMap[$signalName] = array();
         }
 
-        foreach (array_merge($this->signalSlotMap['*'], $this->signalSlotMap[$signalName]) as $slot) {
+        foreach (($this->signalSlotMap['*'] + $this->signalSlotMap[$signalName]) as $slot) {
             /* @var \eZ\Publish\Core\SignalSlot\Slot $slot */
-            $slot->receive($signal);
+            $slot->receive($signal, $collected);
         }
     }
 

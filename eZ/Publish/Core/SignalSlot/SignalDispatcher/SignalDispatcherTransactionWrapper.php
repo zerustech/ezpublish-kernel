@@ -57,18 +57,28 @@ class SignalDispatcherTransactionWrapper extends SignalDispatcher implements Tra
     }
 
     /**
+     * @inherit
+     * @see SignalDispatcher::collect()
+     */
+    public function collect(Signal $signal)
+    {
+        return $this->signalDispatcher->collect($signal);
+    }
+
+    /**
      * Emits the given $signal or queue if in transaction.
      *
      * All assigned slots will eventually receive the $signal
      *
      * @param Signal $signal
+     * @param mixed[] $collected Array of data returned by {@see collect()}
      */
-    public function emit(Signal $signal)
+    public function emit(Signal $signal, array $collected = array())
     {
         if ($this->transactionDepth === 0) {
-            $this->signalDispatcher->emit($signal);
+            $this->signalDispatcher->emit($signal, $collected);
         } else {
-            $this->signalsQueue[$this->transactionCount][] = $signal;
+            $this->signalsQueue[$this->transactionCount][] = array($signal, $collected);
         }
     }
 
@@ -94,8 +104,8 @@ class SignalDispatcherTransactionWrapper extends SignalDispatcher implements Tra
         --$this->transactionDepth;
         if ($this->transactionDepth === 0) {
             foreach ($this->signalsQueue as $signalsQueue) {
-                foreach ($signalsQueue as $signal) {
-                    $this->signalDispatcher->emit($signal);
+                foreach ($signalsQueue as $signalData) {
+                    $this->signalDispatcher->emit($signalData[0], $signalData[1]);
                 }
             }
 

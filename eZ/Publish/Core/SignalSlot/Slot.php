@@ -22,6 +22,7 @@ abstract class Slot
      * Receive the given $signal and react on it.
      *
      * @param Signal $signal
+     * @param mixed[] $collected Array of data returned by {@see CollectorSlot::collect()}
      */
-    abstract public function receive(Signal $signal);
+    abstract public function receive(Signal $signal, array $collected = array());
 }
