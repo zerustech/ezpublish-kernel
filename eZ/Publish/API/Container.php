@@ -14,6 +14,7 @@ namespace eZ\Publish\API;
  * Container interface.
  *
  * Starting point for getting all Public API's
+ * @deprecated
  */
 interface Container
 {
