@@ -238,7 +238,7 @@ class ContentType extends RestController
                 throw new BadRequestException('wrong value for limit parameter');
             }
         }
-        $contentTypes = $this->getContentTypeList();
+        $contentTypes = $this->contentTypeService->loadContentTypes();
         $sort = $request->query->get('sort');
         if ($request->query->has('orderby')) {
             $orderby = $request->query->get('orderby');
@@ -949,21 +949,5 @@ class ContentType extends RestController
                 throw new BadRequestException('wrong value for orderby parameter');
                 break;
         }
-    }
-
-    /**
-     * @return ContentType[]
-     */
-    protected function getContentTypeList()
-    {
-        $contentTypes = array();
-        foreach ($this->contentTypeService->loadContentTypeGroups() as $contentTypeGroup) {
-            $contentTypes = array_merge(
-                $contentTypes,
-                $this->contentTypeService->loadContentTypes($contentTypeGroup)
-            );
-        }
-
-        return $contentTypes;
     }
 }

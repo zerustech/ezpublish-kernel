@@ -272,11 +272,11 @@ class ContentTypeService implements ContentTypeServiceInterface
     /**
      * Get Content Type objects which belong to the given content type group.
      *
-     * @param \eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup $contentTypeGroup
+     * @param \eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup|null $contentTypeGroup
      *
      * @return \eZ\Publish\API\Repository\Values\ContentType\ContentType[] Which have status DEFINED
      */
-    public function loadContentTypes(ContentTypeGroup $contentTypeGroup)
+    public function loadContentTypes(ContentTypeGroup $contentTypeGroup = null)
     {
         return $this->service->loadContentTypes($contentTypeGroup);
     }

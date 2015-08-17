@@ -66,12 +66,29 @@ interface Handler
     public function loadAllGroups();
 
     /**
-     * @param mixed $groupId
      * @param int $status One of Type::STATUS_DEFINED|Type::STATUS_DRAFT|Type::STATUS_MODIFIED
      *
      * @return \eZ\Publish\SPI\Persistence\Content\Type[]
      */
+    public function loadAllTypes($status = Type::STATUS_DEFINED);
+
+    /**
+     * @param mixed $groupId
+     * @param int $status One of Type::STATUS_DEFINED|Type::STATUS_DRAFT|Type::STATUS_MODIFIED
+     *
+     * @deprecated Use {@see loadContentTypesByGroup}
+     * @return \eZ\Publish\SPI\Persistence\Content\Type[]
+     */
     public function loadContentTypes($groupId, $status = Type::STATUS_DEFINED);
+
+    /**
+     * @param mixed $groupId
+     * @param int $status One of Type::STATUS_DEFINED|Type::STATUS_DRAFT|Type::STATUS_MODIFIED
+     *
+     * @since 6.0
+     * @return \eZ\Publish\SPI\Persistence\Content\Type[]
+     */
+    public function loadContentTypesByGroup($groupId, $status = Type::STATUS_DEFINED);
 
     /**
      * Loads a content type by id and status.

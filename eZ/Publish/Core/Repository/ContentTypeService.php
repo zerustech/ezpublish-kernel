@@ -1227,16 +1227,20 @@ class ContentTypeService implements ContentTypeServiceInterface
     /**
      * Get Content Type objects which belong to the given content type group.
      *
-     * @param \eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup $contentTypeGroup
+     * @param \eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup|null $contentTypeGroup
      *
      * @return \eZ\Publish\API\Repository\Values\ContentType\ContentType[] Which have status DEFINED
      */
-    public function loadContentTypes(APIContentTypeGroup $contentTypeGroup)
+    public function loadContentTypes(APIContentTypeGroup $contentTypeGroup = null)
     {
-        $spiContentTypes = $this->contentTypeHandler->loadContentTypes(
-            $contentTypeGroup->id,
-            SPIContentType::STATUS_DEFINED
-        );
+        if ( $contentTypeGroup instanceof APIContentTypeGroup ) {
+            $spiContentTypes = $this->contentTypeHandler->loadContentTypesByGroup(
+                $contentTypeGroup->id,
+                SPIContentType::STATUS_DEFINED
+            );
+        } else {
+            $spiContentTypes = $this->contentTypeHandler->loadAllTypes(SPIContentType::STATUS_DEFINED);
+        }
         $contentTypes = array();
 
         foreach ($spiContentTypes as $spiContentType) {
