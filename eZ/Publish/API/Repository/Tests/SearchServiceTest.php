@@ -1048,7 +1048,7 @@ class SearchServiceTest extends BaseTest
     public function testFindNoPerformCountException()
     {
         if (ltrim(get_class($this->getSetupFactory()), '\\') !== 'eZ\Publish\API\Repository\Tests\SetupFactory\Legacy') {
-            $this->markTestSkipped('Only applicable to Legacy/DB based search');
+            $this->markTestIncomplete('Only applicable to Legacy/DB based search');
         }
 
         $repository = $this->getRepository();
@@ -1096,7 +1096,7 @@ class SearchServiceTest extends BaseTest
     public function testFindLocationsNoPerformCountException()
     {
         if (ltrim(get_class($this->getSetupFactory()), '\\') !== 'eZ\Publish\API\Repository\Tests\SetupFactory\Legacy') {
-            $this->markTestSkipped('Only applicable to Legacy/DB based search');
+            $this->markTestIncomplete('Only applicable to Legacy/DB based search');
         }
 
         $repository = $this->getRepository();
@@ -4119,7 +4119,7 @@ class SearchServiceTest extends BaseTest
     {
         $setupFactory = $this->getSetupFactory();
         if (!$setupFactory instanceof LegacyElasticsearch) {
-            $this->markTestSkipped('Language analysis is implemented only for Elasticsearch storage');
+            $this->markTestIncomplete('Language analysis is implemented only for Elasticsearch storage');
         }
 
         $repository = $this->getRepository();
@@ -4186,7 +4186,7 @@ class SearchServiceTest extends BaseTest
     {
         $setupFactory = $this->getSetupFactory();
         if (!$setupFactory instanceof LegacyElasticsearch) {
-            $this->markTestSkipped('Language analysis is implemented only for Elasticsearch storage');
+            $this->markTestIncomplete('Language analysis is implemented only for Elasticsearch storage');
         }
 
         $repository = $this->getRepository();
@@ -4239,7 +4239,7 @@ class SearchServiceTest extends BaseTest
     {
         $setupFactory = $this->getSetupFactory();
         if (!$setupFactory instanceof LegacyElasticsearch) {
-            $this->markTestSkipped('Language analysis is implemented only for Elasticsearch storage');
+            $this->markTestIncomplete('Language analysis is implemented only for Elasticsearch storage');
         }
 
         $repository = $this->getRepository();
