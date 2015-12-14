@@ -1821,6 +1821,21 @@ class DoctrineDatabaseTest extends LanguageAwareTestCase
         $this->assertEquals($orig, $res, 'Fixtures differ between what was previously stored(expected) and what it now generates(actual), this hints either some mistake in impl or that the fixture (../_fixtures/extract_content_from_rows_multiple_versions.php) and tests needs to be adapted.');
     }
 
+    public function testCountContentByType()
+    {
+        $this->insertDatabaseFixture(
+            __DIR__ . '/../_fixtures/contentobjects.php'
+        );
+
+        $gateway = $this->getDatabaseGateway();
+
+        $resFolder = $gateway->countContentByType(1);
+        $resEvent = $gateway->countContentByType(33);
+
+        $this->assertEquals($resFolder, 31);
+        $this->assertEquals($resEvent, 0);
+    }
+
     /**
      * Counts the number of relations in the database.
      *

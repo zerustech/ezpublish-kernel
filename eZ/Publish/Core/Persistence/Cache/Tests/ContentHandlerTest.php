@@ -51,6 +51,7 @@ class ContentHandlerTest extends HandlerTest
             array('loadRelations', array(2, 1, 3)),
             array('loadReverseRelations', array(2, 3)),
             //array( 'publish', array( 2, 3, new MetadataUpdateStruct ) ),
+            array('countContentByType', array(1)),
         );
     }
 

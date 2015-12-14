@@ -682,4 +682,18 @@ class ContentService implements ContentServiceInterface
     {
         return $this->service->newTranslationValues();
     }
+
+    /**
+     * Returns true if the given content type $contentType has content instances.
+     *
+     * @since 6.0.1
+     *
+     * @param \eZ\Publish\API\Repository\Values\ContentType\ContentType $contentType
+     *
+     * @return bool
+     */
+    public function isContentTypeUsed(ContentType $contentType)
+    {
+        return $this->service->isContentTypeUsed($contentType);
+    }
 }

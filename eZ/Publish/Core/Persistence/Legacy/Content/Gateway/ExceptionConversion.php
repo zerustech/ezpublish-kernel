@@ -708,4 +708,23 @@ class ExceptionConversion extends Gateway
             throw new RuntimeException('Database error', 0, $e);
         }
     }
+
+    /**
+     * Counts the number of content instances of content type $contentTypeId.
+     * It counts content of any status (draft, published, archived).
+     *
+     * @param int $contentTypeId Content Type ID
+     *
+     * @return int
+     */
+    public function countContentByType($contentTypeId)
+    {
+        try {
+            return $this->innerGateway->countContentByType($contentTypeId);
+        } catch (DBALException $e) {
+            throw new RuntimeException('Database error', 0, $e);
+        } catch (PDOException $e) {
+            throw new RuntimeException('Database error', 0, $e);
+        }
+    }
 }

@@ -706,4 +706,17 @@ class Handler implements BaseContentHandler
             $this->contentGateway->loadReverseRelations($destinationContentId, $type)
         );
     }
+
+    /**
+     * Counts the number of content instances of content type $contentTypeId.
+     * It counts content of any status (draft, published, archived).
+     *
+     * @param int $contentTypeId Content Type ID
+     *
+     * @return int
+     */
+    public function countContentByType($contentTypeId)
+    {
+        return $this->contentGateway->countContentByType($contentTypeId);
+    }
 }

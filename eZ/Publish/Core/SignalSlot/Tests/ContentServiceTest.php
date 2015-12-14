@@ -326,6 +326,12 @@ class ContentServiceTest extends ServiceTest
                 array($translationValues),
                 0,
             ),
+            array(
+                'isContentTypeUsed',
+                array($contentType),
+                true,
+                0,
+            ),
         );
     }
 }

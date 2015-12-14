@@ -1378,6 +1378,36 @@ class ContentHandlerTest extends TestCase
     }
 
     /**
+     * @covers eZ\Publish\Core\Persistence\Legacy\Content\Handler::countContentByType
+     */
+    public function testCountContentByType()
+    {
+        $handler = $this->getContentHandler();
+
+        $gatewayMock = $this->getGatewayMock();
+
+        $gatewayMock->expects($this->at(0))
+            ->method('countContentByType')
+            ->with(1)
+            ->will($this->returnValue(18));
+
+        $gatewayMock->expects($this->at(1))
+            ->method('countContentByType')
+            ->with(33)
+            ->will($this->returnValue(0));
+
+        $this->assertEquals(
+            $handler->countContentByType(1),
+            18
+        );
+
+        $this->assertEquals(
+            $handler->countContentByType(33),
+            0
+        );
+    }
+
+    /**
      * Returns the handler to test.
      *
      * @return \eZ\Publish\Core\Persistence\Legacy\Content\Handler

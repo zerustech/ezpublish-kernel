@@ -432,4 +432,15 @@ interface ContentService
      * @return \eZ\Publish\API\Repository\Values\Content\TranslationValues
      */
     public function newTranslationValues();
+
+    /**
+     * Returns true if the given content type $contentType has content instances.
+     *
+     * @since 6.0.1
+     *
+     * @param \eZ\Publish\API\Repository\Values\ContentType\ContentType $contentType
+     *
+     * @return bool
+     */
+    public function isContentTypeUsed(ContentType $contentType);
 }

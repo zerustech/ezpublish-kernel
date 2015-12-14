@@ -767,4 +767,18 @@ class ContentService implements APIContentService, Sessionable
     {
         throw new \Exception('@todo: Implement.');
     }
+
+    /**
+     * Returns true if the given content type $contentType has content instances.
+     *
+     * @since 6.0.1
+     *
+     * @param \eZ\Publish\API\Repository\Values\ContentType\ContentType $contentType
+     *
+     * @return bool
+     */
+    public function isContentTypeUsed(ContentType $contentType)
+    {
+        throw new \Exception('@todo: Implement.');
+    }
 }

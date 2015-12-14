@@ -293,4 +293,14 @@ class ContentHandler extends AbstractHandler implements ContentHandlerInterface
 
         return $content;
     }
+
+    /**
+     * @see \eZ\Publish\SPI\Persistence\Content\Handler::countContentByType
+     */
+    public function countContentByType($contentTypeId)
+    {
+        $this->logger->logCall(__METHOD__, array('contentType' => $contentTypeId));
+
+        return $this->persistenceHandler->contentHandler()->countContentByType($contentTypeId);
+    }
 }

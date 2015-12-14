@@ -1830,4 +1830,37 @@ class DoctrineDatabase extends Gateway
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Counts the number of content instances of content type $contentTypeId.
+     * It counts content of any status (draft, published, archived).
+     *
+     * @param int $contentTypeId Content Type ID
+     *
+     * @return int
+     */
+    public function countContentByType($contentTypeId)
+    {
+        $query = $this->dbHandler->createSelectQuery();
+        $query->select(
+            $query->alias(
+                $query->expr->count(
+                    $this->dbHandler->quoteColumn('id')
+                ),
+                'content_count'
+            )
+        )->from(
+            $this->dbHandler->quoteTable('ezcontentobject')
+        )->where(
+            $query->expr->eq(
+                $this->dbHandler->quoteColumn('contentclass_id'),
+                $query->bindValue($contentTypeId, null, \PDO::PARAM_INT)
+            )
+        );
+
+        $statement = $query->prepare();
+        $statement->execute();
+
+        return (int)$statement->fetchColumn();
+    }
 }

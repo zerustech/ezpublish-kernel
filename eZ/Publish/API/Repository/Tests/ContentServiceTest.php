@@ -4819,4 +4819,33 @@ class ContentServiceTest extends BaseContentServiceTest
             ),
         );
     }
+
+    /**
+     * Test for the isContentTypeUsed() method.
+     *
+     * @see \eZ\Publish\API\Repository\ContentService::isContentTypeUsed()
+     * @group user
+     */
+    public function testIsContentTypeUsed()
+    {
+        if ($this->isVersion4()) {
+            $this->markTestSkipped('This test requires eZ Publish 5');
+        }
+
+        $repository = $this->getRepository();
+
+        /* BEGIN: Use Case */
+        $contentTypeService = $repository->getContentTypeService();
+        $contentService = $repository->getContentService();
+
+        $folderType = $contentTypeService->loadContentTypeByIdentifier('folder');
+        $eventType = $contentTypeService->loadContentTypeByIdentifier('event');
+
+        $isFolderUsed = $contentService->isContentTypeUsed($folderType);
+        $isEventUsed = $contentService->isContentTypeUsed($eventType);
+        /* END: Use Case */
+
+        $this->assertTrue($isFolderUsed);
+        $this->assertFalse($isEventUsed);
+    }
 }
